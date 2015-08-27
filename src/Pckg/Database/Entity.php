@@ -7,7 +7,7 @@ use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Relation\Helper\RelationMethods;
-use LFW\Reflect;
+use Pckg\Reflect;
 
 /**
  * Presents table in database

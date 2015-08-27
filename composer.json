@@ -10,8 +10,8 @@
     }
   ],
   "require": {
-    "lfw/concept": "dev-master",
-    "lfw/reflect": "dev-master"
+    "pckg/concept": "dev-master",
+    "pckg/reflect": "dev-master"
   },
   "autoload": {
     "psr-0": {

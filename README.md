@@ -1,0 +1,1 @@
+Repository, entity, record, relation, collection, filed and object - all separated and logically connected!

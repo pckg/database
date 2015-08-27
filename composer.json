@@ -1,0 +1,22 @@
+{
+  "name": "pckg/database",
+  "description": "PHP database implementation",
+  "homepage": "https://github.com/pckg/database",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bojan Rajh",
+      "email": "schtr4jh@schtr4jh.net"
+    }
+  ],
+  "require": {
+    "lfw/concept": "dev-master",
+    "lfw/reflect": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "LFW": "src\\"
+    }
+  },
+  "minimum-stability": "dev"
+}

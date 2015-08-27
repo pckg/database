@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-0": {
-      "LFW": "src\\"
+      "Pckg": "src\\"
     }
   },
   "minimum-stability": "dev"

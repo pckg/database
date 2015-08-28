@@ -6,7 +6,7 @@ namespace Pckg\Database\Command;
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use Pckg\Concept\AbstractChainOfReponsibility;
-use Pckg\FrameworkConfig;
+use Pckg\Framework\Config;
 use Pckg\Context;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;

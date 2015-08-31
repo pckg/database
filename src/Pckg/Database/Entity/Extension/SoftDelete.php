@@ -45,6 +45,7 @@ trait SoftDelete
     public function delete()
     {
         $this->{$this->softDeleteField} = date('Y-m-d H:i:s');
+
         return $this->update();
     }
 

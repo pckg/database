@@ -19,7 +19,7 @@ class Lista extends Collection
         $return = [];
 
         foreach ($this->collection AS $row) {
-            $return[$row->getID()] = $row;
+            $return[$row->id] = $row;
         }
 
         return $return;

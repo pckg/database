@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Entity\Extension;
 
+use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Adapter\Lang;
 use Pckg\Database\Record;
 
@@ -83,7 +84,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany($this->table . $this->translatableTableSuffix);
+        return $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()));
     }
 
 }

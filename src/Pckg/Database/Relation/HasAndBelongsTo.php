@@ -3,38 +3,43 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\Database\Collection;
+use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
-use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
+use Pckg\Reflect;
 
 /**
  * Class HasAndBelongTo
  * @package Pckg\Database\Relation
  */
-class HasAndBelongsTo extends Relation
+class HasAndBelongsTo extends HasMany
 {
 
-    protected $middleTable;
+    protected $middle;
 
-    public function getRightForeignKey()
+    /**
+     * @return Entity
+     * @throws \Exception
+     */
+    public function getMiddleEntity()
     {
-        $class = explode('\\', get_class($this->getRightEntity()));
+        if (is_string($this->middle)) {
+            $this->middle = Reflect::create($this->middle);
+        }
 
-        return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
+        return $this->middle;
     }
 
-    public function getLeftForeignKey()
+    public function getMiddleRepository()
     {
-        $class = explode('\\', get_class($this->left));
-
-        return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
+        return $this->getMiddleEntity()->getRepository();
     }
 
-    public function middleTable($middleTable)
+    public function over($middle)
     {
-        $this->middleTable = $middleTable;
+        $this->middle = $middle;
 
         return $this;
     }
@@ -43,41 +48,121 @@ class HasAndBelongsTo extends Relation
     {
         $rightForeignKey = $this->getRightForeignKey();
         $leftForeignKey = $this->getLeftForeignKey();
-        $middleTable = $this->middleTable ?: Convention::nameMultiple(substr($rightForeignKey, 0, -3)) . '_' . Convention::nameMultiple(substr($leftForeignKey, 0, -3));
 
-        $select = (new Select())->fields([$rightForeignKey])
-            ->table($middleTable)
-            ->where($leftForeignKey, $record->id);
+        $middleEntity = $this->getMiddleEntity();
+        $middleEntity->resetQuery();
+        $rightEntity = $this->getRightEntity();
+        $rightEntity->resetQuery();
 
-        $record->{Convention::nameMultiple(substr($rightForeignKey, 0, -3))} = (new GetRecords($this->getRightEntity()->where('id', $select, 'IN'), $this->getRightEntity()->getRepository()))->executeAll();
+        $leftCollectionKey = Convention::nameMultiple($leftForeignKey);
+        $middleCollectionKey = lcfirst(Convention::toCamel($middleEntity->getTable()));
+        $rightCollectionKey = Convention::nameMultiple($rightForeignKey);
 
-        $this->fillWithRecord($record);
+        $rightRecordKey = Convention::nameOne($leftForeignKey);
+        $leftRecordKey = Convention::nameOne($rightForeignKey);
+
+        // get mtm records
+        $middleCollection = (new GetRecords($middleEntity->where($leftForeignKey, $record->id)))->executeAll();
+
+        // get right record ids and preset middle record with null values
+        $arrRightIds = [];
+        foreach ($middleCollection as $middleRecord) {
+            $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
+            $middleRecord->{$rightRecordKey} = null;
+            $middleRecord->{$leftRecordKey} = null;
+        }
+
+        // prepare record for mtm relation and right relation
+        $record->{$middleCollectionKey} = $middleCollection;
+        $record->{$rightCollectionKey} = new Collection();
+
+        if ($arrRightIds) {
+            // get all right records
+            $rightCollection = (new GetRecords($rightEntity->where('id', $arrRightIds, 'IN')))->executeAll();
+
+            // prepare right collection records for left relation
+            foreach ($rightCollection as $rightRecord) {
+                $rightRecord->{$leftCollectionKey} = new Collection();
+            }
+
+            $record->{$rightCollectionKey} = $rightCollection;
+
+            // we also have to fill it with relations
+            $this->fillCollectionWithRelations($record->{$rightCollectionKey});
+
+            foreach ($middleCollection as $middleRecord) {
+                $middleRecord->{$rightRecordKey} = $record;
+
+                foreach ($rightCollection as $rightRecord) {
+                    $middleRecord->{$leftRecordKey} = $rightRecord;
+                    $rightRecord->{$leftCollectionKey}->push($rightRecord);
+                }
+            }
+        }
+
+        // also fill current relation's relations
+        $this->fillRecordWithRelations($record);
     }
 
     public function fillCollection(Collection $collection)
     {
-        $arrIds = [];
+        $arrLeftIds = [];
 
         $rightForeignKey = $this->getRightForeignKey();
+        $leftForeignKey = $this->getLeftForeignKey();
+
+        $middleEntity = $this->getMiddleEntity();
+        $middleEntity->resetQuery();
+        $rightEntity = $this->getRightEntity();
+        $rightEntity->resetQuery();
+
+        $rightCollectionKey = Convention::nameMultiple($rightForeignKey);
+        $rightRecordKey = Convention::nameMultiple($leftForeignKey);
+        $leftCollectionKey = Convention::nameMultiple($leftForeignKey);
+        $leftRecordKey = Convention::nameMultiple($rightForeignKey);
         foreach ($collection as $record) {
-            if ($record->{$rightForeignKey}) {
-                $arrIds[$record->{$rightForeignKey}] = $record->{$rightForeignKey};
-                $record->{substr($rightForeignKey, 0, -3)} = new Collection();
-            }
+            $arrLeftIds[$record->id] = $record->id;
+            $record->{$rightCollectionKey} = new Collection();
         }
 
-        $foreignCollection = (new GetRecords($this->getRightEntity()->where('id', $arrIds, 'IN'), $this->getRightEntity()->getRepository()))->executeAll();
-        foreach ($collection as $record) {
-            if ($record->{$rightForeignKey}) {
-                foreach ($foreignCollection as $foreignRecord) {
-                    if ($foreignRecord->id == $record->{$rightForeignKey}) {
-                        $record->{substr($rightForeignKey, 0, -3)}->push($foreignRecord);
+        if ($arrLeftIds) {
+            // middle collection is filled with it's entity relations
+            $middleCollection = (new GetRecords($middleEntity->where($leftForeignKey, $arrLeftIds, 'IN')))->executeAll();
+            $arrRightIds = [];
+            foreach ($middleCollection as $middleRecord) {
+                $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
+                $middleRecord->{$rightRecordKey} = null;
+                $middleRecord->{$leftRecordKey} = null;
+            }
+
+            if ($arrRightIds) {
+                // foreign collection is filled with it's entity relations
+                $rightCollection = (new GetRecords($rightEntity->where('id', $arrRightIds, 'IN')))->executeAll();
+                foreach ($rightCollection as $rightRecord) {
+                    $rightRecord->{$leftCollectionKey} = new Collection();
+                }
+
+                // we have to fill it with current relations
+                $this->fillCollectionWithRelations($rightCollection);
+
+                foreach ($middleCollection as $middleRecord) {
+                    foreach ($collection as $leftRecord) {
+                        if ($leftRecord->id == $middleRecord->{$leftForeignKey}) {
+                            foreach ($rightCollection as $rightRecord) {
+                                if ($rightRecord->id == $middleRecord->{$rightForeignKey}) {
+                                    $leftRecord->{$rightCollectionKey}->push($rightRecord);
+                                    $rightRecord->{$leftCollectionKey}->push($rightRecord);
+                                    $middleRecord->{$leftRecordKey} = $rightRecord;
+                                    $middleRecord->{$rightRecordKey} = $leftRecord;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
 
-        $this->fillWithCollection($collection);
+        // $this->fillCollectionWithRelations($collection);
     }
 
 }

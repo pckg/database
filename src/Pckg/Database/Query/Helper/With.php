@@ -77,19 +77,22 @@ trait With
         return $this;
     }
 
-    protected function fillWithRecord(Record $record)
+    public function fillRecordWithRelations(Record $record)
     {
         foreach ($this->getWith() as $relation) {
             $relation->fillRecord($record);
         }
+
+        return $record;
     }
 
-    protected function fillWithCollection(Collection $collection)
+    public function fillCollectionWithRelations(Collection $collection)
     {
         foreach ($this->getWith() as $relation) {
-            d(get_class($relation) . '->' . get_class($relation->getRightEntity()));
             $relation->fillCollection($collection);
         }
+
+        return $collection;
     }
 
 

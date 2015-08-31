@@ -56,7 +56,7 @@ class Query
     public static function escapeArray($array)
     {
         foreach ($array as &$value) {
-            $value = static::escape($array);
+            $value = static::escape($value);
         }
 
         return $array;

@@ -24,7 +24,7 @@ trait Orderable
      */
     public function initOrderableExtension()
     {
-        $this->query->orderBy($this->orderableField, $this->orderableDirection);
+        $this->getQuery()->orderBy($this->orderableField, $this->orderableDirection);
     }
 
 }

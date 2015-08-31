@@ -64,7 +64,7 @@ abstract class Relation
      */
     public function __call($method, $args)
     {
-        $relation = $this->callWith($method, $args, $this->right);
+        $this->callWith($method, $args, $this->right);
 
         return $this;
     }
@@ -98,9 +98,21 @@ abstract class Relation
         return $this;
     }
 
+    /**
+     * @return Entity
+     * @throws \Exception
+     */
     public function getLeftEntity()
     {
         return $this->left; // left is always entity
+    }
+
+    /**
+     * @return Repository
+     * @throws \Exception
+     */
+    public function getLeftRepository() {
+        return $this->getLeftEntity()->getRepository();
     }
 
     /**
@@ -114,6 +126,14 @@ abstract class Relation
         }
 
         return $this->right;
+    }
+
+    /**
+     * @return Repository
+     * @throws \Exception
+     */
+    public function getRightRepository() {
+        return $this->getRightEntity()->getRepository();
     }
 
     abstract function fillRecord(Record $record);

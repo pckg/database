@@ -24,11 +24,12 @@ class GetRecords
 
     /**
      * @param Entity $entity
+     * @param Repository $repository
      */
-    public function __construct(Entity $entity, Repository $repository)
+    public function __construct(Entity $entity, Repository $repository = null)
     {
         $this->entity = $entity;
-        $this->repository = $repository;
+        $this->repository = $repository ?: $this->entity->getRepository();
     }
 
     /**
@@ -36,11 +37,11 @@ class GetRecords
      */
     public function executeAll()
     {
-        $prepare = new PrepareSQL($this->entity->getQuery(), $this->entity->getRepository());
-        $prepare = $prepare->execute();
+        $prepare = $this->repository->getConnection()->prepare($this->entity->getQuery());
+        $prepare->setFetchMode(PDO::FETCH_CLASS, $this->entity->getRecordClass());
 
-        if ($prepare && $execute = $prepare->execute() && $results = $prepare->fetchAll(PDO::FETCH_CLASS, $this->entity->getRecordClass())) {
-            return $this->fillCollection($results);
+        if ($execute = $prepare->execute() && $results = $prepare->fetchAll()) {
+            return $this->entity->fillCollectionWithRelations(new Collection($results));
         }
 
         return new Collection();
@@ -54,35 +55,11 @@ class GetRecords
         $prepare = $this->repository->getConnection()->prepare($this->entity->getQuery()->limit(1));
         $prepare->setFetchMode(PDO::FETCH_CLASS, $this->entity->getRecordClass());
 
-        if ($prepare->execute() && $record = $prepare->fetch()) {
-            return $this->fillRecord($record);
+        if ($execute = $prepare->execute() && $record = $prepare->fetch()) {
+            return $this->entity->fillRecordWithRelations($record);
         }
 
         return null;
-    }
-
-    /**
-     * @param $results
-     * @return array|Collection
-     */
-    protected function fillCollection(array $results)
-    {
-        $collection = new Collection($results);
-
-        foreach ($this->entity->getWith() as $relation) {
-            $relation->fillCollection($collection);
-        }
-
-        return $collection;
-    }
-
-    protected function fillRecord(Record $record)
-    {
-        foreach ($this->entity->getWith() as $relation) {
-            $relation->fillRecord($record);
-        }
-
-        return $record;
     }
 
 }

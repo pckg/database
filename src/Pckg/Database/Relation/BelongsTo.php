@@ -6,6 +6,7 @@ use Pckg\Database\Collection;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
+use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 /**
  * Class BelongsTo
@@ -23,43 +24,47 @@ class BelongsTo extends Relation
 
     public function fillRecord(Record $record)
     {
+        //d('BelongsTo::fillRecord() ' . get_class($record));
         $rightForeignKey = $this->getRightForeignKey();
 
+        $rightEntity = clone $this->getRightEntity();
         if ($record->{$rightForeignKey}) {
-            $record->{substr($rightForeignKey, 0, -3)} = $this->getRightEntity()->where('id', $record->{$rightForeignKey})->one();
+            $record->{substr($rightForeignKey, 0, -3)} = (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne();
         } else {
             $record->{substr($rightForeignKey, 0, -3)} = null;
         }
 
-        $this->fillWithRecord($record);
+        $this->fillRecordWithRelations($record);
+        //(new GetRecords($this->getRightEntity()))->fillRecord($record);
     }
 
     public function fillCollection(Collection $collection)
     {
+        //d('BelongsTo::fillCollection() ' . get_class($collection[0]) . ' ' . get_class($this->getRightEntity()));
         $arrIds = [];
 
         $rightForeignKey = $this->getRightForeignKey();
+        $rightRecordKey = Convention::nameOne($rightForeignKey);
         foreach ($collection as $record) {
             if ($record->{$rightForeignKey}) {
                 $arrIds[$record->{$rightForeignKey}] = $record->{$rightForeignKey};
-                $record->{substr($rightForeignKey, 0, -3)} = new Collection();
+                $record->{$rightRecordKey} = null;
             }
         }
 
-        $rightEntity = $this->getRightEntity();
-        $foreignCollection = $rightEntity->where($rightEntity->getPrimaryKey(), $arrIds, 'IN')->all();
+        $rightEntity = clone $this->getRightEntity();
+        $foreignCollection = (new GetRecords($rightEntity->where($rightEntity->getPrimaryKey(), $arrIds, 'IN')))->executeAll();
         foreach ($collection as $record) {
-            if ($record->{$rightForeignKey}) {
-                foreach ($foreignCollection as $foreignRecord) {
-                    if ($foreignRecord->id == $record->{$rightForeignKey}) {
-                        $record->{substr($rightForeignKey, 0, -3)} = $foreignRecord;
-                        break 2;
-                    }
+            foreach ($foreignCollection as $foreignRecord) {
+                if ($foreignRecord->id == $record->{$rightForeignKey}) {
+                    $record->{$rightRecordKey} = $foreignRecord;
+                    break;
                 }
             }
         }
 
-        $this->fillWithCollection($collection);
+        //$this->fillCollectionWithRelations($collection);
+        //(new GetRecords($this->getRightEntity()))->fillCollection($collection);
     }
 
 }

@@ -18,7 +18,7 @@ trait RelationMethods
 
     /**
      * @param $hasMany
-     * @return mixed
+     * @return HasMany
      */
     public function hasMany($hasMany)
     {
@@ -27,7 +27,7 @@ trait RelationMethods
 
     /**
      * @param $hasOne
-     * @return mixed
+     * @return HasOne
      */
     public function hasOne($hasOne)
     {
@@ -36,7 +36,7 @@ trait RelationMethods
 
     /**
      * @param $belongsTo
-     * @return mixed
+     * @return BelongsTo
      */
     public function belongsTo($belongsTo)
     {
@@ -45,7 +45,7 @@ trait RelationMethods
 
     /**
      * @param $hasAndBelongsTo
-     * @return mixed
+     * @return HasAndBelongsTo
      */
     public function hasAndBelongsTo($hasAndBelongsTo)
     {
@@ -54,7 +54,7 @@ trait RelationMethods
 
     /**
      * @param $hasParent
-     * @return mixed
+     * @return HasParent
      */
     public function hasParent($hasParent)
     {
@@ -63,7 +63,7 @@ trait RelationMethods
 
     /**
      * @param $hasChildren
-     * @return mixed
+     * @return HasChildren
      */
     public function hasChildren($hasChildren)
     {

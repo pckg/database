@@ -40,13 +40,10 @@ class HasMany extends Relation
             ->table($middleTable)
             ->where($leftForeignKey, $record->id);
 
-        $record->{Convention::nameMultiple(substr($rightForeignKey, 0, -3))} =
-            (new GetRecords(
-                $this->getRightEntity()->where('id', $select, 'IN'),
-                $this->getRightEntity()->getRepository()
-            ))->executeAll();
+        $record->{Convention::nameMultiple(substr($rightForeignKey, 0, -3))} = (new GetRecords($this->getRightEntity()->where('id', $select, 'IN')))->executeAll();
 
         $this->fillWithRecord($record);
+        (new GetRecords($this->getRightEntity()))->fillRecord($record);
     }
 
     function fillCollection(Collection $collection)
@@ -61,7 +58,7 @@ class HasMany extends Relation
             }
         }
 
-        $foreignCollection = (new GetRecords($this->getRightEntity()->where('id', $arrIds, 'IN'), $this->getRightEntity()->getRepository()))->executeAll();
+        $foreignCollection = (new GetRecords($this->getRightEntity()->where('id', $arrIds, 'IN')))->executeAll();
         foreach ($collection as $record) {
             if ($record->{$rightForeignKey}) {
                 foreach ($foreignCollection as $foreignRecord) {
@@ -73,5 +70,6 @@ class HasMany extends Relation
         }
 
         $this->fillWithCollection($collection);
+        (new GetRecords($this->getRightEntity()))->fillCollection($collection);
     }
 }

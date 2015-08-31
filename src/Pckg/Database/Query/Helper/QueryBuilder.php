@@ -25,7 +25,13 @@ trait QueryBuilder
     {
         return $this->query
             ? $this->query
-            : ($this->query = (new Select())->table($this->table));
+            : $this->resetQuery()->getQuery();
+    }
+
+    public function resetQuery() {
+        $this->query = (new Select())->table($this->table);
+
+        return $this;
     }
 
     /**

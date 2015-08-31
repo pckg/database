@@ -3,6 +3,7 @@
 namespace Pckg\Database\Helper;
 
 use Pckg\Database\Repository;
+use Pckg\Framework\Cache as FrameworkCache;
 use PDO;
 
 /**
@@ -10,52 +11,61 @@ use PDO;
  * @package Pckg\Database\Helper
  * Provides simple cache for database fields and relations.
  */
-class Cache
+class Cache extends FrameworkCache
 {
 
+    /**
+     * @var Repository
+     */
     protected $repository;
 
+    /**
+     * @var array
+     */
     protected $cache = [];
 
+    /**
+     * @var array
+     */
     protected $fields = [];
 
+    /**
+     * @var array
+     */
     protected $tables = [];
 
+    /**
+     * @var bool
+     */
     protected $built = false;
 
+    /**
+     * @param Repository $repository
+     */
     public function __construct(Repository $repository)
     {
         $this->repository = $repository;
         $this->readFromCache();
 
         if (!$this->built) {
-            $this->buildTables();
-            $this->buildRelations();
             $this->writeToCache();
         }
     }
 
-    private function readFromCache()
-    {
-        $file = path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_', (get_class(app()) . '_' . get_class(env()))) . '.cache';
-        if (file_exists($file)) {
-            $cache = json_decode(file_get_contents($file), true);
-            $this->fields = $cache['fields'];
-            $this->tables = $cache['tables'];
-            $this->built = true;
-        }
+    protected function buildCache() {
+        $this->buildTables();
+        $this->buildRelations();
+
+        parent::buildCache();
     }
 
-    private function writeToCache()
-    {
-        $file = path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_', (get_class(app()) . '_' . get_class(env()))) . '.cache';
-        $cache = [];
-        $cache['fields'] = $this->fields;
-        $cache['tables'] = $this->tables;
-        $cache = json_encode($cache);
-        file_put_contents($file, $cache);
+    protected function getCachePath() {
+        return path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_', (get_class(app()) . '_' . get_class(env()))) . '.cache';
     }
 
+    /**
+     *
+     */
     protected function buildTables()
     {
         $sql = 'SHOW TABLES';
@@ -69,6 +79,9 @@ class Cache
         }
     }
 
+    /**
+     * @param $table
+     */
     protected function buildFields($table)
     {
         $this->tables[$table] = [];
@@ -77,7 +90,7 @@ class Cache
         $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
-            $this->fields[$table][$field['Field']] = [
+            $this->cache['fields'][$table][$field['Field']] = [
                 'name' => $field['Field'],
                 'type' => substr($field['Type'], 0, strpos($field['Type'], '(')),
                 'limit' => substr($field['Type'], strpos($field['Type'], '(') + 1, strpos($field['Type'], ')') ? -1 : null),
@@ -92,13 +105,19 @@ class Cache
         }
     }
 
+    /**
+     * @param $table
+     */
     protected function buildPrimaryKeys($table)
     {
-        $this->tables[$table]['primaryKeys'] = array_column(array_filter($this->fields[$table], function ($field) {
+        $this->cache['tables'][$table]['primaryKeys'] = array_column(array_filter($this->cache['fields'][$table], function ($field) {
             return $field['key'] == 'primary';
         }), 'name');
     }
 
+    /**
+     *
+     */
     protected function buildRelations()
     {
         $sql = 'SELECT `TABLE_SCHEMA`, `TABLE_NAME`, `COLUMN_NAME`, `REFERENCED_TABLE_SCHEMA`, `REFERENCED_TABLE_NAME`, `REFERENCED_COLUMN_NAME`
@@ -110,29 +129,51 @@ class Cache
         }
     }
 
+    /**
+     * @param $table
+     * @return array
+     */
     public function getTable($table)
     {
-        return array_merge($this->tables[$table], ['fields' => $this->fields[$table]]);
+        return array_merge($this->cache['tables'][$table], ['fields' => $this->cache['fields'][$table]]);
     }
 
+    /**
+     * @param $table
+     * @return array
+     */
     public function getTableFields($table)
     {
-        return array_keys($this->fields[$table]);
+        return array_keys($this->cache['fields'][$table]);
     }
 
+    /**
+     * @param $field
+     * @param $table
+     * @return mixed
+     */
     public function getField($field, $table)
     {
         return $this->getTable($table)[$field];
     }
 
+    /**
+     * @param $table
+     * @param $field
+     * @return bool
+     */
     public function tableHasField($table, $field)
     {
-        return array_key_exists($field, $this->fields[$table]);
+        return array_key_exists($field, $this->cache['fields'][$table]);
     }
 
+    /**
+     * @param $table
+     * @return mixed
+     */
     public function getTablePrimaryKeys($table)
     {
-        return $this->tables[$table]['primaryKeys'];
+        return $this->cache['tables'][$table]['primaryKeys'];
     }
 
 }

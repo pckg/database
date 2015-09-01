@@ -8,7 +8,7 @@ use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Framework\Lang;
-use Pckg\Reflect;
+use Pckg\Framework\Helper\Reflect;
 
 /**
  * Presents table in database

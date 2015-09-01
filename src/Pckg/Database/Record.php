@@ -2,7 +2,7 @@
 
 namespace Pckg\Database;
 
-use Pckg\Reflect;
+use Pckg\Framework\Helper\Reflect;
 
 /**
  * Class Record

@@ -8,7 +8,7 @@ use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
-use Pckg\Reflect;
+use Pckg\Framework\Helper\Reflect;
 
 /**
  * Class HasAndBelongTo

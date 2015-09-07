@@ -184,6 +184,8 @@ class Collection extends Iterator implements ArrayAccess
         foreach ($this->collection as $item) {
             $callback($item);
         }
+
+        return $this->collection;
     }
 
     public function offsetSet($offset, $value)

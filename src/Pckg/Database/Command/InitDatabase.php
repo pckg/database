@@ -34,7 +34,7 @@ class InitDatabase extends AbstractChainOfReponsibility
     /**
      * @throws \Exception
      */
-    public function execute()
+    public function execute(callable $next)
     {
         $config = $this->config->get('database.default');
 
@@ -49,7 +49,7 @@ class InitDatabase extends AbstractChainOfReponsibility
 
         $this->context->bind('Repository', $repository);
 
-        $this->next->execute();
+        return $next();
     }
 
 }

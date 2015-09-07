@@ -1,6 +1,7 @@
 <?php
 
 namespace Pckg\Database;
+use Pckg\Database\Query\Parenthesis;
 
 /**
  * Class Query
@@ -9,32 +10,17 @@ namespace Pckg\Database;
 class Query
 {
 
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
-    /**
-     * @var
-     */
     protected $table, $join, $where, $groupBy, $having, $orderBy, $limit;
 
     protected $sql;
 
     protected $bind = [];
+
+    public function __construct()
+    {
+        $this->where = (new Parenthesis())->setGlue('AND');
+        $this->having = (new Parenthesis())->setGlue('AND');
+    }
 
     public function getBind()
     {
@@ -50,7 +36,15 @@ class Query
 
     public static function escape($value)
     {
-        return "'" . $value . "'";
+        return is_numeric($value)
+            ? $value
+            : (is_bool($value)
+                ? ($value
+                    ? 1
+                    : 'NULL'
+                )
+                : "'" . $value . "'"
+            );
     }
 
     public static function escapeArray($array)
@@ -65,22 +59,6 @@ class Query
     public function __toString()
     {
         return (string)$this->buildSQL();
-    }
-
-    /**
-     *
-     */
-    function __construct($sql = null)
-    {
-        $this->sql = $sql;
-    }
-
-    /**
-     *
-     */
-    public function buildSQL()
-    {
-        return null;
     }
 
     /**
@@ -107,7 +85,7 @@ class Query
      */
     function buildWhere()
     {
-        return $this->where ? ' WHERE ' . implode(" AND ", $this->where) : '';
+        return $this->where->hasChildren() ? ' WHERE ' . $this->where->build() : '';
     }
 
     /**
@@ -115,7 +93,7 @@ class Query
      */
     function buildHaving()
     {
-        return $this->having ? ' HAVING ' . implode(" AND ", $this->having) : '';
+        return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
     }
 
     /**
@@ -144,28 +122,38 @@ class Query
      * @param $where
      * @return $this
      */
-    function where($key, $value, $operator = '=')
+    function where($key, $value = null, $operator = '=')
     {
-        if ($operator == 'IN') {
+        if (is_callable($key)) {
+            $key($this->where);
+
+        } else if ($operator == 'IN') {
             if (is_array($value)) {
-                $this->where[] = $key . ' IN(' . implode(',', static::escapeArray($value)) . ')';
+                $this->where->push($this->makeKey($key) . ' IN(' . implode(',', static::escapeArray($value)) . ')');
 
             } else if ($value instanceof Query) {
-                $this->where[] = $key . ' IN(' . $value->buildSQL() . ')';
+                $this->where->push($this->makeKey($key) . ' IN(' . $value->buildSQL() . ')');
 
             }
 
         } else {
-            $this->where[] = $key . ' ' . $operator . ' ' . static::escape($value);
+            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ' . static::escape($value));
 
         }
 
         return $this;
     }
 
-    function whereOr($key, $value, $operator = '=')
+    private function makeKey($key)
     {
+        return '`' . $key . '`';
+    }
 
+    function orWhere($key, $value = null, $operator = '=')
+    {
+        $this->where->setGlue('OR');
+
+        return $this->where($key, $value, $operator);
     }
 
     /**

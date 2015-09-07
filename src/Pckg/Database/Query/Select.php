@@ -33,7 +33,7 @@ class Select extends Query
         $sql = "SELECT " . $this->buildSelect() . " " . $nl .
             "FROM `" . $this->table . "` " . $nl .
             ($this->join ? $this->buildJoin() . $nl : '') .
-            ($this->where ? $this->buildWhere() . $nl : '') .
+            $this->buildWhere() .
             ($this->having ? $this->buildHaving() . $nl : '') .
             ($this->groupBy ? ' GROUP BY ' . $this->groupBy . $nl : '') .
             ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) . $nl : '') .

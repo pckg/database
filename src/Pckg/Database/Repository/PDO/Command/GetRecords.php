@@ -23,16 +23,18 @@ class GetRecords
     protected $repository;
 
     /**
-     * @param Entity $entity
+     * @param Entity     $entity
      * @param Repository $repository
      */
     public function __construct(Entity $entity, Repository $repository = null)
     {
         $this->entity = $entity;
-        $this->repository = $repository ?: $this->entity->getRepository();
+        $this->repository = $repository
+            ?: $this->entity->getRepository();
     }
 
     /**
+     * Prepare query from entity, fetch records and fill them with relations.
      * @return Collection
      */
     public function executeAll()
@@ -48,6 +50,7 @@ class GetRecords
     }
 
     /**
+     * Prepare query from entity, fetch record and fill it with relations.
      * @return Record
      */
     public function executeOne()

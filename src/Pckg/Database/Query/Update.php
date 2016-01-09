@@ -23,7 +23,7 @@ class Update extends Query
     {
         $sql = "UPDATE `" . $this->table . "` " .
             "SET " . $this->buildSet() . " " .
-            ($this->where ? $this->buildWhere() : '') .
+            $this->buildWhere() .
             ($this->limit ? ' LIMIT ' . $this->limit : '');
 
         return $sql;
@@ -63,14 +63,6 @@ class Update extends Query
     {
         $this->set = $set;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    function buildWhere()
-    {
-        return $this->where ? ' WHERE ' . implode(" AND ", $this->where) : '';
     }
 
     /**

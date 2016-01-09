@@ -22,6 +22,49 @@ class Record extends Object
     protected $pk;
 
     /**
+     * @param $key
+     *
+     * @return null
+     */
+    public function __get($key)
+    {
+        if (array_key_exists($key, $this->values)) {
+            return $this->values[$key];
+        }
+
+        $entity = new $this->entity;
+
+        if (method_exists($entity, $key)) {
+            dd('Method ' . $key . ' exists in ' . $this->entity);
+        }
+
+        foreach (get_class_methods($entity) as $method) {
+            $chains = [];
+            
+            if (substr($method, 0, 5) == '__get' && substr($method, -9) == 'Extension') {
+                $chains[] = function () use ($method, $entity, $key) {
+                    //d('Returning value from ' . get_class($this) . ' ' . $key . ' ' . get_class($entity));
+                    return $entity->$method($this, $key);
+                };
+            }
+
+            if ($chains) {
+                return chain($chains);
+            }
+        }
+
+        //db(5);
+        dd($this, 'Method ' . $key . ' doesnt exist in ' . $this->entity);
+
+        return null;
+    }
+
+    public function keyExists($key)
+    {
+        return array_key_exists($key, $this->values);
+    }
+
+    /**
      * @return mixed
      */
     public function getEntityClass()
@@ -58,8 +101,9 @@ class Record extends Object
     }
 
     /**
-     * @param Entity|null $entity
+     * @param Entity|null     $entity
      * @param Repository|null $repository
+     *
      * @return Record
      */
     public function update(Entity $entity = null, Repository $repository = null)
@@ -76,8 +120,9 @@ class Record extends Object
     }
 
     /**
-     * @param Entity|null $entity
+     * @param Entity|null     $entity
      * @param Repository|null $repository
+     *
      * @return Record
      */
     public function delete(Entity $entity = null, Repository $repository = null)
@@ -94,8 +139,9 @@ class Record extends Object
     }
 
     /**
-     * @param Entity|null $entity
+     * @param Entity|null     $entity
      * @param Repository|null $repository
+     *
      * @return Record
      */
     public function insert(Entity $entity = null, Repository $repository = null)

@@ -36,6 +36,8 @@ class Entity
      */
     protected $repository;
 
+    protected $repositoryName = 'Repository';
+
     /**
      * @var array
      */
@@ -54,9 +56,17 @@ class Entity
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository)
+    public function __construct(Repository $repository = null)
     {
         $this->repository = $repository;
+
+        if (!$repository) {
+            $this->repository = context()->get($this->repositoryName);
+
+            if (!$this->repository) {
+                throw new Exception('Cannot prepare repository');
+            }
+        }
 
         $this->guessDefaults();
         $this->initExtensions();
@@ -65,6 +75,7 @@ class Entity
     /**
      * @param $method
      * @param $args
+     *
      * @return $this
      * @throws Exception
      */
@@ -78,6 +89,7 @@ class Entity
     /**
      * @param $method
      * @param $args
+     *
      * @return $this
      */
     public function __call($method, $args)
@@ -89,6 +101,7 @@ class Entity
 
     /**
      * @param $property
+     *
      * @return mixed
      */
     public function __get($property)
@@ -134,6 +147,7 @@ class Entity
 
     /**
      * @param $table
+     *
      * @return $this
      */
     public function setTable($table)
@@ -167,6 +181,7 @@ class Entity
      * */
     /**
      * @param Repository $repository
+     *
      * @return $this
      */
     public function setRepository(Repository $repository)
@@ -186,6 +201,7 @@ class Entity
 
     /**
      * @param Relation $relation
+     *
      * @return $this
      */
     public function addRelation(Relation $relation)
@@ -197,6 +213,7 @@ class Entity
 
     /**
      * @param $extension
+     *
      * @return $this
      */
     public function addExtension($extension)
@@ -246,7 +263,9 @@ class Entity
 
     /**
      * Transforms Record to two-dimensional array of tables and fields.
+     *
      * @param Record $record
+     *
      * @return array
      */
     public function tabelizeRecord(Record $record)

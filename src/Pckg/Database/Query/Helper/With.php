@@ -60,9 +60,15 @@ trait With
     /**
      *
      */
-    public function with(Relation $relation)
+    public function with($relation)
     {
-        $this->with[] = $relation;
+        if ($relation instanceof Relation) {
+            $this->with[] = $relation;
+
+        } else {
+            $this->with[] = $this->{$relation}();
+
+        }
 
         return $this;
     }

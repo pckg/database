@@ -48,6 +48,7 @@ class Cache extends FrameworkCache
         $this->readFromCache();
 
         if (!$this->built) {
+            $this->buildCache();
             $this->writeToCache();
         }
     }
@@ -84,8 +85,8 @@ class Cache extends FrameworkCache
      */
     protected function buildFields($table)
     {
-        $this->tables[$table] = [];
-        $this->fields[$table] = [];
+        $this->cache['tables'][$table] = [];
+        $this->cache['fields'][$table] = [];
         $sql = 'SHOW FULL COLUMNS IN ';
         $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
         $prepare->execute();

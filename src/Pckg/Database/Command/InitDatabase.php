@@ -36,18 +36,26 @@ class InitDatabase extends AbstractChainOfReponsibility
      */
     public function execute(callable $next)
     {
-        $config = $this->config->get('database.default');
+        foreach ($this->config->get('database') as $name => $config) {
+            $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'], $config['user'], $config['pass']);
 
-        $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'], $config['user'], $config['pass']);
+            if ($this->context->exists('DebugBar')) {
+                $debugBar = $this->context->find('DebugBar');
+                $tracablePdo = new TraceablePDO($pdo);
 
-        if ($this->context->exists('DebugBar')) {
-            $pdoCollector = new TraceablePDO($pdo);
-            $this->context->find('DebugBar')->addCollector(new PDOCollector($pdoCollector));
+                if ($debugBar->hasCollector('pdo')) {
+                    $pdoCollector = $debugBar->getCollector('pdo');
+                    $pdoCollector->addConnection($tracablePdo, $name);
+                } else {
+                    $debugBar->addCollector(new PDOCollector($tracablePdo));
+                }
+            }
+
+            $repository = new RepositoryPDO($pdo);
+
+            $this->context->bindIfNot('Repository', $repository);
+            $this->context->bind('Repository.' . $name, $repository);
         }
-
-        $repository = new RepositoryPDO($pdo);
-
-        $this->context->bind('Repository', $repository);
 
         return $next();
     }

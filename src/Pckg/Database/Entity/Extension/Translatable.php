@@ -69,13 +69,14 @@ trait Translatable
 
     /**
      * @param Record $record
+     *
      * @return array
      */
     public function getTranslatableForeignKeys(Record $record)
     {
         return [
-            $this->primaryKey => $record->{$this->primaryKey},
-            $this->translatableLanguageField => $this->translatableLang->getCurrent(),
+            $this->primaryKey                => $record->{$this->primaryKey},
+            $this->translatableLanguageField => $this->translatableLang->langId(),
         ];
     }
 
@@ -84,7 +85,32 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()));
+        return $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
+            ->primaryKey('id')
+            ->foreignKey('id')
+            ->primaryCollectionKey('_translatee')
+            ->foreignCollectionKey('_translations');
+    }
+
+    public function withTranslations()
+    {
+        return $this->with($this->translations());
+    }
+
+    public function joinTranslations()
+    {
+        return $this->join($this->translations());
+    }
+
+    public function __getTranslatableExtension(Record $record, $key)
+    {
+        if ($record->keyExists('_translations')) {
+            foreach ($record->_translations as $translation) {
+                if ($translation->keyExists($key)) {
+                    return $translation->{$key};
+                }
+            }
+        }
     }
 
 }

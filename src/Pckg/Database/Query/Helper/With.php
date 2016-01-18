@@ -7,7 +7,7 @@ use Exception;
 use Pckg\Database\Collection;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
-use Pckg\Framework\Helper\Reflect;
+use Pckg\Concept\Reflect;
 
 trait With
 {

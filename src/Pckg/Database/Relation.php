@@ -3,7 +3,7 @@
 namespace Pckg\Database;
 
 use Pckg\Database\Query\Helper\With;
-use Pckg\Framework\Helper\Reflect;
+use Pckg\Concept\Reflect;
 
 /**
  * Class Relation

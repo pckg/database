@@ -36,8 +36,8 @@ class InsertRecord
     protected $tables = [];
 
     /**
-     * @param Record $record
-     * @param Entity $entity
+     * @param Record     $record
+     * @param Entity     $entity
      * @param Repository $repository
      */
     public function __construct(Record $record, Entity $entity, Repository $repository)
@@ -49,6 +49,7 @@ class InsertRecord
 
     /**
      * @param ...$tables
+     *
      * @return $this
      */
     public function setTables(...$tables)
@@ -64,12 +65,8 @@ class InsertRecord
      */
     public function execute()
     {
-        try {
-            $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record);
 
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
         foreach ($data as $table => $insert) {
             if ($this->tables && !in_array($table, $this->tables)) {
                 continue;
@@ -86,8 +83,9 @@ class InsertRecord
     }
 
     /**
-     * @param $table
+     * @param       $table
      * @param array $data
+     *
      * @return mixed
      * @throws Exception
      */

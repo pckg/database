@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "pckg/concept": "dev-master"
+    "pckg/concept": "dev-master",
+    "pckg/collection": "dev-master"
   },
   "autoload": {
     "psr-0": {

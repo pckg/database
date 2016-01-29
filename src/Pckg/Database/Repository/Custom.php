@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Repository;
 
-use Pckg\Database\Collection;
+use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;

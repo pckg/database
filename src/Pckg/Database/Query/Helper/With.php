@@ -4,7 +4,7 @@ namespace Pckg\Database\Query\Helper;
 
 use Closure;
 use Exception;
-use Pckg\Database\Collection;
+use Pckg\Collection;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Concept\Reflect;

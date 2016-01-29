@@ -3,7 +3,7 @@
 namespace Pckg\Database\Repository;
 
 use Exception;
-use Pckg\Database\Collection;
+use Pckg\Collection;
 use Pckg\Database\Record;
 
 /**

@@ -3,7 +3,7 @@
 namespace Pckg\Database;
 
 use Exception;
-use Pckg\Database\Collection;
+use Pckg\Collection;
 use PDO;
 
 /**

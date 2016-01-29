@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
-use Pckg\Database\Collection;
+use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;

@@ -85,7 +85,7 @@ trait Translatable
      */
     public function translations()
     {
-        return $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
+        return $this->hasMany((new TestTranslatableEntity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
             ->primaryKey('id')
             ->foreignKey('id')
             ->primaryCollectionKey('_translatee')
@@ -105,12 +105,16 @@ trait Translatable
     public function __getTranslatableExtension(Record $record, $key)
     {
         if ($record->keyExists('_translations')) {
-            foreach ($record->_translations as $translation) {
+            foreach ($record->getValue('_translations') as $translation) {
                 if ($translation->keyExists($key)) {
                     return $translation->{$key};
                 }
             }
         }
     }
+
+}
+
+class TestTranslatableEntity extends Entity {
 
 }

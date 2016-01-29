@@ -20,18 +20,40 @@ class Collection extends Iterator implements ArrayAccess
         return $this;
     }
 
+
     /**
      * @return array
      */
-    public function __toArray()
+    public function __toArray($values = null, $depth = 5)
     {
-        return $this->collection;
+        $return = [];
+
+        if (!$depth) {
+            return;
+        }
+
+        if (!$values) {
+            $values = $this->collection;
+        }
+
+        foreach ($values as $key => $value) {
+            if (is_object($value)) {
+                $return[$key] = $this->__toArray($value, $depth - 1);
+            } else if (is_array($value)) {
+                $return[$key] = $this->__toArray($value, $depth - 1);
+            } else {
+                $return[$key] = $value;
+            }
+        }
+
+        return $return;
     }
 
     /* helper */
     /**
      * @param $object
      * @param $key
+     *
      * @return mixed
      * @throws Exception
      */
@@ -53,6 +75,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $key
+     *
      * @return mixed
      */
     public function getKey($key)
@@ -62,6 +85,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function keyExists($key)
@@ -102,6 +126,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $callback
+     *
      * @return Collection
      */
     public function getCustomList($callback)
@@ -113,6 +138,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $foreign
+     *
      * @return Collection
      */
     public function getTree($foreign)
@@ -124,6 +150,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $sortBy
+     *
      * @return Collection
      */
     public function sortBy($sortBy)
@@ -135,6 +162,7 @@ class Collection extends Iterator implements ArrayAccess
 
     /**
      * @param $groupBy
+     *
      * @return Collection
      */
     public function groupBy($groupBy)
@@ -145,9 +173,10 @@ class Collection extends Iterator implements ArrayAccess
     }
 
     /**
-     * @param $filterBy
-     * @param $value
+     * @param        $filterBy
+     * @param        $value
      * @param string $comparator
+     *
      * @return Collection
      */
     public function filter($filterBy, $value, $comparator = '==')
@@ -158,8 +187,9 @@ class Collection extends Iterator implements ArrayAccess
     }
 
     /**
-     * @param $limitCount
+     * @param     $limitCount
      * @param int $limitOffset
+     *
      * @return Collection
      */
     public function limit($limitCount, $limitOffset = 0)

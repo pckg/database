@@ -28,14 +28,27 @@ class Record extends Object
      */
     public function __get($key)
     {
-        if (array_key_exists($key, $this->values)) {
-            return $this->values[$key];
+        //d('__get ' . $key);
+        $entity = $this->getEntity();
+
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            //d('tableHasField ' . $key);
+            return $this->getValue($key);
         }
 
-        $entity = new $this->entity;
+        if ($this->keyExists($key)) {
+            return $this->getValue($key);
+        }
 
         if (method_exists($entity, $key)) {
-            dd('Method ' . $key . ' exists in ' . $this->entity);
+            //d('method_exists ' . $key);
+            // meaning we're getting output of a relation?
+            //dd('Method ' . $key . ' exists in ' . $this->entity);
+            //d($key);
+
+            return $entity->{$key}()
+                ->onRecord($this)
+                ->getRelationValue($key);
         }
 
         foreach (get_class_methods($entity) as $method) {
@@ -53,15 +66,56 @@ class Record extends Object
             }
         }
 
-        //db(5);
-        dd($this, 'Method ' . $key . ' doesnt exist in ' . $this->entity);
+        db(8);
+        dd('Method ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this));
 
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function __toArray($values = null, $depth = 5)
+    {
+        $return = [];
+
+        if (!$depth) {
+            return;
+        }
+
+        if (!$values) {
+            $values = $this->values;
+        }
+
+        foreach ($values as $key => $value) {
+            if (is_object($value)) {
+                $return[$key] = $this->__toArray($value->__toArray(), $depth - 1);
+            } else if (is_array($value)) {
+                $return[$key] = $this->__toArray($value, $depth - 1);
+            } else {
+                $return[$key] = $value;
+            }
+        }
+
+        return $return;
     }
 
     public function keyExists($key)
     {
         return array_key_exists($key, $this->values);
+    }
+
+    public function getValue($key) {
+        return array_key_exists($key, $this->values)
+            ? $this->values[$key]
+            : null;
+    }
+
+    public function setEntityClass($class)
+    {
+        $this->entity = $class;
+
+        return $this;
     }
 
     /**
@@ -77,7 +131,16 @@ class Record extends Object
      */
     public function getEntity()
     {
-        return Reflect::create($this->entity);
+        return is_object($this->entity)
+            ? $this->entity
+            : Reflect::create($this->getEntityClass());
+    }
+
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
+
+        return $this;
     }
 
     /**

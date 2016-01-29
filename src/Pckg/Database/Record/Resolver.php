@@ -9,13 +9,11 @@ use Pckg\Framework\Router;
 class Resolver implements ResolverInterface
 {
 
-    protected $classes = [
-        Record::class,
-    ];
-
     protected $router;
 
     protected $response;
+
+    protected $classes = [];
 
     public function __construct(Router $router, Response $response)
     {
@@ -23,9 +21,16 @@ class Resolver implements ResolverInterface
         $this->response = $response;
     }
 
+    public function classes()
+    {
+        return [
+            Record::class,
+        ];
+    }
+
     public function resolve($class)
     {
-        foreach ($this->classes as $resolvableClass) {
+        foreach ($this->classes() as $resolvableClass) {
             if (in_array($resolvableClass, class_parents($class))) {
                 return Reflect::create($class)
                     ->getEntity()

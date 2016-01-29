@@ -67,4 +67,11 @@ class BelongsTo extends Relation
         //(new GetRecords($this->getRightEntity()))->fillCollection($collection);
     }
 
+    public function getRelationValue($key)
+    {
+        $value = $this->record->{$key . '_id'};
+
+        return $value;
+    }
+
 }

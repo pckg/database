@@ -44,6 +44,13 @@ class HasAndBelongsTo extends HasMany
         return $this;
     }
 
+    public function getRelationValue($key)
+    {
+        $value = $this->record->getValue($key);
+
+        return $value;
+    }
+
     public function fillRecord(Record $record)
     {
         $rightForeignKey = $this->getRightForeignKey();

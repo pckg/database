@@ -28,6 +28,7 @@ class Object
     /**
      * @param $key
      * @param $val
+     *
      * @return $this
      */
     public function __set($key, $val)
@@ -40,6 +41,7 @@ class Object
     /**
      * @param $key
      * @param $val
+     *
      * @return Object
      */
     public function set($key, $val)
@@ -49,6 +51,7 @@ class Object
 
     /**
      * @param $key
+     *
      * @return null
      */
     public function __get($key)
@@ -60,6 +63,7 @@ class Object
 
     /**
      * @param $key
+     *
      * @return null
      */
     public function get($key)
@@ -69,6 +73,7 @@ class Object
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function __isset($key)

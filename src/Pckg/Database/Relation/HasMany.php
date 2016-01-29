@@ -127,12 +127,13 @@ class HasMany extends Relation
 
         $rightEntity = $this->getRightEntity();
         $rightEntity->resetQuery();
+        //d(get_class($this->getLeftEntity()) . ' ' . $this->getLeftEntity()->getTable() . ' has many ' . get_class($rightEntity) . ' ' . $rightEntity->getTable());
 
         $primaryCollectionKey = $this->getPrimaryCollectionKey();
         $foreignCollectionKey = $this->getForeignCollectionKey();
-        foreach ($collection as $record) {
-            $arrPrimaryIds[$record->{$primaryKey}] = $record->{$primaryKey};
-            $record->{$foreignCollectionKey} = new Collection();
+        foreach ($collection as $primaryRecord) {
+            $arrPrimaryIds[$primaryRecord->{$primaryKey}] = $primaryRecord->{$primaryKey};
+            $primaryRecord->{$foreignCollectionKey} = new Collection();
         }
 
         if ($arrPrimaryIds) {
@@ -145,9 +146,22 @@ class HasMany extends Relation
 
             foreach ($collection as $primaryRecord) {
                 foreach ($foreignCollection as $foreignRecord) {
-                    if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
-                        $primaryRecord->{$foreignCollectionKey}->push($foreignRecord);
-                        $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
+                    try {
+                        /*
+                         * Foreign records needs to have set entity with correct table because we'll read data from
+                         * repository cache in __get method.
+                         */
+                        $foreignRecord->setEntity($rightEntity);
+
+                        if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
+                            //d('setting ' . get_class($primaryRecord) . ' ' . $foreignCollectionKey);
+                            $primaryRecord->getValue($foreignCollectionKey)->push($foreignRecord);
+                            //d('set');
+                            $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
+                        }
+                    } catch (\Exception $e) {
+                        d('Comparing ' . get_class($primaryRecord) . '.' . $primaryKey . ' with ' . get_class($foreignRecord) . '.' . $foreignKey);
+                        dd($e->getMessage(), $e->getFile(), $e->getLine());
                     }
                 }
             }

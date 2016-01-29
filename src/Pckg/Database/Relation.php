@@ -47,6 +47,8 @@ abstract class Relation
      */
     protected $on;
 
+    protected $record;
+
     /**
      * @param $left
      * @param $right
@@ -60,6 +62,7 @@ abstract class Relation
     /**
      * @param $method
      * @param $args
+     *
      * @return $this
      */
     public function __call($method, $args)
@@ -89,6 +92,7 @@ abstract class Relation
 
     /**
      * @param $on
+     *
      * @return $this
      */
     public function on($on)
@@ -111,7 +115,8 @@ abstract class Relation
      * @return Repository
      * @throws \Exception
      */
-    public function getLeftRepository() {
+    public function getLeftRepository()
+    {
         return $this->getLeftEntity()->getRepository();
     }
 
@@ -132,8 +137,16 @@ abstract class Relation
      * @return Repository
      * @throws \Exception
      */
-    public function getRightRepository() {
+    public function getRightRepository()
+    {
         return $this->getRightEntity()->getRepository();
+    }
+
+    public function onRecord(Record $record)
+    {
+        $this->record = $record;
+
+        return $this;
     }
 
     abstract function fillRecord(Record $record);

@@ -165,7 +165,7 @@ class Cache extends FrameworkCache
      */
     public function tableHasField($table, $field)
     {
-        return array_key_exists($field, $this->cache['fields'][$table]);
+        return isset($this->cache['fields'][$table]) && array_key_exists($field, $this->cache['fields'][$table]);
     }
 
     /**

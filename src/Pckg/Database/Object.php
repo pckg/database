@@ -78,7 +78,7 @@ class Object
      */
     public function __isset($key)
     {
-        return array_key_exists($this->values, $key) && $this->values[$key];
+        return array_key_exists($key, $this->values) && $this->values[$key];
     }
 
     /**

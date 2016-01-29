@@ -2,6 +2,7 @@
 
 namespace Pckg\Database;
 
+use Pckg\Collection;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Concept\Reflect;
 

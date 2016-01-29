@@ -42,7 +42,10 @@ trait QueryBuilder
      */
     public function join($table, $on = null, $where = null)
     {
-        $this->getQuery()->join($table, $on, $where);
+        if ($table instanceof Relation) {
+        } else {
+            $this->getQuery()->join($table, $on, $where);
+        }
 
         return $this;
     }

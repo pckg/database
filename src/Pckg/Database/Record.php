@@ -28,27 +28,18 @@ class Record extends Object
      */
     public function __get($key)
     {
-        //d('__get ' . $key);
         $entity = $this->getEntity();
 
-        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            //d('tableHasField ' . $key);
-            return $this->getValue($key);
-        }
-
-        if ($this->keyExists($key)) {
+        if ($this->keyExists($key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
             return $this->getValue($key);
         }
 
         if (method_exists($entity, $key)) {
-            //d('method_exists ' . $key);
-            // meaning we're getting output of a relation?
-            //dd('Method ' . $key . ' exists in ' . $this->entity);
-            //d($key);
+            $relation = $entity->{$key}();
 
-            return $entity->{$key}()
-                ->onRecord($this)
-                ->getRelationValue($key);
+            $relation->fillRecord($this);
+
+            return $this->getValue($key);
         }
 
         foreach (get_class_methods($entity) as $method) {
@@ -105,7 +96,8 @@ class Record extends Object
         return array_key_exists($key, $this->values);
     }
 
-    public function getValue($key) {
+    public function getValue($key)
+    {
         return array_key_exists($key, $this->values)
             ? $this->values[$key]
             : null;

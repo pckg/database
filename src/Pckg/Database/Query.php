@@ -1,6 +1,7 @@
 <?php
 
 namespace Pckg\Database;
+
 use Pckg\Database\Query\Parenthesis;
 
 /**
@@ -58,11 +59,16 @@ class Query
 
     public function __toString()
     {
-        return (string)$this->buildSQL();
+        try {
+            return (string)$this->buildSQL();
+        } catch (\Exception $e) {
+            dd($e->getMessage(), $e->getFile(), $e->getLine());
+        }
     }
 
     /**
      * @param $table
+     *
      * @return $this
      */
     function table($table)
@@ -98,6 +104,7 @@ class Query
 
     /**
      * @param $orderBy
+     *
      * @return $this
      */
     function orderBy($orderBy)
@@ -109,6 +116,7 @@ class Query
 
     /**
      * @param $limit
+     *
      * @return $this
      */
     function limit($limit)
@@ -120,6 +128,7 @@ class Query
 
     /**
      * @param $where
+     *
      * @return $this
      */
     function where($key, $value = null, $operator = '=')
@@ -158,6 +167,7 @@ class Query
 
     /**
      * @param $join
+     *
      * @return $this
      */
     function join($join, $on = null, $where = null)

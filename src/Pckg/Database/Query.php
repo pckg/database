@@ -78,6 +78,16 @@ class Query
         return $this;
     }
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
     /**
      * @return string
      */

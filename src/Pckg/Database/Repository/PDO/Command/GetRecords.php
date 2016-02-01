@@ -39,11 +39,12 @@ class GetRecords
      */
     public function executeAll()
     {
-        $prepare = $this->repository->getConnection()->prepare($this->entity->getQuery());
-        $prepare->setFetchMode(PDO::FETCH_CLASS, $this->entity->getRecordClass());
+        $repository = $this->repository;
+        $entity = $this->entity;
+        $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
-        if ($execute = $prepare->execute() && $results = $prepare->fetchAll()) {
-            return $this->entity->fillCollectionWithRelations(new Collection($results));
+        if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
+            return $entity->fillCollectionWithRelations(new Collection($results));
         }
 
         return new Collection();
@@ -55,11 +56,12 @@ class GetRecords
      */
     public function executeOne()
     {
-        $prepare = $this->repository->getConnection()->prepare($this->entity->getQuery()->limit(1));
-        $prepare->setFetchMode(PDO::FETCH_CLASS, $this->entity->getRecordClass());
+        $repository = $this->repository;
+        $entity = $this->entity;
+        $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 
-        if ($execute = $prepare->execute() && $record = $prepare->fetch()) {
-            return $this->entity->fillRecordWithRelations($record);
+        if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
+            return $entity->fillRecordWithRelations($record);
         }
 
         return null;

@@ -14,12 +14,6 @@ interface Repository
 {
 
     /**
-     * @param $connection
-     * @return mixed
-     */
-    public function setConnection($connection);
-
-    /**
      * @return PDO
      */
     public function getConnection();
@@ -57,5 +51,13 @@ interface Repository
      * @return Record
      */
     public function insert(Record $record, Entity $entity);
+
+    public function prepareQuery(Query $query, $recordClass);
+
+    public function executePrepared($prepare);
+
+    public function fetchAllPrepared($prepare);
+
+    public function fetchPrepared($prepare);
 
 }

@@ -4,10 +4,10 @@ namespace Pckg\Database\Repository;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
+use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\DeleteRecord;
-use Pckg\Database\Repository\PDO\Command\GetRecords;
 use Pckg\Database\Repository\PDO\Command\InsertRecord;
 use Pckg\Database\Repository\PDO\Command\UpdateRecord;
 
@@ -15,7 +15,7 @@ use Pckg\Database\Repository\PDO\Command\UpdateRecord;
  * Class PDO
  * @package Pckg\Database\Repository
  */
-class PDO implements Repository
+class PDO extends AbstractRepository implements Repository
 {
 
     use Failable;
@@ -36,11 +36,6 @@ class PDO implements Repository
         $this->cache = new Cache($this);
     }
 
-    public function getCache()
-    {
-        return $this->cache;
-    }
-
     /**
      * @return \PDO
      */
@@ -50,36 +45,9 @@ class PDO implements Repository
     }
 
     /**
-     * @param \PDO $connection
-     */
-    public function setConnection($connection)
-    {
-        $this->connection = $connection;
-
-        return $this;
-    }
-
-    /**
-     * @param Entity $entity
-     * @return mixed
-     */
-    public function one(Entity $entity)
-    {
-        return (new GetRecords($entity, $this))->executeOne();
-    }
-
-    /**
-     * @param Entity $entity
-     * @return mixed
-     */
-    public function all(Entity $entity)
-    {
-        return (new GetRecords($entity, $this))->executeAll();
-    }
-
-    /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return $this
      */
     public function update(Record $record, Entity $entity)
@@ -92,6 +60,7 @@ class PDO implements Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return $this
      */
     public function insert(Record $record, Entity $entity)
@@ -104,6 +73,7 @@ class PDO implements Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return $this
      */
     public function delete(Record $record, Entity $entity)
@@ -111,6 +81,14 @@ class PDO implements Repository
         (new DeleteRecord($record, $entity, $this))->execute();
 
         return $this;
+    }
+
+    public function prepareQuery(Query $query, $recordClass)
+    {
+        $prepare = $this->getConnection()->prepare($query);
+        $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+
+        return $prepare;
     }
 
 }

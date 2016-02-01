@@ -95,7 +95,7 @@ class Fetcher
 
                     } elseif ($meta['name'] == 'content') {
                         $record->{$field} = '<p>' . implode('</p><p>', $generator->paragraphs(rand(5, 15))) . '</p>';
-                        
+
                     } else {
                         try {
                             $record->{$field} = $generator->{$field};

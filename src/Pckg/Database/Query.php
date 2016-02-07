@@ -180,9 +180,9 @@ class Query
      *
      * @return $this
      */
-    function join($join, $on = null, $where = null)
+    function join($table, $on = null, $where = null)
     {
-        $this->join[] = $join;
+        $this->join[] = $table;
 
         return $this;
     }

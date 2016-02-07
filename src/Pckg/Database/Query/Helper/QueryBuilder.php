@@ -28,32 +28,37 @@ trait QueryBuilder
             : $this->resetQuery()->getQuery();
     }
 
-    public function resetQuery() {
+    public function resetQuery()
+    {
         $this->query = (new Select())->table($this->table);
 
         return $this;
     }
 
     /**
-     * @param $table
+     * @param      $table
      * @param null $on
      * @param null $where
+     *
      * @return $this
      */
     public function join($table, $on = null, $where = null)
     {
+        // @T00D00 - refactor join method
         if ($table instanceof Relation) {
-        } else {
-            $this->getQuery()->join($table, $on, $where);
+            $table = $table->getCondition();
         }
+
+        $this->getQuery()->join($table, $on, $where);
 
         return $this;
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param        $key
+     * @param        $value
      * @param string $operator
+     *
      * @return $this
      */
     public function where($key, $value, $operator = '=')
@@ -64,9 +69,10 @@ trait QueryBuilder
     }
 
     /**
-     * @param $key
-     * @param $value
+     * @param        $key
+     * @param        $value
      * @param string $operator
+     *
      * @return $this
      */
     public function having($key, $value, $operator = '=')

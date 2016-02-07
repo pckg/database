@@ -150,6 +150,13 @@ abstract class Relation
         return $this;
     }
 
+    public function getCondition()
+    {
+        return ' INNER JOIN `' . $this->getRightEntity()->getTable() . '`' .
+        ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
+        ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
+    }
+
     abstract function fillRecord(Record $record);
 
     abstract function fillCollection(Collection $collection);

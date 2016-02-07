@@ -3,6 +3,7 @@
 namespace Pckg\Database;
 
 use Pckg\Concept\Reflect;
+use Pckg\Database\Helper\Convention;
 
 /**
  * Class Record
@@ -31,6 +32,10 @@ class Record extends Object
         $entity = $this->getEntity();
 
         if ($this->keyExists($key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+                return $this->{'get' . ucfirst(Convention::toCamel($key))}();
+            }
+
             return $this->getValue($key);
         }
 

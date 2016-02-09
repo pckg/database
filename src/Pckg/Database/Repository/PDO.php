@@ -85,10 +85,45 @@ class PDO extends AbstractRepository implements Repository
 
     public function prepareQuery(Query $query, $recordClass)
     {
-        $prepare = $this->getConnection()->prepare($query);
-        $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+        try {
+            $build = $query->buildSQL();
+            //d($build);
+            $prepare = $this->getConnection()->prepare($build['sql']);
+            $i = 1;
+            foreach ($build['prepare'] as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $rVal) {
+                        if (!is_numeric($key)) {
+                            $tempKey = ':' . $key;
+                        } else {
+                            $tempKey = $i;
+                        }
+                        //d('binding ' . $i . ' ' . $rVal);
+                        $prepare->bindValue($tempKey, $rVal);
+                        if (is_numeric($key)) {
+                            $i++;
+                        }
+                    }
+                } else {
+                    if (!is_numeric($key)) {
+                        $tempKey = ':' . $key;
+                    } else {
+                        $tempKey = $i;
+                    }
+                    //d('binding ' . $tempKey . ' ' . $val);
+                    $prepare->bindValue($tempKey, $val);
+                    if (is_numeric($key)) {
+                        $i++;
+                    }
+                }
+            }
 
-        return $prepare;
+            $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+
+            return $prepare;
+        } catch (\Exception $e) {
+            dd('pdo', $e->getMessage(), $e->getFile(), $e->getLine());
+        }
     }
 
 }

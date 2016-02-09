@@ -5,6 +5,7 @@ namespace Pckg\Database;
 use Pckg\Collection;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Relation\Helper\RightEntity;
 
 /**
  * Class Relation
@@ -13,7 +14,7 @@ use Pckg\Concept\Reflect;
 abstract class Relation
 {
 
-    use With;
+    use With, RightEntity;
 
     /**
      *
@@ -41,12 +42,9 @@ abstract class Relation
     /**
      * @var
      */
-    protected $right;
-
-    /**
-     * @var
-     */
     protected $on;
+
+    protected $onAdditional;
 
     protected $record;
 
@@ -121,28 +119,6 @@ abstract class Relation
         return $this->getLeftEntity()->getRepository();
     }
 
-    /**
-     * @return Entity
-     * @throws \Exception
-     */
-    public function getRightEntity()
-    {
-        if (is_string($this->right)) {
-            $this->right = Reflect::create($this->right);
-        }
-
-        return $this->right;
-    }
-
-    /**
-     * @return Repository
-     * @throws \Exception
-     */
-    public function getRightRepository()
-    {
-        return $this->getRightEntity()->getRepository();
-    }
-
     public function onRecord(Record $record)
     {
         $this->record = $record;
@@ -152,9 +128,19 @@ abstract class Relation
 
     public function getCondition()
     {
+        return $this->getKeyCondition();
+    }
+
+    public function getKeyCondition() {
         return ' INNER JOIN `' . $this->getRightEntity()->getTable() . '`' .
         ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
         ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
+    }
+
+    public function getAdditionalCondition(){
+        return $this->onAdditional
+            ? ' AND ' . $this->onAdditional
+            : '';
     }
 
     abstract function fillRecord(Record $record);

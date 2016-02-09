@@ -19,6 +19,7 @@ trait With
         'withRequired',
         'with',
         'join',
+        'where'
     ];
 
     protected $with = [];
@@ -49,6 +50,7 @@ trait With
             }
         }
 
+        db();
         throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class);
     }
 

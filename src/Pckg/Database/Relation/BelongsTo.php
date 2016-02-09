@@ -15,16 +15,8 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
 class BelongsTo extends Relation
 {
 
-    public function getRightForeignKey()
-    {
-        $class = explode('\\', get_class($this->getRightEntity()));
-
-        return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
-    }
-
     public function fillRecord(Record $record)
     {
-        //d('BelongsTo::fillRecord() ' . get_class($record));
         $rightForeignKey = $this->getRightForeignKey();
 
         $rightEntity = clone $this->getRightEntity();
@@ -35,12 +27,10 @@ class BelongsTo extends Relation
         }
 
         $this->fillRecordWithRelations($record);
-        //(new GetRecords($this->getRightEntity()))->fillRecord($record);
     }
 
     public function fillCollection(Collection $collection)
     {
-        //d('BelongsTo::fillCollection() ' . get_class($collection[0]) . ' ' . get_class($this->getRightEntity()));
         $arrIds = [];
 
         $rightForeignKey = $this->getRightForeignKey();
@@ -53,7 +43,7 @@ class BelongsTo extends Relation
         }
 
         $rightEntity = clone $this->getRightEntity();
-        $foreignCollection = (new GetRecords($rightEntity->where($rightEntity->getPrimaryKey(), $arrIds, 'IN')))->executeAll();
+        $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrIds);
         foreach ($collection as $record) {
             foreach ($foreignCollection as $foreignRecord) {
                 if ($foreignRecord->id == $record->{$rightForeignKey}) {
@@ -62,9 +52,6 @@ class BelongsTo extends Relation
                 }
             }
         }
-
-        //$this->fillCollectionWithRelations($collection);
-        //(new GetRecords($this->getRightEntity()))->fillCollection($collection);
     }
 
     public function getRelationValue($key)

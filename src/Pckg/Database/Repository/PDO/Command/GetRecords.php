@@ -6,7 +6,6 @@ use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
-use PDO;
 
 /**
  * Class GetAllRecords

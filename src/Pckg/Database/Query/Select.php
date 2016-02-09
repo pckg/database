@@ -39,13 +39,15 @@ class Select extends Query
             ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) . $nl : '') .
             ($this->limit ? ' LIMIT ' . $this->limit : '');
 
-        //d($sql);
-
-        return $sql;
+        return [
+            'sql'     => $sql,
+            'prepare' => $this->bind,
+        ];
     }
 
     /**
      * @param $select
+     *
      * @return $this
      */
     public function addSelect($select)

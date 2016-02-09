@@ -59,16 +59,8 @@ class Insert extends Query
     {
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
-            $arrVal = "";
-            if (is_bool($val)) {
-                $arrVal .= $val ? 1 : 0;
-            } else if (empty($val)) {
-                $arrVal .= "NULL";
-            } else {
-                $arrVal .= static::escape($val);
-            }
-
-            $arrValues[] = $arrVal;
+            $arrValues[] = ':' . $key;
+            $this->bind($val, $key);
         }
 
         return "(" . implode(", ", $arrValues) . ") ";

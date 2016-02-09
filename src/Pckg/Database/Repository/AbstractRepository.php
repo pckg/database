@@ -56,7 +56,14 @@ abstract class AbstractRepository implements Repository
 
     public function executePrepared($prepare)
     {
-        return $prepare->execute();
+        try {
+            $execute = $prepare->execute();
+
+            return $execute;
+        } catch (\Exception $e) {
+            d('abtract repository', $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
+            //db();
+        }
     }
 
     public function fetchAllPrepared($prepare)

@@ -8,6 +8,8 @@ use Pckg\Database\Relation\HasChildren;
 use Pckg\Database\Relation\HasMany;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Database\Relation\HasParent;
+use Pckg\Database\Relation\MorphedBy;
+use Pckg\Database\Relation\MorphsMany;
 
 /**
  * Class RelationMethods
@@ -18,6 +20,7 @@ trait RelationMethods
 
     /**
      * @param $hasMany
+     *
      * @return HasMany
      */
     public function hasMany($hasMany)
@@ -27,6 +30,7 @@ trait RelationMethods
 
     /**
      * @param $hasOne
+     *
      * @return HasOne
      */
     public function hasOne($hasOne)
@@ -36,6 +40,7 @@ trait RelationMethods
 
     /**
      * @param $belongsTo
+     *
      * @return BelongsTo
      */
     public function belongsTo($belongsTo)
@@ -45,6 +50,7 @@ trait RelationMethods
 
     /**
      * @param $hasAndBelongsTo
+     *
      * @return HasAndBelongsTo
      */
     public function hasAndBelongsTo($hasAndBelongsTo)
@@ -54,6 +60,7 @@ trait RelationMethods
 
     /**
      * @param $hasParent
+     *
      * @return HasParent
      */
     public function hasParent($hasParent)
@@ -63,11 +70,33 @@ trait RelationMethods
 
     /**
      * @param $hasChildren
+     *
      * @return HasChildren
      */
     public function hasChildren($hasChildren)
     {
         return new HasChildren($this, $hasChildren);
+    }
+
+
+    /**
+     * @param $morphsMany
+     *
+     * @return MorphsMany
+     */
+    public function morphsMany($morphsMany)
+    {
+        return new MorphsMany($this, $morphsMany);
+    }
+
+    /**
+     * @param $morphedBy
+     *
+     * @return MorphedBy
+     */
+    public function morphedBy($morphedBy)
+    {
+        return new MorphedBy($this, $morphedBy);
     }
 
 }

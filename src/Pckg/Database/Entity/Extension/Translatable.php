@@ -4,7 +4,10 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Adapter\Lang;
+use Pckg\Database\Query;
+use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record;
+use Pckg\Database\Relation\HasMany;
 
 /**
  * Class Translatable
@@ -83,21 +86,39 @@ trait Translatable
     /**
      * @return mixed
      */
-    public function translations()
+    public function translations(callable $callable = null)
     {
-        return $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
+        $relation = $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
             ->primaryKey('id')
             ->foreignKey('id')
             ->primaryCollectionKey('_translatee')
             ->foreignCollectionKey('_translations');
+
+        if ($callable) {
+            $callable($relation->getRightEntity()->getQuery());
+        }
+
+        return $relation;
     }
 
-    public function withTranslations()
+    public function withTranslations(callable $callable = null)
     {
-        return $this->with($this->translations());
+        return $this->with($this->translations($callable));
     }
 
-    public function joinTranslations()
+    public function joinTranslations(callable $callable = null)
+    {
+        return $this->join($this->translations($callable));
+    }
+
+    public function withTranslation()
+    {
+        return $this->withTranslations(function (Query $query) {
+            $query->where($this->translatableLanguageField, $this->translatableLang->langId());
+        });
+    }
+
+    public function joinTranslation()
     {
         return $this->join($this->translations());
     }

@@ -8,7 +8,7 @@ use Pckg\Database\Query\Parenthesis;
  * Class Query
  * @package Pckg\Database
  */
-class Query
+abstract class Query
 {
 
     protected $table, $join, $where, $groupBy, $having, $orderBy, $limit;
@@ -16,6 +16,8 @@ class Query
     protected $sql;
 
     protected $bind = [];
+
+    abstract function buildSQL();
 
     public function __construct()
     {
@@ -28,6 +30,17 @@ class Query
         return $this->bind;
     }
 
+    public function bind($val, $key = null)
+    {
+        if (!$key) {
+            $this->bind[] = $val;
+        } else {
+            $this->bind[$key] = $val;
+        }
+
+        return $this;
+    }
+
     public static function raw($sql)
     {
         $query = new static($sql);
@@ -35,34 +48,12 @@ class Query
         return $query;
     }
 
-    public static function escape($value)
-    {
-        return is_numeric($value)
-            ? $value
-            : (is_bool($value)
-                ? ($value
-                    ? 1
-                    : 'NULL'
-                )
-                : "'" . $value . "'"
-            );
-    }
-
-    public static function escapeArray($array)
-    {
-        foreach ($array as &$value) {
-            $value = static::escape($value);
-        }
-
-        return $array;
-    }
-
     public function __toString()
     {
         try {
-            return (string)$this->buildSQL();
+            return $this->buildSQL()['sql'];
         } catch (\Exception $e) {
-            dd($e->getMessage(), $e->getFile(), $e->getLine());
+            dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
         }
     }
 
@@ -148,7 +139,8 @@ class Query
 
         } else if ($operator == 'IN') {
             if (is_array($value)) {
-                $this->where->push($this->makeKey($key) . ' IN(' . implode(',', static::escapeArray($value)) . ')');
+                $this->where->push($this->makeKey($key) . ' IN(' . str_repeat('?, ', count($value) - 1) . '?)');
+                $this->bind($value);
 
             } else if ($value instanceof Query) {
                 $this->where->push($this->makeKey($key) . ' IN(' . $value->buildSQL() . ')');
@@ -156,7 +148,8 @@ class Query
             }
 
         } else {
-            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ' . static::escape($value));
+            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ?');
+            $this->bind($value);
 
         }
 

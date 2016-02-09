@@ -3,6 +3,7 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
+use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
@@ -79,13 +80,6 @@ class HasMany extends Relation
             : Convention::nameMultiple($this->getRightForeignKey());
     }
 
-    public function getRightForeignKey()
-    {
-        $class = explode('\\', get_class($this->getRightEntity()));
-
-        return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
-    }
-
     public function getLeftForeignKey()
     {
         $class = explode('\\', get_class($this->getLeftEntity()));
@@ -99,11 +93,10 @@ class HasMany extends Relation
         $foreignKey = $this->getForeignKey();
 
         $rightEntity = $this->getRightEntity();
-        $rightEntity->resetQuery();
 
         $primaryCollectionKey = $this->getPrimaryCollectionKey();
         $foreignCollectionKey = $this->getForeignCollectionKey();
-        $foreignCollection = (new GetRecords($rightEntity->where($foreignKey, $record->{$primaryKey})))->executeAll();
+        $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
 
         foreach ($foreignCollection as $foreignRecord) {
             $foreignRecord->{$primaryCollectionKey} = new Collection();
@@ -125,8 +118,6 @@ class HasMany extends Relation
         $foreignKey = $this->getForeignKey();
 
         $rightEntity = $this->getRightEntity();
-        $rightEntity->resetQuery();
-        //d(get_class($this->getLeftEntity()) . ' ' . $this->getLeftEntity()->getTable() . ' has many ' . get_class($rightEntity) . ' ' . $rightEntity->getTable());
 
         $primaryCollectionKey = $this->getPrimaryCollectionKey();
         $foreignCollectionKey = $this->getForeignCollectionKey();
@@ -136,7 +127,7 @@ class HasMany extends Relation
         }
 
         if ($arrPrimaryIds) {
-            $foreignCollection = (new GetRecords($rightEntity->where($foreignKey, $arrPrimaryIds, 'IN')))->executeAll();
+            $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
             foreach ($foreignCollection as $foreignRecord) {
                 $foreignRecord->{$primaryCollectionKey} = new Collection();
             }
@@ -145,22 +136,15 @@ class HasMany extends Relation
 
             foreach ($collection as $primaryRecord) {
                 foreach ($foreignCollection as $foreignRecord) {
-                    try {
-                        /*
-                         * Foreign records needs to have set entity with correct table because we'll read data from
-                         * repository cache in __get method.
-                         */
-                        $foreignRecord->setEntity($rightEntity);
+                    /*
+                     * Foreign records needs to have set entity with correct table because we'll read data from
+                     * repository cache in __get method.
+                     */
+                    $foreignRecord->setEntity($rightEntity);
 
-                        if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
-                            //d('setting ' . get_class($primaryRecord) . ' ' . $foreignCollectionKey);
-                            $primaryRecord->getValue($foreignCollectionKey)->push($foreignRecord);
-                            //d('set');
-                            $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
-                        }
-                    } catch (\Exception $e) {
-                        d('Comparing ' . get_class($primaryRecord) . '.' . $primaryKey . ' with ' . get_class($foreignRecord) . '.' . $foreignKey);
-                        dd($e->getMessage(), $e->getFile(), $e->getLine());
+                    if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
+                        $primaryRecord->getValue($foreignCollectionKey)->push($foreignRecord);
+                        $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
                     }
                 }
             }

@@ -106,7 +106,7 @@ class Entity
     public function __get($property)
     {
         if (method_exists($this, $property)) {
-            return $this->$property;
+            return $this->{$property}();
         }
 
         return null;

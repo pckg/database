@@ -36,6 +36,8 @@ trait Translatable
      */
     protected $translatableLang;
 
+    protected $translatableFallbackLang;
+
     /**
      * @param Lang $lang
      */
@@ -65,9 +67,7 @@ trait Translatable
      */
     public function getTranslatableFields()
     {
-        return $this->translatableFields
-            ? $this->translatableFields
-            : $this->getRepository()->getCache()->getTableFields($this->table);
+        return $this->getRepository()->getCache()->getTableFields($this->table . $this->translatableTableSuffix);
     }
 
     /**
@@ -121,6 +121,20 @@ trait Translatable
     public function joinTranslation()
     {
         return $this->join($this->translations());
+    }
+
+    public function setTranslatableLang(Lang $lang)
+    {
+        $this->translatableLang = $lang;
+
+        return $this;
+    }
+
+    public function setFallbackLang(Lang $lang)
+    {
+        $this->translatableFallbackLang = $lang;
+
+        return $this;
     }
 
     public function __getTranslatableExtension(Record $record, $key)

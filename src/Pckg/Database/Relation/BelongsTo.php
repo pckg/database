@@ -15,15 +15,22 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
 class BelongsTo extends Relation
 {
 
+    /**
+     * @param Record $record
+     *
+     * @return mixed
+     *
+     * Example: layout belongs to variable.
+     */
     public function fillRecord(Record $record)
     {
         $rightForeignKey = $this->getRightForeignKey();
 
-        $rightEntity = clone $this->getRightEntity();
+        $rightEntity = $this->getRightEntity();
         if ($record->{$rightForeignKey}) {
-            $record->{substr($rightForeignKey, 0, -3)} = (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne();
+            $record->setRelation($this->fill, (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne());
         } else {
-            $record->{substr($rightForeignKey, 0, -3)} = null;
+            $record->setRelation($this->fill, null);
         }
 
         $this->fillRecordWithRelations($record);
@@ -34,11 +41,10 @@ class BelongsTo extends Relation
         $arrIds = [];
 
         $rightForeignKey = $this->getRightForeignKey();
-        $rightRecordKey = Convention::nameOne($rightForeignKey);
         foreach ($collection as $record) {
             if ($record->{$rightForeignKey}) {
                 $arrIds[$record->{$rightForeignKey}] = $record->{$rightForeignKey};
-                $record->{$rightRecordKey} = null;
+                $record->setRelation($this->fill, null);
             }
         }
 
@@ -47,18 +53,11 @@ class BelongsTo extends Relation
         foreach ($collection as $record) {
             foreach ($foreignCollection as $foreignRecord) {
                 if ($foreignRecord->id == $record->{$rightForeignKey}) {
-                    $record->{$rightRecordKey} = $foreignRecord;
+                    $record->setRelation($this->fill, $foreignRecord);
                     break;
                 }
             }
         }
-    }
-
-    public function getRelationValue($key)
-    {
-        $value = $this->record->{$key . '_id'};
-
-        return $value;
     }
 
 }

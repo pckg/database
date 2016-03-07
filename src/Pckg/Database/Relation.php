@@ -48,6 +48,8 @@ abstract class Relation
 
     protected $record;
 
+    protected $fill;
+
     /**
      * @param $left
      * @param $right
@@ -56,6 +58,13 @@ abstract class Relation
     {
         $this->left = $left;
         $this->right = $right;
+        $this->fill = $this->getCalee();
+        //d((is_object($left) ? get_class($left) : $left) . ' ' . get_class($this) . ' ' . (is_object($right) ? get_class($right) : $right) . ' in ' . $this->fill);
+    }
+
+    protected function getCalee($depth = 3)
+    {
+        return debug_backtrace()[$depth]['function'];
     }
 
     /**
@@ -87,6 +96,18 @@ abstract class Relation
         $this->join = static::LEFT_JOIN;
 
         return $this;
+    }
+
+    public function fill($fill)
+    {
+        $this->fill = $fill;
+
+        return $this;
+    }
+
+    public function getFill()
+    {
+        return $this->fill;
     }
 
     /**
@@ -131,13 +152,15 @@ abstract class Relation
         return $this->getKeyCondition();
     }
 
-    public function getKeyCondition() {
+    public function getKeyCondition()
+    {
         return ' INNER JOIN `' . $this->getRightEntity()->getTable() . '`' .
         ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
         ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
     }
 
-    public function getAdditionalCondition(){
+    public function getAdditionalCondition()
+    {
         return $this->onAdditional
             ? ' AND ' . $this->onAdditional
             : '';

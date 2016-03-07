@@ -17,10 +17,18 @@ class Record extends Object
      */
     protected $entity = Entity::class;
 
-    /**
-     * @var
-     */
-    protected $pk;
+    protected $relations = [];
+
+    public function __isset($key)
+    {
+        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key))) || $this->keyExists($key) || $this->relationExists($key)) {
+            return true;
+        }
+
+        $entity = $this->getEntity();
+
+        return method_exists($entity, $key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key);
+    }
 
     /**
      * @param $key
@@ -31,41 +39,62 @@ class Record extends Object
     {
         $entity = $this->getEntity();
 
-        if ($this->keyExists($key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
-                return $this->{'get' . ucfirst(Convention::toCamel($key))}();
-            }
+        /**
+         * Return value via getter
+         */
+        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+            return $this->{'get' . ucfirst(Convention::toCamel($key))}();
+        }
 
+        /**
+         * Return value from relation.
+         */
+        if ($this->relationExists($key)) {
+            return $this->getRelation($key);
+        }
+
+        /**
+         * Return value, even if it's null or not set.
+         */
+        if ($this->keyExists($key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
             return $this->getValue($key);
         }
 
+        /**
+         * Return value from relation.
+         */
         if (method_exists($entity, $key)) {
             $relation = $entity->{$key}();
 
             $relation->fillRecord($this);
 
-            return $this->getValue($key);
+            return $this->getRelation($relation->getFill());
         }
 
-        foreach (get_class_methods($entity) as $method) {
-            $chains = [];
+        /**
+         * Return value from extension.
+         */
+        if ($chains = $this->getEntityChains($entity, $key)) {
+            return chain($chains);
+        }
 
+        db(8);
+        dd('Method ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this));
+    }
+
+    private function getEntityChains(Entity $entity, $key)
+    {
+        $chains = [];
+        foreach (get_class_methods($entity) as $method) {
             if (substr($method, 0, 5) == '__get' && substr($method, -9) == 'Extension') {
                 $chains[] = function () use ($method, $entity, $key) {
                     //d('Returning value from ' . get_class($this) . ' ' . $key . ' ' . get_class($entity));
                     return $entity->$method($this, $key);
                 };
             }
-
-            if ($chains) {
-                return chain($chains);
-            }
         }
 
-        db(8);
-        dd('Method ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this));
-
-        return null;
+        return $chains;
     }
 
     /**
@@ -80,7 +109,7 @@ class Record extends Object
         }
 
         if (!$values) {
-            $values = $this->values;
+            $values = $this->data;
         }
 
         foreach ($values as $key => $value) {
@@ -96,16 +125,21 @@ class Record extends Object
         return $return;
     }
 
-    public function keyExists($key)
+    public function relationExists($key)
     {
-        return array_key_exists($key, $this->values);
+        return array_key_exists($key, $this->relations);
     }
 
-    public function getValue($key)
+    public function setRelation($key, $value)
     {
-        return array_key_exists($key, $this->values)
-            ? $this->values[$key]
-            : null;
+        $this->relations[$key] = $value;
+
+        return $this;
+    }
+
+    public function getRelation($key)
+    {
+        return $this->relations[$key];
     }
 
     public function setEntityClass($class)
@@ -138,14 +172,6 @@ class Record extends Object
         $this->entity = $entity;
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPK()
-    {
-        return $this->pk;
     }
 
     /**

@@ -20,11 +20,14 @@ class HasAndBelongsTo extends HasMany
 
     use MiddleEntity;
 
-    public function getRelationValue($key)
+    public function getLeftCollectionKey()
     {
-        $value = $this->record->getValue($key);
+        return Convention::nameMultiple($this->getLeftForeignKey());
+    }
 
-        return $value;
+    public function getRightCollectionKey()
+    {
+        return Convention::nameMultiple($this->getRightForeignKey());
     }
 
     public function fillRecord(Record $record)
@@ -35,48 +38,42 @@ class HasAndBelongsTo extends HasMany
         $middleEntity = $this->getMiddleEntity();
         $rightEntity = $this->getRightEntity();
 
-        $leftCollectionKey = Convention::nameMultiple($leftForeignKey);
-        $middleCollectionKey = lcfirst(Convention::toCamel($middleEntity->getTable()));
-        $rightCollectionKey = Convention::nameMultiple($rightForeignKey);
+        $leftCollectionKey = $this->getLeftCollectionKey();
+        $rightCollectionKey = $this->getRightCollectionKey();
 
         $rightRecordKey = Convention::nameOne($leftForeignKey);
         $leftRecordKey = Convention::nameOne($rightForeignKey);
 
-        // get mtm records
+        // get records from middle (mtm) entity
         $middleCollection = $this->getMiddleCollection($middleEntity, $leftForeignKey, $record->id);
 
         // get right record ids and preset middle record with null values
         $arrRightIds = [];
         foreach ($middleCollection as $middleRecord) {
             $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-            $middleRecord->{$rightRecordKey} = null;
-            $middleRecord->{$leftRecordKey} = null;
+            $middleRecord->setRelation($rightRecordKey, $record);
+            $middleRecord->setRelation($leftRecordKey, null);
         }
 
         // prepare record for mtm relation and right relation
-        $record->{$middleCollectionKey} = $middleCollection;
-        $record->{$rightCollectionKey} = new Collection();
+        $record->setRelation($this->fill, $middleCollection);
+        $record->setRelation($rightCollectionKey, new Collection());
 
         if ($arrRightIds) {
             // get all right records
             $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
 
-            // prepare right collection records for left relation
-            foreach ($rightCollection as $rightRecord) {
-                $rightRecord->{$leftCollectionKey} = new Collection();
-            }
-
-            $record->{$rightCollectionKey} = $rightCollection;
+            // set relation
+            $record->setRelation($rightCollectionKey, $rightCollection);
 
             // we also have to fill it with relations
-            $this->fillCollectionWithRelations($record->{$rightCollectionKey});
+            $this->fillCollectionWithRelations($record->getRelation($rightCollectionKey));
 
-            foreach ($middleCollection as $middleRecord) {
-                $middleRecord->{$rightRecordKey} = $record;
-
-                foreach ($rightCollection as $rightRecord) {
-                    $middleRecord->{$leftRecordKey} = $rightRecord;
-                    $rightRecord->{$leftCollectionKey}->push($rightRecord);
+            // we need to link middle record with left and right records
+            foreach ($rightCollection as $rightRecord) {
+                foreach ($middleCollection as $middleRecord) {
+                    $middleRecord->setRelation($leftRecordKey, $rightRecord);
+                    $rightRecord->setRelation($leftCollectionKey, $middleRecord);
                 }
             }
         }
@@ -146,7 +143,7 @@ class HasAndBelongsTo extends HasMany
             }
         }
 
-        //$this->fillCollectionWithRelations($collection);
+        $this->fillCollectionWithRelations($collection);
     }
 
 }

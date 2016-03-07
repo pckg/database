@@ -12,7 +12,19 @@ class Object
     /**
      * @var array
      */
-    protected $values = [];
+    public $data = [];
+
+    public function keyExists($key)
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    public function getValue($key)
+    {
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
+            : null;
+    }
 
     /**
      * @param array $values
@@ -24,6 +36,13 @@ class Object
         }
     }
 
+    public function __unset($key)
+    {
+        unset($this->data[$key]);
+
+        return $this;
+    }
+
 
     /**
      * @param $key
@@ -33,7 +52,7 @@ class Object
      */
     public function __set($key, $val)
     {
-        $this->values[$key] = $val;
+        $this->data[$key] = $val;
 
         return $this;
     }
@@ -56,8 +75,8 @@ class Object
      */
     public function __get($key)
     {
-        return array_key_exists($key, $this->values)
-            ? $this->values[$key]
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
             : null;
     }
 
@@ -78,7 +97,7 @@ class Object
      */
     public function __isset($key)
     {
-        return array_key_exists($key, $this->values) && $this->values[$key];
+        return array_key_exists($key, $this->data) && $this->data[$key];
     }
 
     /**
@@ -86,7 +105,7 @@ class Object
      */
     public function __toArray()
     {
-        return $this->values;
+        return $this->data;
     }
 
     /**

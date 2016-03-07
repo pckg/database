@@ -24,21 +24,25 @@ class Resolver implements ResolverInterface
     public function classes()
     {
         return [
-            Record::class,
+            Record::class => function ($class) {
+                $result = Reflect::create($class)
+                    ->getEntity()
+                    //->inExtendedContext()
+                    ->where('slug', $this->router->get('name'))
+                    ->oneOrFail(function () {
+                        $this->response->notFound('Route not found');
+                    });
+
+                return $result;
+            },
         ];
     }
 
     public function resolve($class)
     {
-        foreach ($this->classes() as $resolvableClass) {
+        foreach ($this->classes() as $resolvableClass => $resolvableCallback) {
             if (in_array($resolvableClass, class_parents($class))) {
-                return Reflect::create($class)
-                    ->getEntity()
-                    ->inExtendedContext()
-                    ->where('slug', $this->router->get('name'))
-                    ->oneOrFail(function () {
-                        $this->response->notFound('Route not found');
-                    });
+                return $resolvableCallback($class);
             }
         }
     }

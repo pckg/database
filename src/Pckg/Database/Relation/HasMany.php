@@ -99,7 +99,7 @@ class HasMany extends Relation
         $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
 
         foreach ($foreignCollection as $foreignRecord) {
-            $foreignRecord->{$primaryCollectionKey} = new Collection();
+            $foreignRecord->setRelation($primaryCollectionKey, new Collection());
         }
 
         $this->fillCollectionWithRelations($foreignCollection);

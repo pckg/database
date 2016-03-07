@@ -32,6 +32,11 @@ class MorphsMany extends HasAndBelongsTo
         return $this->poly;
     }
 
+    public function getLeftCollectionKey()
+    {
+        return 'poly';
+    }
+
     public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
         return (new GetRecords($rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=')

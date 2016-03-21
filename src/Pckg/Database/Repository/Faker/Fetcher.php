@@ -74,7 +74,8 @@ class Fetcher
 
                 } elseif (substr($meta['name'], 0, 3) == 'dt_') {
                     if (strpos($meta['name'], 'added', 3)) {
-                        $record->{$field} = date('Y-m-d H:i:s', strtotime(round(rand(0, 100000) - rand(0, 10000)) . ' seconds'));
+                        $record->{$field} = date('Y-m-d H:i:s',
+                            strtotime(round(rand(0, 100000) - rand(0, 10000)) . ' seconds'));
 
                     } elseif (strpos($meta['name'], 'updated', 3)) {
                         $record->{$field} = date('Y-m-d H:i:s', strtotime(-round(rand(0, 100000)) . ' seconds'));

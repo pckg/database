@@ -3,13 +3,13 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
+use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\MiddleEntity;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
-use Pckg\Concept\Reflect;
 
 /**
  * Class HasAndBelongTo
@@ -84,7 +84,8 @@ class HasAndBelongsTo extends HasMany
 
     public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=')))->executeAll();
+        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue,
+            is_array($primaryValue) ? 'IN' : '=')))->executeAll();
     }
 
     public function fillCollection(Collection $collection)

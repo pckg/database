@@ -53,15 +53,18 @@ class Cache extends FrameworkCache
         }
     }
 
-    protected function buildCache() {
+    protected function buildCache()
+    {
         $this->buildTables();
         $this->buildRelations();
 
         parent::buildCache();
     }
 
-    protected function getCachePath() {
-        return path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_', (get_class(app()) . '_' . get_class(env()))) . '.cache';
+    protected function getCachePath()
+    {
+        return path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_',
+            (get_class(app()) . '_' . get_class(env()))) . '.cache';
     }
 
     /**
@@ -92,15 +95,16 @@ class Cache extends FrameworkCache
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
             $this->cache['fields'][$table][$field['Field']] = [
-                'name' => $field['Field'],
-                'type' => substr($field['Type'], 0, strpos($field['Type'], '(')),
-                'limit' => substr($field['Type'], strpos($field['Type'], '(') + 1, strpos($field['Type'], ')') ? -1 : null),
-                'null' => $field['Null'] == 'NO',
-                'key' => $field['Key'] == 'PRI'
+                'name'      => $field['Field'],
+                'type'      => substr($field['Type'], 0, strpos($field['Type'], '(')),
+                'limit'     => substr($field['Type'], strpos($field['Type'], '(') + 1,
+                    strpos($field['Type'], ')') ? -1 : null),
+                'null'      => $field['Null'] == 'NO',
+                'key'       => $field['Key'] == 'PRI'
                     ? 'primary'
                     : $field['Key'],
-                'default' => $field['Default'],
-                'extra' => $field['Extra'],
+                'default'   => $field['Default'],
+                'extra'     => $field['Extra'],
                 'relations' => [],
             ];
         }
@@ -111,9 +115,10 @@ class Cache extends FrameworkCache
      */
     protected function buildPrimaryKeys($table)
     {
-        $this->cache['tables'][$table]['primaryKeys'] = array_column(array_filter($this->cache['fields'][$table], function ($field) {
-            return $field['key'] == 'primary';
-        }), 'name');
+        $this->cache['tables'][$table]['primaryKeys'] = array_column(array_filter($this->cache['fields'][$table],
+            function ($field) {
+                return $field['key'] == 'primary';
+            }), 'name');
     }
 
     /**

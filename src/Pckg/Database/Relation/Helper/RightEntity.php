@@ -44,7 +44,8 @@ trait RightEntity
 
     public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=')))->executeAll();
+        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue,
+            is_array($primaryValue) ? 'IN' : '=')))->executeAll();
     }
 
 }

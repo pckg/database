@@ -7,10 +7,10 @@ use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use Faker\Factory;
 use Pckg\Concept\AbstractChainOfReponsibility;
-use Pckg\Framework\Config;
 use Pckg\Concept\Context;
-use Pckg\Database\Repository\PDO as RepositoryPDO;
 use Pckg\Database\Repository\Faker as RepositoryFaker;
+use Pckg\Database\Repository\PDO as RepositoryPDO;
+use Pckg\Framework\Config;
 use PDO;
 
 /**
@@ -43,7 +43,8 @@ class InitDatabase extends AbstractChainOfReponsibility
                 $repository = new RepositoryFaker(Factory::create());
 
             } else {
-                $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'], $config['user'], $config['pass']);
+                $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
+                    $config['user'], $config['pass']);
 
                 if ($this->context->exists('DebugBar')) {
                     $debugBar = $this->context->find('DebugBar');

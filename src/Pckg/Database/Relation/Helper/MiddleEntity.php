@@ -36,7 +36,8 @@ trait MiddleEntity
 
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($middleEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=')))->executeAll();
+        return (new GetRecords($middleEntity->where($foreignKey, $primaryValue,
+            is_array($primaryValue) ? 'IN' : '=')))->executeAll();
     }
 
 }

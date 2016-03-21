@@ -3,7 +3,6 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
@@ -28,7 +27,8 @@ class BelongsTo extends Relation
 
         $rightEntity = $this->getRightEntity();
         if ($record->{$rightForeignKey}) {
-            $record->setRelation($this->fill, (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne());
+            $record->setRelation($this->fill,
+                (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne());
         } else {
             $record->setRelation($this->fill, null);
         }

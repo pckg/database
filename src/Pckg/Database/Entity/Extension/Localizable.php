@@ -2,8 +2,8 @@
 
 namespace Pckg\Database\Entity\Extension;
 
-use Pckg\Database\Record;
 use Locale;
+use Pckg\Database\Record;
 
 /**
  * Class Localizable
@@ -71,7 +71,7 @@ trait Localizable
     {
         return [
             $this->localizableLocaleField => $this->localizableLocale->getCode(),
-            $this->primary => $record->{$this->primary}
+            $this->primary                => $record->{$this->primary}
         ];
     }
 

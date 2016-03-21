@@ -28,16 +28,16 @@ class Parenthesis
         return !empty($this->children);
     }
 
+    public function __toString()
+    {
+        return (string)$this->build();
+    }
+
     public function build()
     {
         return $this->children
             ? '(' . implode(') ' . $this->glue . ' (', $this->children) . ')'
             : '';
-    }
-
-    public function __toString()
-    {
-        return (string)$this->build();
     }
 
 }

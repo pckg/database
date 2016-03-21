@@ -17,28 +17,10 @@ abstract class Query
 
     protected $bind = [];
 
-    abstract function buildSQL();
-
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
-    }
-
-    public function getBind()
-    {
-        return $this->bind;
-    }
-
-    public function bind($val, $key = null)
-    {
-        if (!$key) {
-            $this->bind[] = $val;
-        } else {
-            $this->bind[$key] = $val;
-        }
-
-        return $this;
     }
 
     public static function raw($sql)
@@ -46,6 +28,11 @@ abstract class Query
         $query = new static($sql);
 
         return $query;
+    }
+
+    public function getBind()
+    {
+        return $this->bind;
     }
 
     public function __toString()
@@ -56,6 +43,8 @@ abstract class Query
             dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
         }
     }
+
+    abstract function buildSQL();
 
     /**
      * @param $table
@@ -127,6 +116,13 @@ abstract class Query
         return $this;
     }
 
+    function orWhere($key, $value = null, $operator = '=')
+    {
+        $this->where->setGlue('OR');
+
+        return $this->where($key, $value, $operator);
+    }
+
     /**
      * @param $where
      *
@@ -161,11 +157,15 @@ abstract class Query
         return '`' . $key . '`';
     }
 
-    function orWhere($key, $value = null, $operator = '=')
+    public function bind($val, $key = null)
     {
-        $this->where->setGlue('OR');
+        if (!$key) {
+            $this->bind[] = $val;
+        } else {
+            $this->bind[$key] = $val;
+        }
 
-        return $this->where($key, $value, $operator);
+        return $this;
     }
 
     /**

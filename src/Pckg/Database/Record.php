@@ -21,13 +21,16 @@ class Record extends Object
 
     public function __isset($key)
     {
-        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key))) || $this->keyExists($key) || $this->relationExists($key)) {
+        if (method_exists($this,
+                'get' . ucfirst(Convention::toCamel($key))) || $this->keyExists($key) || $this->relationExists($key)
+        ) {
             return true;
         }
 
         $entity = $this->getEntity();
 
-        return method_exists($entity, $key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key);
+        return method_exists($entity, $key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(),
+            $key);
     }
 
     /**

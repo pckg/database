@@ -5,9 +5,7 @@ namespace Pckg\Database\Entity\Extension;
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Adapter\Lang;
 use Pckg\Database\Query;
-use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record;
-use Pckg\Database\Relation\HasMany;
 
 /**
  * Class Translatable
@@ -15,11 +13,6 @@ use Pckg\Database\Relation\HasMany;
  */
 trait Translatable
 {
-
-    /**
-     * @var array
-     */
-    // protected $translatableFields = [];
 
     /**
      * @var string

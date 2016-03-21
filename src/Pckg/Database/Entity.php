@@ -3,11 +3,11 @@
 namespace Pckg\Database;
 
 use Exception;
+use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Relation\Helper\RelationMethods;
-use Pckg\Concept\Reflect;
 
 /**
  * Presents table in database
@@ -288,7 +288,9 @@ class Entity
         $values = [];
         foreach ($keys as $table => $fields) {
             foreach ($fields as $field) {
-                if (array_key_exists($field, $dataArray) && $this->repository->getCache()->tableHasField($table, $field)) {
+                if (array_key_exists($field, $dataArray) && $this->repository->getCache()->tableHasField($table,
+                        $field)
+                ) {
                     $values[$table][$field] = $dataArray[$field];
                 }
             }

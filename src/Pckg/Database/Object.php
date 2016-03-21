@@ -14,6 +14,16 @@ class Object
      */
     public $data = [];
 
+    /**
+     * @param array $values
+     */
+    public function __construct($values = [])
+    {
+        foreach ($values as $key => $val) {
+            $this->__set($key, $val);
+        }
+    }
+
     public function keyExists($key)
     {
         return array_key_exists($key, $this->data);
@@ -26,33 +36,9 @@ class Object
             : null;
     }
 
-    /**
-     * @param array $values
-     */
-    public function __construct($values = [])
-    {
-        foreach ($values as $key => $val) {
-            $this->__set($key, $val);
-        }
-    }
-
     public function __unset($key)
     {
         unset($this->data[$key]);
-
-        return $this;
-    }
-
-
-    /**
-     * @param $key
-     * @param $val
-     *
-     * @return $this
-     */
-    public function __set($key, $val)
-    {
-        $this->data[$key] = $val;
 
         return $this;
     }
@@ -73,6 +59,16 @@ class Object
      *
      * @return null
      */
+    public function get($key)
+    {
+        return $this->__get($key);
+    }
+
+    /**
+     * @param $key
+     *
+     * @return null
+     */
     public function __get($key)
     {
         return array_key_exists($key, $this->data)
@@ -82,12 +78,15 @@ class Object
 
     /**
      * @param $key
+     * @param $val
      *
-     * @return null
+     * @return $this
      */
-    public function get($key)
+    public function __set($key, $val)
     {
-        return $this->__get($key);
+        $this->data[$key] = $val;
+
+        return $this;
     }
 
     /**
@@ -103,17 +102,17 @@ class Object
     /**
      * @return array
      */
-    public function __toArray()
+    public function toArray()
     {
-        return $this->data;
+        return $this->__toArray();
     }
 
     /**
      * @return array
      */
-    public function toArray()
+    public function __toArray()
     {
-        return $this->__toArray();
+        return $this->data;
     }
 
 }

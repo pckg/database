@@ -36,8 +36,8 @@ class UpdateRecord
     protected $tables = [];
 
     /**
-     * @param Record $record
-     * @param Entity $entity
+     * @param Record     $record
+     * @param Entity     $entity
      * @param Repository $repository
      */
     public function __construct(Record $record, Entity $entity, Repository $repository)
@@ -85,7 +85,7 @@ class UpdateRecord
     }
 
     /**
-     * @param $table
+     * @param       $table
      * @param array $data
      * @return bool
      * @throws Exception
@@ -116,7 +116,7 @@ class UpdateRecord
     }
 
     /**
-     * @param $table
+     * @param       $table
      * @param array $data
      * @return bool|null
      * @throws Exception

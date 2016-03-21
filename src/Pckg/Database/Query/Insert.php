@@ -28,17 +28,6 @@ class Insert extends Query
     }
 
     /**
-     * @param $insert
-     * @return mixed
-     */
-    function setInsert($insert)
-    {
-        $this->insert = $insert;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     function buildKeys()
@@ -64,5 +53,16 @@ class Insert extends Query
         }
 
         return "(" . implode(", ", $arrValues) . ") ";
+    }
+
+    /**
+     * @param $insert
+     * @return mixed
+     */
+    function setInsert($insert)
+    {
+        $this->insert = $insert;
+
+        return $this;
     }
 }

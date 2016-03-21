@@ -1,6 +1,5 @@
 <?php namespace Pckg\Database\Repository;
 
-use Exception;
 use Faker\Generator;
 use Pckg\Collection;
 use Pckg\Database\Entity;

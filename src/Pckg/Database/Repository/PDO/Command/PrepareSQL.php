@@ -23,7 +23,7 @@ class PrepareSQL
     protected $repository;
 
     /**
-     * @param $sql
+     * @param            $sql
      * @param Repository $repository
      */
     public function __construct(Query $query, Repository $repository)

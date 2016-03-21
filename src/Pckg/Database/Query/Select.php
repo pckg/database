@@ -45,6 +45,11 @@ class Select extends Query
         ];
     }
 
+    public function buildSelect()
+    {
+        return implode(', ', $this->select);
+    }
+
     /**
      * @param $select
      *
@@ -55,10 +60,5 @@ class Select extends Query
         $this->select[] = $select;
 
         return $this;
-    }
-
-    public function buildSelect()
-    {
-        return implode(', ', $this->select);
     }
 }

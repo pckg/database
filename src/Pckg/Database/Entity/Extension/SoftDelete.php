@@ -39,6 +39,15 @@ trait SoftDelete
     }
 
     /* Overrides Entity's method */
+
+    /**
+     * @return mixed
+     */
+    public function forceDelete()
+    {
+        return $this->delete();
+    }
+
     /**
      * @return mixed
      */
@@ -47,14 +56,6 @@ trait SoftDelete
         $this->{$this->softDeleteField} = date('Y-m-d H:i:s');
 
         return $this->update();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function forceDelete()
-    {
-        return $this->delete();
     }
 
 }

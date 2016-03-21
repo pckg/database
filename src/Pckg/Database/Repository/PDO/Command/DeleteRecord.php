@@ -29,8 +29,8 @@ class DeleteRecord
     protected $repository;
 
     /**
-     * @param Record $record
-     * @param Entity $entity
+     * @param Record     $record
+     * @param Entity     $entity
      * @param Repository $repository
      */
     public function __construct(Record $record, Entity $entity, Repository $repository)

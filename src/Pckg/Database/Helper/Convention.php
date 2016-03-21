@@ -25,19 +25,27 @@ class Convention
         }
 
         $id = substr($input, -3) == "_id";
-        if ($id) $input = str_replace("_id", "", $input);
+        if ($id) {
+            $input = str_replace("_id", "", $input);
+        }
 
-        $one = NULL;
+        $one = null;
         if (substr($input, -3) == "ies") //categories
+        {
             $one = substr($input, 0, -3) . "y";
-        else if (substr($input, -3) == "ses") // statuses
+        } else if (substr($input, -3) == "ses") // statuses
+        {
             $one = substr($input, 0, -2);
-        else if (substr($input, -3) == "es") // pages
+        } else if (substr($input, -3) == "es") // pages
+        {
             $one = substr($input, 0, -1);
-        else if (substr($input, -1) != "s") // users_fb
+        } else if (substr($input, -1) != "s") // users_fb
+        {
             $one = $input;
-        else  // users
+        } else  // users
+        {
             $one = substr($input, 0, -1);
+        }
 
         return $one . $i18n;
     }
@@ -51,18 +59,26 @@ class Convention
         $i18n = substr($input, -5) == "_i18n";
         $id = substr($input, -3) == "_id";
 
-        if ($i18n) $input = str_replace("_i18n", "", $input);
-        if ($id) $input = str_replace("_id", "", $input);
+        if ($i18n) {
+            $input = str_replace("_i18n", "", $input);
+        }
+        if ($id) {
+            $input = str_replace("_id", "", $input);
+        }
 
-        $multiple = NULL;
+        $multiple = null;
         if (substr($input, -2) == "es") //categories
+        {
             $multiple = $input;
-        else if (substr($input, -1) == "y") // category
+        } else if (substr($input, -1) == "y") // category
+        {
             $multiple = substr($input, 0, -1) . "ies";
-        else if (substr($input, -1) == "s") // news
+        } else if (substr($input, -1) == "s") // news
+        {
             $multiple = $input;
-        else
+        } else {
             $multiple = $input . "s";
+        }
 
         return $multiple . ($i18n ? "_i18n" : "");
 
@@ -93,7 +109,7 @@ class Convention
      */
     public static function fromCamel($text)
     {
-        $return = NULL;
+        $return = null;
         $text = str_split($text, 1);
 
         foreach ($text AS $index => $char) {

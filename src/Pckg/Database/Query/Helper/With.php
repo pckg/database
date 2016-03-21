@@ -5,9 +5,9 @@ namespace Pckg\Database\Query\Helper;
 use Closure;
 use Exception;
 use Pckg\Collection;
+use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
-use Pckg\Concept\Reflect;
 
 trait With
 {

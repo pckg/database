@@ -38,6 +38,10 @@ class InitDatabase extends AbstractChainOfReponsibility
      */
     public function execute(callable $next)
     {
+        if (!$this->config->get('database')) {
+            return $next();
+        }
+        
         foreach ($this->config->get('database') as $name => $config) {
             if ($config['driver'] == 'faker') {
                 $repository = new RepositoryFaker(Factory::create());

@@ -11,7 +11,10 @@
   ],
   "require": {
     "pckg/concept": "dev-master",
-    "pckg/collection": "dev-master"
+    "pckg/collection": "dev-master",
+    "pckg/framework": "dev-master",
+    "maximebf/debugbar": "1.*",
+    "fzaninotto/faker": "1.*"
   },
   "autoload": {
     "psr-0": {

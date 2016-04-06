@@ -87,7 +87,6 @@ class PDO extends AbstractRepository implements Repository
     {
         try {
             $build = $query->buildSQL();
-            //d($build);
             $prepare = $this->getConnection()->prepare($build['sql']);
             $i = 1;
             foreach ($build['prepare'] as $key => $val) {
@@ -98,7 +97,7 @@ class PDO extends AbstractRepository implements Repository
                         } else {
                             $tempKey = $i;
                         }
-                        //d('binding ' . $i . ' ' . $rVal);
+
                         $prepare->bindValue($tempKey, $rVal);
                         if (is_numeric($key)) {
                             $i++;
@@ -110,7 +109,7 @@ class PDO extends AbstractRepository implements Repository
                     } else {
                         $tempKey = $i;
                     }
-                    //d('binding ' . $tempKey . ' ' . $val);
+                    
                     $prepare->bindValue($tempKey, $val);
                     if (is_numeric($key)) {
                         $i++;

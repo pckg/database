@@ -59,7 +59,6 @@ abstract class Relation
         $this->left = $left;
         $this->right = $right;
         $this->fill = $this->getCalee();
-        //d((is_object($left) ? get_class($left) : $left) . ' ' . get_class($this) . ' ' . (is_object($right) ? get_class($right) : $right) . ' in ' . $this->fill);
     }
 
     protected function getCalee($depth = 3)

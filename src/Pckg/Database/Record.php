@@ -91,7 +91,6 @@ class Record extends Object
         foreach (get_class_methods($entity) as $method) {
             if (substr($method, 0, 5) == '__get' && substr($method, -9) == 'Extension') {
                 $chains[] = function () use ($method, $entity, $key) {
-                    //d('Returning value from ' . get_class($this) . ' ' . $key . ' ' . get_class($entity));
                     return $entity->$method($this, $key);
                 };
             }

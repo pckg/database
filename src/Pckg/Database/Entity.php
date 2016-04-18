@@ -35,7 +35,7 @@ class Entity
      */
     protected $repository;
 
-    protected $repositoryName = 'Repository';
+    protected $repositoryName = Repository::class;
 
     /**
      * @var array

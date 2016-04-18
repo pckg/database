@@ -5,9 +5,11 @@ namespace Pckg\Database\Command;
 
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
+use DebugBar\DebugBar;
 use Faker\Factory;
 use Pckg\Concept\AbstractChainOfReponsibility;
 use Pckg\Concept\Context;
+use Pckg\Database\Repository;
 use Pckg\Database\Repository\Faker as RepositoryFaker;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use Pckg\Framework\Config;
@@ -50,8 +52,8 @@ class InitDatabase extends AbstractChainOfReponsibility
                 $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
                     $config['user'], $config['pass']);
 
-                if ($this->context->exists('DebugBar')) {
-                    $debugBar = $this->context->find('DebugBar');
+                if ($this->context->exists(DebugBar::class)) {
+                    $debugBar = $this->context->find(DebugBar::class);
                     $tracablePdo = new TraceablePDO($pdo);
 
                     if ($debugBar->hasCollector('pdo')) {
@@ -65,8 +67,8 @@ class InitDatabase extends AbstractChainOfReponsibility
                 $repository = new RepositoryPDO($pdo);
             }
 
-            $this->context->bindIfNot('Repository', $repository);
-            $this->context->bind('Repository.' . $name, $repository);
+            $this->context->bindIfNot(Repository::class, $repository);
+            $this->context->bind(Repository::class . '.' . $name, $repository);
         }
 
         return $next();

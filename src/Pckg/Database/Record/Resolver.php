@@ -27,10 +27,9 @@ class Resolver implements ResolverInterface
             Record::class => function ($class) {
                 $result = Reflect::create($class)
                     ->getEntity()
-                    //->inExtendedContext()
                     ->where('slug', $this->router->get('name'))
-                    ->oneOrFail(function () {
-                        $this->response->notFound('Route not found');
+                    ->oneOrFail(function () use ($class) {
+                        $this->response->notFound('Record ' . $class . ' not found, cannot be resolved');
                     });
 
                 return $result;

@@ -47,10 +47,10 @@ class Cache extends FrameworkCache
         $this->repository = $repository;
         $this->readFromCache();
 
-        if (!$this->built) {
-            $this->buildCache();
-            $this->writeToCache();
-        }
+        //if (!$this->built) {
+        $this->buildCache();
+        $this->writeToCache();
+        //}
     }
 
     protected function buildCache()
@@ -79,7 +79,46 @@ class Cache extends FrameworkCache
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $table) {
             $table = end($table);
             $this->buildFields($table);
+            $this->buildConstraints($table);
             $this->buildPrimaryKeys($table);
+        }
+    }
+
+    protected function buildConstraints($table)
+    {
+        $sql = 'SHOW INDEX IN `' . $table . '`';
+        $prepare = $this->repository->getConnection()->prepare($sql);
+        $prepare->execute();
+
+        $indexes = [];
+
+        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $constraint) {
+            $indexes[$constraint['Key_name']][] = $constraint;
+        }
+
+        foreach ($indexes as $indexs) {
+            $first = $indexs[0];
+            $name = $first['Key_name'];
+
+            if ($name == 'PRIMARY') {
+                $this->cache['constraints'][$table][$name] = [
+                    'type' => 'PRIMARY',
+                ];
+            } else {
+                /*$name = implode('_', array_map(function($item){
+                    return $item['Column_name'];
+                }, $indexs));*/
+
+                if ($first['Non_unique']) {
+                    $this->cache['constraints'][$table][$first['Key_name']] = [
+                        'type' => 'KEY',
+                    ];
+                } else {
+                    $this->cache['constraints'][$table][$first['Key_name']] = [
+                        'type' => 'UNIQUE',
+                    ];
+                }
+            }
         }
     }
 
@@ -96,10 +135,12 @@ class Cache extends FrameworkCache
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
             $this->cache['fields'][$table][$field['Field']] = [
                 'name'      => $field['Field'],
-                'type'      => substr($field['Type'], 0, strpos($field['Type'], '(')),
+                'type'      => strpos($field['Type'], '(')
+                    ? substr($field['Type'], 0, strpos($field['Type'], '('))
+                    : $field['Type'],
                 'limit'     => substr($field['Type'], strpos($field['Type'], '(') + 1,
                     strpos($field['Type'], ')') ? -1 : null),
-                'null'      => $field['Null'] == 'NO',
+                'null'      => $field['Null'] == 'YES',
                 'key'       => $field['Key'] == 'PRI'
                     ? 'primary'
                     : $field['Key'],
@@ -141,7 +182,13 @@ class Cache extends FrameworkCache
      */
     public function getTable($table)
     {
-        return array_merge($this->cache['tables'][$table], ['fields' => $this->cache['fields'][$table]]);
+        return array_merge(
+            $this->cache['tables'][$table],
+            [
+                'fields'      => $this->cache['fields'][$table],
+                'constraints' => $this->cache['constraints'][$table],
+            ]
+        );
     }
 
     /**
@@ -160,7 +207,17 @@ class Cache extends FrameworkCache
      */
     public function getField($field, $table)
     {
-        return $this->getTable($table)[$field];
+        return $this->getTable($table)['fields'][$field];
+    }
+
+    /**
+     * @param $field
+     * @param $table
+     * @return mixed
+     */
+    public function getConstraint($constraint, $table)
+    {
+        return $this->getTable($table)['constraints'][$constraint];
     }
 
     /**
@@ -171,6 +228,26 @@ class Cache extends FrameworkCache
     public function tableHasField($table, $field)
     {
         return isset($this->cache['fields'][$table]) && array_key_exists($field, $this->cache['fields'][$table]);
+    }
+
+    /**
+     * @param $table
+     * @param $field
+     * @return bool
+     */
+    public function tableHasConstraint($table, $constraint)
+    {
+        return isset($this->cache['constraints'][$table]) && array_key_exists($constraint,
+            $this->cache['constraints'][$table]);
+    }
+
+    /**
+     * @param $table
+     * @return bool
+     */
+    public function hasTable($table)
+    {
+        return isset($this->cache['tables'][$table]);
     }
 
     /**

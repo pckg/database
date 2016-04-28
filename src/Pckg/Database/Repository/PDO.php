@@ -85,44 +85,25 @@ class PDO extends AbstractRepository implements Repository
 
     public function prepareQuery(Query $query, $recordClass)
     {
-        try {
-            $build = $query->buildSQL();
-            $prepare = $this->getConnection()->prepare($build['sql']);
-            $i = 1;
-            foreach ($build['prepare'] as $key => $val) {
-                if (is_array($val)) {
-                    foreach ($val as $rVal) {
-                        if (!is_numeric($key)) {
-                            $tempKey = ':' . $key;
-                        } else {
-                            $tempKey = $i;
-                        }
-
-                        $prepare->bindValue($tempKey, $rVal);
-                        if (is_numeric($key)) {
-                            $i++;
-                        }
-                    }
-                } else {
-                    if (!is_numeric($key)) {
-                        $tempKey = ':' . $key;
-                    } else {
-                        $tempKey = $i;
-                    }
-                    
-                    $prepare->bindValue($tempKey, $val);
-                    if (is_numeric($key)) {
-                        $i++;
-                    }
+        $sql = $query->buildSQL();
+        $binds = $query->buildBinds();
+        $prepare = $this->getConnection()->prepare($sql);
+        $i = 1;
+        foreach ($binds as $key => $val) {
+            if (is_array($val)) {
+                foreach ($val as $rVal) {
+                    $prepare->bindValue($i, $rVal);
+                    $i++;
                 }
+            } else {
+                $prepare->bindValue($i, $val);
+                $i++;
             }
-
-            $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
-
-            return $prepare;
-        } catch (\Exception $e) {
-            dd('pdo', $e->getMessage(), $e->getFile(), $e->getLine());
         }
+
+        $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+
+        return $prepare;
     }
 
 }

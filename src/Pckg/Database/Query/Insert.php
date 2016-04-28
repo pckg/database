@@ -21,10 +21,14 @@ class Insert extends Query
      */
     function buildSQL()
     {
-        $sql = "INSERT INTO `" . $this->table . "` " .
-            $this->buildKeys() .
-            "VALUES " . $this->buildValues();
-        return $sql;
+        return "INSERT INTO `" . $this->table . "` " .
+        $this->buildKeys() .
+        "VALUES " . $this->buildValues();
+    }
+
+    public function buildBinds()
+    {
+        return $this->getBinds(['keys', 'values']);
     }
 
     /**
@@ -48,8 +52,8 @@ class Insert extends Query
     {
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
-            $arrValues[] = ':' . $key;
-            $this->bind($val, $key);
+            $arrValues[] = '?';
+            $this->bind($val, 'values');
         }
 
         return "(" . implode(", ", $arrValues) . ") ";
@@ -57,7 +61,7 @@ class Insert extends Query
 
     /**
      * @param $insert
-     * @return mixed
+     * @return $this
      */
     function setInsert($insert)
     {

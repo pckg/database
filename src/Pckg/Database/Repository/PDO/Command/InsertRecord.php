@@ -92,16 +92,18 @@ class InsertRecord
     public function insert($table, array $data = [])
     {
         $query = (new Insert())->table($table)->setInsert($data);
-        $prepare = (new PrepareSQL($query, $this->repository))->execute();
+        $sql = $query->buildSQL();
+        $binds = $query->buildBinds();
+        $prepare = $this->repository->getConnection()->prepare($sql);
 
         if (!$prepare) {
             throw new Exception('Cannot prepare insert statement');
         }
 
-        foreach ($query->getBind() as $key => $val) {
-            $prepare->bindParam(':' . $key, $val);
+        foreach ($binds as $key => $val) {
+            $prepare->bindValue($key + 1, $val);
         }
-        $execute = $prepare->execute($query->getBind());
+        $execute = $prepare->execute();
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();

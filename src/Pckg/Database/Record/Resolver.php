@@ -25,6 +25,7 @@ class Resolver implements ResolverInterface
     {
         return [
             Record::class => function ($class) {
+                return new $class();
                 $result = Reflect::create($class)
                     ->getEntity()
                     ->where('slug', $this->router->get('name'))

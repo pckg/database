@@ -21,12 +21,15 @@ class Update extends Query
      */
     function buildSQL()
     {
-        $sql = "UPDATE `" . $this->table . "` " .
-            "SET " . $this->buildSet() . " " .
-            $this->buildWhere() .
-            ($this->limit ? ' LIMIT ' . $this->limit : '');
+        return "UPDATE `" . $this->table . "` " .
+        "SET " . $this->buildSet() . " " .
+        $this->buildWhere() .
+        ($this->limit ? ' LIMIT ' . $this->limit : '');
+    }
 
-        return $sql;
+    function buildBinds()
+    {
+        return $this->getBinds(['set', 'where', 'limit']);
     }
 
     // builders
@@ -47,8 +50,8 @@ class Update extends Query
                 $val = null;
             }
 
-            $arrValues[] = $keyPart . ':' . $key;
-            $this->bind[$key] = $val;
+            $arrValues[] = $keyPart . '?';
+            $this->bind['set'][] = $val;
         }
 
         return implode(", ", $arrValues);
@@ -62,6 +65,7 @@ class Update extends Query
     function setSet($set)
     {
         $this->set = $set;
+
         return $this;
     }
 
@@ -72,6 +76,7 @@ class Update extends Query
     function setTable($table)
     {
         $this->table = $table;
+
         return $this;
     }
 
@@ -82,6 +87,7 @@ class Update extends Query
     function setWhere($where)
     {
         $this->where = $where;
+
         return $this;
     }
 
@@ -92,6 +98,7 @@ class Update extends Query
     function setLimit($limit)
     {
         $this->limit = $limit;
+
         return $this;
     }
 
@@ -103,6 +110,7 @@ class Update extends Query
     function addWhere($where)
     {
         $this->where[] = $where;
+
         return $this;
     }
 }

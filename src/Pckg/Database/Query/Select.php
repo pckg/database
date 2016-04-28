@@ -28,21 +28,19 @@ class Select extends Query
      */
     function buildSQL()
     {
-        $nl = "";
+        return "SELECT " . $this->buildSelect() . " " .
+        "FROM `" . $this->table . "` " .
+        ($this->join ? $this->buildJoin() : '') .
+        $this->buildWhere() .
+        ($this->having ? $this->buildHaving() : '') .
+        ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
+        ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
+        ($this->limit ? ' LIMIT ' . $this->limit : '');
+    }
 
-        $sql = "SELECT " . $this->buildSelect() . " " . $nl .
-            "FROM `" . $this->table . "` " . $nl .
-            ($this->join ? $this->buildJoin() . $nl : '') .
-            $this->buildWhere() .
-            ($this->having ? $this->buildHaving() . $nl : '') .
-            ($this->groupBy ? ' GROUP BY ' . $this->groupBy . $nl : '') .
-            ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) . $nl : '') .
-            ($this->limit ? ' LIMIT ' . $this->limit : '');
-
-        return [
-            'sql'     => $sql,
-            'prepare' => $this->bind,
-        ];
+    public function buildBinds()
+    {
+        return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
     }
 
     public function buildSelect()

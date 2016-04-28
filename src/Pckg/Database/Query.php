@@ -46,6 +46,8 @@ abstract class Query
 
     abstract function buildSQL();
 
+    abstract function buildBinds();
+
     /**
      * @param $table
      *
@@ -136,16 +138,16 @@ abstract class Query
         } else if ($operator == 'IN') {
             if (is_array($value)) {
                 $this->where->push($this->makeKey($key) . ' IN(' . str_repeat('?, ', count($value) - 1) . '?)');
-                $this->bind($value);
+                $this->bind($value, 'where');
 
             } else if ($value instanceof Query) {
-                $this->where->push($this->makeKey($key) . ' IN(' . $value->buildSQL() . ')');
+                $this->where->push($this->makeKey($key) . ' IN(' . $value->buildSQL()['sql'] . ')');
 
             }
 
         } else {
             $this->where->push($this->makeKey($key) . ' ' . $operator . ' ?');
-            $this->bind($value);
+            $this->bind($value, 'where');
 
         }
 
@@ -157,15 +159,25 @@ abstract class Query
         return '`' . $key . '`';
     }
 
-    public function bind($val, $key = null)
+    public function bind($val, $part)
     {
-        if (!$key) {
-            $this->bind[] = $val;
-        } else {
-            $this->bind[$key] = $val;
-        }
+        $this->bind[$part][] = $val;
 
         return $this;
+    }
+
+    public function getBinds($parts = [])
+    {
+        $binds = [];
+        foreach ($parts as $part) {
+            if (isset($this->bind[$part])) {
+                foreach ($this->bind[$part] as $bind) {
+                    $binds[] = $bind;
+                }
+            }
+        }
+
+        return $binds;
     }
 
     /**

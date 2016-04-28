@@ -19,6 +19,11 @@ class Record extends Object
 
     protected $relations = [];
 
+    public function hasKey($key)
+    {
+        return $this->__isset($key);
+    }
+
     public function __isset($key)
     {
         if (method_exists($this,

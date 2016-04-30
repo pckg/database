@@ -91,7 +91,7 @@ class PDO extends AbstractRepository implements Repository
         $prepare = $this->getConnection()->prepare($sql);
 
         if (!$prepare) {
-            throw new Exception('Cannot prepare update statement');
+            throw new Exception('Cannot prepare statement');
         }
 
         $i = 1;
@@ -122,7 +122,7 @@ class PDO extends AbstractRepository implements Repository
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
-            throw new Exception('Cannot execute delete statement: ' . end($errorInfo));
+            throw new Exception('Cannot execute prepared statement: ' . end($errorInfo));
         }
 
         return $execute;

@@ -86,8 +86,7 @@ class Record extends Object
             return chain($chains);
         }
 
-        db(8);
-        dd('Method ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this));
+        dd('Method (key) ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this), db(8));
     }
 
     private function getEntityChains(Entity $entity, $key)

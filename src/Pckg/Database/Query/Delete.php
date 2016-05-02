@@ -25,4 +25,21 @@ class Delete extends Query
         ($this->where ? $this->buildWhere() : '') .
         ($this->limit ? 'LIMIT ' . $this->limit : '');
     }
+
+    function buildBinds()
+    {
+        return $this->getBinds(['where', 'limit']);
+    }
+
+    /**
+     * @param $table
+     * @return $this
+     */
+    function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
 }

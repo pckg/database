@@ -25,7 +25,9 @@ trait RelationMethods
      */
     public function hasMany($hasMany)
     {
-        return new HasMany($this, $hasMany);
+        return (new HasMany($this, $hasMany))
+            ->foreignKey('dynamic_table_id')
+            ->primaryKey('id');
     }
 
     /**

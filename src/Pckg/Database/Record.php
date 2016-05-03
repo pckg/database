@@ -55,7 +55,7 @@ class Record extends Object
         }
 
         /**
-         * Return value from relation.
+         * Return value from existing relation.
          */
         if ($this->relationExists($key)) {
             return $this->getRelation($key);
@@ -69,7 +69,7 @@ class Record extends Object
         }
 
         /**
-         * Return value from relation.
+         * Return value from empty relation.
          */
         if (method_exists($entity, $key)) {
             $relation = $entity->{$key}();

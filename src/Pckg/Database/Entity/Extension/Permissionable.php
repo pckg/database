@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Entity\Extension;
 
-use Pckg\Database\Entity\Adapter\Auth;
+use Pckg\Auth\Entity\Adapter\Auth;
 use Pckg\Database\Record;
 
 /**

@@ -6,7 +6,7 @@ use Pckg\Database\Entity\Adapter\Auth;
 use Pckg\Database\Record;
 
 /**
- * Class Permissionable
+ * Class Permissionable - permissionalisation - p17n
  * @package Pckg\Database\Entity\Extension
  */
 trait Permissionable
@@ -20,7 +20,7 @@ trait Permissionable
     /**
      * @var string
      */
-    protected $permissionableTableSuffix = '_permissions';
+    protected $permissionableTableSuffix = '_p17n';
 
     /**
      * @var string

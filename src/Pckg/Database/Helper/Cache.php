@@ -47,10 +47,10 @@ class Cache extends FrameworkCache
         $this->repository = $repository;
         $this->readFromCache();
 
-        //if (!$this->built) {
-        $this->buildCache();
-        $this->writeToCache();
-        //}
+        if (!$this->built) {
+            $this->buildCache();
+            $this->writeToCache();
+        }
     }
 
     protected function buildCache()

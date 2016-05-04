@@ -92,30 +92,29 @@ class UpdateRecord
      */
     public function update($table, array $data = [])
     {
+        /**
+         * We will update record in $table with $data ...
+         */
         $query = (new Update())->setTable($table)->setSet($data);
 
-        foreach ($this->entity->getRepository()->getCache()->getTablePrimaryKeys($table) as $primaryKey) {
-            $query->where($primaryKey, $data[$primaryKey]);
-        }
+        /**
+         * ... add primary key condition ...
+         */
+        $query->primaryWhere($this->entity, $data, $table);
 
-        $sql = $query->buildSQL();
-        $binds = $query->buildBinds();
-        $prepare = $this->repository->getConnection()->prepare($sql);
+        /**
+         * ... prepare query ...
+         */
+        $prepare = $this->repository->prepareQuery($query, null);
 
-        if (!$prepare) {
-            throw new Exception('Cannot prepare update statement');
-        }
+        /**
+         * ... and execute it.
+         */
+        $this->repository->executePrepared($prepare);
 
-        foreach ($binds as $key => $val) {
-            $prepare->bindValue($key + 1, $val);
-        }
-
-        $execute = $prepare->execute();
-
-        if (!$execute) {
-            $errorInfo = $prepare->errorInfo();
-            throw new Exception('Cannot execute update statement: ' . end($errorInfo));
-        }
+        /**
+         * @T00D00 - We should return number of updated records or something?
+         */
 
         return true;
     }

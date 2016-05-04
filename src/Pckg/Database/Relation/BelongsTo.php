@@ -23,12 +23,12 @@ class BelongsTo extends Relation
      */
     public function fillRecord(Record $record)
     {
-        $rightForeignKey = $this->getRightForeignKey();
-
+        $foreignKey = $this->getForeignKey();
         $rightEntity = $this->getRightEntity();
-        if ($record->{$rightForeignKey}) {
+
+        if ($record->{$foreignKey}) {
             $record->setRelation($this->fill,
-                (new GetRecords($rightEntity->where('id', $record->{$rightForeignKey})))->executeOne());
+                (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne());
         } else {
             $record->setRelation($this->fill, null);
         }
@@ -40,7 +40,7 @@ class BelongsTo extends Relation
     {
         $arrIds = [];
 
-        $rightForeignKey = $this->getRightForeignKey();
+        $rightForeignKey = $this->getForeignKey();
         foreach ($collection as $record) {
             if ($record->{$rightForeignKey}) {
                 $arrIds[$record->{$rightForeignKey}] = $record->{$rightForeignKey};

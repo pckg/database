@@ -144,6 +144,13 @@ class Entity
         return $this->record;
     }
 
+    public function setRecordClass($class)
+    {
+        $this->record = $class;
+
+        return $this;
+    }
+
     /**
      * @param $table
      *

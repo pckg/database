@@ -61,8 +61,7 @@ abstract class AbstractRepository implements Repository
 
             return $execute;
         } catch (\Exception $e) {
-            d('abtract repository', $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
-            //db();
+            d('abstract repository', $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
         }
     }
 

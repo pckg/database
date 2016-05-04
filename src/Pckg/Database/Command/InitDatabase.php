@@ -1,7 +1,4 @@
-<?php
-
-
-namespace Pckg\Database\Command;
+<?php namespace Pckg\Database\Command;
 
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
@@ -40,16 +37,19 @@ class InitDatabase extends AbstractChainOfReponsibility
      */
     public function execute(callable $next)
     {
+        /**
+         * Skip database initialization if connections are not defined.
+         */
         if (!$this->config->get('database')) {
             return $next();
         }
-        
+
         foreach ($this->config->get('database') as $name => $config) {
             if ($config['driver'] == 'faker') {
                 $repository = new RepositoryFaker(Factory::create());
 
             } else {
-                $pdo = new \PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
+                $pdo = new PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
                     $config['user'], $config['pass']);
 
                 if ($this->context->exists(DebugBar::class)) {
@@ -58,10 +58,12 @@ class InitDatabase extends AbstractChainOfReponsibility
 
                     if ($debugBar->hasCollector('pdo')) {
                         $pdoCollector = $debugBar->getCollector('pdo');
-                        $pdoCollector->addConnection($tracablePdo, $name);
                     } else {
-                        $debugBar->addCollector(new PDOCollector($tracablePdo));
+                        $debugBar->addCollector($pdoCollector = new PDOCollector($tracablePdo));
+                        $name = 'default';
                     }
+
+                    $pdoCollector->addConnection($tracablePdo, $name);
                 }
 
                 $repository = new RepositoryPDO($pdo);

@@ -28,14 +28,16 @@ class Select extends Query
      */
     function buildSQL()
     {
-        return "SELECT " . $this->buildSelect() . " " .
-        "FROM `" . $this->table . "` " .
-        ($this->join ? $this->buildJoin() : '') .
-        $this->buildWhere() .
-        ($this->having ? $this->buildHaving() : '') .
-        ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
-        ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
-        ($this->limit ? ' LIMIT ' . $this->limit : '');
+        $sql = "SELECT " . $this->buildSelect() . " " .
+            "FROM `" . $this->table . "` " .
+            ($this->join ? $this->buildJoin() : '') .
+            $this->buildWhere() .
+            ($this->having ? $this->buildHaving() : '') .
+            ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
+            ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
+            ($this->limit ? ' LIMIT ' . $this->limit : '');
+
+        return $sql;
     }
 
     public function buildBinds()

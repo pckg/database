@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Repository;
 
+use Exception;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
@@ -83,11 +84,16 @@ class PDO extends AbstractRepository implements Repository
         return $this;
     }
 
-    public function prepareQuery(Query $query, $recordClass)
+    public function prepareQuery(Query $query, $recordClass = null)
     {
         $sql = $query->buildSQL();
         $binds = $query->buildBinds();
         $prepare = $this->getConnection()->prepare($sql);
+
+        if (!$prepare) {
+            throw new Exception('Cannot prepare update statement');
+        }
+
         $i = 1;
         foreach ($binds as $key => $val) {
             if (is_array($val)) {
@@ -101,9 +107,33 @@ class PDO extends AbstractRepository implements Repository
             }
         }
 
-        $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+        if ($recordClass) {
+            $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+        } else {
+            $prepare->setFetchMode(\PDO::FETCH_OBJ);
+        }
 
         return $prepare;
+    }
+
+    public function executePrepared($prepare)
+    {
+        $execute = $prepare->execute();
+
+        if (!$execute) {
+            $errorInfo = $prepare->errorInfo();
+            throw new Exception('Cannot execute delete statement: ' . end($errorInfo));
+        }
+
+        return $execute;
+    }
+
+    public function prepareExecuteAndFetchAll(Query $query)
+    {
+        $prepare = $this->prepareQuery($query);
+        $execute = $this->executePrepared($prepare);
+
+        return $this->fetchAllPrepared($prepare);
     }
 
 }

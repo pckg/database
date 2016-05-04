@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Relation\Helper\RightEntity;
 
@@ -49,6 +50,70 @@ abstract class Relation
     protected $record;
 
     protected $fill;
+
+    protected $primaryKey;
+
+    protected $primaryCollectionKey;
+
+    protected $foreignKey;
+
+    protected $foreignCollectionKey;
+
+    public function primaryKey($primaryKey)
+    {
+        $this->primaryKey = $primaryKey;
+
+        return $this;
+    }
+
+    public function foreignKey($foreignKey)
+    {
+        $this->foreignKey = $foreignKey;
+
+        return $this;
+    }
+
+    public function primaryCollectionKey($primaryCollectionKey)
+    {
+        $this->primaryCollectionKey = $primaryCollectionKey;
+
+        return $this;
+    }
+
+    public function foreignCollectionKey($foreignCollectionKey)
+    {
+        $this->foreignCollectionKey = $foreignCollectionKey;
+
+        return $this;
+    }
+
+    public function getPrimaryKey()
+    {
+        return $this->primaryKey
+            ? $this->primaryKey
+            : $this->getLeftForeignKey();
+    }
+
+    public function getForeignKey()
+    {
+        return $this->foreignKey
+            ? $this->foreignKey
+            : $this->getRightForeignKey();
+    }
+
+    public function getPrimaryCollectionKey()
+    {
+        return $this->primaryCollectionKey
+            ? $this->primaryCollectionKey
+            : Convention::nameOne($this->getLeftForeignKey());
+    }
+
+    public function getForeignCollectionKey()
+    {
+        return $this->foreignCollectionKey
+            ? $this->foreignCollectionKey
+            : Convention::nameMultiple($this->getRightForeignKey());
+    }
 
     /**
      * @param $left

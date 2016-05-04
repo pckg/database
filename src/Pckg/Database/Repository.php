@@ -52,7 +52,7 @@ interface Repository
      */
     public function insert(Record $record, Entity $entity);
 
-    public function prepareQuery(Query $query, $recordClass);
+    public function prepareQuery(Query $query, $recordClass = null);
 
     public function executePrepared($prepare);
 

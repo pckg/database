@@ -191,12 +191,14 @@ class Record extends Object
     /**
      * @return Record
      */
-    public function save()
+    public function save(Entity $entity = null, Repository $repository = null)
     {
         if ($this->id) {
-            return $this->update();
+            return $this->update($entity, $repository);
+
         } else {
-            return $this->insert();
+            return $this->insert($entity, $repository);
+
         }
     }
 

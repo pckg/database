@@ -91,25 +91,24 @@ class InsertRecord
      */
     public function insert($table, array $data = [])
     {
+        /**
+         * We will insert $data into $table ...
+         */
         $query = (new Insert())->table($table)->setInsert($data);
-        $sql = $query->buildSQL();
-        $binds = $query->buildBinds();
-        $prepare = $this->repository->getConnection()->prepare($sql);
 
-        if (!$prepare) {
-            throw new Exception('Cannot prepare insert statement');
-        }
+        /**
+         * ... prepare query ...
+         */
+        $prepare = $this->repository->prepareQuery($query);
 
-        foreach ($binds as $key => $val) {
-            $prepare->bindValue($key + 1, $val);
-        }
-        $execute = $prepare->execute();
+        /**
+         * ... execute it ...
+         */
+        $this->repository->executePrepared($prepare);
 
-        if (!$execute) {
-            $errorInfo = $prepare->errorInfo();
-            throw new Exception('Cannot execute insert statement: ' . end($errorInfo) . ' ' . $prepare->queryString);
-        }
-
+        /**
+         * ... and return inserted ID.
+         */
         return $this->repository->getConnection()->lastInsertId();
     }
 

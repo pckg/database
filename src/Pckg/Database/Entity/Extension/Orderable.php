@@ -12,7 +12,7 @@ trait Orderable
     /**
      * @var string
      */
-    protected $orderableField = 'ord';
+    protected $orderableField = 'order';
 
     /**
      * @var string
@@ -24,7 +24,7 @@ trait Orderable
      */
     public function initOrderableExtension()
     {
-        $this->getQuery()->orderBy($this->orderableField, $this->orderableDirection);
+        $this->getQuery()->orderBy('`' . $this->orderableField . '` ' . $this->orderableDirection);
     }
 
 }

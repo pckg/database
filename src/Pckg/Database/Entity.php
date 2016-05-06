@@ -306,7 +306,7 @@ class Entity
         // Get extensions' foreign keys
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 3) == 'get' && substr($method, -11) == 'ForeignKeys') {
-                $values[$table] = array_merge($this->{$method}($record), $values[$table]);
+                $values[$table] = array_merge($this->{$method}($record), isset($values[$table]) ? $values[$table] : []);
             }
         }
 

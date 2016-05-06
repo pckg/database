@@ -141,4 +141,15 @@ trait Translatable
         }
     }
 
+    public function __issetTranslatableExtension($key)
+    {
+        $table = $this->getTable() . $this->translatableTableSuffix;
+
+        if ($this->getRepository()->getCache()->tableHasField($table, $key)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -71,7 +71,7 @@ trait Permissionable
     public function getPermissionableForeignKeys(Record $record)
     {
         return [
-            $this->permissionablePermissionField => $this->permissionableAuth->getGroupId(),
+            $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
             $this->primary = $record->{$this->primary}
         ];
     }

@@ -26,16 +26,37 @@ class Record extends Object
 
     public function __isset($key)
     {
-        if (method_exists($this,
-                'get' . ucfirst(Convention::toCamel($key))) || $this->keyExists($key) || $this->relationExists($key)
-        ) {
+        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+            return true;
+        }
+
+        if ($this->keyExists($key)) {
+            return true;
+        }
+
+        if ($this->relationExists($key)) {
             return true;
         }
 
         $entity = $this->getEntity();
 
-        return method_exists($entity, $key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(),
-            $key);
+        if (method_exists($entity, $key)) {
+            return true;
+        }
+
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            return true;
+        }
+
+        foreach (get_class_methods($entity) as $method) {
+            if (substr($method, 0, 7) == '__isset' && substr($method, -9) == 'Extension') {
+                if ($entity->$method($key)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

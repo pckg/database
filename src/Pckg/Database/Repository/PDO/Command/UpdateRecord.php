@@ -49,6 +49,7 @@ class UpdateRecord
 
     /**
      * @param ...$tables
+     *
      * @return $this
      */
     public function setTables(...$tables)
@@ -87,6 +88,7 @@ class UpdateRecord
     /**
      * @param       $table
      * @param array $data
+     *
      * @return bool
      * @throws Exception
      */
@@ -122,16 +124,21 @@ class UpdateRecord
     /**
      * @param       $table
      * @param array $data
+     *
      * @return bool|null
      * @throws Exception
      */
     public function updateOrInsert($table, array $data = [])
     {
         $primaryKeys = $this->repository->getCache()->getTablePrimaryKeys($table);
+        $this->entity->setTable($table);
         foreach ($primaryKeys as $primaryKey) {
             $this->entity->where($primaryKey, $data[$primaryKey]);
         }
-        $record = $this->entity->setTable($table)->one();
+
+        $this->entity->getQuery()->select(['`' . $table . '`.*']);
+
+        $record = $this->entity->one();
 
         if ($record) {
             return $this->update($table, $data);

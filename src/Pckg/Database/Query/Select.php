@@ -54,6 +54,17 @@ class Select extends Query
         return implode(', ', $this->select);
     }
 
+    public function select($fields)
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        $this->select = $fields;
+
+        return $this;
+    }
+
     /**
      * @param $select
      *

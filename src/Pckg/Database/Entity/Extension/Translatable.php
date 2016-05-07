@@ -106,7 +106,6 @@ trait Translatable
             $this->addTranslatableConditionIfNot($relation);
 
         } else {
-            d('not callable');
             $this->addTranslatableCondition($relation);
 
         }

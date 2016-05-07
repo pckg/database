@@ -4,6 +4,8 @@ namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Query;
+use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
@@ -13,6 +15,22 @@ use Pckg\Database\Relation;
  */
 class HasMany extends Relation
 {
+
+    public function mergeToQuery(Select $query)
+    {
+        $condition = '';
+        if ($this->condition) {
+            $condition = ' AND ' . implode(' AND ', $this->condition);
+        }
+
+        $query->join($this->getKeyCondition() . $condition);
+
+        foreach ($this->select as $select) {
+            $query->prependSelect($select);
+        }
+
+        return $this;
+    }
 
     public function getLeftForeignKey()
     {

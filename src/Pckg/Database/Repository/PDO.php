@@ -116,13 +116,19 @@ class PDO extends AbstractRepository implements Repository
         return $prepare;
     }
 
+    /**
+     * @param $prepare \PDOStatement
+     *
+     * @return mixed
+     * @throws Exception
+     */
     public function executePrepared($prepare)
     {
         $execute = $prepare->execute();
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
-            throw new Exception('Cannot execute prepared statement: ' . end($errorInfo));
+            throw new Exception('Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString);
         }
 
         return $execute;

@@ -44,12 +44,13 @@ trait QueryBuilder
      */
     public function join($table, $on = null, $where = null)
     {
-        // @T00D00 - refactor join method
         if ($table instanceof Relation) {
-            $table = $table->getCondition();
-        }
+            $table->mergeToQuery($this->getQuery());
 
-        $this->getQuery()->join($table, $on, $where);
+        } else {
+            $this->getQuery()->join($table, $on, $where);
+
+        }
 
         return $this;
     }
@@ -63,6 +64,10 @@ trait QueryBuilder
      */
     public function where($key, $value, $operator = '=')
     {
+        if (!strpos($key, '.')) {
+            $key = $this->table . '`.`' . $key;
+        }
+
         $this->getQuery()->where($key, $value, $operator);
 
         return $this;

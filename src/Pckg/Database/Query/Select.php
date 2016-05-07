@@ -13,11 +13,15 @@ class Select extends Query
     /**
      * @var
      */
-    protected $select = ['*'];
+    protected $select = [];
 
-    public function fields($fields)
+    public function table($table)
     {
-        $this->select = $fields;
+        $this->table = $table;
+
+        if (!in_array('`' . $table . '`.*', $this->select)) {
+            $this->select[] = '`' . $table . '`.*';
+        }
 
         return $this;
     }
@@ -55,10 +59,30 @@ class Select extends Query
      *
      * @return $this
      */
-    public function addSelect($select)
+    public function addSelect($fields)
     {
-        $this->select[] = $select;
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        foreach ($fields as $field) {
+            $this->select[] = $field;
+        }
 
         return $this;
     }
+
+    public function prependSelect($fields = [])
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        foreach ($fields as $field) {
+            array_unshift($this->select, $field);
+        }
+
+        return $this;
+    }
+
 }

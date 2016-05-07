@@ -2,10 +2,12 @@
 
 namespace Pckg\Database\Entity\Extension;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Entity\Extension\Adapter\Lang;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
+use Pckg\Database\Relation\HasMany;
 
 /**
  * Class Translatable
@@ -25,7 +27,7 @@ trait Translatable
     protected $translatableLanguageField = 'language_id';
 
     /**
-     * @var
+     * @var Lang
      */
     protected $translatableLang;
 
@@ -81,17 +83,56 @@ trait Translatable
      */
     public function translations(callable $callable = null)
     {
-        $relation = $this->hasMany((new Entity($this->getRepository()))->setTable($this->getTable() . $this->getTranslatableTableSuffix()))
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+        $repository = $this->getRepository();
+
+        /**
+         * @T00D00 - language should be binded (PDO) ...
+         */
+        $relation = $this->hasMany((new Entity($repository))->setTable($translaTable))
             ->primaryKey('id')
             ->foreignKey('id')
             ->primaryCollectionKey('_translatee')
-            ->foreignCollectionKey('_translations');
+            ->foreignCollectionKey('_translations')
+            ->addSelect(['`' . $translaTable . '`.*']);
 
         if ($callable) {
-            $callable($relation->getRightEntity()->getQuery());
+            $query = $relation->getRightEntity()->getQuery();
+
+            Reflect::call($callable, [
+                $query, $relation, $this
+            ]);
+
+            $this->addTranslatableConditionIfNot($relation);
+
+        } else {
+            d('not callable');
+            $this->addTranslatableCondition($relation);
+
         }
 
         return $relation;
+    }
+
+    private function addTranslatableConditionIfNot(HasMany $relation)
+    {
+        $foundLanguageCondition = false;
+        foreach ($relation->getCondition() as $condition) {
+            if (strpos($condition, 'language_id')) {
+                $foundLanguageCondition = true;
+            }
+        }
+
+        if (!$foundLanguageCondition) {
+            $this->addTranslatableCondition($relation);
+        }
+    }
+
+    private function addTranslatableCondition(HasMany $relation)
+    {
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+
+        $relation->addCondition('`' . $translaTable . '`.`' . $this->translatableLanguageField . '` = \'' . $this->translatableLang->langId() . '\'');
     }
 
     public function withTranslations(callable $callable = null)
@@ -111,9 +152,9 @@ trait Translatable
         });
     }
 
-    public function joinTranslation()
+    public function joinTranslation(callable $callable = null)
     {
-        return $this->join($this->translations());
+        return $this->join($this->translations($callable));
     }
 
     public function setTranslatableLang(Lang $lang)

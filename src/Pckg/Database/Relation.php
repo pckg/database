@@ -59,6 +59,41 @@ abstract class Relation
 
     protected $foreignCollectionKey;
 
+    protected $select = [];
+
+    protected $condition = [];
+
+    public function addSelect($fields = [])
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        foreach ($fields as $field) {
+            $this->select[] = $field;
+        }
+
+        return $this;
+    }
+
+    public function addCondition($conditions = [])
+    {
+        if (!is_array($conditions)) {
+            $conditions = [$conditions];
+        }
+
+        foreach ($conditions as $condition) {
+            $this->condition[] = $condition;
+        }
+
+        return $this;
+    }
+
+    public function getCondition()
+    {
+        return $this->condition;
+    }
+
     public function primaryKey($primaryKey)
     {
         $this->primaryKey = $primaryKey;
@@ -211,14 +246,14 @@ abstract class Relation
         return $this;
     }
 
-    public function getCondition()
-    {
-        return $this->getKeyCondition();
-    }
-
+    /**
+     * @T00D00 - join type needs to be dynamic!
+     *
+     * @return string
+     */
     public function getKeyCondition()
     {
-        return ' INNER JOIN `' . $this->getRightEntity()->getTable() . '`' .
+        return ' LEFT JOIN `' . $this->getRightEntity()->getTable() . '`' .
         ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
         ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
     }

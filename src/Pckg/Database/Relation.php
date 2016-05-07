@@ -253,7 +253,7 @@ abstract class Relation
      */
     public function getKeyCondition()
     {
-        return ' LEFT JOIN `' . $this->getRightEntity()->getTable() . '`' .
+        return 'LEFT JOIN `' . $this->getRightEntity()->getTable() . '`' .
         ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
         ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
     }

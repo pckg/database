@@ -3,6 +3,7 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
+use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
@@ -13,6 +14,22 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 class BelongsTo extends Relation
 {
+
+    public function mergeToQuery(Select $query)
+    {
+        $condition = '';
+        if ($this->condition) {
+            $condition = ' AND ' . implode(' AND ', $this->condition);
+        }
+
+        $query->join($this->getKeyCondition() . $condition);
+
+        foreach ($this->select as $select) {
+            $query->prependSelect($select);
+        }
+
+        return $this;
+    }
 
     /**
      * @param Record $record
@@ -38,6 +55,16 @@ class BelongsTo extends Relation
 
     public function fillCollection(Collection $collection)
     {
+        if (!$collection->count()) {
+            message('no count');
+            return $collection;
+        } else {
+            message(
+                'filling collection of ' . get_class($collection->first()) . ' : ' .
+                $this->getLeftEntity()->getTable() . '.' . $this->getPrimaryKey() . ' = ' . $this->getRightEntity()->getTable() . '.' . $this->getForeignKey()
+            );
+        }
+
         $arrIds = [];
 
         $rightForeignKey = $this->getForeignKey();

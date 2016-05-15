@@ -38,6 +38,9 @@ trait With
 
         foreach ($this->autocall as $autocall) {
             if (substr($method, 0, strlen($autocall)) == $autocall) {
+                /**
+                 * We are calling 
+                 */
                 $relation = $object->{lcfirst(substr($method, strlen($autocall)))}();
 
                 $return = $this->{$autocall}($relation);
@@ -63,6 +66,10 @@ trait With
      */
     public function with($relation)
     {
+        if ($relation == $this) {
+            return $this;
+        }
+        
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
 

@@ -18,6 +18,19 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
 
+    protected function returnRelation($relation, $entity, callable $callback = null)
+    {
+        //d('creating relation ' . (is_object($relation) ? get_class($relation) : $relation) . ' on ' . (is_object($entity) ? get_class($entity) : $entity));
+
+        $relation = new $relation($this, $entity);
+
+        if ($callback) {
+            $callback($relation);
+        }
+
+        return $relation;
+    }
+
     /**
      * @param $hasMany
      *
@@ -43,9 +56,9 @@ trait RelationMethods
      *
      * @return BelongsTo
      */
-    public function belongsTo($belongsTo)
+    public function belongsTo($entity, callable $callback = null)
     {
-        return new BelongsTo($this, $belongsTo);
+        return $this->returnRelation(BelongsTo::class, $entity, $callback);
     }
 
     /**

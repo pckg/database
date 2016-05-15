@@ -71,12 +71,12 @@ class Record extends Object
         /**
          * Return value via getter
          */
-        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+        if ($key != 'value' && method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
             return $this->{'get' . ucfirst(Convention::toCamel($key))}();
         }
 
         /**
-         * Return value from existing relation.
+         * Return value from existing relation (Collection/Record).
          */
         if ($this->relationExists($key)) {
             return $this->getRelation($key);
@@ -167,6 +167,11 @@ class Record extends Object
     public function getRelation($key)
     {
         return $this->relations[$key];
+    }
+
+    public function getRelations()
+    {
+        return $this->relations;
     }
 
     public function setEntityClass($class)

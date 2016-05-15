@@ -39,7 +39,7 @@ class HasMany extends Relation
         return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
     }
 
-    public function fillRecord(Record $record)
+    public function fillRecord(Record $record, $debug = false)
     {
         $primaryKey = $this->getPrimaryKey();
         $foreignKey = $this->getForeignKey();

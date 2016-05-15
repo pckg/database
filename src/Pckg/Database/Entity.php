@@ -52,6 +52,8 @@ class Entity
      */
     protected $extensions = [];
 
+    protected $useCache;
+
     /**
      * @param Repository $repository
      */

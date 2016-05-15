@@ -106,8 +106,10 @@ abstract class Query
             }
 
         } else {
-            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ?');
-            $this->bind($value, 'where');
+            $this->where->push($this->makeKey($key) . ($value ? ' ' . $operator . ' ?' : ' IS NULL'));
+            if ($value) {
+                $this->bind($value, 'where');
+            }
 
         }
 
@@ -116,7 +118,7 @@ abstract class Query
 
     private function makeKey($key)
     {
-        return '`' . $key . '`';
+        return is_numeric($key) ? $key : '`' . $key . '`';
     }
 
     public function bind($val, $part)

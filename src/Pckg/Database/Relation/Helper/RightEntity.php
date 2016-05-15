@@ -3,6 +3,7 @@
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 trait RightEntity
@@ -44,8 +45,15 @@ trait RightEntity
 
     public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue,
-            is_array($primaryValue) ? 'IN' : '=')))->executeAll();
+        $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
+
+        foreach ($this->condition as $condition) {
+            $entity->where(function (Parenthesis $parenthesis) use ($condition) {
+                $parenthesis->push($condition);
+            });
+        }
+
+        return (new GetRecords($entity))->executeAll();
     }
 
 }

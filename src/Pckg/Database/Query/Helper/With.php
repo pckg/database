@@ -15,11 +15,11 @@ trait With
     /**
      * @var array
      */
-    protected $autocall = [
+    protected $autocallPrefixes = [
         'withRequired',
         'with',
         'join',
-        'where'
+        'where',
     ];
 
     protected $with = [];
@@ -27,33 +27,47 @@ trait With
     /**
      * @param $method
      * @param $args
-     * @return $this
+     *
+     * @return $this|Relation
      * @throws Exception
      */
-    public function callWith($method, $args, $object)
+    public function callWith($method, $args, $object, $returnRelation = false)
     {
         if (is_string($object)) {
             $object = Reflect::create($object);
         }
 
-        foreach ($this->autocall as $autocall) {
-            if (substr($method, 0, strlen($autocall)) == $autocall) {
+        foreach ($this->autocallPrefixes as $prefix) {
+            if (substr($method, 0, strlen($prefix)) == $prefix) {
                 /**
-                 * We are calling 
+                 * We are calling relation function without arguments: $entity->withSomething();.
                  */
-                $relation = $object->{lcfirst(substr($method, strlen($autocall)))}();
+                $relation = $object->{lcfirst(substr($method, strlen($prefix)))}();
+                //message('Creating relation ' . get_class($object) . ' ' . lcfirst(substr($method, strlen($autocall))));
 
-                $return = $this->{$autocall}($relation);
+                /**
+                 * We'll return $entity->with($relation), which is Relation;
+                 */
+                $return = $this->{$prefix}($relation);
 
-                if (isset($args[0]) && $args[0] instanceof Closure) {
+                /**
+                 * If callback was added, we run it.
+                 */
+                if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+                    //d('Callback on ' . get_class($object) . ' ' . lcfirst(substr($method, strlen($autocall))));
                     $args[0]($relation);
                 }
 
-                return $return;
+                /**
+                 * Then we return relation.
+                 */
+                return $returnRelation
+                    ? $relation
+                    : $return;
             }
         }
 
-        throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class);
+        throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class . ' (callWith)');
     }
 
     public function getWith()
@@ -69,7 +83,7 @@ trait With
         if ($relation == $this) {
             return $this;
         }
-        
+
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
 

@@ -110,6 +110,18 @@ class Record extends Object
         dd('Method (key) ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this), db(8));
     }
 
+    public function __call($method, $args)
+    {
+        /**
+         * Return value from empty relation.
+         */
+        $entity = $this->getEntity();
+        $relation = $entity->callWith($method, $args, $entity, true);
+        $relation->fillRecord($this, true);
+
+        return $this->getRelation(lcfirst(substr($method, 4)));
+    }
+
     private function getEntityChains(Entity $entity, $key)
     {
         $chains = [];
@@ -190,7 +202,7 @@ class Record extends Object
     }
 
     /**
-     * @return mixed
+     * @return Entity
      */
     public function getEntity()
     {

@@ -41,8 +41,6 @@ class Select extends Query
             ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
             ($this->limit ? ' LIMIT ' . $this->limit : '');
 
-        //d($sql);
-
         return $sql;
     }
 

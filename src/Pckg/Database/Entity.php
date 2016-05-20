@@ -3,6 +3,7 @@
 namespace Pckg\Database;
 
 use Exception;
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;

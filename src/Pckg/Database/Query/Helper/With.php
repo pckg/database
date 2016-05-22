@@ -67,7 +67,7 @@ trait With
             }
         }
 
-        throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class . ' (callWith)');
+        throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class . ' (With->callWith)');
     }
 
     public function getWith()

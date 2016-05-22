@@ -119,7 +119,9 @@ class Record extends Object
         $relation = $entity->callWith($method, $args, $entity, true);
         $relation->fillRecord($this, true);
 
-        return $this->getRelation(lcfirst(substr($method, 4)));
+        $data = $this->getRelation(lcfirst(substr($method, 4)));
+
+        return $data;
     }
 
     private function getEntityChains(Entity $entity, $key)

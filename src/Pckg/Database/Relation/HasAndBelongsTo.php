@@ -45,6 +45,7 @@ class HasAndBelongsTo extends HasMany
         $leftRecordKey = Convention::nameOne($rightForeignKey);
 
         // get records from middle (mtm) entity
+        message('getting middle collection ' . get_class($middleEntity) . ' ' . $leftForeignKey . ' = ' . $record->id);
         $middleCollection = $this->getMiddleCollection($middleEntity, $leftForeignKey, $record->id);
 
         // get right record ids and preset middle record with null values
@@ -58,12 +59,15 @@ class HasAndBelongsTo extends HasMany
         // prepare record for mtm relation and right relation
         $record->setRelation($this->fill, $middleCollection);
         $record->setRelation($rightCollectionKey, new Collection());
+        message($this->fill . ' - ' . $rightCollectionKey);
 
         if ($arrRightIds) {
             // get all right records
+            message('getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
             $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
 
             // set relation
+            message('setting record relation ' . $rightCollectionKey . ' ' . $rightCollection->count());
             $record->setRelation($rightCollectionKey, $rightCollection);
 
             // we also have to fill it with relations

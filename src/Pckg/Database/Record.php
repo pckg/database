@@ -2,6 +2,7 @@
 
 namespace Pckg\Database;
 
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 
@@ -156,14 +157,32 @@ class Record extends Object
         foreach ($values as $key => $value) {
             if (is_object($value)) {
                 $return[$key] = $this->__toArray($value->__toArray(), $depth - 1);
+
             } else if (is_array($value)) {
                 $return[$key] = $this->__toArray($value, $depth - 1);
+
             } else {
                 $return[$key] = $value;
+                
+            }
+        }
+
+        foreach ($this->relations as $key => $value) {
+            if ($value instanceof Record) {
+                $return[$key] = $value->__toArray(null, $depth - 1);
+
+            } elseif ($value instanceof Collection) {
+                $return[$key] = $value->__toArray(null, $depth - 1);
+
             }
         }
 
         return $return;
+    }
+
+    public function toJSON()
+    {
+        return json_encode($this->__toArray());
     }
 
     public function relationExists($key)

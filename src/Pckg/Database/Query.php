@@ -86,6 +86,10 @@ abstract class Query
 
     public function where($key, $value = null, $operator = '=')
     {
+        if (is_array($value)) {
+            $operator = 'IN';
+        }
+        
         if (is_callable($key)) {
             $key($this->where);
 

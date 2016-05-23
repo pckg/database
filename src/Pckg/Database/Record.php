@@ -67,8 +67,6 @@ class Record extends Object
      */
     public function __get($key)
     {
-        $entity = $this->getEntity();
-
         /**
          * Return value via getter
          */
@@ -86,7 +84,13 @@ class Record extends Object
         /**
          * Return value, even if it's null or not set.
          */
-        if ($this->keyExists($key) || $entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+
+        if ($this->keyExists($key)) {
+            return $this->getValue($key);
+        }
+
+        $entity = $this->getEntity();
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
             return $this->getValue($key);
         }
 
@@ -229,7 +233,7 @@ class Record extends Object
     {
         return is_object($this->entity)
             ? $this->entity
-            : Reflect::create($this->getEntityClass());
+            : $this->entity = Reflect::create($this->getEntityClass());
     }
 
     public function setEntity($entity)

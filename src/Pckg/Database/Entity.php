@@ -323,7 +323,11 @@ class Entity
     {
         $this->applyExtensions();
 
-        return $this->repository->one($this);
+        $one = $this->repository->one($this);
+
+        $this->resetQuery();
+
+        return $one;
     }
 
     /**
@@ -333,7 +337,11 @@ class Entity
     {
         $this->applyExtensions();
 
-        return $this->repository->all($this);
+        $all = $this->repository->all($this);
+
+        $this->resetQuery();
+
+        return $all;
     }
 
     /**

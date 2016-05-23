@@ -87,31 +87,35 @@ class PDO extends AbstractRepository implements Repository
     public function prepareQuery(Query $query, $recordClass = null)
     {
         $sql = $query->buildSQL();
-        $binds = $query->buildBinds();
-        $prepare = $this->getConnection()->prepare($sql);
+        $prepare = measure('Prepare query: ' . $sql, function () use ($query, $sql, $recordClass) {
+            $binds = $query->buildBinds();
+            $prepare = $this->getConnection()->prepare($sql);
 
-        if (!$prepare) {
-            throw new Exception('Cannot prepare statement');
-        }
+            if (!$prepare) {
+                throw new Exception('Cannot prepare statement');
+            }
 
-        $i = 1;
-        foreach ($binds as $key => $val) {
-            if (is_array($val)) {
-                foreach ($val as $rVal) {
-                    $prepare->bindValue($i, $rVal);
+            $i = 1;
+            foreach ($binds as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $rVal) {
+                        $prepare->bindValue($i, $rVal);
+                        $i++;
+                    }
+                } else {
+                    $prepare->bindValue($i, $val);
                     $i++;
                 }
-            } else {
-                $prepare->bindValue($i, $val);
-                $i++;
             }
-        }
 
-        if ($recordClass) {
-            $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
-        } else {
-            $prepare->setFetchMode(\PDO::FETCH_OBJ);
-        }
+            if ($recordClass) {
+                $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
+            } else {
+                $prepare->setFetchMode(\PDO::FETCH_OBJ);
+            }
+
+            return $prepare;
+        });
 
         return $prepare;
     }
@@ -124,7 +128,9 @@ class PDO extends AbstractRepository implements Repository
      */
     public function executePrepared($prepare)
     {
-        $execute = $prepare->execute();
+        $execute = measure('Execute query: ' . $prepare->queryString, function () use ($prepare) {
+            return $prepare->execute();
+        });
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();

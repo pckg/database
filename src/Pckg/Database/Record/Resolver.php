@@ -23,6 +23,9 @@ class Resolver implements ResolverInterface
 
     public function classes()
     {
+        /**
+         * @T00D00 - this is useless, right?
+         */
         return [
             Record::class => function ($class) {
                 return new $class();

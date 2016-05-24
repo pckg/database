@@ -77,19 +77,19 @@ abstract class Query
         return $this;
     }
 
-    public function orWhere($key, $value = null, $operator = '=')
+    public function orWhere($key, $value = true, $operator = '=')
     {
         $this->where->setGlue('OR');
 
         return $this->where($key, $value, $operator);
     }
 
-    public function where($key, $value = null, $operator = '=')
+    public function where($key, $value = true, $operator = '=')
     {
         if (is_array($value)) {
             $operator = 'IN';
         }
-        
+
         if (is_callable($key)) {
             $key($this->where);
 
@@ -110,11 +110,10 @@ abstract class Query
             }
 
         } else {
-            $this->where->push($this->makeKey($key) . ($value ? ' ' . $operator . ' ?' : ' IS NULL'));
-            if ($value) {
+            $this->where->push($this->makeKey($key) . ($value ? ($value == true ? '' : ' ' . $operator . ' ?') : ' IS NULL'));
+            if ($value && $value != true) {
                 $this->bind($value, 'where');
             }
-
         }
 
         return $this;

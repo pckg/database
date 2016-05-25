@@ -20,6 +20,8 @@ class Record extends Object
 
     protected $relations = [];
 
+    protected $toArray = [];
+
     public function hasKey($key)
     {
         return $this->__isset($key);
@@ -156,6 +158,11 @@ class Record extends Object
 
         if (!$values) {
             $values = $this->data;
+            if ($this->toArray) {
+                foreach ($this->toArray as $key) {
+                    $values[$key] = $this->{$key};
+                }
+            }
         }
 
         foreach ($values as $key => $value) {
@@ -167,7 +174,7 @@ class Record extends Object
 
             } else {
                 $return[$key] = $value;
-                
+
             }
         }
 
@@ -223,7 +230,9 @@ class Record extends Object
      */
     public function getEntityClass()
     {
-        return $this->entity;
+        return is_object($this->entity)
+            ? get_class($this->entity)
+            : $this->entity;
     }
 
     /**
@@ -256,7 +265,7 @@ class Record extends Object
      */
     public function save(Entity $entity = null, Repository $repository = null)
     {
-        if ($this->id) {
+        if (isset($this->data['id'])) {
             return $this->update($entity, $repository);
 
         } else {
@@ -293,7 +302,7 @@ class Record extends Object
     public function delete(Entity $entity = null, Repository $repository = null)
     {
         if (!$entity) {
-            $entity = $this->prepareEntity();
+            $entity = $this->getEntity();
         }
 
         if (!$repository) {
@@ -312,7 +321,7 @@ class Record extends Object
     public function insert(Entity $entity = null, Repository $repository = null)
     {
         if (!$entity) {
-            $entity = $this->prepareEntity();
+            $entity = $this->getEntity();
         }
 
         if (!$repository) {

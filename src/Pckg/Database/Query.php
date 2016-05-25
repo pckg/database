@@ -110,8 +110,8 @@ abstract class Query
             }
 
         } else {
-            $this->where->push($this->makeKey($key) . ($value ? ($value == true ? '' : ' ' . $operator . ' ?') : ' IS NULL'));
-            if ($value && $value != true) {
+            $this->where->push($this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL'));
+            if ($value && $value !== true) {
                 $this->bind($value, 'where');
             }
         }

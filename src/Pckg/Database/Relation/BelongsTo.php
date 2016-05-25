@@ -44,8 +44,7 @@ class BelongsTo extends Relation
         $rightEntity = $this->getRightEntity();
 
         if ($record->{$foreignKey}) {
-            $record->setRelation($this->fill,
-                (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne());
+            $record->setRelation($this->fill, (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne());
         } else {
             $record->setRelation($this->fill, null);
         }
@@ -84,6 +83,10 @@ class BelongsTo extends Relation
                     break;
                 }
             }
+        }
+
+        if ($this->after) {
+            $collection->each($this->after);
         }
     }
 

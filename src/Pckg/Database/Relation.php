@@ -64,6 +64,8 @@ abstract class Relation
 
     protected $condition = [];
 
+    protected $after;
+
     public function addSelect($fields = [])
     {
         if (!is_array($fields)) {
@@ -201,6 +203,13 @@ abstract class Relation
     public function fill($fill)
     {
         $this->fill = $fill;
+
+        return $this;
+    }
+
+    public function after($after)
+    {
+        $this->after = $after;
 
         return $this;
     }

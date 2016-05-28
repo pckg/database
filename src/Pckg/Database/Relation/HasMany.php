@@ -45,21 +45,18 @@ class HasMany extends Relation
         $foreignKey = $this->getForeignKey();
 
         $rightEntity = $this->getRightEntity();
-
-        $primaryCollectionKey = $this->getPrimaryCollectionKey();
-        $foreignCollectionKey = $this->getForeignCollectionKey();
         $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
 
         foreach ($foreignCollection as $foreignRecord) {
-            $foreignRecord->setRelation($primaryCollectionKey, new Collection());
+            $foreignRecord->setRelation($this->fill, new Collection());
         }
 
         $this->fillCollectionWithRelations($foreignCollection);
 
-        $record->setRelation($foreignCollectionKey, new Collection());
+        $record->setRelation($this->fill, new Collection());
         foreach ($foreignCollection as $foreignRecord) {
-            $record->getRelation($foreignCollectionKey)->push($foreignRecord);
-            $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
+            $record->getRelation($this->fill)->push($foreignRecord);
+            $foreignRecord->{$this->fill} = $foreignRecord;
         }
     }
 
@@ -72,17 +69,15 @@ class HasMany extends Relation
 
         $rightEntity = $this->getRightEntity();
 
-        $primaryCollectionKey = $this->getPrimaryCollectionKey();
-        $foreignCollectionKey = $this->getForeignCollectionKey();
         foreach ($collection as $primaryRecord) {
             $arrPrimaryIds[$primaryRecord->{$primaryKey}] = $primaryRecord->{$primaryKey};
-            $primaryRecord->{$foreignCollectionKey} = new Collection();
+            $primaryRecord->setRelation($this->fill, new Collection());
         }
 
         if ($arrPrimaryIds) {
             $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
             foreach ($foreignCollection as $foreignRecord) {
-                $foreignRecord->{$primaryCollectionKey} = new Collection();
+                $foreignRecord->{$this->fill} = new Collection();
             }
 
             $this->fillCollectionWithRelations($foreignCollection);
@@ -96,8 +91,8 @@ class HasMany extends Relation
                     $foreignRecord->setEntity($rightEntity);
 
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
-                        $primaryRecord->getValue($foreignCollectionKey)->push($foreignRecord);
-                        $foreignRecord->{$primaryCollectionKey} = $foreignRecord;
+                        $primaryRecord->getRelation($this->fill)->push($foreignRecord);
+                        $foreignRecord->{$this->fill} = $foreignRecord;
                     }
                 }
             }

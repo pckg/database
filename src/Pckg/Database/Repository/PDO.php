@@ -28,12 +28,20 @@ class PDO extends AbstractRepository implements Repository
 
     protected $cache;
 
+    protected $name;
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
     /**
      * @param \PDO $connection
      */
-    public function __construct(\PDO $connection)
+    public function __construct(\PDO $connection, $name = 'default')
     {
         $this->setConnection($connection);
+        $this->name = $name;
         $this->cache = new Cache($this);
     }
 

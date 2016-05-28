@@ -49,8 +49,11 @@ class InitDatabase extends AbstractChainOfReponsibility
                 $repository = new RepositoryFaker(Factory::create());
 
             } else {
-                $pdo = new PDO("mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
-                    $config['user'], $config['pass']);
+                $pdo = new PDO(
+                    "mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
+                    $config['user'],
+                    $config['pass']
+                );
 
                 if ($this->context->exists(DebugBar::class)) {
                     $debugBar = $this->context->find(DebugBar::class);
@@ -60,13 +63,12 @@ class InitDatabase extends AbstractChainOfReponsibility
                         $pdoCollector = $debugBar->getCollector('pdo');
                     } else {
                         $debugBar->addCollector($pdoCollector = new PDOCollector($tracablePdo));
-                        $name = 'default';
                     }
 
                     $pdoCollector->addConnection($tracablePdo, $name);
                 }
 
-                $repository = new RepositoryPDO($pdo);
+                $repository = new RepositoryPDO($pdo, $name);
             }
 
             $this->context->bindIfNot(Repository::class, $repository);

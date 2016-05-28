@@ -58,8 +58,6 @@ abstract class Relation
 
     protected $foreignKey;
 
-    protected $foreignCollectionKey;
-
     protected $select = [];
 
     protected $condition = [];
@@ -111,20 +109,6 @@ abstract class Relation
         return $this;
     }
 
-    public function primaryCollectionKey($primaryCollectionKey)
-    {
-        $this->primaryCollectionKey = $primaryCollectionKey;
-
-        return $this;
-    }
-
-    public function foreignCollectionKey($foreignCollectionKey)
-    {
-        $this->foreignCollectionKey = $foreignCollectionKey;
-
-        return $this;
-    }
-
     public function getPrimaryKey()
     {
         return $this->primaryKey
@@ -137,20 +121,6 @@ abstract class Relation
         return $this->foreignKey
             ? $this->foreignKey
             : $this->getRightForeignKey();
-    }
-
-    public function getPrimaryCollectionKey()
-    {
-        return $this->primaryCollectionKey
-            ? $this->primaryCollectionKey
-            : Convention::nameOne($this->getLeftForeignKey());
-    }
-
-    public function getForeignCollectionKey()
-    {
-        return $this->foreignCollectionKey
-            ? $this->foreignCollectionKey
-            : Convention::nameMultiple($this->getRightForeignKey());
     }
 
     /**
@@ -177,7 +147,7 @@ abstract class Relation
      */
     public function __call($method, $args)
     {
-        $this->callWith($method, $args, $this->right);
+        $this->callWith($method, $args, $this->getRightEntity());
 
         return $this;
     }

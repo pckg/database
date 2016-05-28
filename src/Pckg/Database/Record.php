@@ -22,9 +22,58 @@ class Record extends Object
 
     protected $toArray = [];
 
+    public function __set($key, $val)
+    {
+        /**
+         * Fill value to existing data.
+         */
+        if (array_key_exists($key, $this->data)) {
+            $this->data[$key] = $val;
+        }
+
+        /**
+         * Fill value to existing relation.
+         */
+        if (array_key_exists($key, $this->relations)) {
+            $this->relations[$key] = $val;
+        }
+
+        /**
+         * Fill value to new data.
+         */
+        if ($this->hasKey($key)) {
+            $this->data[$key] = $val;
+        }
+
+        return $this;
+    }
+
     public function hasKey($key)
     {
-        return $this->__isset($key);
+        if (array_key_exists($key, $this->data)) {
+            return true;
+        }
+
+        $entity = $this->getEntity();
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function hasRelation($key)
+    {
+        if (array_key_exists($key, $this->relations)) {
+            return true;
+        }
+
+        $entity = $this->getEntity();
+        if (method_exists($entity, $key)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function __isset($key)
@@ -77,16 +126,8 @@ class Record extends Object
         }
 
         /**
-         * Return value from existing relation (Collection/Record).
-         */
-        if ($this->relationExists($key)) {
-            return $this->getRelation($key);
-        }
-
-        /**
          * Return value, even if it's null or not set.
          */
-
         if ($this->keyExists($key)) {
             return $this->getValue($key);
         }
@@ -94,6 +135,13 @@ class Record extends Object
         $entity = $this->getEntity();
         if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
             return $this->getValue($key);
+        }
+
+        /**
+         * Return value from existing relation (Collection/Record).
+         */
+        if ($this->relationExists($key)) {
+            return $this->getRelation($key);
         }
 
         /**
@@ -124,9 +172,10 @@ class Record extends Object
          */
         $entity = $this->getEntity();
         $relation = $entity->callWith($method, $args, $entity, true);
+        $relation->fill($method);
         $relation->fillRecord($this, true);
 
-        $data = $this->getRelation(lcfirst(substr($method, 4)));
+        $data = $this->getRelation($method);
 
         return $data;
     }
@@ -157,7 +206,7 @@ class Record extends Object
         }
 
         if (!$values) {
-            $values = $this->data;
+            $values = $this->data + $this->relations;
             if ($this->toArray) {
                 foreach ($this->toArray as $key) {
                     $values[$key] = $this->{$key};

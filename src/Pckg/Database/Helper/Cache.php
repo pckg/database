@@ -63,8 +63,8 @@ class Cache extends FrameworkCache
 
     protected function getCachePath()
     {
-        return path('cache') . 'framework/database_' . str_replace(['\\', '/'], '_',
-            (get_class(app()) . '_' . get_class(env()))) . '.cache';
+        return path('cache') . 'framework/pckg_database_repository_' . str_replace(['\\', '/'], '_',
+            (get_class(app()) . '_' . get_class(env()))) . '_' . $this->repository->getName() . '.cache';
     }
 
     /**

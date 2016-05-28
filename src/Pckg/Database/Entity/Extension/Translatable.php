@@ -92,8 +92,7 @@ trait Translatable
         $relation = $this->hasMany((new Entity($repository))->setTable($translaTable))
             ->primaryKey('id')
             ->foreignKey('id')
-            ->primaryCollectionKey('_translatee')
-            ->foreignCollectionKey('_translations')
+            ->fill('_translations')
             ->addSelect(['`' . $translaTable . '`.*']);
 
         if ($callable) {

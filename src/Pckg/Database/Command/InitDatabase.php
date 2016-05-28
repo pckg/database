@@ -44,7 +44,8 @@ class InitDatabase extends AbstractChainOfReponsibility
             return $next();
         }
 
-        foreach ($this->config->get('database') as $name => $config) {
+        $configs = $this->config->get('database');
+        foreach ($configs as $name => $config) {
             if ($config['driver'] == 'faker') {
                 $repository = new RepositoryFaker(Factory::create());
 
@@ -61,11 +62,19 @@ class InitDatabase extends AbstractChainOfReponsibility
 
                     if ($debugBar->hasCollector('pdo')) {
                         $pdoCollector = $debugBar->getCollector('pdo');
+
                     } else {
-                        $debugBar->addCollector($pdoCollector = new PDOCollector($tracablePdo));
+                        $debugBar->addCollector($pdoCollector = new PDOCollector());
+
                     }
 
-                    $pdoCollector->addConnection($tracablePdo, $name);
+                    if (false && !isset($config['default'])) {
+                        $pdoCollector->addConnection($tracablePdo, 'default');
+
+                    } else {
+                        $pdoCollector->addConnection($tracablePdo, $name);
+
+                    }
                 }
 
                 $repository = new RepositoryPDO($pdo, $name);

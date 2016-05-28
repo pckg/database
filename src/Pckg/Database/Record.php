@@ -24,25 +24,33 @@ class Record extends Object
 
     public function __set($key, $val)
     {
-        /**
-         * Fill value to existing data.
-         */
         if (array_key_exists($key, $this->data)) {
+            /**
+             * Fill value to existing data.
+             */
             $this->data[$key] = $val;
-        }
 
-        /**
-         * Fill value to existing relation.
-         */
-        if (array_key_exists($key, $this->relations)) {
+        } else if (array_key_exists($key, $this->relations)) {
+            /**
+             * Fill value to existing relation.
+             */
             $this->relations[$key] = $val;
-        }
 
-        /**
-         * Fill value to new data.
-         */
-        if ($this->hasKey($key)) {
+        } else if ($this->hasKey($key)) {
+            /**
+             * Fill value to new data.
+             */
             $this->data[$key] = $val;
+
+        } else if ($this->hasRelation($key)) {
+            /**
+             * Fill value to existing relation.
+             */
+            $this->relations[$key] = $val;
+
+        } else {
+            $this->data[$key] = $val;
+
         }
 
         return $this;
@@ -91,7 +99,6 @@ class Record extends Object
         }
 
         $entity = $this->getEntity();
-
         if (method_exists($entity, $key)) {
             return true;
         }
@@ -132,16 +139,16 @@ class Record extends Object
             return $this->getValue($key);
         }
 
-        $entity = $this->getEntity();
-        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            return $this->getValue($key);
-        }
-
         /**
          * Return value from existing relation (Collection/Record).
          */
         if ($this->relationExists($key)) {
             return $this->getRelation($key);
+        }
+
+        $entity = $this->getEntity();
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            return $this->getValue($key);
         }
 
         /**
@@ -158,7 +165,7 @@ class Record extends Object
         /**
          * Return value from extension.
          */
-        if ($chains = $this->getEntityChains($entity, $key)) {
+        if ($chains = $this->getEntityChains($entity, $key, '__get')) {
             return chain($chains);
         }
 
@@ -180,11 +187,11 @@ class Record extends Object
         return $data;
     }
 
-    private function getEntityChains(Entity $entity, $key)
+    private function getEntityChains(Entity $entity, $key, $overloadMethod)
     {
         $chains = [];
         foreach (get_class_methods($entity) as $method) {
-            if (substr($method, 0, 5) == '__get' && substr($method, -9) == 'Extension') {
+            if (substr($method, 0, strlen($overloadMethod)) == $overloadMethod && substr($method, -9) == 'Extension') {
                 $chains[] = function () use ($method, $entity, $key) {
                     return $entity->$method($this, $key);
                 };
@@ -206,33 +213,32 @@ class Record extends Object
         }
 
         if (!$values) {
-            $values = $this->data + $this->relations;
+            $values = $this->data;
             if ($this->toArray) {
                 foreach ($this->toArray as $key) {
-                    $values[$key] = $this->{$key};
+                    if ($this->hasKey($key)) {
+                        $values[$key] = $this->{$key};
+
+                    } elseif ($this->hasRelation($key)) {
+                        $values[$key] = $this->getRelation($key);
+
+                    } elseif (method_exists($this, 'get' . ucfirst($key))) {
+                        $values[$key] = $this->{'get' . ucfirst($key)}();
+
+                    }
                 }
             }
         }
 
         foreach ($values as $key => $value) {
             if (is_object($value)) {
-                $return[$key] = $this->__toArray($value->__toArray(), $depth - 1);
+                $return[$key] = $this->__toArray($value->__toArray(null, $depth - 1), $depth - 1);
 
             } else if (is_array($value)) {
                 $return[$key] = $this->__toArray($value, $depth - 1);
 
             } else {
                 $return[$key] = $value;
-
-            }
-        }
-
-        foreach ($this->relations as $key => $value) {
-            if ($value instanceof Record) {
-                $return[$key] = $value->__toArray(null, $depth - 1);
-
-            } elseif ($value instanceof Collection) {
-                $return[$key] = $value->__toArray(null, $depth - 1);
 
             }
         }

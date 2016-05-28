@@ -121,19 +121,29 @@ class Entity
     protected function guessDefaults()
     {
         if (!$this->table) {
-            $class = explode('\\', static::class);
-            $this->table = Convention::fromCamel(end($class));
+            if (static::class == Entity::class) {
+                $this->table = null;
+            } else {
+                $class = explode('\\', static::class);
+                $this->table = Convention::fromCamel(end($class));
+            }
         }
 
         if (!$this->record) {
             $class = static::class;
 
-            if (strpos('\\Entity\\', $class)) {
-                $class = explode('\\', str_replace('\\Entity\\', '\\Record\\', $class));
-                $class[count($class) - 1] = Convention::nameOne($class[count($class) - 1]);
-                $class = implode('\\', $class);
-                if (class_exists($class)) {
-                    $this->record = $class;
+
+            if ($class == Entity::class) {
+                $this->record = Record::class;
+                
+            } else {
+                if (strpos('\\Entity\\', $class)) {
+                    $class = explode('\\', str_replace('\\Entity\\', '\\Record\\', $class));
+                    $class[count($class) - 1] = Convention::nameOne($class[count($class) - 1]);
+                    $class = implode('\\', $class);
+                    if (class_exists($class)) {
+                        $this->record = $class;
+                    }
                 }
             }
         }
@@ -279,7 +289,7 @@ class Entity
      */
     public function tabelizeRecord(Record $record)
     {
-        $dataArray = $record->toArray();
+        $dataArray = $record->__toArray(null, 1);
         $keys = [
             $this->table => $this->repository->getCache()->getTableFields($this->table),
         ];

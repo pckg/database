@@ -78,6 +78,11 @@ class BelongsTo extends Relation
         $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrIds);
         foreach ($collection as $record) {
             foreach ($foreignCollection as $foreignRecord) {
+                if (!isset($foreignRecord->id)) {
+                    dd($foreignCollection);
+                    debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+                    dd($foreignRecord);
+                }
                 if ($foreignRecord->id == $record->{$rightForeignKey}) {
                     $record->setRelation($this->fill, $foreignRecord);
                     break;

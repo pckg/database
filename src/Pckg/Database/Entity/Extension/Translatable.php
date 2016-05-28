@@ -171,8 +171,8 @@ trait Translatable
 
     public function __getTranslatableExtension(Record $record, $key)
     {
-        if ($record->keyExists('_translations')) {
-            foreach ($record->getValue('_translations') as $translation) {
+        if ($record->relationExists('_translations')) {
+            foreach ($record->getRelation('_translations') as $translation) {
                 if ($translation->keyExists($key)) {
                     return $translation->{$key};
                 }

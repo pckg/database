@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
-use Pckg\Collection;
+use Pckg\Database\Collection;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Select;

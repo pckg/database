@@ -5,6 +5,7 @@ namespace Pckg\Database\Query\Helper;
 use Closure;
 use Exception;
 use Pckg\Collection;
+use Pckg\CollectionInterface;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
@@ -67,6 +68,10 @@ trait With
             }
         }
 
+        if (!method_exists($object, $method)) {
+            throw new Exception('Method ' . $method . ' does not exist in ' . get_class($object));
+        }
+
         $relation = Reflect::method($object, $method, $args);
 
         if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
@@ -124,7 +129,7 @@ trait With
         return $record;
     }
 
-    public function fillCollectionWithRelations(Collection $collection)
+    public function fillCollectionWithRelations(CollectionInterface $collection)
     {
         foreach ($this->getWith() as $relation) {
             $relation->fillCollection($collection);

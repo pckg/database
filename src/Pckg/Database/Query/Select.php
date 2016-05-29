@@ -15,6 +15,20 @@ class Select extends Query
      */
     protected $select = [];
 
+    protected $count = false;
+
+    public function count($count = true)
+    {
+        $this->count = $count;
+
+        return $this;
+    }
+
+    public function isCounted()
+    {
+        return $this->count;
+    }
+
     public function table($table)
     {
         $this->table = $table;
@@ -51,7 +65,7 @@ class Select extends Query
 
     public function buildSelect()
     {
-        return implode(', ', $this->select);
+        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $this->select);
     }
 
     public function select($fields)

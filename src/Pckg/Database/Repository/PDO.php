@@ -92,6 +92,36 @@ class PDO extends AbstractRepository implements Repository
         return $this;
     }
 
+    public function prepareSQL($sql, $binds = [])
+    {
+        $prepare = measure('Prepare query: ' . $sql, function () use ($sql, $binds) {
+            $prepare = $this->getConnection()->prepare($sql);
+
+            if (!$prepare) {
+                throw new Exception('Cannot prepare statement');
+            }
+
+            $i = 1;
+            foreach ($binds as $key => $val) {
+                if (is_array($val)) {
+                    foreach ($val as $rVal) {
+                        $prepare->bindValue($i, $rVal);
+                        $i++;
+                    }
+                } else {
+                    $prepare->bindValue($i, $val);
+                    $i++;
+                }
+            }
+
+            $prepare->setFetchMode(\PDO::FETCH_OBJ);
+
+            return $prepare;
+        });
+
+        return $prepare;
+    }
+
     public function prepareQuery(Query $query, $recordClass = null)
     {
         $sql = $query->buildSQL();

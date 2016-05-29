@@ -78,6 +78,7 @@ class Cache extends FrameworkCache
 
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $table) {
             $table = end($table);
+            $table = strtolower($table);
             $this->buildFields($table);
             $this->buildConstraints($table);
             $this->buildPrimaryKeys($table);
@@ -107,10 +108,6 @@ class Cache extends FrameworkCache
                     'type' => 'PRIMARY',
                 ];
             } else {
-                /*$name = implode('_', array_map(function($item){
-                    return $item['Column_name'];
-                }, $indexs));*/
-
                 if ($first['Non_unique']) {
                     $this->cache['constraints'][$table][$first['Key_name']] = [
                         'type' => 'KEY',
@@ -135,6 +132,7 @@ class Cache extends FrameworkCache
         $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
+            $field['Field'] = strtolower($field['Field']);
             $this->cache['fields'][$table][$field['Field']] = [
                 'name'      => $field['Field'],
                 'type'      => strpos($field['Type'], '(')

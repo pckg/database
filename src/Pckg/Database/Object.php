@@ -49,9 +49,16 @@ class Object
      *
      * @return Object
      */
-    public function set($key, $val)
+    public function set($key, $val = null)
     {
-        return $this->__set($key, $val);
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $this->__set($k, $v);
+            }
+            return $this;
+        } else {
+            return $this->__set($key, $val);
+        }
     }
 
     /**

@@ -5,12 +5,13 @@ namespace Pckg\Database;
 use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Record\RecordInterface;
 
 /**
  * Class Record
  * @package Pckg\Database
  */
-class Record extends Object
+class Record extends Object implements RecordInterface
 {
 
     /**
@@ -204,7 +205,7 @@ class Record extends Object
     /**
      * @return array
      */
-    public function __toArray($values = null, $depth = 5)
+    public function __toArray($values = null, $depth = 5, $withToArray = true)
     {
         $return = [];
 
@@ -214,7 +215,7 @@ class Record extends Object
 
         if (!$values) {
             $values = $this->data;
-            if ($this->toArray) {
+            if ($withToArray && $this->toArray) {
                 foreach ($this->toArray as $key) {
                     if ($this->hasKey($key)) {
                         $values[$key] = $this->{$key};
@@ -232,10 +233,10 @@ class Record extends Object
 
         foreach ($values as $key => $value) {
             if (is_object($value)) {
-                $return[$key] = $this->__toArray($value->__toArray(null, $depth - 1), $depth - 1);
+                $return[$key] = $this->__toArray($value->__toArray(null, $depth - 1), $depth - 1, $withToArray);
 
             } else if (is_array($value)) {
-                $return[$key] = $this->__toArray($value, $depth - 1);
+                $return[$key] = $this->__toArray($value, $depth - 1, $withToArray);
 
             } else {
                 $return[$key] = $value;

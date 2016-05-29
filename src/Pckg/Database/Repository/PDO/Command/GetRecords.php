@@ -2,10 +2,11 @@
 
 namespace Pckg\Database\Repository\PDO\Command;
 
-use Pckg\Collection;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
+use PDO;
 
 /**
  * Class GetAllRecords
@@ -22,7 +23,7 @@ class GetRecords
     protected $repository;
 
     /**
-     * @param Entity     $entity
+     * @param Entity $entity
      * @param Repository $repository
      */
     public function __construct(Entity $entity, Repository $repository = null)
@@ -43,7 +44,16 @@ class GetRecords
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
-            return $entity->fillCollectionWithRelations(new Collection($results));
+            $collection = new Collection($results);
+            if ($entity->getQuery()->isCounted()) {
+                $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
+                $repository->executePrepared($prepareCount);
+                $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
+            }
+
+            $collection->setEntity($entity);
+
+            return $entity->fillCollectionWithRelations($collection);
         }
 
         return new Collection();
@@ -60,6 +70,8 @@ class GetRecords
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
+            $record->setEntity($entity);
+
             return $entity->fillRecordWithRelations($record);
         }
 

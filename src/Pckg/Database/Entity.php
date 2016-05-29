@@ -3,8 +3,9 @@
 namespace Pckg\Database;
 
 use Exception;
-use Pckg\Collection;
+use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
@@ -14,7 +15,7 @@ use Pckg\Database\Relation\Helper\RelationMethods;
  * Presents table in database
  *
  */
-class Entity
+class Entity implements EntityInterface
 {
 
     use RelationMethods, QueryBuilder, With;
@@ -135,7 +136,7 @@ class Entity
 
             if ($class == Entity::class) {
                 $this->record = Record::class;
-                
+
             } else {
                 if (strpos('\\Entity\\', $class)) {
                     $class = explode('\\', str_replace('\\Entity\\', '\\Record\\', $class));
@@ -147,6 +148,17 @@ class Entity
                 }
             }
         }
+    }
+
+    public function getRecord()
+    {
+        $class = $this->getRecordClass();
+
+        $record = new $class;
+        $record->setEntity($this);
+        $record->setEntityClass(get_class($this));
+
+        return $record;
     }
 
     /**
@@ -289,7 +301,7 @@ class Entity
      */
     public function tabelizeRecord(Record $record)
     {
-        $dataArray = $record->__toArray(null, 1);
+        $dataArray = $record->__toArray(null, 1, false);
         $keys = [
             $this->table => $this->repository->getCache()->getTableFields($this->table),
         ];
@@ -382,6 +394,14 @@ class Entity
         }
 
         throw new Exception('No records found');
+    }
+
+    public function total()
+    {
+        return $this->count()
+            ->limit(1)
+            ->all()
+            ->total();
     }
 
 }

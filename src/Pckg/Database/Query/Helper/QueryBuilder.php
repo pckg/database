@@ -80,9 +80,30 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function having($key, $value, $operator = '=')
+    public function having($key, $value = true, $operator = '=')
     {
         $this->getQuery()->having($key, $value, $operator);
+
+        return $this;
+    }
+
+    public function orderBy($key)
+    {
+        $this->getQuery()->orderBy($key);
+
+        return $this;
+    }
+
+    public function limit($limit)
+    {
+        $this->getQuery()->limit($limit);
+
+        return $this;
+    }
+
+    public function count()
+    {
+        $this->getQuery()->count();
 
         return $this;
     }

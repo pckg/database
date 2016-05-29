@@ -2,11 +2,9 @@
 
 namespace Pckg\Database;
 
-use Pckg\Collection;
+use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\With;
-use Pckg\Database\Query\Select;
 use Pckg\Database\Relation\Helper\RightEntity;
 
 /**

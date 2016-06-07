@@ -56,4 +56,17 @@ trait RightEntity
         return (new GetRecords($entity))->executeAll();
     }
 
+    public function getForeignRecord(Entity $rightEntity, $foreignKey, $primaryValue)
+    {
+        $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
+
+        foreach ($this->condition as $condition) {
+            $entity->where(function (Parenthesis $parenthesis) use ($condition) {
+                $parenthesis->push($condition);
+            });
+        }
+
+        return (new GetRecords($entity))->executeOne();
+    }
+
 }

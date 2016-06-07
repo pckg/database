@@ -2,6 +2,7 @@
 
 namespace Pckg\Database;
 
+use ArrayAccess;
 use Pckg\Database\Query\Parenthesis;
 
 abstract class Query
@@ -13,79 +14,70 @@ abstract class Query
 
     protected $bind = [];
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
     }
 
-    public static function raw($sql)
-    {
+    public static function raw($sql) {
         $query = new static($sql);
 
         return $query;
     }
 
-    public function getBind()
-    {
+    public function getBind() {
         return $this->bind;
     }
 
-    public function table($table)
-    {
+    public function table($table) {
         $this->table = $table;
 
         return $this;
     }
 
-    public function getTable()
-    {
+    public function getTable() {
         return $this->table;
     }
 
-    public function getLimit()
-    {
+    public function getLimit() {
         return $this->limit;
     }
 
-    public function buildJoin()
-    {
+    public function buildJoin() {
         return implode(" ", $this->join);
     }
 
-    public function buildWhere()
-    {
+    public function buildWhere() {
         return $this->where->hasChildren() ? ' WHERE ' . $this->where->build() : '';
     }
 
-    public function buildHaving()
-    {
+    public function buildHaving() {
         return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
     }
 
-    public function orderBy($orderBy)
-    {
+    public function orderBy($orderBy) {
         $this->orderBy = $orderBy;
 
         return $this;
     }
 
-    public function limit($limit)
-    {
+    public function limit($limit) {
         $this->limit = $limit;
 
         return $this;
     }
 
-    public function orWhere($key, $value = true, $operator = '=')
-    {
+    public function orWhere($key, $value = true, $operator = '=') {
         $this->where->setGlue('OR');
 
         return $this->where($key, $value, $operator);
     }
 
-    public function where($key, $value = true, $operator = '=')
-    {
+    public function where($key, $value = true, $operator = '=') {
+        if (is_object($value) && object_implements($value, ArrayAccess::class)) {
+            $value = $value->__toArray();
+        }
+
         if (is_array($value)) {
             $operator = 'IN';
         }
@@ -93,24 +85,30 @@ abstract class Query
         if (is_callable($key)) {
             $key($this->where);
 
-        } else if ($operator == 'IN') {
+        } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_array($value)) {
                 if (!$value) {
                     $this->where->push($this->makeKey($key));
                     $this->where->push('0 = 1');
                 } else {
-                    $this->where->push($this->makeKey($key) . ' IN(' . str_repeat('?, ', count($value) - 1) . '?)');
+                    $this->where->push(
+                        $this->makeKey($key) . ' ' . $operator . '(' . str_repeat('?, ', count($value) - 1) . '?)'
+                    );
                     $this->bind($value, 'where');
                 }
 
             } else if ($value instanceof Query) {
-                $this->where->push($this->makeKey($key) . ' IN(' . $value->buildSQL() . ')');
-                $this->bind($value->buildBinds(), 'where');
+                $this->where->push($this->makeKey($key) . ' ' . $operator . '(' . $value->buildSQL() . ')');
+                if ($binds = $value->buildBinds()) {
+                    $this->bind($binds, 'where');
+                }
 
             }
 
         } else {
-            $this->where->push($this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL'));
+            $this->where->push(
+                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')
+            );
             if ($value && $value !== true) {
                 $this->bind($value, 'where');
             }
@@ -119,20 +117,17 @@ abstract class Query
         return $this;
     }
 
-    private function makeKey($key)
-    {
+    private function makeKey($key) {
         return is_numeric($key) ? $key : '`' . $key . '`';
     }
 
-    public function bind($val, $part)
-    {
+    public function bind($val, $part) {
         $this->bind[$part][] = $val;
 
         return $this;
     }
 
-    public function getBinds($parts = [])
-    {
+    public function getBinds($parts = []) {
         $binds = [];
 
         foreach ($parts as $part) {
@@ -154,15 +149,13 @@ abstract class Query
         return $binds;
     }
 
-    public function join($table, $on = null, $where = null)
-    {
+    public function join($table, $on = null, $where = null) {
         $this->join[] = $table;
 
         return $this;
     }
 
-    public function primaryWhere(Entity $entity, $data, $table)
-    {
+    public function primaryWhere(Entity $entity, $data, $table) {
         foreach ($entity->getRepository()->getCache()->getTablePrimaryKeys($table) as $primaryKey) {
             $this->where($primaryKey, $data[$primaryKey]);
         }
@@ -172,8 +165,7 @@ abstract class Query
 
     abstract public function buildBinds();
 
-    public function __toString()
-    {
+    public function __toString() {
         try {
             return $this->buildSQL();
         } catch (\Exception $e) {

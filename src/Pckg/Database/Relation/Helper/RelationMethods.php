@@ -42,13 +42,13 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasOne
+     * @param $hasMany
      *
-     * @return HasOne
+     * @return HasMany
      */
     public function hasOne($hasOne)
     {
-        return new HasOne($this, $hasOne);
+        return (new HasOne($this, $hasOne));
     }
 
     /**

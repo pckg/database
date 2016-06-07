@@ -387,4 +387,22 @@ class Record extends Object implements RecordInterface
         return $repository->insert($this, $entity);
     }
 
+    public function refetch() {
+        $entity = $this->getEntity();
+        foreach ($this->data as $key => $val) {
+            $entity->where($key, $val);
+        }
+        $record = $entity->one();
+
+        if ($record) {
+        $this->data = $record->getData();
+        }
+
+        return $this;
+    }
+
+    public function getData() {
+        return $this->data;
+    }
+
 }

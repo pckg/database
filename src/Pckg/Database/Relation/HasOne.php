@@ -2,25 +2,74 @@
 
 namespace Pckg\Database\Relation;
 
-use Pckg\Collection;
+use Pckg\Database\Collection;
+use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
 /**
- * Class HasOne
+ * Class HasMany
  * @package Pckg\Database\Relation
  */
-class HasOne extends Relation
+class HasOne extends HasMany
 {
 
-    function fillRecord(Record $record)
+    public function fillRecord(Record $record, $debug = false)
     {
-        // TODO: Implement fillRecord() method.
+        $primaryKey = $this->getPrimaryKey();
+        $foreignKey = $this->getForeignKey();
+
+        $rightEntity = $this->getRightEntity();
+        $foreignRecord = $this->getForeignRecord($rightEntity, $foreignKey, $record->{$primaryKey});
+        $record->setRelation($this->fill, null);
+
+        if ($foreignRecord) {
+            $foreignRecord->setRelation($this->fill, null);
+
+            $this->fillRecordWithRelations($foreignRecord);
+
+            $record->setRelation($this->fill, $foreignRecord);
+            $foreignRecord->{$this->fill} = $foreignRecord;
+        }
     }
 
-    function fillCollection(Collection $collection)
+    public function fillCollection(Collection $collection)
     {
-        // TODO: Implement fillCollection() method.
+        $arrPrimaryIds = [];
+
+        $primaryKey = $this->getPrimaryKey();
+        $foreignKey = $this->getForeignKey();
+
+        $rightEntity = $this->getRightEntity();
+
+        foreach ($collection as $primaryRecord) {
+            $arrPrimaryIds[$primaryRecord->{$primaryKey}] = $primaryRecord->{$primaryKey};
+            $primaryRecord->setRelation($this->fill, null);
+        }
+
+        if ($arrPrimaryIds) {
+            $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
+            foreach ($foreignCollection as $foreignRecord) {
+                $foreignRecord->{$this->fill} = new Collection();
+            }
+
+            $this->fillCollectionWithRelations($foreignCollection);
+
+            foreach ($collection as $primaryRecord) {
+                foreach ($foreignCollection as $foreignRecord) {
+                    /*
+                     * Foreign records needs to have set entity with correct table because we'll read data from
+                     * repository cache in __get method.
+                     */
+                    $foreignRecord->setEntity($rightEntity);
+
+                    if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
+                        $primaryRecord->setRelation($this->fill, $foreignRecord);
+                        $foreignRecord->{$this->fill} = $foreignRecord;
+                    }
+                }
+            }
+        }
     }
 
 }

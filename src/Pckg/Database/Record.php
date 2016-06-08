@@ -221,7 +221,7 @@ class Record extends Object implements RecordInterface
                         $values[$key] = $this->{$key};
 
                     } elseif ($this->hasRelation($key)) {
-                        $values[$key] = $this->getRelation($key);
+                        $values[$key] = $this->getRelationIfSet($key);
 
                     } elseif (method_exists($this, 'get' . ucfirst($key))) {
                         $values[$key] = $this->{'get' . ucfirst($key)}();
@@ -255,6 +255,14 @@ class Record extends Object implements RecordInterface
     public function relationExists($key)
     {
         return array_key_exists($key, $this->relations);
+    }
+
+    public function getRelationIfSet($name) {
+        if (!isset($this->relations[$name])) {
+            return null;
+        }
+
+        return $this->relations[$name];
     }
 
     public function setRelation($key, $value)

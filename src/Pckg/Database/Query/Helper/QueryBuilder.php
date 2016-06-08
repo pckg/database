@@ -19,7 +19,7 @@ trait QueryBuilder
     protected $query;
 
     /**
-     * @return Query
+     * @return Query|Select
      */
     public function getQuery()
     {
@@ -83,6 +83,13 @@ trait QueryBuilder
     public function having($key, $value = true, $operator = '=')
     {
         $this->getQuery()->having($key, $value, $operator);
+
+        return $this;
+    }
+
+    public function groupBy($key)
+    {
+        $this->getQuery()->groupBy($key);
 
         return $this;
     }

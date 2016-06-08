@@ -68,8 +68,14 @@ abstract class Relation
             $fields = [$fields];
         }
 
-        foreach ($fields as $field) {
-            $this->select[] = $field;
+        foreach ($fields as $key => $field) {
+            if (is_numeric($key)) {
+                $this->select[] = $field;
+
+            } else {
+                $this->select[$key] = $field;
+
+            }
         }
 
         return $this;
@@ -145,7 +151,15 @@ abstract class Relation
      */
     public function __call($method, $args)
     {
-        $this->callWith($method, $args, $this->getRightEntity());
+        $rightEntity = $this->getRightEntity();
+
+        if (method_exists($rightEntity, $method)) {
+            Reflect::method($rightEntity, $method, $args);
+            
+        } else {
+            $this->callWith($method, $args, $this->getRightEntity());
+
+        }
 
         return $this;
     }

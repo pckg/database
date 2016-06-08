@@ -43,6 +43,10 @@ abstract class Query
         return $this->limit;
     }
 
+    public function getWhere() {
+        return $this->where;
+    }
+
     public function buildJoin() {
         return implode(" ", $this->join);
     }
@@ -57,6 +61,12 @@ abstract class Query
 
     public function orderBy($orderBy) {
         $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function groupBy($groupBy) {
+        $this->groupBy = $groupBy;
 
         return $this;
     }
@@ -78,7 +88,7 @@ abstract class Query
             $value = $value->__toArray();
         }
 
-        if (is_array($value)) {
+        if (is_array($value) && $operator == '=') {
             $operator = 'IN';
         }
 
@@ -127,8 +137,18 @@ abstract class Query
         return $this;
     }
 
+    public function setBind($bind) {
+        $this->bind = $bind;
+
+        return $this;
+    }
+
     public function getBinds($parts = []) {
         $binds = [];
+
+        if (!is_array($parts)) {
+            $parts = [$parts];
+        }
 
         foreach ($parts as $part) {
             if (isset($this->bind[$part])) {

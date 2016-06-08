@@ -7,6 +7,7 @@ use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Query\Delete;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Relation\Helper\RelationMethods;
@@ -402,6 +403,18 @@ class Entity implements EntityInterface
             ->limit(1)
             ->all()
             ->total();
+    }
+
+    public function delete(Repository $repository = null) {
+        if (!$repository) {
+            $repository = $this->getRepository();
+        }
+
+        $delete = $this->getQuery()->transformToDelete();
+
+        $prepare = $repository->prepareQuery($delete);
+
+        return $repository->executePrepared($prepare);
     }
 
 }

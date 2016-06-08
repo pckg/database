@@ -24,12 +24,9 @@ class HasOne extends HasMany
         $record->setRelation($this->fill, null);
 
         if ($foreignRecord) {
-            $foreignRecord->setRelation($this->fill, null);
-
             $this->fillRecordWithRelations($foreignRecord);
 
             $record->setRelation($this->fill, $foreignRecord);
-            $foreignRecord->{$this->fill} = $foreignRecord;
         }
     }
 
@@ -49,11 +46,6 @@ class HasOne extends HasMany
 
         if ($arrPrimaryIds) {
             $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
-            foreach ($foreignCollection as $foreignRecord) {
-                $foreignRecord->{$this->fill} = new Collection();
-            }
-
-            $this->fillCollectionWithRelations($foreignCollection);
 
             foreach ($collection as $primaryRecord) {
                 foreach ($foreignCollection as $foreignRecord) {
@@ -65,10 +57,11 @@ class HasOne extends HasMany
 
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->setRelation($this->fill, $foreignRecord);
-                        $foreignRecord->{$this->fill} = $foreignRecord;
                     }
                 }
             }
+
+            $this->fillCollectionWithRelations($foreignCollection);
         }
     }
 

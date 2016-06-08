@@ -28,6 +28,16 @@ class Parenthesis
         return !empty($this->children);
     }
 
+    public function getChildren() {
+        return $this->children;
+    }
+
+    public function setChildren($children) {
+        $this->children = $children;
+
+        return $this;
+    }
+
     public function __toString()
     {
         return (string)$this->build();

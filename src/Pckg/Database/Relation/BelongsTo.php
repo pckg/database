@@ -55,13 +55,7 @@ class BelongsTo extends Relation
     public function fillCollection(Collection $collection)
     {
         if (!$collection->count()) {
-            message('no count');
             return $collection;
-        } else {
-            message(
-                'filling collection of ' . get_class($collection->first()) . ' : ' .
-                $this->getLeftEntity()->getTable() . '.' . $this->getPrimaryKey() . ' = ' . $this->getRightEntity()->getTable() . '.' . $this->getForeignKey()
-            );
         }
 
         $arrIds = [];
@@ -74,21 +68,18 @@ class BelongsTo extends Relation
             }
         }
 
-        $rightEntity = clone $this->getRightEntity();
+        $rightEntity = $this->getRightEntity();
         $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrIds);
         foreach ($collection as $record) {
             foreach ($foreignCollection as $foreignRecord) {
-                if (!isset($foreignRecord->id)) {
-                    dd($foreignCollection);
-                    debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-                    dd($foreignRecord);
-                }
                 if ($foreignRecord->id == $record->{$rightForeignKey}) {
                     $record->setRelation($this->fill, $foreignRecord);
                     break;
                 }
             }
         }
+        
+        $this->fillCollectionWithRelations($foreignCollection);
 
         if ($this->after) {
             $collection->each($this->after);

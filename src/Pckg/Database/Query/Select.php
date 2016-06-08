@@ -65,7 +65,18 @@ class Select extends Query
 
     public function buildSelect()
     {
-        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $this->select);
+        $keys = [];
+        foreach ($this->select as $key => $select) {
+            if (is_numeric($key)) {
+                $keys[] = $select;
+
+            } else {
+                $keys[] = $select . ' AS ' . $key;
+
+            }
+        }
+
+        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $keys);
     }
 
     public function select($fields)
@@ -90,8 +101,12 @@ class Select extends Query
             $fields = [$fields];
         }
 
-        foreach ($fields as $field) {
+        foreach ($fields as $key => $field) {
+            if (is_numeric($key)) {
             $this->select[] = $field;
+            } else {
+                $this->select[$key] = $field;
+            }
         }
 
         return $this;
@@ -108,6 +123,19 @@ class Select extends Query
         }
 
         return $this;
+    }
+
+    /**
+     * @return Delete
+     */
+    public function transformToDelete() {
+        $delete = new Delete();
+
+        $delete->setTable($this->table);
+        $delete->getWhere()->setChildren($this->where->getChildren());
+        $delete->setBind(['where' => $this->getBinds('where')]);
+
+        return $delete;
     }
 
 }

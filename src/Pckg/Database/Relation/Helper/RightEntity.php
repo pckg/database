@@ -47,7 +47,7 @@ trait RightEntity
     {
         $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
 
-        foreach ($this->condition as $condition) {
+        foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
             $entity->where(function (Parenthesis $parenthesis) use ($condition) {
                 $parenthesis->push($condition);
             });
@@ -70,7 +70,7 @@ trait RightEntity
     {
         $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
 
-        foreach ($this->condition as $condition) {
+        foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
             $entity->where(function (Parenthesis $parenthesis) use ($condition) {
                 $parenthesis->push($condition);
             });

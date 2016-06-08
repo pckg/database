@@ -115,9 +115,12 @@ trait Translatable
     private function addTranslatableConditionIfNot(HasMany $relation)
     {
         $foundLanguageCondition = false;
-        foreach ($relation->getCondition() as $condition) {
-            if (strpos($condition, 'language_id')) {
-                $foundLanguageCondition = true;
+        $query = $relation->getQuery();
+        foreach ($query->getWhere() as $where) {
+            foreach ($where->getChildren() as $key => $child) {
+                if (strpos($key, 'language_id')) {
+                    $foundLanguageCondition = true;
+                }
             }
         }
 
@@ -130,7 +133,7 @@ trait Translatable
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
 
-        $relation->addCondition('`' . $translaTable . '`.`' . $this->translatableLanguageField . '` = \'' . $this->translatableLang->langId() . '\'');
+        $relation->where('`' . $translaTable . '`.`' . $this->translatableLanguageField . '`', $this->translatableLang->langId());
     }
 
     public function withTranslations(callable $callable = null)

@@ -41,6 +41,7 @@ class GetRecords
     {
         $repository = $this->repository;
         $entity = $this->entity;
+        try {
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
@@ -54,6 +55,8 @@ class GetRecords
             $collection->setEntity($entity);
 
             return $entity->fillCollectionWithRelations($collection);
+        }} catch (\Exception $e) {
+            dd($prepare, exception($e));
         }
 
         return new Collection();

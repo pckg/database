@@ -15,22 +15,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
 class BelongsTo extends Relation
 {
 
-    public function mergeToQuery(Select $query)
-    {
-        $condition = '';
-        if ($this->condition) {
-            $condition = ' AND ' . implode(' AND ', $this->condition);
-        }
-
-        $query->join($this->getKeyCondition() . $condition);
-
-        foreach ($this->select as $select) {
-            $query->prependSelect($select);
-        }
-
-        return $this;
-    }
-
     /**
      * @param Record $record
      *

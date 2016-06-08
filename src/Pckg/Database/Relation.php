@@ -5,6 +5,8 @@ namespace Pckg\Database;
 use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Query\Helper\With;
+use Pckg\Database\Query\Parenthesis;
+use Pckg\Database\Query\Select;
 use Pckg\Database\Relation\Helper\RightEntity;
 
 /**
@@ -60,6 +62,11 @@ abstract class Relation
 
     protected $condition = [];
 
+    /**
+     * @var Select
+     */
+    protected $query;
+
     protected $after;
 
     public function addSelect($fields = [])
@@ -81,22 +88,21 @@ abstract class Relation
         return $this;
     }
 
-    public function addCondition($conditions = [])
-    {
-        if (!is_array($conditions)) {
-            $conditions = [$conditions];
-        }
+    public function where($key, $value = true, $operator = '=') {
+        $this->getQuery();
 
-        foreach ($conditions as $condition) {
-            $this->condition[] = $condition;
-        }
+        $this->getRightEntity()->where($key, $value, $operator);
 
         return $this;
     }
 
-    public function getCondition()
+    public function getQuery()
     {
-        return $this->condition;
+        if (!$this->query) {
+            $this->query = new Select();
+        }
+
+        return $this->query;
     }
 
     public function primaryKey($primaryKey)
@@ -255,6 +261,26 @@ abstract class Relation
         return $this->onAdditional
             ? ' AND ' . $this->onAdditional
             : '';
+    }
+
+    public function mergeToQuery(Select $query)
+    {
+        $condition = '';
+        if ($this->getQuery()->getWhere()->hasChildren()) {
+            $condition = ' AND ' . $this->getQuery()->getWhere()->build();
+
+            foreach ($this->query->getBinds('where') as $bind) {
+                $query->bind($bind, 'where');
+            }
+        }
+
+        $query->join($this->getKeyCondition() . $condition);
+
+        foreach ($this->select as $select) {
+            $query->prependSelect($select);
+        }
+
+        return $this;
     }
 
     abstract function fillRecord(Record $record);

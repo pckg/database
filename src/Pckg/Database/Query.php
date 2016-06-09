@@ -128,7 +128,7 @@ abstract class Query
     }
 
     private function makeKey($key) {
-        return is_numeric($key) ? $key : '`' . $key . '`';
+        return is_numeric($key) || strpos($key, '`') === false || strpos($key, '.') ? $key : '`' . $key . '`';
     }
 
     public function bind($val, $part) {

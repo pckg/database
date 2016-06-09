@@ -64,8 +64,8 @@ trait QueryBuilder
      */
     public function where($key, $value = true, $operator = '=')
     {
-        if (is_string($key) && !strpos($key, '.')) {
-            $key = $this->table . '`.`' . $key;
+        if (is_string($key) && !strpos($key, '.') && strpos($key, '`') === false) {
+            $key = '`' . $this->table . '`.`' . $key . '`';
         }
 
         $this->getQuery()->where($key, $value, $operator);

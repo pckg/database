@@ -11,13 +11,13 @@ use Pckg\Database\Relation;
 
 /**
  * Class HasMany
+ *
  * @package Pckg\Database\Relation
  */
 class HasMany extends Relation
 {
 
-    public function fillRecord(Record $record, $debug = false)
-    {
+    public function fillRecord(Record $record, $debug = false) {
         $primaryKey = $this->getPrimaryKey();
         $foreignKey = $this->getForeignKey();
 
@@ -33,12 +33,14 @@ class HasMany extends Relation
         $record->setRelation($this->fill, new Collection());
         foreach ($foreignCollection as $foreignRecord) {
             $record->getRelation($this->fill)->push($foreignRecord);
-            $foreignRecord->{$this->fill} = $foreignRecord;
         }
     }
 
-    public function fillCollection(Collection $collection)
-    {
+    public function fillCollection(Collection $collection) {
+        if (!$collection->count()) {
+            return $collection;
+        }
+
         $arrPrimaryIds = [];
 
         $primaryKey = $this->getPrimaryKey();
@@ -54,22 +56,20 @@ class HasMany extends Relation
         if ($arrPrimaryIds) {
             $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
             foreach ($foreignCollection as $foreignRecord) {
-                $foreignRecord->{$this->fill} = new Collection();
+                /*
+                 * Foreign records needs to have set entity with correct table because we'll read data from
+                 * repository cache in __get method.
+                 */
+                $foreignRecord->setEntity($rightEntity);
             }
 
             $this->fillCollectionWithRelations($foreignCollection);
 
             foreach ($collection as $primaryRecord) {
                 foreach ($foreignCollection as $foreignRecord) {
-                    /*
-                     * Foreign records needs to have set entity with correct table because we'll read data from
-                     * repository cache in __get method.
-                     */
-                    $foreignRecord->setEntity($rightEntity);
-
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->getRelation($this->fill)->push($foreignRecord);
-                        $foreignRecord->{$this->fill} = $foreignRecord;
+                        break;
                     }
                 }
             }

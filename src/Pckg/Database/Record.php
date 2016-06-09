@@ -126,6 +126,10 @@ class Record extends Object implements RecordInterface
      */
     public function __get($key)
     {
+        if (!$key) {
+            dd(debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+        }
+        
         /**
          * Return value via getter
          */

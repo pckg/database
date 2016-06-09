@@ -22,24 +22,24 @@ class HasAndBelongsTo extends HasMany
 
     public function getLeftCollectionKey()
     {
-        return Convention::nameMultiple($this->getLeftForeignKey());
+        return Convention::nameMultiple($this->leftForeignKey);
     }
 
     public function getRightCollectionKey()
     {
-        return Convention::nameMultiple($this->getRightForeignKey());
+        return Convention::nameMultiple($this->rightForeignKey);
     }
 
     public function fillRecord(Record $record)
     {
-        $rightForeignKey = $this->getRightForeignKey();
-        $leftForeignKey = $this->getLeftForeignKey();
+        $rightForeignKey = $this->rightForeignKey;
+        $leftForeignKey = $this->leftForeignKey;
 
         $middleEntity = $this->getMiddleEntity();
         $rightEntity = $this->getRightEntity();
 
         $leftCollectionKey = $this->getLeftCollectionKey();
-        $rightCollectionKey = $this->getRightCollectionKey();
+        $rightCollectionKey = $this->fill;
 
         $rightRecordKey = Convention::nameOne($leftForeignKey);
         $leftRecordKey = Convention::nameOne($rightForeignKey);
@@ -96,19 +96,19 @@ class HasAndBelongsTo extends HasMany
     {
         $arrLeftIds = [];
 
-        $rightForeignKey = $this->getRightForeignKey();
-        $leftForeignKey = $this->getLeftForeignKey();
+        $rightForeignKey = $this->rightForeignKey;
+        $leftForeignKey = $this->leftForeignKey;
 
         $middleEntity = $this->getMiddleEntity();
         $rightEntity = $this->getRightEntity();
 
-        $rightCollectionKey = Convention::nameMultiple($rightForeignKey);
+        $rightCollectionKey = $this->fill;
         $rightRecordKey = Convention::nameMultiple($leftForeignKey);
         $leftCollectionKey = Convention::nameMultiple($leftForeignKey);
         $leftRecordKey = Convention::nameMultiple($rightForeignKey);
         foreach ($collection as $record) {
             $arrLeftIds[$record->id] = $record->id;
-            $record->{$rightCollectionKey} = new Collection();
+            $record->setRelation($rightCollectionKey, new Collection());
         }
 
         if ($arrLeftIds) {
@@ -117,34 +117,45 @@ class HasAndBelongsTo extends HasMany
             $arrRightIds = [];
             foreach ($middleCollection as $middleRecord) {
                 $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-                $middleRecord->{$rightRecordKey} = null;
-                $middleRecord->{$leftRecordKey} = null;
+                //$middleRecord->{$rightRecordKey} = null;
+                //$middleRecord->{$leftRecordKey} = null;
             }
 
             if ($arrRightIds) {
                 // foreign collection is filled with it's entity relations
                 $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
-                foreach ($rightCollection as $rightRecord) {
-                    $rightRecord->{$leftCollectionKey} = new Collection();
-                }
+                /*foreach ($rightCollection as $rightRecord) {
+                    $rightRecord->setRelation($leftCollectionKey, new Collection());
+                }*/
 
                 // we have to fill it with current relations
                 $this->fillCollectionWithRelations($rightCollection);
 
+                // prepare collections for faster processing
+                $keyedLeftCollection = $collection->keyBy('id');
+                $keyedRightCollection = $rightCollection->keyBy('id');
+
                 foreach ($middleCollection as $middleRecord) {
+                    $keyedLeftCollection[$middleRecord->{$leftForeignKey}]
+                        ->getRelation($rightCollectionKey)
+                        ->push($keyedRightCollection[$middleRecord->{$rightForeignKey}]);
+                }
+
+                /*foreach ($middleCollection as $middleRecord) {
                     foreach ($collection as $leftRecord) {
                         if ($leftRecord->id == $middleRecord->{$leftForeignKey}) {
                             foreach ($rightCollection as $rightRecord) {
                                 if ($rightRecord->id == $middleRecord->{$rightForeignKey}) {
-                                    $leftRecord->{$rightCollectionKey}->push($rightRecord);
-                                    $rightRecord->{$leftCollectionKey}->push($rightRecord);
-                                    $middleRecord->{$leftRecordKey} = $rightRecord;
-                                    $middleRecord->{$rightRecordKey} = $leftRecord;
+                                    $leftRecord->getRelation($rightCollectionKey)->push($rightRecord);
+                                    //$rightRecord->getRelation($leftCollectionKey)->push($rightRecord);
+                                    //$middleRecord->{$leftRecordKey} = $rightRecord;
+                                    //$middleRecord->{$rightRecordKey} = $leftRecord;
+                                    break 2;
                                 }
                             }
                         }
                     }
-                }
+                }*/
             }
         }
 

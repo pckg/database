@@ -9,6 +9,38 @@ trait MiddleEntity
 
     protected $middle;
 
+    protected $leftForeignKey;
+
+    protected $rightForeignKey;
+
+    protected $leftPrimaryKey;
+
+    protected $rightPrimaryKey;
+
+    public function leftPrimaryKey($leftPrimaryKey) {
+        $this->leftPrimaryKey = $leftPrimaryKey;
+
+        return $this;
+    }
+
+    public function rightPrimaryKey($rightPrimaryKey) {
+        $this->rightPrimaryKey = $rightPrimaryKey;
+
+        return $this;
+    }
+
+    public function leftForeignKey($leftForeignKey) {
+        $this->leftForeignKey = $leftForeignKey;
+
+        return $this;
+    }
+
+    public function rightForeignKey($rightForeignKey) {
+        $this->rightForeignKey = $rightForeignKey;
+
+        return $this;
+    }
+
     /**
      * @return Entity
      * @throws \Exception

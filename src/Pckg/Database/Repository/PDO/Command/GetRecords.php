@@ -51,10 +51,10 @@ class GetRecords
                 $repository->executePrepared($prepareCount);
                 $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
             }
-
             $collection->setEntity($entity);
 
             return $entity->fillCollectionWithRelations($collection);
+
         }} catch (\Exception $e) {
             dd($prepare, exception($e));
         }

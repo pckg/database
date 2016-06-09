@@ -10,6 +10,7 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 /**
  * Class BelongsTo
+ *
  * @package Pckg\Database\Relation
  */
 class BelongsTo extends Relation
@@ -22,13 +23,15 @@ class BelongsTo extends Relation
      *
      * Example: layout belongs to variable.
      */
-    public function fillRecord(Record $record)
-    {
+    public function fillRecord(Record $record) {
         $foreignKey = $this->getForeignKey();
         $rightEntity = $this->getRightEntity();
 
         if ($record->{$foreignKey}) {
-            $record->setRelation($this->fill, (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne());
+            $record->setRelation(
+                $this->fill,
+                (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne()
+            );
         } else {
             $record->setRelation($this->fill, null);
         }
@@ -36,33 +39,34 @@ class BelongsTo extends Relation
         $this->fillRecordWithRelations($record);
     }
 
-    public function fillCollection(Collection $collection)
-    {
+    public function fillCollection(Collection $collection) {
         if (!$collection->count()) {
             return $collection;
         }
 
-        $arrIds = [];
+        $arrPrimaryIds = [];
+        $rightEntity = $this->getRightEntity();
 
-        $rightForeignKey = $this->getForeignKey();
+        $foreignKey = $this->getForeignKey();
+        $primaryKey = $this->getPrimaryKey();
+
         foreach ($collection as $record) {
-            if ($record->{$rightForeignKey}) {
-                $arrIds[$record->{$rightForeignKey}] = $record->{$rightForeignKey};
+            if ($record->{$foreignKey}) {
+                $arrPrimaryIds[$record->{$foreignKey}] = $record->{$foreignKey};
                 $record->setRelation($this->fill, null);
             }
         }
 
-        $rightEntity = $this->getRightEntity();
-        $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrIds);
-        foreach ($collection as $record) {
+        $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrPrimaryIds);
+        foreach ($collection as $primaryRecord) {
             foreach ($foreignCollection as $foreignRecord) {
-                if ($foreignRecord->id == $record->{$rightForeignKey}) {
-                    $record->setRelation($this->fill, $foreignRecord);
+                if ($foreignRecord->{$primaryKey} == $primaryRecord->{$foreignKey}) {
+                    $primaryRecord->setRelation($this->fill, $foreignRecord);
                     break;
                 }
             }
         }
-        
+
         $this->fillCollectionWithRelations($foreignCollection);
 
         if ($this->after) {

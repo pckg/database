@@ -57,6 +57,7 @@ class HasOne extends HasMany
 
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->setRelation($this->fill, $foreignRecord);
+                        break;
                     }
                 }
             }

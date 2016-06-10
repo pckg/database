@@ -88,6 +88,10 @@ abstract class Relation
         return $this;
     }
 
+    public function getSelect() {
+        return $this->select;
+    }
+
     public function where($key, $value = true, $operator = '=') {
         $this->getQuery();
 
@@ -117,20 +121,6 @@ abstract class Relation
         $this->foreignKey = $foreignKey;
 
         return $this;
-    }
-
-    public function getPrimaryKey()
-    {
-        return $this->primaryKey
-            ? $this->primaryKey
-            : $this->getLeftForeignKey();
-    }
-
-    public function getForeignKey()
-    {
-        return $this->foreignKey
-            ? $this->foreignKey
-            : $this->getRightForeignKey();
     }
 
     /**
@@ -252,8 +242,8 @@ abstract class Relation
     public function getKeyCondition()
     {
         return 'LEFT JOIN `' . $this->getRightEntity()->getTable() . '`' .
-        ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->getPrimaryKey() . '`' .
-        ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->getForeignKey() . '`';
+        ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->primaryKey . '`' .
+        ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->foreignKey . '`';
     }
 
     public function getAdditionalCondition()

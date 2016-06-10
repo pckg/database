@@ -125,6 +125,10 @@ class Select extends Query
         return $this;
     }
 
+    public function getSelect() {
+        return $this->select;
+    }
+
     /**
      * @return Delete
      */

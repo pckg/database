@@ -24,7 +24,7 @@ class BelongsTo extends Relation
      * Example: layout belongs to variable.
      */
     public function fillRecord(Record $record) {
-        $foreignKey = $this->getForeignKey();
+        $foreignKey = $this->foreignKey;
         $rightEntity = $this->getRightEntity();
 
         if ($record->{$foreignKey}) {
@@ -47,8 +47,8 @@ class BelongsTo extends Relation
         $arrPrimaryIds = [];
         $rightEntity = $this->getRightEntity();
 
-        $foreignKey = $this->getForeignKey();
-        $primaryKey = $this->getPrimaryKey();
+        $foreignKey = $this->foreignKey;
+        $primaryKey = $this->primaryKey;
 
         foreach ($collection as $record) {
             if ($record->{$foreignKey}) {

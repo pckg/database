@@ -16,8 +16,8 @@ class HasOne extends HasMany
 
     public function fillRecord(Record $record, $debug = false)
     {
-        $primaryKey = $this->getPrimaryKey();
-        $foreignKey = $this->getForeignKey();
+        $primaryKey = $this->primaryKey;
+        $foreignKey = $this->foreignKey;
 
         $rightEntity = $this->getRightEntity();
         $foreignRecord = $this->getForeignRecord($rightEntity, $foreignKey, $record->{$primaryKey});
@@ -34,8 +34,8 @@ class HasOne extends HasMany
     {
         $arrPrimaryIds = [];
 
-        $primaryKey = $this->getPrimaryKey();
-        $foreignKey = $this->getForeignKey();
+        $primaryKey = $this->primaryKey;
+        $foreignKey = $this->foreignKey;
 
         $rightEntity = $this->getRightEntity();
 

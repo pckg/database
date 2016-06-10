@@ -41,6 +41,14 @@ trait MiddleEntity
         return $this;
     }
 
+    public function getLeftForeignKey() {
+        return $this->leftForeignKey;
+    }
+
+    public function getRightForeignKey() {
+        return $this->rightForeignKey;
+    }
+
     /**
      * @return Entity
      * @throws \Exception

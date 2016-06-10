@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 use ArrayAccess;
 use Pckg\Database\Query\Parenthesis;
+use Pckg\Database\Query\Raw;
 
 abstract class Query
 {
@@ -84,6 +85,14 @@ abstract class Query
     }
 
     public function where($key, $value = true, $operator = '=') {
+        if (is_object($key) && $key instanceof Raw) {
+            $this->where->push($key->buildSQL());
+            if ($binds = $key->buildBinds()) {
+                $this->bind($binds, 'where');
+            }
+
+            return $this;
+        }
         if (is_object($value) && object_implements($value, ArrayAccess::class)) {
             $value = $value->__toArray();
         }

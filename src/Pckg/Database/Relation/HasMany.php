@@ -18,8 +18,8 @@ class HasMany extends Relation
 {
 
     public function fillRecord(Record $record, $debug = false) {
-        $primaryKey = $this->getPrimaryKey();
-        $foreignKey = $this->getForeignKey();
+        $primaryKey = $this->primaryKey;
+        $foreignKey = $this->foreignKey;
 
         $rightEntity = $this->getRightEntity();
         $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
@@ -43,8 +43,8 @@ class HasMany extends Relation
 
         $arrPrimaryIds = [];
 
-        $primaryKey = $this->getPrimaryKey();
-        $foreignKey = $this->getForeignKey();
+        $primaryKey = $this->primaryKey;
+        $foreignKey = $this->foreignKey;
 
         $rightEntity = $this->getRightEntity();
 

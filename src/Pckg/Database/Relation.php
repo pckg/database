@@ -11,6 +11,7 @@ use Pckg\Database\Relation\Helper\RightEntity;
 
 /**
  * Class Relation
+ *
  * @package Pckg\Database
  */
 abstract class Relation
@@ -22,10 +23,12 @@ abstract class Relation
      *
      */
     const LEFT_JOIN = 'LEFT JOIN';
+
     /**
      *
      */
     const RIGHT_JOIN = 'RIGHT JOIN';
+
     /**
      *
      */
@@ -69,8 +72,7 @@ abstract class Relation
 
     protected $after;
 
-    public function addSelect($fields = [])
-    {
+    public function addSelect($fields = []) {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
@@ -100,8 +102,7 @@ abstract class Relation
         return $this;
     }
 
-    public function getQuery()
-    {
+    public function getQuery() {
         if (!$this->query) {
             $this->query = new Select();
         }
@@ -109,15 +110,13 @@ abstract class Relation
         return $this->query;
     }
 
-    public function primaryKey($primaryKey)
-    {
+    public function primaryKey($primaryKey) {
         $this->primaryKey = $primaryKey;
 
         return $this;
     }
 
-    public function foreignKey($foreignKey)
-    {
+    public function foreignKey($foreignKey) {
         $this->foreignKey = $foreignKey;
 
         return $this;
@@ -127,15 +126,13 @@ abstract class Relation
      * @param $left
      * @param $right
      */
-    public function __construct($left, $right)
-    {
+    public function __construct($left, $right) {
         $this->left = $left;
         $this->right = $right;
         $this->fill = $this->getCalee();
     }
 
-    protected function getCalee($depth = 3)
-    {
+    protected function getCalee($depth = 3) {
         return debug_backtrace()[$depth]['function'];
     }
 
@@ -145,13 +142,12 @@ abstract class Relation
      *
      * @return $this
      */
-    public function __call($method, $args)
-    {
+    public function __call($method, $args) {
         $rightEntity = $this->getRightEntity();
 
         if (method_exists($rightEntity, $method)) {
             Reflect::method($rightEntity, $method, $args);
-            
+
         } else {
             $this->callWith($method, $args, $this->getRightEntity());
 
@@ -163,37 +159,41 @@ abstract class Relation
     /**
      * @param $join
      */
-    public function join($join)
-    {
+    public function join($join) {
         $this->join = $join;
     }
 
     /**
      * @return $this
      */
-    public function leftJoin()
-    {
+    public function leftJoin() {
         $this->join = static::LEFT_JOIN;
 
         return $this;
     }
 
-    public function fill($fill)
-    {
+    /**
+     * @return $this
+     */
+    public function innerJoin() {
+        $this->join = static::INNER_JOIN;
+
+        return $this;
+    }
+
+    public function fill($fill) {
         $this->fill = $fill;
 
         return $this;
     }
 
-    public function after($after)
-    {
+    public function after($after) {
         $this->after = $after;
 
         return $this;
     }
 
-    public function getFill()
-    {
+    public function getFill() {
         return $this->fill;
     }
 
@@ -202,8 +202,7 @@ abstract class Relation
      *
      * @return $this
      */
-    public function on($on)
-    {
+    public function on($on) {
         $this->on = $on;
 
         return $this;
@@ -213,8 +212,7 @@ abstract class Relation
      * @return Entity
      * @throws \Exception
      */
-    public function getLeftEntity()
-    {
+    public function getLeftEntity() {
         return $this->left; // left is always entity
     }
 
@@ -222,13 +220,11 @@ abstract class Relation
      * @return Repository
      * @throws \Exception
      */
-    public function getLeftRepository()
-    {
+    public function getLeftRepository() {
         return $this->getLeftEntity()->getRepository();
     }
 
-    public function onRecord(Record $record)
-    {
+    public function onRecord(Record $record) {
         $this->record = $record;
 
         return $this;
@@ -239,29 +235,32 @@ abstract class Relation
      *
      * @return string
      */
-    public function getKeyCondition()
-    {
-        return 'LEFT JOIN `' . $this->getRightEntity()->getTable() . '`' .
-        ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->primaryKey . '`' .
-        ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->foreignKey . '`';
+    public function getKeyCondition() {
+        return $this->join . ' `' . $this->getRightEntity()->getTable() . '`' .
+               ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->primaryKey . '`' .
+               ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->foreignKey . '`';
     }
 
-    public function getAdditionalCondition()
-    {
+    public function getAdditionalCondition() {
         return $this->onAdditional
             ? ' AND ' . $this->onAdditional
             : '';
     }
 
-    public function mergeToQuery(Select $query)
-    {
+    public function mergeToQuery(Select $query) {
         $condition = '';
-        if ($this->getQuery()->getWhere()->hasChildren()) {
-            $condition = ' AND ' . $this->getQuery()->getWhere()->build();
+        foreach ([
+                     $this->getQuery(),
+                     $this->getRightEntity()->getQuery(),
+                 ] as $subquery) {
+            if ($subquery->getWhere()->hasChildren()) {
+                $condition = ' AND ' . $subquery->getWhere()->build();
 
-            foreach ($this->query->getBinds('where') as $bind) {
-                $query->bind($bind, 'where');
+                foreach ($subquery->getBinds('where') as $bind) {
+                    $query->bind($bind, 'where');
+                }
             }
+
         }
 
         $query->join($this->getKeyCondition() . $condition);

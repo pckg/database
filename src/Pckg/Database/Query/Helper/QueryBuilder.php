@@ -47,49 +47,7 @@ trait QueryBuilder
     public function join($table, $on = null, $where = null)
     {
         if ($table instanceof Relation) {
-            if ($table instanceof HasAndBelongsTo) {
-                /**
-                 * Join middle entity
-                 */
-                $middleQuery = $table->getMiddleEntity()->getQuery();
-                $this->getQuery()->join('LEFT JOIN ' . $middleQuery->getTable() .
-                                        ' ON ' . $table->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $table->getLeftForeignKey(), null);
-
-                /**
-                 * Join right entity
-                 */
-                $rightQuery = $table->getRightEntity()->getQuery();
-                $this->getQuery()->join('LEFT JOIN ' . $rightQuery->getTable() .
-                                        ' ON ' . $table->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $table->getRightForeignKey(), null);
-
-                /**
-                 * Add select fields
-                 */
-                foreach ($table->getSelect() as $key => $val) {
-                    if (is_numeric($key)) {
-                        $this->getQuery()->prependSelect([$val]);
-                    }  else {
-                        $this->getQuery()->addSelect([$key => $val]);
-                    }
-                }
-                foreach ($table->getMiddleEntity()->getQuery()->getSelect() as $key => $val) {
-                    if (is_numeric($key)) {
-                        $this->getQuery()->prependSelect([$val]);
-                    }  else {
-                        $this->getQuery()->addSelect([$key => $val]);
-                    }
-                }
-                foreach ($table->getRightEntity()->getQuery()->getSelect() as $key => $val) {
-                    if (is_numeric($key)) {
-                        $this->getQuery()->prependSelect([$val]);
-                    }  else {
-                        $this->getQuery()->addSelect([$key => $val]);
-                    }
-                }
-            } else {
-                $table->mergeToQuery($this->getQuery());
-
-            }
+            $table->mergeToQuery($this->getQuery());
 
         } else {
             $this->getQuery()->join($table, $on, $where);

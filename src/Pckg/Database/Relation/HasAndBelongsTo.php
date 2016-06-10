@@ -6,6 +6,7 @@ use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\MiddleEntity;
@@ -160,6 +161,47 @@ class HasAndBelongsTo extends HasMany
         }
 
         $this->fillCollectionWithRelations($collection);
+    }
+    
+    public function mergeToQuery(Select $query) {
+        /**
+         * Join middle entity
+         */
+        $middleQuery = $this->getMiddleEntity()->getQuery();
+        $this->getQuery()->join('LEFT JOIN ' . $middleQuery->getTable() .
+                                ' ON ' . $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getLeftForeignKey(), null);
+
+        /**
+         * Join right entity
+         */
+        $rightQuery = $this->getRightEntity()->getQuery();
+        $this->getQuery()->join('LEFT JOIN ' . $rightQuery->getTable() .
+                                ' ON ' . $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getRightForeignKey(), null);
+
+        /**
+         * Add select fields
+         */
+        foreach ($this->getSelect() as $key => $val) {
+            if (is_numeric($key)) {
+                $this->getQuery()->prependSelect([$val]);
+            }  else {
+                $this->getQuery()->addSelect([$key => $val]);
+            }
+        }
+        foreach ($this->getMiddleEntity()->getQuery()->getSelect() as $key => $val) {
+            if (is_numeric($key)) {
+                $this->getQuery()->prependSelect([$val]);
+            }  else {
+                $this->getQuery()->addSelect([$key => $val]);
+            }
+        }
+        foreach ($this->getRightEntity()->getQuery()->getSelect() as $key => $val) {
+            if (is_numeric($key)) {
+                $this->getQuery()->prependSelect([$val]);
+            }  else {
+                $this->getQuery()->addSelect([$key => $val]);
+            }
+        }
     }
 
 }

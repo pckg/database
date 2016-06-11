@@ -4,6 +4,7 @@ namespace Pckg\Database\Repository\PDO\Command;
 
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
+use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 use PDO;
@@ -33,6 +34,18 @@ class GetRecords
             ?: $this->entity->getRepository();
     }
 
+    protected function checkBinds(Query $query) {
+        $binds = $query->getBinds();
+        $sql = $query->buildSQL();
+        $countBinds = 0;
+        foreach ($binds as $group => $bs) {
+            $countBinds += count($bs);
+        }
+        if (substr_count($sql, '?') != $countBinds) {
+            dd($sql, $binds, substr_count($sql, '?'));
+        }
+    }
+
     /**
      * Prepare query from entity, fetch records and fill them with relations.
      * @return Collection
@@ -41,7 +54,9 @@ class GetRecords
     {
         $repository = $this->repository;
         $entity = $this->entity;
-        try {
+
+        //$this->checkBinds($entity->getQuery());
+
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
@@ -55,8 +70,6 @@ class GetRecords
 
             return $entity->fillCollectionWithRelations($collection);
 
-        }} catch (\Exception $e) {
-            dd($prepare, exception($e));
         }
 
         return new Collection();
@@ -70,6 +83,9 @@ class GetRecords
     {
         $repository = $this->repository;
         $entity = $this->entity;
+
+        //$this->checkBinds($entity->getQuery());
+
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {

@@ -51,9 +51,13 @@ trait RightEntity
             $entity->where(function (Parenthesis $parenthesis) use ($condition) {
                 $parenthesis->push($condition);
             });
+
+            foreach ($this->getQuery()->getBinds('where') as $bind) {
+                $entity->getQuery()->bind($bind, 'where');
+            }
         }
 
-        foreach ($this->select as $key => $select) {
+        /*foreach ($this->select as $key => $select) {
             if (is_numeric($key)) {
                 $entity->getQuery()->addSelect([$select]);
 
@@ -61,7 +65,7 @@ trait RightEntity
                 $entity->getQuery()->addSelect([$key => $select]);
 
             }
-        }
+        }*/
 
         return (new GetRecords($entity))->executeAll();
     }
@@ -74,9 +78,13 @@ trait RightEntity
             $entity->where(function (Parenthesis $parenthesis) use ($condition) {
                 $parenthesis->push($condition);
             });
+
+            foreach ($this->getQuery()->getBinds('where') as $bind) {
+                $entity->getQuery()->bind($bind, 'where');
+            }
         }
 
-        foreach ($this->select as $key => $select) {
+        /*foreach ($this->select as $key => $select) {
             if (is_numeric($key)) {
                 $entity->getQuery()->addSelect([$select]);
 
@@ -84,7 +92,7 @@ trait RightEntity
                 $entity->getQuery()->addSelect([$key => $select]);
 
             }
-        }
+        }*/
 
         return (new GetRecords($entity))->executeOne();
     }

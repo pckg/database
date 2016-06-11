@@ -20,8 +20,6 @@ trait RelationMethods
 
     protected function returnRelation($relation, $entity, callable $callback = null)
     {
-        //d('creating relation ' . (is_object($relation) ? get_class($relation) : $relation) . ' on ' . (is_object($entity) ? get_class($entity) : $entity));
-
         $relation = new $relation($this, $entity);
 
         if ($callback) {

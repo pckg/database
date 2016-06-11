@@ -10,6 +10,7 @@ use Pckg\Database\Relation\HasAndBelongsTo;
 
 /**
  * Class QueryBuilder
+ *
  * @package Pckg\Database\Query\Helper
  */
 trait QueryBuilder
@@ -23,16 +24,18 @@ trait QueryBuilder
     /**
      * @return Query|Select
      */
-    public function getQuery()
-    {
+    public function getQuery() {
         return $this->query
             ? $this->query
             : $this->resetQuery()->getQuery();
     }
 
-    public function resetQuery()
-    {
-        $this->query = (new Select())->table($this->table);
+    public function resetQuery() {
+        $this->query = (new Select());
+
+        if (isset($this->table)) {
+            $this->query->table($this->table);
+        }
 
         return $this;
     }
@@ -44,8 +47,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function join($table, $on = null, $where = null)
-    {
+    public function join($table, $on = null, $where = null) {
         if ($table instanceof Relation) {
             $table->mergeToQuery($this->getQuery());
 
@@ -64,9 +66,8 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function where($key, $value = true, $operator = '=')
-    {
-        if (is_string($key) && !strpos($key, '.') && strpos($key, '`') === false) {
+    public function where($key, $value = true, $operator = '=') {
+        if (isset($this->table) && is_string($key) && !strpos($key, '.') && strpos($key, '`') === false) {
             $key = '`' . $this->table . '`.`' . $key . '`';
         }
 
@@ -82,39 +83,44 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function having($key, $value = true, $operator = '=')
-    {
+    public function having($key, $value = true, $operator = '=') {
         $this->getQuery()->having($key, $value, $operator);
 
         return $this;
     }
 
-    public function groupBy($key)
-    {
+    public function groupBy($key) {
         $this->getQuery()->groupBy($key);
 
         return $this;
     }
 
-    public function orderBy($key)
-    {
+    public function orderBy($key) {
         $this->getQuery()->orderBy($key);
 
         return $this;
     }
 
-    public function limit($limit)
-    {
+    public function limit($limit) {
         $this->getQuery()->limit($limit);
 
         return $this;
     }
 
-    public function count()
-    {
+    public function count() {
         $this->getQuery()->count();
 
         return $this;
+    }
+
+    public function addSelect($fields = []) {
+        $this->getQuery()->addSelect($fields);
+
+        return $this;
+    }
+
+    public function getSelect() {
+        return $this->getQuery()->getSelect();
     }
 
 }

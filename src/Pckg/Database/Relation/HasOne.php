@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
-use Pckg\Database\Collection;
+use Pckg\CollectionInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
@@ -30,7 +30,7 @@ class HasOne extends HasMany
         }
     }
 
-    public function fillCollection(Collection $collection)
+    public function fillCollection(CollectionInterface $collection)
     {
         $arrPrimaryIds = [];
 

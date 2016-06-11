@@ -6,10 +6,12 @@ use Pckg\Database\Query;
 
 /**
  * Class Select
+ *
  * @package Pckg\Database\Query
  */
 class Select extends Query
 {
+
     /**
      * @var
      */
@@ -17,20 +19,17 @@ class Select extends Query
 
     protected $count = false;
 
-    public function count($count = true)
-    {
+    public function count($count = true) {
         $this->count = $count;
 
         return $this;
     }
 
-    public function isCounted()
-    {
+    public function isCounted() {
         return $this->count;
     }
 
-    public function table($table)
-    {
+    public function table($table) {
         $this->table = $table;
 
         if (!in_array('`' . $table . '`.*', $this->select)) {
@@ -44,27 +43,24 @@ class Select extends Query
     /**
      * @return string
      */
-    function buildSQL()
-    {
+    function buildSQL() {
         $sql = "SELECT " . $this->buildSelect() . " " .
-            "FROM `" . $this->table . "` " .
-            ($this->join ? $this->buildJoin() : '') .
-            $this->buildWhere() .
-            ($this->having ? $this->buildHaving() : '') .
-            ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
-            ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
-            ($this->limit ? ' LIMIT ' . $this->limit : '');
+               "FROM `" . $this->table . "` " .
+               ($this->join ? $this->buildJoin() : '') .
+               $this->buildWhere() .
+               ($this->having ? $this->buildHaving() : '') .
+               ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
+               ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
+               ($this->limit ? ' LIMIT ' . $this->limit : '');
 
         return $sql;
     }
 
-    public function buildBinds()
-    {
+    public function buildBinds() {
         return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
     }
 
-    public function buildSelect()
-    {
+    public function buildSelect() {
         $keys = [];
         foreach ($this->select as $key => $select) {
             if (is_numeric($key)) {
@@ -79,8 +75,7 @@ class Select extends Query
         return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $keys);
     }
 
-    public function select($fields)
-    {
+    public function select($fields) {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
@@ -95,15 +90,14 @@ class Select extends Query
      *
      * @return $this
      */
-    public function addSelect($fields)
-    {
+    public function addSelect($fields) {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
 
         foreach ($fields as $key => $field) {
             if (is_numeric($key)) {
-            $this->select[] = $field;
+                $this->select[] = $field;
             } else {
                 $this->select[$key] = $field;
             }
@@ -112,8 +106,7 @@ class Select extends Query
         return $this;
     }
 
-    public function prependSelect($fields = [])
-    {
+    public function prependSelect($fields = []) {
         if (!is_array($fields)) {
             $fields = [$fields];
         }

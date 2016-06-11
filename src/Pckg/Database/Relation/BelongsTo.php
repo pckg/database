@@ -2,8 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
-use Pckg\Database\Collection;
-use Pckg\Database\Query\Select;
+use Pckg\CollectionInterface;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
@@ -39,7 +38,7 @@ class BelongsTo extends Relation
         $this->fillRecordWithRelations($record);
     }
 
-    public function fillCollection(Collection $collection) {
+    public function fillCollection(CollectionInterface $collection) {
         if (!$collection->count()) {
             return $collection;
         }

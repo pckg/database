@@ -60,30 +60,6 @@ abstract class Query
         return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
     }
 
-    public function orderBy($orderBy) {
-        $this->orderBy = $orderBy;
-
-        return $this;
-    }
-
-    public function groupBy($groupBy) {
-        $this->groupBy = $groupBy;
-
-        return $this;
-    }
-
-    public function limit($limit) {
-        $this->limit = $limit;
-
-        return $this;
-    }
-
-    public function orWhere($key, $value = true, $operator = '=') {
-        $this->where->setGlue('OR');
-
-        return $this->where($key, $value, $operator);
-    }
-
     public function where($key, $value = true, $operator = '=') {
         if (is_object($key) && $key instanceof Raw) {
             $this->where->push($key->buildSQL());
@@ -132,6 +108,30 @@ abstract class Query
                 $this->bind($value, 'where');
             }
         }
+
+        return $this;
+    }
+
+    public function orWhere($key, $value = true, $operator = '=') {
+        $this->where->setGlue('OR');
+
+        return $this->where($key, $value, $operator);
+    }
+
+    public function groupBy($groupBy) {
+        $this->groupBy = $groupBy;
+
+        return $this;
+    }
+
+    public function orderBy($orderBy) {
+        $this->orderBy = $orderBy;
+
+        return $this;
+    }
+
+    public function limit($limit) {
+        $this->limit = $limit;
 
         return $this;
     }

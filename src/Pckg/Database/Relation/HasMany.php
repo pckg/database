@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
+use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
@@ -36,7 +37,7 @@ class HasMany extends Relation
         }
     }
 
-    public function fillCollection(Collection $collection) {
+    public function fillCollection(CollectionInterface $collection) {
         if (!$collection->count()) {
             return $collection;
         }

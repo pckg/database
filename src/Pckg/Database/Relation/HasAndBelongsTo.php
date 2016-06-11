@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Relation;
 
+use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -93,7 +94,7 @@ class HasAndBelongsTo extends HasMany
             is_array($primaryValue) ? 'IN' : '=')))->executeAll();
     }
 
-    public function fillCollection(Collection $collection)
+    public function fillCollection(CollectionInterface $collection)
     {
         $arrLeftIds = [];
 

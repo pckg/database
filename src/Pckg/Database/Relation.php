@@ -1,11 +1,8 @@
-<?php
+<?php namespace Pckg\Database;
 
-namespace Pckg\Database;
-
-use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
-use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Relation\Helper\RightEntity;
 
@@ -14,10 +11,10 @@ use Pckg\Database\Relation\Helper\RightEntity;
  *
  * @package Pckg\Database
  */
-abstract class Relation
+abstract class Relation implements RelationInterface
 {
 
-    use With, RightEntity;
+    use With, RightEntity, QueryBuilder;
 
     /**
      *
@@ -55,15 +52,13 @@ abstract class Relation
 
     protected $fill;
 
-    protected $primaryKey;
+    protected $primaryKey = 'id';
 
     protected $primaryCollectionKey;
 
     protected $foreignKey;
 
     protected $select = [];
-
-    protected $condition = [];
 
     /**
      * @var Select
@@ -72,42 +67,31 @@ abstract class Relation
 
     protected $after;
 
-    public function addSelect($fields = []) {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
+    /**
+     * @param $method
+     * @param $args
+     *
+     * @return $this
+     */
+    public function __call($method, $args) {
+        if (method_exists($this->getQuery(), $method)) {
+            /**
+             * First overload Query.
+             */
+            Reflect::method($this->getQuery(), $method, $args);
 
-        foreach ($fields as $key => $field) {
-            if (is_numeric($key)) {
-                $this->select[] = $field;
+            /**
+             * Then right entity.
+             */
+        } elseif (method_exists($this->getRightEntity(), $method)) {
+            Reflect::method($this->getRightEntity(), $method, $args);
 
-            } else {
-                $this->select[$key] = $field;
+        } else {
+            $this->callWith($method, $args, $this->getRightEntity());
 
-            }
         }
 
         return $this;
-    }
-
-    public function getSelect() {
-        return $this->select;
-    }
-
-    public function where($key, $value = true, $operator = '=') {
-        $this->getQuery();
-
-        $this->getRightEntity()->where($key, $value, $operator);
-
-        return $this;
-    }
-
-    public function getQuery() {
-        if (!$this->query) {
-            $this->query = new Select();
-        }
-
-        return $this->query;
     }
 
     public function primaryKey($primaryKey) {
@@ -134,33 +118,6 @@ abstract class Relation
 
     protected function getCalee($depth = 3) {
         return debug_backtrace()[$depth]['function'];
-    }
-
-    /**
-     * @param $method
-     * @param $args
-     *
-     * @return $this
-     */
-    public function __call($method, $args) {
-        $rightEntity = $this->getRightEntity();
-
-        if (method_exists($rightEntity, $method)) {
-            Reflect::method($rightEntity, $method, $args);
-
-        } else {
-            $this->callWith($method, $args, $this->getRightEntity());
-
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $join
-     */
-    public function join($join) {
-        $this->join = $join;
     }
 
     /**
@@ -249,18 +206,13 @@ abstract class Relation
 
     public function mergeToQuery(Select $query) {
         $condition = '';
-        foreach ([
-                     $this->getQuery(),
-                     $this->getRightEntity()->getQuery(),
-                 ] as $subquery) {
-            if ($subquery->getWhere()->hasChildren()) {
-                $condition = ' AND ' . $subquery->getWhere()->build();
+        
+        if ($this->getQuery()->getWhere()->hasChildren()) {
+            $condition = ' AND ' . $this->getQuery()->getWhere()->build();
 
-                foreach ($subquery->getBinds('where') as $bind) {
-                    $query->bind($bind, 'where');
-                }
+            foreach ($this->getQuery()->getBinds('where') as $bind) {
+                $query->bind($bind, 'where');
             }
-
         }
 
         $query->join($this->getKeyCondition() . $condition);
@@ -271,9 +223,5 @@ abstract class Relation
 
         return $this;
     }
-
-    abstract function fillRecord(Record $record);
-
-    abstract function fillCollection(Collection $collection);
 
 }

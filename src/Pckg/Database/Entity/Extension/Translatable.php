@@ -93,7 +93,8 @@ trait Translatable
             ->primaryKey('id')
             ->foreignKey('id')
             ->fill('_translations')
-            ->addSelect(['`' . $translaTable . '`.*']);
+            ->addSelect(['`' . $translaTable . '`.*'])
+            ->leftJoin();
 
         if ($callable) {
             $query = $relation->getRightEntity()->getQuery();

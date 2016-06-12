@@ -127,7 +127,7 @@ class Record extends Object implements RecordInterface
     public function __get($key)
     {
         if (!$key) {
-            dd(debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
+            dd("no key", debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
         }
         
         /**
@@ -308,6 +308,10 @@ class Record extends Object implements RecordInterface
      */
     public function getEntity()
     {
+        if (!is_object($this->entity)) {
+            //d("Not object", $this->getEntityClass(), get_class($this), $this->entity);
+        }
+
         return is_object($this->entity)
             ? $this->entity
             : $this->entity = Reflect::create($this->getEntityClass());

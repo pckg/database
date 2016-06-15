@@ -100,6 +100,13 @@ abstract class Query
 
             }
 
+        } elseif ($operator == 'IS' || $operator == 'IS NOT') {
+            $this->where->push(
+                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
+            );
+            if ($value && $value !== true) {
+                $this->bind($value, 'where');
+            }
         } else {
             $this->where->push(
                 $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')

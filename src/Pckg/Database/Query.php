@@ -108,9 +108,7 @@ abstract class Query
                 $this->bind($value, 'where');
             }
         } elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
-            $this->where->push(
-                $this->makeKey($key) . ' ' . $operator . ' ?')
-            );
+            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ?');
             $this->bind($value, 'where');
         } else {
             $this->where->push(

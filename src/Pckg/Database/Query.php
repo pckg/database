@@ -107,6 +107,11 @@ abstract class Query
             if ($value && $value !== true) {
                 $this->bind($value, 'where');
             }
+        } elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
+            $this->where->push(
+                $this->makeKey($key) . ' ' . $operator . ' ?')
+            );
+            $this->bind($value, 'where');
         } else {
             $this->where->push(
                 $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')

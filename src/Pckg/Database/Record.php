@@ -133,7 +133,7 @@ class Record extends Object implements RecordInterface
         /**
          * Return value via getter
          */
-        if ($key != 'value' && method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+        if (!in_array($key, ['value', 'relations']) && method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
             return $this->{'get' . ucfirst(Convention::toCamel($key))}();
         }
 

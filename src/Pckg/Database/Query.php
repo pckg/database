@@ -188,8 +188,21 @@ abstract class Query
         return $binds;
     }
 
-    public function join($table, $on = null, $where = null) {
-        $this->join[] = $table;
+    public function join($table, $on = null, $where = null, $binds = []) {
+        if (!$on) {
+            $this->join[] = $table;
+        } else {
+            $this->join[] = $table . ' ON ' . $on;
+
+            if ($where) {
+                $this->where(new Raw($where));
+            }
+            if ($binds) {
+                foreach ($binds as $bind) {
+                    //$this->bind($bind, 'where');
+                }
+            }
+        }
 
         return $this;
     }

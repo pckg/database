@@ -90,7 +90,6 @@ trait Translatable
          * @T00D00 - language should be binded (PDO) ...
          */
         $relation = $this->hasMany((new Entity($repository))->setTable($translaTable))
-            ->primaryKey('id')
             ->foreignKey('id')
             ->fill('_translations')
             ->addSelect(['`' . $translaTable . '`.*'])

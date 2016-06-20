@@ -66,8 +66,8 @@ class HasMany extends Relation
 
             $this->fillCollectionWithRelations($foreignCollection);
 
-            foreach ($collection as $primaryRecord) {
-                foreach ($foreignCollection as $foreignRecord) {
+            foreach ($foreignCollection as $foreignRecord) {
+                foreach ($collection as $primaryRecord) {
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->getRelation($this->fill)->push($foreignRecord);
                         break;

@@ -193,9 +193,12 @@ abstract class Relation implements RelationInterface
      * @return string
      */
     public function getKeyCondition() {
-        return $this->join . ' `' . $this->getRightEntity()->getTable() . '`' .
+        $rightEntity = $this->getRightEntity();
+        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
+
+        return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
                ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->primaryKey . '`' .
-               ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->foreignKey . '`';
+               ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`';
     }
 
     public function getAdditionalCondition() {

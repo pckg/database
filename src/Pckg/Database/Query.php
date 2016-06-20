@@ -9,7 +9,7 @@ use Pckg\Database\Query\Raw;
 abstract class Query
 {
 
-    protected $table, $join, $where, $groupBy, $having, $orderBy, $limit;
+    protected $table, $alias, $join, $where, $groupBy, $having, $orderBy, $limit;
 
     protected $sql;
 
@@ -18,6 +18,10 @@ abstract class Query
     public function __construct() {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
+    }
+
+    public function __clone() {
+        $this->where = clone $this->where;
     }
 
     public static function raw($sql) {
@@ -38,6 +42,16 @@ abstract class Query
 
     public function getTable() {
         return $this->table;
+    }
+
+    public function alias($alias) {
+        $this->alias = $alias;
+
+        return $this;
+    }
+
+    public function getAlias() {
+        return $this->alias;
     }
 
     public function getLimit() {
@@ -102,7 +116,9 @@ abstract class Query
 
         } elseif ($operator == 'IS' || $operator == 'IS NOT') {
             $this->where->push(
-                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
+                $this->makeKey(
+                    $key
+                ) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
             );
             if ($value && $value !== true) {
                 $this->bind($value, 'where');
@@ -205,6 +221,16 @@ abstract class Query
         }
 
         return $this;
+    }
+
+    public function getJoin() {
+        return $this->join;
+    }
+
+    public function makeJoinsLeft() {
+        foreach ($this->join as &$join) {
+            $join = str_replace('INNER JOIN', 'LEFT JOIN', $join);
+        }
     }
 
     public function primaryWhere(Entity $entity, $data, $table) {

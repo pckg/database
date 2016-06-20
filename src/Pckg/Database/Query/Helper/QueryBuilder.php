@@ -40,6 +40,12 @@ trait QueryBuilder
         return $this;
     }
 
+    public function setQuery($query) {
+        $this->query = $query;
+
+        return $this;
+    }
+
     /**
      * @param      $table
      * @param null $on
@@ -67,8 +73,12 @@ trait QueryBuilder
      * @return $this
      */
     public function where($key, $value = true, $operator = '=') {
-        if (isset($this->table) && is_string($key) && !strpos($key, '.') && strpos($key, '`') === false) {
-            $key = '`' . $this->table . '`.`' . $key . '`';
+        if ((isset($this->table) || isset($this->alias)) && is_string($key) && !strpos($key, '.') && strpos($key, '`') === false) {
+            if ($this->alias) {
+                $key = '`' . $this->alias . '`.`' . $key . '`';
+            } else {
+                $key = '`' . $this->table . '`.`' . $key . '`';
+            }
         }
 
         $this->getQuery()->where($key, $value, $operator);

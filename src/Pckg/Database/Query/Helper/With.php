@@ -44,7 +44,6 @@ trait With
                  * We are calling relation function without arguments: $entity->withSomething();.
                  */
                 $relation = $object->{lcfirst(substr($method, strlen($prefix)))}();
-                //message('Creating relation ' . get_class($object) . ' ' . lcfirst(substr($method, strlen($autocall))));
 
                 /**
                  * We'll return $entity->with($relation), which is Relation;
@@ -55,7 +54,6 @@ trait With
                  * If callback was added, we run it.
                  */
                 if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
-                    //d('Callback on ' . get_class($object) . ' ' . lcfirst(substr($method, strlen($autocall))));
                     $args[0]($relation);
                 }
 
@@ -79,10 +77,6 @@ trait With
         }
 
         return $relation;
-
-        dd($this->autocallPrefixes, $method, get_class($object));
-
-        throw new Exception('Method ' . $method . ' doesn\'t exist in ' . static::class . ' (With->callWith)');
     }
 
     public function getWith()

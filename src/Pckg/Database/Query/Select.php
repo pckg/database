@@ -39,13 +39,27 @@ class Select extends Query
         return $this;
     }
 
+    public function alias($alias) {
+        $this->alias = $alias;
+
+        if (!in_array('`' . $alias . '`.*', $this->select)) {
+            $this->select[] = '`' . $alias . '`.*';
+        }
+
+        if (in_array('`' . $this->table . '`.*', $this->select)) {
+            unset($this->select[array_search('`' . $this->table . '`.*', $this->select)]);
+        }
+
+        return $this;
+    }
+
     // builders
     /**
      * @return string
      */
     function buildSQL() {
         $sql = "SELECT " . $this->buildSelect() . " " .
-               "FROM `" . $this->table . "` " .
+               "FROM " . $this->buildTable() . " " .
                ($this->join ? $this->buildJoin() : '') .
                $this->buildWhere() .
                ($this->having ? $this->buildHaving() : '') .
@@ -73,6 +87,12 @@ class Select extends Query
         }
 
         return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $keys);
+    }
+
+    public function buildTable() {
+        return '`' . $this->table . '`' . ($this->alias
+            ? ' AS `' . $this->alias . '`'
+            : '');
     }
 
     public function select($fields) {

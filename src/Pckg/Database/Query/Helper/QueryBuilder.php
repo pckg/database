@@ -117,8 +117,8 @@ trait QueryBuilder
         return $this;
     }
 
-    public function count() {
-        $this->getQuery()->count();
+    public function count($count = true) {
+        $this->getQuery()->count($count);
 
         return $this;
     }

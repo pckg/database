@@ -65,6 +65,7 @@ class GetRecords
                 $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
                 $repository->executePrepared($prepareCount);
                 $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
+                $entity->count(false);
             }
             $collection->setEntity($entity);
 

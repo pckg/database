@@ -74,16 +74,6 @@ trait RightEntity
             }
         }
 
-        /*foreach ($this->select as $key => $select) {
-            if (is_numeric($key)) {
-                $entity->getQuery()->addSelect([$select]);
-
-            } else {
-                $entity->getQuery()->addSelect([$key => $select]);
-
-            }
-        }*/
-
         return (new GetRecords($entity))->executeOne();
     }
 

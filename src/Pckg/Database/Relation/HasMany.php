@@ -24,12 +24,12 @@ class HasMany extends Relation
 
         $rightEntity = $this->getRightEntity();
         $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
+        $foreignCollection->setEntity($rightEntity);
+        $this->fillCollectionWithRelations($foreignCollection);
 
         foreach ($foreignCollection as $foreignRecord) {
             $foreignRecord->setRelation($this->fill, new Collection());
         }
-
-        $this->fillCollectionWithRelations($foreignCollection);
 
         $record->setRelation($this->fill, new Collection());
         foreach ($foreignCollection as $foreignRecord) {
@@ -56,18 +56,12 @@ class HasMany extends Relation
 
         if ($arrPrimaryIds) {
             $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
-            foreach ($foreignCollection as $foreignRecord) {
-                /*
-                 * Foreign records needs to have set entity with correct table because we'll read data from
-                 * repository cache in __get method.
-                 */
-                $foreignRecord->setEntity($rightEntity);
-            }
-
+            $foreignCollection->setEntity($rightEntity);
             $this->fillCollectionWithRelations($foreignCollection);
 
-            foreach ($foreignCollection as $foreignRecord) {
-                foreach ($collection as $primaryRecord) {
+            message('HasMany: ' . $collection->count() . ' x ' . $foreignCollection->count());
+            foreach ($collection as $primaryRecord) {
+                foreach ($foreignCollection as $foreignRecord) {
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->getRelation($this->fill)->push($foreignRecord);
                         break;

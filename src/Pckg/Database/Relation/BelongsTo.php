@@ -24,12 +24,13 @@ class BelongsTo extends Relation
      */
     public function fillRecord(Record $record) {
         $foreignKey = $this->foreignKey;
+        $primaryKey = $this->primaryKey;
         $rightEntity = $this->getRightEntity();
 
         if ($record->{$foreignKey}) {
             $record->setRelation(
                 $this->fill,
-                (new GetRecords($rightEntity->where('id', $record->{$foreignKey})))->executeOne()
+                (new GetRecords($rightEntity->where($primaryKey, $record->{$foreignKey})))->executeOne()
             );
         } else {
             $record->setRelation($this->fill, null);
@@ -49,27 +50,31 @@ class BelongsTo extends Relation
         $foreignKey = $this->foreignKey;
         $primaryKey = $this->primaryKey;
 
-        foreach ($collection as $record) {
-            if ($record->{$foreignKey}) {
-                $arrPrimaryIds[$record->{$foreignKey}] = $record->{$foreignKey};
-                $record->setRelation($this->fill, null);
+        foreach ($collection as $primaryRecord) {
+            if ($primaryRecord->{$foreignKey}) {
+                $arrPrimaryIds[$primaryRecord->{$foreignKey}] = $primaryRecord->{$foreignKey};
+                $primaryRecord->setRelation($this->fill, null);
             }
         }
 
-        $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrPrimaryIds);
-        foreach ($collection as $primaryRecord) {
-            foreach ($foreignCollection as $foreignRecord) {
-                if ($foreignRecord->{$primaryKey} == $primaryRecord->{$foreignKey}) {
-                    $primaryRecord->setRelation($this->fill, $foreignRecord);
-                    break;
+        if ($arrPrimaryIds) {
+            $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrPrimaryIds);
+            $foreignCollection->setEntity($rightEntity);
+            $this->fillCollectionWithRelations($foreignCollection);
+
+            message('BelongsTo: ' . $collection->count() . ' x ' . $foreignCollection->count());
+            foreach ($collection as $primaryRecord) {
+                foreach ($foreignCollection as $foreignRecord) {
+                    if ($primaryRecord->{$foreignKey} == $foreignRecord->{$primaryKey}) {
+                        $primaryRecord->setRelation($this->fill, $foreignRecord);
+                        break;
+                    }
                 }
             }
-        }
 
-        $this->fillCollectionWithRelations($foreignCollection);
-
-        if ($this->after) {
-            $collection->each($this->after);
+            if ($this->after) {
+                $collection->each($this->after);
+            }
         }
     }
 
@@ -78,8 +83,7 @@ class BelongsTo extends Relation
      *
      * @return string
      */
-    public function getKeyCondition()
-    {
+    public function getKeyCondition() {
         return $this->join . ' `' . $this->getRightEntity()->getTable() . '`' .
                ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->foreignKey . '`' .
                ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->primaryKey . '`';

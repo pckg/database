@@ -24,6 +24,12 @@ class Object
         }
     }
 
+    public function setData($data = []) {
+        $this->data = $data;
+
+        return $this;
+    }
+
     public function keyExists($key)
     {
         return array_key_exists($key, $this->data);

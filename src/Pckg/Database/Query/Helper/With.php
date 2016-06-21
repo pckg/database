@@ -45,17 +45,18 @@ trait With
                  */
                 $relation = $object->{lcfirst(substr($method, strlen($prefix)))}();
 
+                if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+                    /**
+                     * If callback was added, we run it.
+                     * Now, this is a problem if we're making join because query was already merged.
+                     * So, we'll call this magically and provide both.
+                     */
+                    Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                }
                 /**
                  * We'll return $entity->with($relation), which is Relation;
                  */
                 $return = $this->{$prefix}($relation);
-
-                /**
-                 * If callback was added, we run it.
-                 */
-                if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
-                    $args[0]($relation);
-                }
 
                 /**
                  * Then we return relation.
@@ -87,10 +88,14 @@ trait With
     /**
      *
      */
-    public function with($relation)
+    public function with($relation, $callback = null)
     {
         if ($relation == $this) {
             return $this;
+        }
+
+        if (is_callable($callback)) {
+            Reflect::call($callback, [$relation, $relation->getQuery()]);
         }
 
         if ($relation instanceof Relation) {

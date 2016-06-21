@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Query\Helper;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Query\Select;
@@ -55,6 +56,10 @@ trait QueryBuilder
      */
     public function join($table, $on = null, $where = null) {
         if ($table instanceof Relation) {
+            if (is_callable($on)) {
+                $on($this->getQuery());
+            }
+            
             $table->mergeToQuery($this->getQuery());
 
         } else {
@@ -125,6 +130,12 @@ trait QueryBuilder
 
     public function addSelect($fields = []) {
         $this->getQuery()->addSelect($fields);
+
+        return $this;
+    }
+
+    public function select($fields = []) {
+        $this->getQuery()->select($fields);
 
         return $this;
     }

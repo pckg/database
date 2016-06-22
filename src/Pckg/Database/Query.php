@@ -91,6 +91,10 @@ abstract class Query
             $operator = 'IN';
         }
 
+        if (is_object($value) && $value instanceof Raw && $operator == '=') {
+            $operator = 'IN';
+        }
+
         if (is_callable($key)) {
             $key($this->where);
 

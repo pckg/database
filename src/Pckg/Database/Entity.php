@@ -292,7 +292,10 @@ class Entity implements EntityInterface
         foreach (get_class_methods($this) as $method) {
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix) {
+                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()->hasTable($this->table . $suffix)) {
+                    /**
+                     * @T00D00 ... propery save extensions ...
+                     */
                     $keys[$this->table . $suffix] = $this->{$method}();
                 }
             }
@@ -314,8 +317,11 @@ class Entity implements EntityInterface
 
         // Get extensions' foreign keys
         foreach (get_class_methods($this) as $method) {
-            if (substr($method, 0, 3) == 'get' && substr($method, -11) == 'ForeignKeys') {
-                $values[$table] = array_merge($this->{$method}($record), isset($values[$table]) ? $values[$table] : []);
+            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr($method, -11) == 'ForeignKeys') {
+                $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
+                if ($this->repository->getCache()->hasTable($this->table . $suffix)) {
+                    $values[$table] = array_merge($this->{$method}($record), isset($values[$table]) && array_keys($values)[0] == $table ? $values[$table] : []);
+                }
             }
         }
 
@@ -391,6 +397,18 @@ class Entity implements EntityInterface
         $delete = $this->getQuery()->transformToDelete();
 
         $prepare = $repository->prepareQuery($delete);
+//d($prepare);
+        return $repository->executePrepared($prepare);
+    }
+
+    public function insert(Repository $repository = null) {
+        if (!$this->repository) {
+            $repository = $this->getRepository();
+        }
+
+        $insert = $this->getQuery()->transformToInsert();
+
+        $prepare = $repository->prepareQuery($insert);
 
         return $repository->executePrepared($prepare);
     }

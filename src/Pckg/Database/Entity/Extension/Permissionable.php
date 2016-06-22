@@ -11,6 +11,7 @@ use Pckg\Database\Relation\HasMany;
 
 /**
  * Class Permissionable - permissionalisation - p17n
+ *
  * @package Pckg\Database\Entity\Extension
  */
 trait Permissionable
@@ -34,24 +35,21 @@ trait Permissionable
     /**
      * @param Auth $lang
      */
-    public function injectPermissionableDependencies(Auth $lang)
-    {
+    public function injectPermissionableDependencies(Auth $lang) {
         $this->permissionableAuth = $lang;
     }
 
     /**
      *
      */
-    public function initPermissionableExtension()
-    {
+    public function initPermissionableExtension() {
 
     }
 
     /**
      * @return string
      */
-    public function getPermissionableTableSuffix()
-    {
+    public function getPermissionableTableSuffix() {
         return $this->permissionableTableSuffix;
     }
 
@@ -64,12 +62,12 @@ trait Permissionable
 
     /**
      * @param Record $record
+     *
      * @return array
      */
-    public function getPermissionableForeignKeys(Record $record)
-    {
+    public function getPermissionableForeignKeys(Record $record) {
         return [
-            $this->primaryKey = $record->{$this->primaryKey},
+            $this->primaryKey => $record->{$this->primaryKey},
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
         ];
     }
@@ -117,7 +115,7 @@ trait Permissionable
         $query = $relation->getQuery();
         foreach ($query->getWhere() as $where) {
             foreach ($where->getChildren() as $key => $child) {
-                if (strpos($key, $this->translatableLanguageField)) {
+                if (strpos($key, $this->permissionablePermissionField)) {
                     $foundGroupCondition = true;
                 }
             }

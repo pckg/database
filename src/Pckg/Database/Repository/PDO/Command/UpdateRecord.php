@@ -77,7 +77,7 @@ class UpdateRecord
 
             } else {
                 // we don't know if children exists
-                $this->updateOrInsert($table, $update);
+                // $this->updateOrInsert($table, $update);
 
             }
         }

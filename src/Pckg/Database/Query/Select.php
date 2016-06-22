@@ -155,4 +155,15 @@ class Select extends Query
         return $delete;
     }
 
+    /**
+     * @return Delete
+     */
+    public function transformToInsert() {
+        $delete = new Insert();
+
+        die("this is not implemented (insert)");
+
+        return $delete;
+    }
+
 }

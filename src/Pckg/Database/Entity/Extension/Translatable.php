@@ -78,7 +78,7 @@ trait Translatable
      * @return mixed
      */
     public function translations(callable $callable = null) {
-        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix;
         $repository = $this->getRepository();
 
         /**
@@ -117,7 +117,7 @@ trait Translatable
         $query = $relation->getQuery();
         foreach ($query->getWhere() as $where) {
             foreach ($where->getChildren() as $key => $child) {
-                if (strpos($key, 'language_id')) {
+                if (strpos($key, $this->translatableLanguageField)) {
                     $foundLanguageCondition = true;
                 }
             }

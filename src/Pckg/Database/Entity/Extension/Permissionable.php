@@ -3,7 +3,11 @@
 namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Auth\Entity\Adapter\Auth;
+use Pckg\Concept\Reflect;
+use Pckg\Database\Entity;
+use Pckg\Database\Query;
 use Pckg\Database\Record;
+use Pckg\Database\Relation\HasMany;
 
 /**
  * Class Permissionable - permissionalisation - p17n
@@ -13,11 +17,6 @@ trait Permissionable
 {
 
     /**
-     * @var array
-     */
-    protected $permissionableFields = [];
-
-    /**
      * @var string
      */
     protected $permissionableTableSuffix = '_p17n';
@@ -25,7 +24,7 @@ trait Permissionable
     /**
      * @var string
      */
-    protected $permissionablePermissionField = 'permission_id';
+    protected $permissionablePermissionField = 'user_group_id';
 
     /**
      * @var
@@ -59,9 +58,8 @@ trait Permissionable
     /**
      * @return array
      */
-    public function getPermissionableFields()
-    {
-        return $this->permissionableFields;
+    public function getPermissionableFields() {
+        return $this->getRepository()->getCache()->getTableFields($this->table . $this->permissionableTableSuffix);
     }
 
     /**
@@ -71,17 +69,93 @@ trait Permissionable
     public function getPermissionableForeignKeys(Record $record)
     {
         return [
+            $this->primaryKey = $record->{$this->primaryKey},
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
-            $this->primary = $record->{$this->primary}
         ];
     }
 
     /**
      * @return mixed
      */
-    public function permissions()
-    {
-        return $this->hasMany($this->table . $this->permissionableTableSuffix);
+    public function permissions(callable $callable = null) {
+        $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
+        $repository = $this->getRepository();
+
+        /**
+         * @T00D00 - group should be binded (PDO) ...
+         */
+        $relation = $this->hasMany((new Entity($repository))->setTable($permissionTable))
+                         ->foreignKey('id')
+                         ->fill('_permissions')
+                         ->addSelect(['`' . $permissionTable . '`.*'])
+                         ->innerJoin();
+
+        if ($callable) {
+            $query = $relation->getRightEntity()->getQuery();
+
+            Reflect::call(
+                $callable,
+                [
+                    $query,
+                    $relation,
+                    $this,
+                ]
+            );
+
+            $this->addPermissionableConditionIfNot($relation);
+
+        } else {
+            $this->addPermissionableCondition($relation);
+
+        }
+
+        return $relation;
+    }
+
+    private function addPermissionableConditionIfNot(HasMany $relation) {
+        $foundGroupCondition = false;
+        $query = $relation->getQuery();
+        foreach ($query->getWhere() as $where) {
+            foreach ($where->getChildren() as $key => $child) {
+                if (strpos($key, $this->translatableLanguageField)) {
+                    $foundGroupCondition = true;
+                }
+            }
+        }
+
+        if (!$foundGroupCondition) {
+            $this->addPermissionableCondition($relation);
+        }
+    }
+
+    private function addPermissionableCondition(HasMany $relation) {
+        $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
+
+        $relation->where(
+            '`' . $permissionTable . '`.`' . $this->permissionablePermissionField . '`',
+            $this->permissionableAuth->groupId()
+        );
+    }
+
+    public function withPermissions(callable $callable = null) {
+        return $this->with($this->permissions($callable));
+    }
+
+    public function joinPermissions(callable $callable = null) {
+        return $this->join($this->permissions($callable));
+    }
+
+    public function withPermission() {
+        return $this->withPermissions(
+            function(Query $query) {
+                $query->where($this->permissionablePermissionField, $this->permissionableAuth->groupId());
+            }
+        );
+    }
+
+    public function joinPermission(callable $callable = null) {
+        return $this->join($this->permissions($callable))
+                    ->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
     }
 
 }

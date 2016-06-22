@@ -71,10 +71,13 @@ trait With
             throw new Exception('Method ' . $method . ' does not exist in ' . get_class($object));
         }
 
+        /**
+         * Autoprefixes failed, return relation, probably?
+         */
         $relation = Reflect::method($object, $method, $args);
 
         if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
-            $args[0]($relation);
+            Reflect::call($args[0], [$relation, $relation->getQuery()]);
         }
 
         return $relation;

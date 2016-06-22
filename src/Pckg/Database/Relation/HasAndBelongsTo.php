@@ -43,9 +43,6 @@ class HasAndBelongsTo extends HasMany
         $leftCollectionKey = $this->getLeftCollectionKey();
         $rightCollectionKey = $this->fill;
 
-        $rightRecordKey = Convention::nameOne($leftForeignKey);
-        $leftRecordKey = Convention::nameOne($rightForeignKey);
-
         // get records from middle (mtm) entity
         message('getting middle collection ' . get_class($middleEntity) . ' ' . $leftForeignKey . ' = ' . $record->id);
         $middleCollection = $this->getMiddleCollection($middleEntity, $leftForeignKey, $record->id);
@@ -54,8 +51,8 @@ class HasAndBelongsTo extends HasMany
         $arrRightIds = [];
         foreach ($middleCollection as $middleRecord) {
             $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-            $middleRecord->setRelation($rightRecordKey, $record);
-            $middleRecord->setRelation($leftRecordKey, null);
+            $middleRecord->setRelation($rightForeignKey, $record);
+            $middleRecord->setRelation($leftForeignKey, null);
         }
 
         // prepare record for mtm relation and right relation
@@ -78,7 +75,7 @@ class HasAndBelongsTo extends HasMany
             // we need to link middle record with left and right records
             foreach ($rightCollection as $rightRecord) {
                 foreach ($middleCollection as $middleRecord) {
-                    $middleRecord->setRelation($leftRecordKey, $rightRecord);
+                    $middleRecord->setRelation($leftForeignKey, $rightRecord);
                     $rightRecord->setRelation($leftCollectionKey, $middleRecord);
                 }
             }
@@ -105,9 +102,6 @@ class HasAndBelongsTo extends HasMany
         $rightEntity = $this->getRightEntity();
 
         $rightCollectionKey = $this->fill;
-        $rightRecordKey = Convention::nameMultiple($leftForeignKey);
-        $leftCollectionKey = Convention::nameMultiple($leftForeignKey);
-        $leftRecordKey = Convention::nameMultiple($rightForeignKey);
         foreach ($collection as $record) {
             $arrLeftIds[$record->id] = $record->id;
             $record->setRelation($rightCollectionKey, new Collection());
@@ -119,16 +113,11 @@ class HasAndBelongsTo extends HasMany
             $arrRightIds = [];
             foreach ($middleCollection as $middleRecord) {
                 $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-                //$middleRecord->{$rightRecordKey} = null;
-                //$middleRecord->{$leftRecordKey} = null;
             }
 
             if ($arrRightIds) {
                 // foreign collection is filled with it's entity relations
                 $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
-                /*foreach ($rightCollection as $rightRecord) {
-                    $rightRecord->setRelation($leftCollectionKey, new Collection());
-                }*/
 
                 // we have to fill it with current relations
                 $this->fillCollectionWithRelations($rightCollection);
@@ -142,22 +131,6 @@ class HasAndBelongsTo extends HasMany
                         ->getRelation($rightCollectionKey)
                         ->push($keyedRightCollection[$middleRecord->{$rightForeignKey}]);
                 }
-
-                /*foreach ($middleCollection as $middleRecord) {
-                    foreach ($collection as $leftRecord) {
-                        if ($leftRecord->id == $middleRecord->{$leftForeignKey}) {
-                            foreach ($rightCollection as $rightRecord) {
-                                if ($rightRecord->id == $middleRecord->{$rightForeignKey}) {
-                                    $leftRecord->getRelation($rightCollectionKey)->push($rightRecord);
-                                    //$rightRecord->getRelation($leftCollectionKey)->push($rightRecord);
-                                    //$middleRecord->{$leftRecordKey} = $rightRecord;
-                                    //$middleRecord->{$rightRecordKey} = $leftRecord;
-                                    break 2;
-                                }
-                            }
-                        }
-                    }
-                }*/
             }
         }
 

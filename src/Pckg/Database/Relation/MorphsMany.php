@@ -49,4 +49,60 @@ class MorphsMany extends HasAndBelongsTo
             ->where($this->morph, get_class($this->getLeftEntity()))))->executeAll();
     }
 
+    public function fillRecord(Record $record)
+    {
+        $rightForeignKey = $this->rightForeignKey;
+        $leftForeignKey = $this->leftForeignKey;
+
+        $morphKey = $this->morph;
+        $polyKey = $this->poly;
+
+        $middleEntity = $this->getMiddleEntity();
+        $rightEntity = $this->getRightEntity();
+
+        $leftCollectionKey = $this->getLeftCollectionKey();
+        $rightCollectionKey = $this->fill;
+
+        // get records from middle (mtm) entity
+        message('getting middle collection ' . get_class($middleEntity) . ' ' . $polyKey . ' = ' . $record->id);
+        $middleCollection = $this->getMiddleCollection($middleEntity, $polyKey, $record->id);
+
+        // get right record ids and preset middle record with null values
+        $arrRightIds = [];
+        foreach ($middleCollection as $middleRecord) {
+            $arrRightIds[$middleRecord->{$leftForeignKey}] = $middleRecord->{$leftForeignKey};
+            $middleRecord->setRelation($rightForeignKey, $record);
+            $middleRecord->setRelation($leftForeignKey, null);
+        }
+
+        // prepare record for mtm relation and right relation
+        $record->setRelation($this->fill, $middleCollection);
+        $record->setRelation($rightCollectionKey, new Collection());
+        message($this->fill . ' - ' . $rightCollectionKey);
+
+        if ($arrRightIds) {
+            // get all right records
+            message('getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
+            $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
+
+            // set relation
+            message('setting record relation ' . $rightCollectionKey . ' ' . $rightCollection->count());
+            $record->setRelation($rightCollectionKey, $rightCollection);
+
+            // we also have to fill it with relations
+            $this->fillCollectionWithRelations($record->getRelation($rightCollectionKey));
+
+            // we need to link middle record with left and right records
+            foreach ($rightCollection as $rightRecord) {
+                foreach ($middleCollection as $middleRecord) {
+                    $middleRecord->setRelation($leftForeignKey, $rightRecord);
+                    $rightRecord->setRelation($leftCollectionKey, $middleRecord);
+                }
+            }
+        }
+
+        // also fill current relation's relations
+        $this->fillRecordWithRelations($record);
+    }
+
 }

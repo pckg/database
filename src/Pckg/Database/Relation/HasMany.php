@@ -25,6 +25,9 @@ class HasMany extends Relation
         $rightEntity = $this->getRightEntity();
         $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
         $foreignCollection->setEntity($rightEntity);
+
+        message('HasMany: 1 x ' . $foreignCollection->count());
+
         $this->fillCollectionWithRelations($foreignCollection);
 
         foreach ($foreignCollection as $foreignRecord) {

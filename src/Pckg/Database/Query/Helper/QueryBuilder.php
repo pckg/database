@@ -57,9 +57,12 @@ trait QueryBuilder
     public function join($table, $on = null, $where = null) {
         if ($table instanceof Relation) {
             if (is_callable($on)) {
-                $on($this->getQuery());
+                /**
+                 * Is this needed?
+                 */
+                Reflect::call($on, [$table, $table->getQuery()]);
             }
-            
+
             $table->mergeToQuery($this->getQuery());
 
         } else {
@@ -130,6 +133,12 @@ trait QueryBuilder
 
     public function addSelect($fields = []) {
         $this->getQuery()->addSelect($fields);
+
+        return $this;
+    }
+
+    public function prependSelect($fields = []) {
+        $this->getQuery()->prependSelect($fields);
 
         return $this;
     }

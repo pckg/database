@@ -55,7 +55,7 @@ class GetRecords
         $repository = $this->repository;
         $entity = $this->entity;
 
-        //$this->checkBinds($entity->getQuery());
+        $this->checkBinds($entity->getQuery());
 
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
@@ -85,7 +85,7 @@ class GetRecords
         $repository = $this->repository;
         $entity = $this->entity;
 
-        //$this->checkBinds($entity->getQuery());
+        $this->checkBinds($entity->getQuery());
 
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 

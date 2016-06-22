@@ -9,13 +9,13 @@ trait MiddleEntity
 
     protected $middle;
 
-    protected $leftForeignKey;
+    protected $leftForeignKey = 'poly_id';
 
     protected $rightForeignKey;
 
-    protected $leftPrimaryKey;
+    protected $leftPrimaryKey = 'id';
 
-    protected $rightPrimaryKey;
+    protected $rightPrimaryKey = 'id';
 
     public function leftPrimaryKey($leftPrimaryKey) {
         $this->leftPrimaryKey = $leftPrimaryKey;

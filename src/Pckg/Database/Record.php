@@ -184,10 +184,13 @@ class Record extends Object implements RecordInterface
          */
         $entity = $this->getEntity();
         $relation = $entity->callWith($method, $args, $entity, true);
-        $relation->fill($method);
-        $relation->fillRecord($this, true);
+        /**
+         * THis is not needed here?
+         */
+        // $relation->fill($method);
+        $relation->fillRecord($this);
 
-        $data = $this->getRelation($method);
+        $data = $this->getRelation($relation->getFill());
 
         return $data;
     }

@@ -42,6 +42,7 @@ class GetRecords
             $countBinds += count($bs);
         }
         if (substr_count($sql, '?') != $countBinds) {
+            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
             dd($sql, $binds, substr_count($sql, '?'));
         }
     }

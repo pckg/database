@@ -155,17 +155,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $on
-     *
-     * @return $this
-     */
-    public function on($on) {
-        $this->on = $on;
-
-        return $this;
-    }
-
-    /**
      * @return Entity
      * @throws \Exception
      */

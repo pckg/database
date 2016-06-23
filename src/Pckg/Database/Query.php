@@ -76,7 +76,8 @@ abstract class Query
 
     public function where($key, $value = true, $operator = '=') {
         if (is_object($key) && $key instanceof Raw) {
-            $this->where->push($key->buildSQL());
+            $sql = $key->buildSQL();
+            $this->where->push($sql);
             if ($binds = $key->buildBinds()) {
                 $this->bind($binds, 'where');
             }
@@ -101,7 +102,10 @@ abstract class Query
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_array($value)) {
                 if (!$value) {
-                    $this->where->push($this->makeKey($key));
+                    /**
+                     * This is probable not needed.
+                     */
+                    // $this->where->push($this->makeKey($key));
                     $this->where->push('0 = 1');
                 } else {
                     $this->where->push(

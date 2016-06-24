@@ -67,7 +67,7 @@ trait Permissionable
      */
     public function getPermissionableForeignKeys(Record $record) {
         return [
-            $this->primaryKey => $record->{$this->primaryKey},
+            $this->primaryKey                    => $record->{$this->primaryKey},
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
         ];
     }
@@ -126,6 +126,10 @@ trait Permissionable
         }
     }
 
+    public function getPermissionableTable() {
+        return $this->getTable() . $this->getPermissionableTableSuffix();
+    }
+
     private function addPermissionableCondition(HasMany $relation) {
         $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
 
@@ -154,6 +158,18 @@ trait Permissionable
     public function joinPermission(callable $callable = null) {
         return $this->join($this->permissions($callable))
                     ->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
+    }
+
+    public function joinPermissionTo($permission) {
+        $self = $this;
+
+        return $this->join(
+            $this->permissions(
+                function(HasMany $permissions) use ($permission, $self) {
+                    $permissions->where($self->getPermissionableTable() . '.action', $permission);
+                }
+            )
+        )->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
     }
 
 }

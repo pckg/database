@@ -4,9 +4,7 @@ namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query;
-use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
@@ -62,13 +60,20 @@ class HasMany extends Relation
             $this->fillCollectionWithRelations($foreignCollection);
 
             message('HasMany: ' . $collection->count() . ' x ' . $foreignCollection->count());
+            $keyedCollection = $foreignCollection->groupBy($foreignKey);
             foreach ($collection as $primaryRecord) {
-                foreach ($foreignCollection as $foreignRecord) {
+                if ($keyedCollection->keyExists($primaryRecord->{$primaryKey})) {
+                    $primaryRecord->setRelation(
+                        $this->fill,
+                        new Collection($keyedCollection->getKey($primaryRecord->{$primaryKey}))
+                    );
+                }
+                /*foreach ($foreignCollection as $foreignRecord) {
                     if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
                         $primaryRecord->getRelation($this->fill)->push($foreignRecord);
-                        break;
+                        //break;
                     }
-                }
+                }*/
             }
         }
     }

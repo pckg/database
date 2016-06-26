@@ -50,34 +50,8 @@ class InitDatabase extends AbstractChainOfReponsibility
                 $repository = new RepositoryFaker(Factory::create());
 
             } else {
-                $pdo = new PDO(
-                    "mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
-                    $config['user'],
-                    $config['pass']
-                );
+                $repository = $this->initPdoDatabase($config, $name);
 
-                if ($this->context->exists(DebugBar::class)) {
-                    $debugBar = $this->context->find(DebugBar::class);
-                    $tracablePdo = new TraceablePDO($pdo);
-
-                    if ($debugBar->hasCollector('pdo')) {
-                        $pdoCollector = $debugBar->getCollector('pdo');
-
-                    } else {
-                        $debugBar->addCollector($pdoCollector = new PDOCollector());
-
-                    }
-
-                    if (false && !isset($config['default'])) {
-                        $pdoCollector->addConnection($tracablePdo, 'default');
-
-                    } else {
-                        $pdoCollector->addConnection($tracablePdo, $name);
-
-                    }
-                }
-
-                $repository = new RepositoryPDO($pdo, $name);
             }
 
             $this->context->bindIfNot(Repository::class, $repository);
@@ -85,6 +59,37 @@ class InitDatabase extends AbstractChainOfReponsibility
         }
 
         return $next();
+    }
+
+    public function initPdoDatabase($config, $name) {
+        $pdo = new PDO(
+            "mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
+            $config['user'],
+            $config['pass']
+        );
+
+        if ($this->context->exists(DebugBar::class)) {
+            $debugBar = $this->context->find(DebugBar::class);
+            $tracablePdo = new TraceablePDO($pdo);
+
+            if ($debugBar->hasCollector('pdo')) {
+                $pdoCollector = $debugBar->getCollector('pdo');
+
+            } else {
+                $debugBar->addCollector($pdoCollector = new PDOCollector());
+
+            }
+
+            if (false && !isset($config['default'])) {
+                $pdoCollector->addConnection($tracablePdo, 'default');
+
+            } else {
+                $pdoCollector->addConnection($tracablePdo, $name);
+
+            }
+        }
+
+        return new RepositoryPDO($pdo, $name);
     }
 
 }

@@ -24,7 +24,7 @@ class Object
         }
     }
 
-    public function setData($data = []) {
+    public function setData(array $data = []) {
         $this->data = $data;
 
         return $this;

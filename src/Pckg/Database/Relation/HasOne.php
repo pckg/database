@@ -22,8 +22,10 @@ class HasOne extends HasMany
 
         if ($record->{$primaryKey}) {
             $for = $this->getForeignRecord($rightEntity, $foreignKey, $record->{$primaryKey});
-            $for->setEntity($rightEntity);
-            $this->fillRecordWithRelations($for);
+            if ($for) {
+                $for->setEntity($rightEntity);
+                $this->fillRecordWithRelations($for);
+            }
             $record->setRelation(
                 $this->fill,
                 $for

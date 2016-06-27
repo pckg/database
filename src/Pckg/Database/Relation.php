@@ -206,7 +206,7 @@ abstract class Relation implements RelationInterface
             $condition = ' AND ' . $this->getQuery()->getWhere()->build();
 
             foreach ($this->getQuery()->getBinds('where') as $bind) {
-                $query->bind($bind, 'where');
+                $query->bind($bind, 'join');
             }
         }
 

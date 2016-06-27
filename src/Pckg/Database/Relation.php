@@ -216,6 +216,10 @@ abstract class Relation implements RelationInterface
             $query->prependSelect($select);
         }
 
+        foreach ($this->getQuery()->getSelect() as $key => $select) {
+            $query->addSelect([$key => $select]);
+        }
+
         return $this;
     }
 

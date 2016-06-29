@@ -85,11 +85,15 @@ abstract class Relation implements RelationInterface
             /**
              * Then right entity.
              */
-            message(get_class($this) . '->__call(' . $method . ') on right entity ' . get_class($this->getRightEntity()));
+            message(
+                get_class($this) . '->__call(' . $method . ') on right entity ' . get_class($this->getRightEntity())
+            );
             Reflect::method($this->getRightEntity(), $method, $args);
 
         } else {
-            message(get_class($this) . '->__call(' . $method . ') with right entity ' . get_class($this->getRightEntity()));
+            message(
+                get_class($this) . '->__call(' . $method . ') with right entity ' . get_class($this->getRightEntity())
+            );
             $this->callWith($method, $args, $this->getRightEntity());
 
         }
@@ -201,7 +205,7 @@ abstract class Relation implements RelationInterface
 
     public function mergeToQuery(Select $query) {
         $condition = '';
-        
+
         if ($this->getQuery()->getWhere()->hasChildren()) {
             $condition = ' AND ' . $this->getQuery()->getWhere()->build();
 
@@ -221,6 +225,17 @@ abstract class Relation implements RelationInterface
         }
 
         return $this;
+    }
+
+    public function reflect(callable $callable, $entity, $query = null) {
+        Reflect::call(
+            $callable,
+            [
+                $query ?? $this->getQuery(),
+                $this,
+                $entity,
+            ]
+        );
     }
 
 }

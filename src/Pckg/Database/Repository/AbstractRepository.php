@@ -29,10 +29,7 @@ abstract class AbstractRepository implements Repository
         return $this->connection;
     }
 
-    public function getCache()
-    {
-        return $this->cache;
-    }
+    abstract public function getCache();
 
     /**
      * @param Entity $entity

@@ -21,10 +21,12 @@ class Update extends Query
      */
     function buildSQL()
     {
-        return "UPDATE `" . $this->table . "` " .
+        $sql = "UPDATE `" . $this->table . "` " .
         "SET " . $this->buildSet() . " " .
         $this->buildWhere() .
         ($this->limit ? ' LIMIT ' . $this->limit : '');
+
+        return $sql;
     }
 
     function buildBinds()

@@ -75,6 +75,10 @@ class Select extends Query
     }
 
     public function buildSelect() {
+        if (!$this->select) {
+            $this->select[] = $this->table . '.*';
+        }
+
         $keys = [];
         foreach ($this->select as $key => $select) {
             if (is_numeric($key)) {

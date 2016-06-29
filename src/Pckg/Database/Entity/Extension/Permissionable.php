@@ -107,6 +107,8 @@ trait Permissionable
         if ($callable) {
             $this->addPermissionableConditionIfNot($relation);
 
+            $relation->reflect($callable, $this);
+
         } else {
             $this->addPermissionableCondition($relation);
 

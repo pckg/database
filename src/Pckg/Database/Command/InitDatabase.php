@@ -68,6 +68,8 @@ class InitDatabase extends AbstractChainOfReponsibility
             $config['pass']
         );
 
+        $pdo->uniqueName = $config['host'] . "-" . $config['db'];
+
         if ($this->context->exists(DebugBar::class)) {
             $debugBar = $this->context->find(DebugBar::class);
             $tracablePdo = new TraceablePDO($pdo);

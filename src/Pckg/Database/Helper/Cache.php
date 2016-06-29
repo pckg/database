@@ -63,8 +63,13 @@ class Cache extends FrameworkCache
 
     protected function getCachePath()
     {
+        return static::getCachePathByRepository($this->repository);
+    }
+
+    public static function getCachePathByRepository(Repository $repository)
+    {
         return path('cache') . 'framework/pckg_database_repository_' . str_replace(['\\', '/'], '_',
-            (get_class(app()) . '_' . get_class(env()))) . '_' . $this->repository->getName() . '.cache';
+            (get_class(app()) . '_' . get_class(env()))) . '_' . $repository->getName() . '_' . $repository->getConnection()->uniqueName . '.cache';
     }
 
     /**

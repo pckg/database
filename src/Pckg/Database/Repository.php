@@ -60,4 +60,6 @@ interface Repository
 
     public function fetchPrepared($prepare);
 
+    public function getCache();
+
 }

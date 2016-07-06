@@ -142,15 +142,13 @@ class HasAndBelongsTo extends HasMany
          * Join middle entity
          */
         $middleQuery = $this->getMiddleEntity()->getQuery();
-        $this->getQuery()->join('LEFT JOIN ' . $middleQuery->getTable() .
-                                ' ON ' . $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getLeftForeignKey(), null);
+        $this->getQuery()->join($this->join . ' ' . $middleQuery->getTable(), $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getLeftForeignKey());
 
         /**
          * Join right entity
          */
         $rightQuery = $this->getRightEntity()->getQuery();
-        $this->getQuery()->join('LEFT JOIN ' . $rightQuery->getTable() .
-                                ' ON ' . $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getRightForeignKey(), null);
+        $this->getQuery()->join($this->join . ' ' . $rightQuery->getTable(), $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getRightForeignKey());
 
         /**
          * Add select fields

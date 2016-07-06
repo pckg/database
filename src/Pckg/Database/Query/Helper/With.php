@@ -41,7 +41,7 @@ trait With
         foreach ($this->autocallPrefixes as $prefix) {
             if (substr($method, 0, strlen($prefix)) == $prefix) {
                 /**
-                 * We are calling relation function without arguments: $entity->[with|join]Something();.
+                 * We are calling relation function without arguments: $entity->something();.
                  */
                 $relation = $object->{lcfirst(substr($method, strlen($prefix)))}();
 

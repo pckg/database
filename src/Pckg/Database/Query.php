@@ -79,7 +79,10 @@ abstract class Query
             $sql = $key->buildSQL();
             $this->where->push($sql);
             if ($binds = $key->buildBinds()) {
-                $this->bind($binds, 'where');
+                //$this->bind($binds, 'where');
+                foreach ($binds as $bind) {
+                    $this->bind($bind, 'where');
+                }
             }
 
             return $this;
@@ -216,15 +219,16 @@ abstract class Query
         if (!$on) {
             $this->join[] = $table;
         } else {
-            $this->join[] = $table . ' ON ' . $on;
+            $this->join[] = $table . (strpos($table, ' ON ') ? ' AND ' : ' ON ') . $on;
+        }
 
-            if ($where) {
-                $this->where(new Raw($where));
-            }
-            if ($binds) {
-                foreach ($binds as $bind) {
-                    //$this->bind($bind, 'where');
-                }
+        if ($where) {
+            $this->where(new Raw($where));
+        }
+
+        if ($binds) {
+            foreach ($binds as $bind) {
+                $this->bind($bind, 'where');
             }
         }
 

@@ -85,7 +85,7 @@ class Select extends Query
                 $keys[] = $select;
 
             } else {
-                $keys[] = $select . ' AS ' . $key;
+                $keys[] = $select . ' AS `' . $key . '`';
 
             }
         }

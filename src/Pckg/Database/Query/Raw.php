@@ -15,7 +15,7 @@ class Raw extends Query
 
     public function buildSQL()
     {
-        return $this->sql;
+        return $this->sql ?? $this->where->build();
     }
 
     public function buildBinds()

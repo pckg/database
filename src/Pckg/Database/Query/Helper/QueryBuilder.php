@@ -94,6 +94,14 @@ trait QueryBuilder
         return $this;
     }
 
+    public function orWhere($key, $value = true, $operator = '=') {
+        $this->getQuery()->getWhere()->setGlue('OR');
+
+        $this->where($key, $value, $operator);
+
+        return $this;
+    }
+
     /**
      * @param        $key
      * @param        $value

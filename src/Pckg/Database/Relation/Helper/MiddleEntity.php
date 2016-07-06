@@ -56,7 +56,11 @@ trait MiddleEntity
     public function getMiddleEntity()
     {
         if (is_string($this->middle)) {
-            $this->middle = Reflect::create($this->middle);
+            if (class_exists($this->middle)) {
+                $this->middle = Reflect::create($this->middle);
+            } else {
+                $this->middle = (new Entity())->setTable($this->middle)->setRepository($this->getLeftEntity()->getRepository());
+            }
         }
 
         return $this->middle;
@@ -76,8 +80,7 @@ trait MiddleEntity
 
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($middleEntity->where($foreignKey, $primaryValue,
-            is_array($primaryValue) ? 'IN' : '=')))->executeAll();
+        return (new GetRecords($middleEntity->where($foreignKey, $primaryValue)))->executeAll();
     }
 
 }

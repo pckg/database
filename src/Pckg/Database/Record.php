@@ -151,6 +151,10 @@ class Record extends Object implements RecordInterface
             return $this->getRelation($key);
         }
 
+        /**
+         * @T00D00 - Entity is needed here just for cache, optimize this ... :/
+         *         $Reflection = new ReflectionProperty(get_class($a), 'a');
+         */
         $entity = $this->getEntity();
         if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
             return $this->getValue($key);
@@ -158,6 +162,7 @@ class Record extends Object implements RecordInterface
 
         /**
          * Return value from empty relation.
+         * @T00D00 - optimize this
          */
         if (method_exists($entity, $key)) {
             $relation = $entity->{$key}();

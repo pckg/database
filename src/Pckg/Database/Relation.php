@@ -193,8 +193,9 @@ abstract class Relation implements RelationInterface
         $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
 
         return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-               ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->primaryKey . '`' .
-               ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`';
+               ($this->primaryKey && $this->foreignKey ? ' ON `' . $this->getLeftEntity()->getTable(
+                   ) . '`.`' . $this->primaryKey . '`' .
+                                                         ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`' : '');
     }
 
     public function getAdditionalCondition() {
@@ -204,17 +205,12 @@ abstract class Relation implements RelationInterface
     }
 
     public function mergeToQuery(Select $query) {
-        $condition = '';
-
-        if ($this->getQuery()->getWhere()->hasChildren()) {
-            $condition = ' AND ' . $this->getQuery()->getWhere()->build();
-
-            foreach ($this->getQuery()->getBinds('where') as $bind) {
-                $query->bind($bind, 'join');
-            }
-        }
-
-        $query->join($this->getKeyCondition() . $condition);
+        $query->join(
+            $this->getKeyCondition(),
+            $this->getQuery()->getWhere()->build(),
+            null,
+            $this->getQuery()->getBinds('where')
+        );
 
         foreach ($this->select as $select) {
             $query->prependSelect($select);

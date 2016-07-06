@@ -228,7 +228,7 @@ abstract class Query
 
         if ($binds) {
             foreach ($binds as $bind) {
-                $this->bind($bind, 'where');
+                $this->bind($bind, 'join');
             }
         }
 

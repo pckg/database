@@ -22,7 +22,8 @@ class BelongsTo extends Relation
      *
      * Example: layout belongs to variable.
      */
-    public function fillRecord(Record $record) {
+    public function fillRecord(Record $record)
+    {
         $foreignKey = $this->foreignKey;
         $primaryKey = $this->primaryKey;
         $rightEntity = $this->getRightEntity();
@@ -39,7 +40,8 @@ class BelongsTo extends Relation
         $this->fillRecordWithRelations($record);
     }
 
-    public function fillCollection(CollectionInterface $collection) {
+    public function fillCollection(CollectionInterface $collection)
+    {
         if (!$collection->count()) {
             return $collection;
         }
@@ -58,7 +60,11 @@ class BelongsTo extends Relation
         }
 
         if ($arrPrimaryIds) {
-            $foreignCollection = $this->getForeignCollection($rightEntity, $rightEntity->getPrimaryKey(), $arrPrimaryIds);
+            $foreignCollection = $this->getForeignCollection(
+                $rightEntity,
+                $rightEntity->getPrimaryKey(),
+                $arrPrimaryIds
+            );
             $foreignCollection->setEntity($rightEntity);
             $this->fillCollectionWithRelations($foreignCollection);
 
@@ -81,7 +87,8 @@ class BelongsTo extends Relation
     /**
      * @return string
      */
-    public function getKeyCondition() {
+    public function getKeyCondition()
+    {
         return $this->join . ' `' . $this->getRightEntity()->getTable() . '`' .
                ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->foreignKey . '`' .
                ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->primaryKey . '`';

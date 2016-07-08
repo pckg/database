@@ -18,7 +18,8 @@ trait RightEntity
      * @return Entity
      * @throws \Exception
      */
-    public function getRightEntity() {
+    public function getRightEntity()
+    {
         if (is_string($this->right)) {
             $this->right = Reflect::create($this->right);
         }
@@ -30,17 +31,20 @@ trait RightEntity
      * @return Repository
      * @throws \Exception
      */
-    public function getRightRepository() {
+    public function getRightRepository()
+    {
         return $this->getRightEntity()->getRepository();
     }
 
-    public function getRightForeignKey() {
+    public function getRightForeignKey()
+    {
         $class = explode('\\', get_class($this->getRightEntity()));
 
         return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
     }
 
-    public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue) {
+    public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
+    {
         $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
 
         foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
@@ -58,7 +62,8 @@ trait RightEntity
         return (new GetRecords($entity))->executeAll();
     }
 
-    public function getForeignRecord(Entity $rightEntity, $foreignKey, $primaryValue) {
+    public function getForeignRecord(Entity $rightEntity, $foreignKey, $primaryValue)
+    {
         $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
 
         /**

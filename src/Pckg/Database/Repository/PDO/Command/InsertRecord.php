@@ -10,6 +10,7 @@ use Pckg\Database\Repository;
 
 /**
  * Class InsertRecord
+ *
  * @package Pckg\Database\Repository\PDO\Command
  */
 class InsertRecord

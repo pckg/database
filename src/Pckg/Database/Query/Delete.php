@@ -6,10 +6,12 @@ use Pckg\Database\Query;
 
 /**
  * Class Delete
+ *
  * @package Pckg\Database\Query
  */
 class Delete extends Query
 {
+
     /**
      * @var
      */
@@ -22,8 +24,8 @@ class Delete extends Query
     function buildSQL()
     {
         return "DELETE FROM `" . $this->table . "` " .
-        ($this->where ? $this->buildWhere() : '') .
-        ($this->limit ? 'LIMIT ' . $this->limit : '');
+               ($this->where ? $this->buildWhere() : '') .
+               ($this->limit ? 'LIMIT ' . $this->limit : '');
     }
 
     function buildBinds()
@@ -33,6 +35,7 @@ class Delete extends Query
 
     /**
      * @param $table
+     *
      * @return $this
      */
     function setTable($table)

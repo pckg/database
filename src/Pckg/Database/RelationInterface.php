@@ -4,7 +4,7 @@ use Pckg\CollectionInterface;
 
 interface RelationInterface
 {
-    
+
     public function fillRecord(Record $record);
 
     public function fillRecordWithRelations(Record $record);

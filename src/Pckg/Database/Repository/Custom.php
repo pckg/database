@@ -9,6 +9,7 @@ use Pckg\Database\Repository;
 
 /**
  * Class Custom
+ *
  * @package Pckg\Database\Repository
  */
 class Custom implements Repository
@@ -18,6 +19,7 @@ class Custom implements Repository
 
     /**
      * @param Entity $entity
+     *
      * @return null
      */
     public function one(Entity $entity)
@@ -27,6 +29,7 @@ class Custom implements Repository
 
     /**
      * @param Entity $entity
+     *
      * @return array
      */
     public function all(Entity $entity)
@@ -37,6 +40,7 @@ class Custom implements Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function update(Record $record, Entity $entity)
@@ -47,6 +51,7 @@ class Custom implements Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function delete(Record $record, Entity $entity)
@@ -57,6 +62,7 @@ class Custom implements Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function insert(Record $record, Entity $entity)

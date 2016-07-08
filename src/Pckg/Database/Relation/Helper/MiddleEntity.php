@@ -17,35 +17,41 @@ trait MiddleEntity
 
     protected $rightPrimaryKey = 'id';
 
-    public function leftPrimaryKey($leftPrimaryKey) {
+    public function leftPrimaryKey($leftPrimaryKey)
+    {
         $this->leftPrimaryKey = $leftPrimaryKey;
 
         return $this;
     }
 
-    public function rightPrimaryKey($rightPrimaryKey) {
+    public function rightPrimaryKey($rightPrimaryKey)
+    {
         $this->rightPrimaryKey = $rightPrimaryKey;
 
         return $this;
     }
 
-    public function leftForeignKey($leftForeignKey) {
+    public function leftForeignKey($leftForeignKey)
+    {
         $this->leftForeignKey = $leftForeignKey;
 
         return $this;
     }
 
-    public function rightForeignKey($rightForeignKey) {
+    public function rightForeignKey($rightForeignKey)
+    {
         $this->rightForeignKey = $rightForeignKey;
 
         return $this;
     }
 
-    public function getLeftForeignKey() {
+    public function getLeftForeignKey()
+    {
         return $this->leftForeignKey;
     }
 
-    public function getRightForeignKey() {
+    public function getRightForeignKey()
+    {
         return $this->rightForeignKey;
     }
 
@@ -59,7 +65,9 @@ trait MiddleEntity
             if (class_exists($this->middle)) {
                 $this->middle = Reflect::create($this->middle);
             } else {
-                $this->middle = (new Entity())->setTable($this->middle)->setRepository($this->getLeftEntity()->getRepository());
+                $this->middle = (new Entity())->setTable($this->middle)->setRepository(
+                    $this->getLeftEntity()->getRepository()
+                );
             }
         }
 

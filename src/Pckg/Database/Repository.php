@@ -8,6 +8,7 @@ use PDO;
 
 /**
  * Interface Repository
+ *
  * @package Pckg\Database
  */
 interface Repository
@@ -20,12 +21,14 @@ interface Repository
 
     /**
      * @param Entity $entity
+     *
      * @return Record
      */
     public function one(Entity $entity);
 
     /**
      * @param Entity $entity
+     *
      * @return Collection
      * @throws Exception
      */
@@ -34,6 +37,7 @@ interface Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function update(Record $record, Entity $entity);
@@ -41,6 +45,7 @@ interface Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function delete(Record $record, Entity $entity);
@@ -48,6 +53,7 @@ interface Repository
     /**
      * @param Record $record
      * @param Entity $entity
+     *
      * @return Record
      */
     public function insert(Record $record, Entity $entity);

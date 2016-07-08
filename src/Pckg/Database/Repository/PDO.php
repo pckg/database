@@ -32,19 +32,22 @@ class PDO extends AbstractRepository implements Repository
     /**
      * @param \PDO $connection
      */
-    public function __construct(\PDO $connection, $name = 'default') {
+    public function __construct(\PDO $connection, $name = 'default')
+    {
         $this->setConnection($connection);
         $this->name = $name;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
     /**
      * @return Cache
      */
-    public function getCache() {
+    public function getCache()
+    {
         $key = 'pckg.database.repository.cache.' . sha1(Cache::getCachePathByRepository($this));
         $context = context();
 
@@ -58,7 +61,8 @@ class PDO extends AbstractRepository implements Repository
     /**
      * @return \PDO
      */
-    public function getConnection() {
+    public function getConnection()
+    {
         return $this->connection;
     }
 
@@ -68,7 +72,8 @@ class PDO extends AbstractRepository implements Repository
      *
      * @return $this
      */
-    public function update(Record $record, Entity $entity) {
+    public function update(Record $record, Entity $entity)
+    {
         (new UpdateRecord($record, $entity, $this))->execute();
 
         return $this;
@@ -80,7 +85,8 @@ class PDO extends AbstractRepository implements Repository
      *
      * @return $this
      */
-    public function insert(Record $record, Entity $entity) {
+    public function insert(Record $record, Entity $entity)
+    {
         (new InsertRecord($record, $entity, $this))->execute();
 
         return $this;
@@ -92,13 +98,15 @@ class PDO extends AbstractRepository implements Repository
      *
      * @return $this
      */
-    public function delete(Record $record, Entity $entity) {
+    public function delete(Record $record, Entity $entity)
+    {
         (new DeleteRecord($record, $entity, $this))->execute();
 
         return $this;
     }
 
-    public function prepareSQL($sql, $binds = []) {
+    public function prepareSQL($sql, $binds = [])
+    {
         $prepare = measure(
             'Prepare query: ' . $sql,
             function() use ($sql, $binds) {
@@ -130,7 +138,8 @@ class PDO extends AbstractRepository implements Repository
         return $prepare;
     }
 
-    public function prepareQuery(Query $query, $recordClass = null) {
+    public function prepareQuery(Query $query, $recordClass = null)
+    {
         $sql = $query->buildSQL();
         $prepare = measure(
             'Prepare query: ' . $sql,
@@ -174,7 +183,8 @@ class PDO extends AbstractRepository implements Repository
      * @return mixed
      * @throws Exception
      */
-    public function executePrepared($prepare) {
+    public function executePrepared($prepare)
+    {
         $execute = measure(
             'Execute query: ' . $prepare->queryString,
             function() use ($prepare) {
@@ -192,7 +202,8 @@ class PDO extends AbstractRepository implements Repository
         return $execute;
     }
 
-    public function prepareExecuteAndFetchAll(Query $query) {
+    public function prepareExecuteAndFetchAll(Query $query)
+    {
         $prepare = $this->prepareQuery($query);
         $execute = $this->executePrepared($prepare);
 

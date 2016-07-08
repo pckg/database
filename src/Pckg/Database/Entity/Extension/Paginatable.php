@@ -3,7 +3,8 @@
 trait Paginatable
 {
 
-    public function page($num) {
+    public function page($num)
+    {
         $perPage = (int)$this->getQuery()->getLimit();
 
         if ($perPage < 1) {

@@ -9,6 +9,7 @@ use Pckg\Database\Repository;
 
 /**
  * Class DeleteRecord
+ *
  * @package Pckg\Database\Repository\PDO\Command
  */
 class DeleteRecord

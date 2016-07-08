@@ -28,11 +28,13 @@ class Parenthesis
         return !empty($this->children);
     }
 
-    public function getChildren() {
+    public function getChildren()
+    {
         return $this->children;
     }
 
-    public function setChildren($children) {
+    public function setChildren($children)
+    {
         $this->children = $children;
 
         return $this;

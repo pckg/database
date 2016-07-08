@@ -28,15 +28,20 @@ class Resolver implements ResolverInterface
          * @T00D00 - this is useless, right?
          */
         return [
-            Record::class => function ($class) {
+            Record::class => function($class) {
                 throw new Exception('Is this needed? Empty class will be created ...');
+
                 return new $class();
                 $result = Reflect::create($class)
-                    ->getEntity()
-                    ->where('slug', $this->router->get('name'))
-                    ->oneOrFail(function () use ($class) {
-                        $this->response->notFound('Record ' . $class . ' not found, cannot be resolved');
-                    });
+                                 ->getEntity()
+                                 ->where('slug', $this->router->get('name'))
+                                 ->oneOrFail(
+                                     function() use ($class) {
+                                         $this->response->notFound(
+                                             'Record ' . $class . ' not found, cannot be resolved'
+                                         );
+                                     }
+                                 );
 
                 return $result;
             },

@@ -19,17 +19,20 @@ class Select extends Query
 
     protected $count = false;
 
-    public function count($count = true) {
+    public function count($count = true)
+    {
         $this->count = $count;
 
         return $this;
     }
 
-    public function isCounted() {
+    public function isCounted()
+    {
         return $this->count;
     }
 
-    public function table($table) {
+    public function table($table)
+    {
         $this->table = $table;
 
         if (!in_array('`' . $table . '`.*', $this->select)) {
@@ -39,7 +42,8 @@ class Select extends Query
         return $this;
     }
 
-    public function alias($alias) {
+    public function alias($alias)
+    {
         $this->alias = $alias;
 
         if (!in_array('`' . $alias . '`.*', $this->select)) {
@@ -57,7 +61,8 @@ class Select extends Query
     /**
      * @return string
      */
-    function buildSQL() {
+    function buildSQL()
+    {
         $sql = "SELECT " . $this->buildSelect() . " " .
                "FROM " . $this->buildTable() . " " .
                ($this->join ? $this->buildJoin() : '') .
@@ -70,11 +75,8 @@ class Select extends Query
         return $sql;
     }
 
-    public function buildBinds() {
-        return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
-    }
-
-    public function buildSelect() {
+    public function buildSelect()
+    {
         if (!$this->select) {
             $this->select[] = $this->table . '.*';
         }
@@ -93,13 +95,20 @@ class Select extends Query
         return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $keys);
     }
 
-    public function buildTable() {
+    public function buildTable()
+    {
         return '`' . $this->table . '`' . ($this->alias
             ? ' AS `' . $this->alias . '`'
             : '');
     }
 
-    public function select($fields) {
+    public function buildBinds()
+    {
+        return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
+    }
+
+    public function select($fields)
+    {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
@@ -114,7 +123,8 @@ class Select extends Query
      *
      * @return $this
      */
-    public function addSelect($fields) {
+    public function addSelect($fields)
+    {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
@@ -130,7 +140,8 @@ class Select extends Query
         return $this;
     }
 
-    public function prependSelect($fields = []) {
+    public function prependSelect($fields = [])
+    {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
@@ -142,14 +153,16 @@ class Select extends Query
         return $this;
     }
 
-    public function getSelect() {
+    public function getSelect()
+    {
         return $this->select;
     }
 
     /**
      * @return Delete
      */
-    public function transformToDelete() {
+    public function transformToDelete()
+    {
         $delete = new Delete();
 
         $delete->setTable($this->table);
@@ -162,7 +175,8 @@ class Select extends Query
     /**
      * @return Delete
      */
-    public function transformToInsert() {
+    public function transformToInsert()
+    {
         $delete = new Insert();
 
         die("this is not implemented (insert)");

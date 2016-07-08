@@ -4,6 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Orderable
+ *
  * @package Pckg\Database\Entity\Extension
  */
 trait Orderable

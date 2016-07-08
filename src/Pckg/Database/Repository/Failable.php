@@ -8,6 +8,7 @@ use Pckg\Database\Record;
 
 /**
  * Class Failable
+ *
  * @package Pckg\Database\Repository
  */
 trait Failable

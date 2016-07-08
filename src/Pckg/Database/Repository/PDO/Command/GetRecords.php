@@ -11,6 +11,7 @@ use PDO;
 
 /**
  * Class GetAllRecords
+ *
  * @package Pckg\Database\Repository\PDO\Command
  */
 class GetRecords
@@ -24,7 +25,7 @@ class GetRecords
     protected $repository;
 
     /**
-     * @param Entity $entity
+     * @param Entity     $entity
      * @param Repository $repository
      */
     public function __construct(Entity $entity, Repository $repository = null)
@@ -34,7 +35,8 @@ class GetRecords
             ?: $this->entity->getRepository();
     }
 
-    protected function checkBinds(Query $query) {
+    protected function checkBinds(Query $query)
+    {
         $binds = $query->getBinds();
         $sql = $query->buildSQL();
         $countBinds = 0;
@@ -49,6 +51,7 @@ class GetRecords
 
     /**
      * Prepare query from entity, fetch records and fill them with relations.
+     *
      * @return Collection
      */
     public function executeAll()
@@ -79,6 +82,7 @@ class GetRecords
 
     /**
      * Prepare query from entity, fetch record and fill it with relations.
+     *
      * @return Record
      */
     public function executeOne()

@@ -6,10 +6,12 @@ use Pckg\Database\Query;
 
 /**
  * Class Update
+ *
  * @package Pckg\Database\Query
  */
 class Update extends Query
 {
+
     /**
      * @var
      */
@@ -22,19 +24,12 @@ class Update extends Query
     function buildSQL()
     {
         $sql = "UPDATE `" . $this->table . "` " .
-        "SET " . $this->buildSet() . " " .
-        $this->buildWhere() .
-        ($this->limit ? ' LIMIT ' . $this->limit : '');
+               "SET " . $this->buildSet() . " " .
+               $this->buildWhere() .
+               ($this->limit ? ' LIMIT ' . $this->limit : '');
 
         return $sql;
     }
-
-    function buildBinds()
-    {
-        return $this->getBinds(['set', 'where', 'limit']);
-    }
-
-    // builders
 
     /**
      * @return string
@@ -59,9 +54,18 @@ class Update extends Query
         return implode(", ", $arrValues);
     }
 
+    // builders
+
+    function buildBinds()
+    {
+        return $this->getBinds(['set', 'where', 'limit']);
+    }
+
     // setters
+
     /**
      * @param $set
+     *
      * @return $this
      */
     function setSet($set)
@@ -73,6 +77,7 @@ class Update extends Query
 
     /**
      * @param $table
+     *
      * @return $this
      */
     function setTable($table)
@@ -84,6 +89,7 @@ class Update extends Query
 
     /**
      * @param $where
+     *
      * @return $this
      */
     function setWhere($where)
@@ -95,6 +101,7 @@ class Update extends Query
 
     /**
      * @param $limit
+     *
      * @return $this
      */
     function setLimit($limit)
@@ -107,6 +114,7 @@ class Update extends Query
     // adders
     /**
      * @param $where
+     *
      * @return $this
      */
     function addWhere($where)

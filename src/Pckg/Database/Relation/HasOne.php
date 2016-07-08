@@ -15,7 +15,8 @@ use Pckg\Database\Relation;
 class HasOne extends HasMany
 {
 
-    public function fillRecord(Record $record, $debug = false) {
+    public function fillRecord(Record $record, $debug = false)
+    {
         $primaryKey = $this->primaryKey;
         $foreignKey = $this->foreignKey;
         $rightEntity = $this->getRightEntity();
@@ -36,7 +37,8 @@ class HasOne extends HasMany
         }
     }
 
-    public function fillCollection(CollectionInterface $collection) {
+    public function fillCollection(CollectionInterface $collection)
+    {
         if (!$collection->count()) {
             return $collection;
         }

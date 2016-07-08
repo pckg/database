@@ -35,28 +35,32 @@ trait Permissionable
     /**
      * @param Auth $lang
      */
-    public function injectPermissionableDependencies(Auth $lang) {
+    public function injectPermissionableDependencies(Auth $lang)
+    {
         $this->permissionableAuth = $lang;
     }
 
     /**
      *
      */
-    public function initPermissionableExtension() {
+    public function initPermissionableExtension()
+    {
 
     }
 
     /**
      * @return string
      */
-    public function getPermissionableTableSuffix() {
+    public function getPermissionableTableSuffix()
+    {
         return $this->permissionableTableSuffix;
     }
 
     /**
      * @return array
      */
-    public function getPermissionableFields() {
+    public function getPermissionableFields()
+    {
         return $this->getRepository()->getCache()->getTableFields($this->table . $this->permissionableTableSuffix);
     }
 
@@ -65,14 +69,16 @@ trait Permissionable
      *
      * @return array
      */
-    public function getPermissionableForeignKeys(Record $record) {
+    public function getPermissionableForeignKeys(Record $record)
+    {
         return [
             $this->primaryKey                    => $record->{$this->primaryKey},
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
         ];
     }
 
-    public function allPermissions(callable $callable = null) {
+    public function allPermissions(callable $callable = null)
+    {
         $permissionTable = $this->getPermissionableTable();
         $repository = $this->getRepository();
 
@@ -100,7 +106,8 @@ trait Permissionable
     /**
      * @return mixed
      */
-    public function permissions(callable $callable = null) {
+    public function permissions(callable $callable = null)
+    {
         $relation = $this->allPermissions()
                          ->innerJoin();
 
@@ -117,7 +124,8 @@ trait Permissionable
         return $relation;
     }
 
-    private function addPermissionableConditionIfNot(HasMany $relation) {
+    private function addPermissionableConditionIfNot(HasMany $relation)
+    {
         $foundGroupCondition = false;
         $query = $relation->getQuery();
         foreach ($query->getWhere() as $where) {
@@ -133,11 +141,13 @@ trait Permissionable
         }
     }
 
-    public function getPermissionableTable() {
+    public function getPermissionableTable()
+    {
         return $this->getTable() . $this->getPermissionableTableSuffix();
     }
 
-    private function addPermissionableCondition(HasMany $relation) {
+    private function addPermissionableCondition(HasMany $relation)
+    {
         $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
 
         $relation->where(
@@ -146,15 +156,18 @@ trait Permissionable
         );
     }
 
-    public function withPermissions(callable $callable = null) {
+    public function withPermissions(callable $callable = null)
+    {
         return $this->with($this->permissions($callable));
     }
 
-    public function joinPermissions(callable $callable = null) {
+    public function joinPermissions(callable $callable = null)
+    {
         return $this->join($this->permissions($callable));
     }
 
-    public function withPermission() {
+    public function withPermission()
+    {
         return $this->withPermissions(
             function(Query $query) {
                 $query->where($this->permissionablePermissionField, $this->permissionableAuth->groupId());
@@ -162,12 +175,14 @@ trait Permissionable
         );
     }
 
-    public function joinPermission(callable $callable = null) {
+    public function joinPermission(callable $callable = null)
+    {
         return $this->join($this->permissions($callable))
                     ->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
     }
 
-    public function joinPermissionTo($permission) {
+    public function joinPermissionTo($permission)
+    {
         $self = $this;
 
         return $this->join(

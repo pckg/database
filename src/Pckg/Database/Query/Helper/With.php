@@ -125,7 +125,7 @@ trait With
     public function fillRecordWithRelations(Record $record)
     {
         foreach ($this->getWith() as $relation) {
-             $relation->fillRecord($record);
+            $relation->fillRecord($record);
         }
 
         return $record;
@@ -139,6 +139,5 @@ trait With
 
         return $collection;
     }
-
 
 }

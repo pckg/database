@@ -73,7 +73,8 @@ abstract class Relation implements RelationInterface
      *
      * @return $this
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
         if (method_exists($this->getQuery(), $method)) {
             /**
              * First overload Query.
@@ -101,13 +102,15 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
-    public function primaryKey($primaryKey) {
+    public function primaryKey($primaryKey)
+    {
         $this->primaryKey = $primaryKey;
 
         return $this;
     }
 
-    public function foreignKey($foreignKey) {
+    public function foreignKey($foreignKey)
+    {
         $this->foreignKey = $foreignKey;
 
         return $this;
@@ -117,20 +120,23 @@ abstract class Relation implements RelationInterface
      * @param $left
      * @param $right
      */
-    public function __construct($left, $right) {
+    public function __construct($left, $right)
+    {
         $this->left = $left;
         $this->right = $right;
         $this->fill = $this->getCalee();
     }
 
-    protected function getCalee($depth = 3) {
+    protected function getCalee($depth = 3)
+    {
         return debug_backtrace()[$depth]['function'];
     }
 
     /**
      * @return $this
      */
-    public function leftJoin() {
+    public function leftJoin()
+    {
         $this->join = static::LEFT_JOIN;
 
         return $this;
@@ -139,25 +145,29 @@ abstract class Relation implements RelationInterface
     /**
      * @return $this
      */
-    public function innerJoin() {
+    public function innerJoin()
+    {
         $this->join = static::INNER_JOIN;
 
         return $this;
     }
 
-    public function fill($fill) {
+    public function fill($fill)
+    {
         $this->fill = $fill;
 
         return $this;
     }
 
-    public function after($after) {
+    public function after($after)
+    {
         $this->after = $after;
 
         return $this;
     }
 
-    public function getFill() {
+    public function getFill()
+    {
         return $this->fill;
     }
 
@@ -165,7 +175,8 @@ abstract class Relation implements RelationInterface
      * @return Entity
      * @throws \Exception
      */
-    public function getLeftEntity() {
+    public function getLeftEntity()
+    {
         return $this->left; // left is always entity
     }
 
@@ -173,11 +184,13 @@ abstract class Relation implements RelationInterface
      * @return Repository
      * @throws \Exception
      */
-    public function getLeftRepository() {
+    public function getLeftRepository()
+    {
         return $this->getLeftEntity()->getRepository();
     }
 
-    public function onRecord(Record $record) {
+    public function onRecord(Record $record)
+    {
         $this->record = $record;
 
         return $this;
@@ -186,7 +199,8 @@ abstract class Relation implements RelationInterface
     /**
      * @return string
      */
-    public function getKeyCondition() {
+    public function getKeyCondition()
+    {
         $rightEntity = $this->getRightEntity();
         $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
 
@@ -196,13 +210,15 @@ abstract class Relation implements RelationInterface
                                                          ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`' : '');
     }
 
-    public function getAdditionalCondition() {
+    public function getAdditionalCondition()
+    {
         return $this->onAdditional
             ? ' AND ' . $this->onAdditional
             : '';
     }
 
-    public function mergeToQuery(Select $query) {
+    public function mergeToQuery(Select $query)
+    {
         $query->join(
             $this->getKeyCondition(),
             $this->getQuery()->getWhere()->build(),
@@ -224,7 +240,8 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
-    public function reflect(callable $callable, $entity, $query = null) {
+    public function reflect(callable $callable, $entity, $query = null)
+    {
         Reflect::call(
             $callable,
             [

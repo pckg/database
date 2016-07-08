@@ -10,6 +10,7 @@ use Pckg\Database\Repository;
 
 /**
  * Class UpdateRecord
+ *
  * @package Pckg\Database\Repository\PDO\Command
  */
 class UpdateRecord

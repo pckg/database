@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 /**
  * Class Object
+ *
  * @package Pckg\Database
  */
 class Object
@@ -24,7 +25,8 @@ class Object
         }
     }
 
-    public function setData(array $data = []) {
+    public function setData(array $data = [])
+    {
         $this->data = $data;
 
         return $this;
@@ -66,6 +68,7 @@ class Object
             foreach ($key as $k => $v) {
                 $this->__set($k, $v);
             }
+
             return $this;
         } else {
             return $this->__set($key, $val);

@@ -4,6 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Timeable
+ *
  * @package Pckg\Database\Entity\Extension
  */
 trait Timeable

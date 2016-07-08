@@ -14,6 +14,7 @@ use PDO;
 
 /**
  * Class InitDatabase
+ *
  * @package Pckg\Database\Command
  */
 class InitDatabase extends AbstractChainOfReponsibility
@@ -61,7 +62,8 @@ class InitDatabase extends AbstractChainOfReponsibility
         return $next();
     }
 
-    public function initPdoDatabase($config, $name) {
+    public function initPdoDatabase($config, $name)
+    {
         $pdo = new PDO(
             "mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
             $config['user'],

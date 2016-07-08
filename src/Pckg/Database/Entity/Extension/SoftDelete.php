@@ -4,6 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class SoftDelete
+ *
  * @package Pckg\Database\Entity\Extension
  */
 trait SoftDelete
@@ -29,6 +30,7 @@ trait SoftDelete
 
     /**
      * @param bool|true $enabled
+     *
      * @return $this
      */
     public function withSoftDeleted($enabled = true)

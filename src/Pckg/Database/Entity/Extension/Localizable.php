@@ -7,6 +7,7 @@ use Pckg\Database\Record;
 
 /**
  * Class Localizable
+ *
  * @package Pckg\Database\Entity\Extension
  */
 trait Localizable
@@ -65,13 +66,14 @@ trait Localizable
 
     /**
      * @param Record $record
+     *
      * @return array
      */
     public function getLocalizableForeignKeys(Record $record)
     {
         return [
             $this->localizableLocaleField => $this->localizableLocale->getCode(),
-            $this->primary                => $record->{$this->primary}
+            $this->primary                => $record->{$this->primary},
         ];
     }
 

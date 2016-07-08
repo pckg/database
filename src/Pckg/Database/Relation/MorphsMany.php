@@ -39,14 +39,22 @@ class MorphsMany extends HasAndBelongsTo
 
     public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($rightEntity->where($foreignKey, $primaryValue)
-            ->where($this->morph, get_class($this->getLeftEntity()))))->executeAll();
+        return (
+        new GetRecords(
+            $rightEntity->where($foreignKey, $primaryValue)
+                        ->where($this->morph, get_class($this->getLeftEntity()))
+        )
+        )->executeAll();
     }
 
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
-        return (new GetRecords($middleEntity->where($foreignKey, $primaryValue)
-            ->where($this->morph, get_class($this->getLeftEntity()))))->executeAll();
+        return (
+        new GetRecords(
+            $middleEntity->where($foreignKey, $primaryValue)
+                         ->where($this->morph, get_class($this->getLeftEntity()))
+        )
+        )->executeAll();
     }
 
     public function fillRecord(Record $record)

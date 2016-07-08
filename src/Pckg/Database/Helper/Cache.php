@@ -8,8 +8,9 @@ use PDO;
 
 /**
  * Class Cache
+ *
  * @package Pckg\Database\Helper
- * Provides simple cache for database fields and relations.
+ *          Provides simple cache for database fields and relations.
  */
 class Cache extends FrameworkCache
 {
@@ -68,8 +69,11 @@ class Cache extends FrameworkCache
 
     public static function getCachePathByRepository(Repository $repository)
     {
-        return path('cache') . 'framework/pckg_database_repository_' . str_replace(['\\', '/'], '_',
-            (get_class(app()) . '_' . get_class(env()))) . '_' . $repository->getName() . '_' . $repository->getConnection()->uniqueName . '.cache';
+        return path('cache') . 'framework/pckg_database_repository_' . str_replace(
+            ['\\', '/'],
+            '_',
+            (get_class(app()) . '_' . get_class(env()))
+        ) . '_' . $repository->getName() . '_' . $repository->getConnection()->uniqueName . '.cache';
     }
 
     /**
@@ -143,8 +147,11 @@ class Cache extends FrameworkCache
                 'type'      => strpos($field['Type'], '(')
                     ? substr($field['Type'], 0, strpos($field['Type'], '('))
                     : $field['Type'],
-                'limit'     => substr($field['Type'], strpos($field['Type'], '(') + 1,
-                    strpos($field['Type'], ')') ? -1 : null),
+                'limit'     => substr(
+                    $field['Type'],
+                    strpos($field['Type'], '(') + 1,
+                    strpos($field['Type'], ')') ? -1 : null
+                ),
                 'null'      => $field['Null'] == 'YES',
                 'key'       => $field['Key'] == 'PRI'
                     ? 'primary'
@@ -161,10 +168,15 @@ class Cache extends FrameworkCache
      */
     protected function buildPrimaryKeys($table)
     {
-        $this->cache['tables'][$table]['primaryKeys'] = array_column(array_filter($this->cache['fields'][$table],
-            function ($field) {
-                return $field['key'] == 'primary';
-            }), 'name');
+        $this->cache['tables'][$table]['primaryKeys'] = array_column(
+            array_filter(
+                $this->cache['fields'][$table],
+                function($field) {
+                    return $field['key'] == 'primary';
+                }
+            ),
+            'name'
+        );
     }
 
     /**
@@ -248,8 +260,10 @@ class Cache extends FrameworkCache
      */
     public function tableHasConstraint($table, $constraint)
     {
-        return isset($this->cache['constraints'][$table]) && array_key_exists($constraint,
-            $this->cache['constraints'][$table]);
+        return isset($this->cache['constraints'][$table]) && array_key_exists(
+            $constraint,
+            $this->cache['constraints'][$table]
+        );
     }
 
     /**

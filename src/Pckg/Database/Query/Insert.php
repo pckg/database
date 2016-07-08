@@ -6,10 +6,12 @@ use Pckg\Database\Query;
 
 /**
  * Class Insert
+ *
  * @package Pckg\Database\Query
  */
 class Insert extends Query
 {
+
     /**
      * @var
      */
@@ -22,13 +24,8 @@ class Insert extends Query
     function buildSQL()
     {
         return "INSERT INTO `" . $this->table . "` " .
-        $this->buildKeys() .
-        "VALUES " . $this->buildValues();
-    }
-
-    public function buildBinds()
-    {
-        return $this->getBinds(['keys', 'values']);
+               $this->buildKeys() .
+               "VALUES " . $this->buildValues();
     }
 
     /**
@@ -59,8 +56,14 @@ class Insert extends Query
         return "(" . implode(", ", $arrValues) . ") ";
     }
 
+    public function buildBinds()
+    {
+        return $this->getBinds(['keys', 'values']);
+    }
+
     /**
      * @param $insert
+     *
      * @return $this
      */
     function setInsert($insert)

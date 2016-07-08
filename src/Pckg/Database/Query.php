@@ -15,66 +15,80 @@ abstract class Query
 
     protected $bind = [];
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
     }
 
-    public function __clone() {
+    public function __clone()
+    {
         $this->where = clone $this->where;
     }
 
-    public static function raw($sql) {
+    public static function raw($sql)
+    {
         $query = new static($sql);
 
         return $query;
     }
 
-    public function getBind() {
+    public function getBind()
+    {
         return $this->bind;
     }
 
-    public function table($table) {
+    public function table($table)
+    {
         $this->table = $table;
 
         return $this;
     }
 
-    public function getTable() {
+    public function getTable()
+    {
         return $this->table;
     }
 
-    public function alias($alias) {
+    public function alias($alias)
+    {
         $this->alias = $alias;
 
         return $this;
     }
 
-    public function getAlias() {
+    public function getAlias()
+    {
         return $this->alias;
     }
 
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
-    public function getWhere() {
+    public function getWhere()
+    {
         return $this->where;
     }
 
-    public function buildJoin() {
+    public function buildJoin()
+    {
         return implode(" ", $this->join);
     }
 
-    public function buildWhere() {
+    public function buildWhere()
+    {
         return $this->where->hasChildren() ? ' WHERE ' . $this->where->build() : '';
     }
 
-    public function buildHaving() {
+    public function buildHaving()
+    {
         return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
     }
 
-    public function where($key, $value = true, $operator = '=') {
+    public function where($key, $value = true, $operator = '=')
+    {
         if (is_object($key) && $key instanceof Raw) {
             $sql = $key->buildSQL();
             $this->where->push($sql);
@@ -149,47 +163,55 @@ abstract class Query
         return $this;
     }
 
-    public function orWhere($key, $value = true, $operator = '=') {
+    public function orWhere($key, $value = true, $operator = '=')
+    {
         $this->where->setGlue('OR');
 
         return $this->where($key, $value, $operator);
     }
 
-    public function groupBy($groupBy) {
+    public function groupBy($groupBy)
+    {
         $this->groupBy = $groupBy;
 
         return $this;
     }
 
-    public function orderBy($orderBy) {
+    public function orderBy($orderBy)
+    {
         $this->orderBy = $orderBy;
 
         return $this;
     }
 
-    public function limit($limit) {
+    public function limit($limit)
+    {
         $this->limit = $limit;
 
         return $this;
     }
 
-    private function makeKey($key) {
+    private function makeKey($key)
+    {
         return is_numeric($key) || strpos($key, '`') === false || strpos($key, '.') ? $key : '`' . $key . '`';
     }
 
-    public function bind($val, $part) {
+    public function bind($val, $part)
+    {
         $this->bind[$part][] = $val;
 
         return $this;
     }
 
-    public function setBind($bind) {
+    public function setBind($bind)
+    {
         $this->bind = $bind;
 
         return $this;
     }
 
-    public function getBinds($parts = []) {
+    public function getBinds($parts = [])
+    {
         $binds = [];
 
         if (!is_array($parts)) {
@@ -215,7 +237,8 @@ abstract class Query
         return $binds;
     }
 
-    public function join($table, $on = null, $where = null, $binds = []) {
+    public function join($table, $on = null, $where = null, $binds = [])
+    {
         if (!$on) {
             $this->join[] = $table;
         } else {
@@ -235,17 +258,20 @@ abstract class Query
         return $this;
     }
 
-    public function getJoin() {
+    public function getJoin()
+    {
         return $this->join;
     }
 
-    public function makeJoinsLeft() {
+    public function makeJoinsLeft()
+    {
         foreach ($this->join as &$join) {
             $join = str_replace('INNER JOIN', 'LEFT JOIN', $join);
         }
     }
 
-    public function primaryWhere(Entity $entity, $data, $table) {
+    public function primaryWhere(Entity $entity, $data, $table)
+    {
         foreach ($entity->getRepository()->getCache()->getTablePrimaryKeys($table) as $primaryKey) {
             $this->where($primaryKey, $data[$primaryKey]);
         }
@@ -255,7 +281,8 @@ abstract class Query
 
     abstract public function buildBinds();
 
-    public function __toString() {
+    public function __toString()
+    {
         try {
             return $this->buildSQL();
         } catch (\Exception $e) {

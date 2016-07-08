@@ -64,9 +64,12 @@ abstract class AbstractRepository implements Repository
 
     public function fetchAllPrepared($prepare)
     {
-        return measure('Fetching prepared', function() use ($prepare) {
-            return $prepare->fetchAll();
-        });
+        return measure(
+            'Fetching prepared',
+            function() use ($prepare) {
+                return $prepare->fetchAll();
+            }
+        );
     }
 
     public function fetchPrepared($prepare)

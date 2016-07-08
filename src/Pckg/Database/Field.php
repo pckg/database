@@ -7,6 +7,7 @@ namespace Pckg\Database;
      */
 /**
  * Class Field
+ *
  * @package Pckg\Database
  */
 class Field
@@ -19,6 +20,7 @@ class Field
 
     /**
      * @param $value
+     *
      * @return $this
      */
     public function set($value)

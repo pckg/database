@@ -3,11 +3,9 @@
 namespace Pckg\Database;
 
 use Exception;
-use Pckg\Database\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
-use Pckg\Database\Query\Delete;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record\RecordInterface;
@@ -61,7 +59,8 @@ class Entity implements EntityInterface
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null) {
+    public function __construct(Repository $repository = null)
+    {
         $this->repository = $repository;
 
         if (!$repository) {
@@ -83,7 +82,8 @@ class Entity implements EntityInterface
      * @return $this
      * @throws Exception
      */
-    public static function __callStatic($method, $args) {
+    public static function __callStatic($method, $args)
+    {
         $entity = Reflect::create(static::class);
 
         return Reflect::method($entity, $method, $args);
@@ -95,7 +95,8 @@ class Entity implements EntityInterface
      *
      * @return $this
      */
-    public function __call($method, $args) {
+    public function __call($method, $args)
+    {
         $relation = $this->callWith($method, $args, $this);
 
         return $this;
@@ -106,7 +107,8 @@ class Entity implements EntityInterface
      *
      * @return mixed
      */
-    public function __get($property) {
+    public function __get($property)
+    {
         if (method_exists($this, $property)) {
             return $this->{$property}();
         }
@@ -117,7 +119,8 @@ class Entity implements EntityInterface
     /**
      *
      */
-    protected function guessDefaults() {
+    protected function guessDefaults()
+    {
         if (!$this->table) {
             if (static::class == Entity::class) {
                 $this->table = null;
@@ -146,7 +149,8 @@ class Entity implements EntityInterface
         }
     }
 
-    public function getRecord() {
+    public function getRecord()
+    {
         $class = $this->getRecordClass();
 
         $record = new $class;
@@ -159,11 +163,13 @@ class Entity implements EntityInterface
     /**
      * @return mixed
      */
-    public function getRecordClass() {
+    public function getRecordClass()
+    {
         return $this->record;
     }
 
-    public function setRecordClass($class) {
+    public function setRecordClass($class)
+    {
         $this->record = $class;
 
         return $this;
@@ -174,36 +180,42 @@ class Entity implements EntityInterface
      *
      * @return $this
      */
-    public function setTable($table) {
+    public function setTable($table)
+    {
         $this->table = $table;
         $this->getQuery()->table($table);
 
         return $this;
     }
 
-    public function setAlias($alias) {
+    public function setAlias($alias)
+    {
         $this->alias = $alias;
         $this->getQuery()->alias($alias);
 
         return $this;
     }
 
-    public function getAlias() {
+    public function getAlias()
+    {
         return $this->alias;
     }
 
     /**
      * @return mixed
      */
-    public function getTable() {
+    public function getTable()
+    {
         return $this->table;
     }
 
-    public function getPrimaryKey() {
+    public function getPrimaryKey()
+    {
         return $this->primaryKey;
     }
 
-    public function getFields() {
+    public function getFields()
+    {
         return $this->fields ?: $this->getRepository()->getCache()->getTableFields($this->table);
     }
 
@@ -215,7 +227,8 @@ class Entity implements EntityInterface
      *
      * @return $this
      */
-    public function setRepository(Repository $repository) {
+    public function setRepository(Repository $repository)
+    {
         $this->repository = $repository;
 
         return $this;
@@ -224,7 +237,8 @@ class Entity implements EntityInterface
     /**
      * @return Repository
      */
-    public function getRepository() {
+    public function getRepository()
+    {
         return $this->repository;
     }
 
@@ -233,7 +247,8 @@ class Entity implements EntityInterface
      *
      * @return $this
      */
-    public function addExtension($extension) {
+    public function addExtension($extension)
+    {
         $this->extensions[] = $extension;
 
         return $this;
@@ -245,7 +260,8 @@ class Entity implements EntityInterface
     /**
      * @return $this
      */
-    public function initExtensions() {
+    public function initExtensions()
+    {
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
                 $this->{$method}();
@@ -265,7 +281,8 @@ class Entity implements EntityInterface
     /**
      * @return $this
      */
-    public function applyExtensions() {
+    public function applyExtensions()
+    {
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'apply' && substr($method, -9) == 'Extension') {
                 $this->{$method}();
@@ -282,7 +299,8 @@ class Entity implements EntityInterface
      *
      * @return array
      */
-    public function tabelizeRecord(Record $record) {
+    public function tabelizeRecord(Record $record)
+    {
         $dataArray = $record->__toArray(null, 1, false);
         $keys = [
             $this->table => $this->repository->getCache()->getTableFields($this->table),
@@ -292,7 +310,11 @@ class Entity implements EntityInterface
         foreach (get_class_methods($this) as $method) {
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()->hasTable($this->table . $suffix)) {
+                if (substr(
+                        $this->table,
+                        strlen($this->table) - strlen($suffix)
+                    ) != $suffix && $this->repository->getCache()->hasTable($this->table . $suffix)
+                ) {
                     /**
                      * @T00D00 ... propery save extensions ...
                      */
@@ -317,10 +339,19 @@ class Entity implements EntityInterface
 
         // Get extensions' foreign keys
         foreach (get_class_methods($this) as $method) {
-            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr($method, -11) == 'ForeignKeys') {
+            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
+                                                                                     $method,
+                                                                                     -11
+                                                                                 ) == 'ForeignKeys'
+            ) {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
                 if ($this->repository->getCache()->hasTable($this->table . $suffix)) {
-                    $values[$table] = array_merge($this->{$method}($record), isset($values[$table]) && array_keys($values)[0] == $table ? $values[$table] : []);
+                    $values[$table] = array_merge(
+                        $this->{$method}($record),
+                        isset($values[$table]) && array_keys(
+                                                      $values
+                                                  )[0] == $table ? $values[$table] : []
+                    );
                 }
             }
         }
@@ -331,7 +362,8 @@ class Entity implements EntityInterface
     /**
      * @return Record
      */
-    public function one() {
+    public function one()
+    {
         $this->applyExtensions();
 
         $one = $this->repository->one($this);
@@ -344,7 +376,8 @@ class Entity implements EntityInterface
     /**
      * @return Collection
      */
-    public function all() {
+    public function all()
+    {
         $this->applyExtensions();
 
         $all = $this->repository->all($this);
@@ -358,7 +391,8 @@ class Entity implements EntityInterface
      * @return Record
      * @throws Exception
      */
-    public function oneOrFail(callable $callback = null) {
+    public function oneOrFail(callable $callback = null)
+    {
         if ($result = $this->one()) {
             return $result;
         }
@@ -374,7 +408,8 @@ class Entity implements EntityInterface
      * @throws Exception
      * @return Collection
      * */
-    public function allOrFail() {
+    public function allOrFail()
+    {
         if ($results = $this->all()) {
             return $results;
         }
@@ -382,14 +417,16 @@ class Entity implements EntityInterface
         throw new Exception('No records found');
     }
 
-    public function total() {
+    public function total()
+    {
         return $this->count()
                     ->limit(1)
                     ->all()
                     ->total();
     }
 
-    public function delete(Repository $repository = null) {
+    public function delete(Repository $repository = null)
+    {
         if (!$repository) {
             $repository = $this->getRepository();
         }
@@ -397,11 +434,13 @@ class Entity implements EntityInterface
         $delete = $this->getQuery()->transformToDelete();
 
         $prepare = $repository->prepareQuery($delete);
+
 //d($prepare);
         return $repository->executePrepared($prepare);
     }
 
-    public function insert(Repository $repository = null) {
+    public function insert(Repository $repository = null)
+    {
         if (!$this->repository) {
             $repository = $this->getRepository();
         }

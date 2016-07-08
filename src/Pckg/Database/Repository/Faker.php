@@ -41,5 +41,4 @@ class Faker extends AbstractRepository implements Repository
         return new Fetcher($this, $query, $recordClass);
     }
 
-
 }

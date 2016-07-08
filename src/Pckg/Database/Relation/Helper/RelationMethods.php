@@ -19,7 +19,8 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
 
-    protected function returnRelation($relation, $entity, callable $callback = null) {
+    protected function returnRelation($relation, $entity, callable $callback = null)
+    {
         $relation = new $relation($this, $entity);
 
         if ($callback) {
@@ -34,7 +35,8 @@ trait RelationMethods
      *
      * @return HasMany
      */
-    public function hasMany($hasMany, callable $callback = null) {
+    public function hasMany($hasMany, callable $callback = null)
+    {
         return $this->returnRelation(HasMany::class, $hasMany, $callback);
     }
 
@@ -43,7 +45,8 @@ trait RelationMethods
      *
      * @return HasMany
      */
-    public function hasOne($hasOne, $alias = null) {
+    public function hasOne($hasOne, $alias = null)
+    {
         $relation = new HasOne($this, $hasOne);
 
         if ($alias) {
@@ -58,7 +61,8 @@ trait RelationMethods
      *
      * @return BelongsTo
      */
-    public function belongsTo($entity, callable $callback = null) {
+    public function belongsTo($entity, callable $callback = null)
+    {
         return $this->returnRelation(BelongsTo::class, $entity, $callback);
     }
 
@@ -67,7 +71,8 @@ trait RelationMethods
      *
      * @return HasAndBelongsTo
      */
-    public function hasAndBelongsTo($hasAndBelongsTo) {
+    public function hasAndBelongsTo($hasAndBelongsTo)
+    {
         return new HasAndBelongsTo($this, $hasAndBelongsTo);
     }
 
@@ -76,7 +81,8 @@ trait RelationMethods
      *
      * @return HasParent
      */
-    public function hasParent($hasParent) {
+    public function hasParent($hasParent)
+    {
         return new HasParent($this, $hasParent);
     }
 
@@ -85,7 +91,8 @@ trait RelationMethods
      *
      * @return HasChildren
      */
-    public function hasChildren($hasChildren) {
+    public function hasChildren($hasChildren)
+    {
         return new HasChildren($this, $hasChildren);
     }
 
@@ -94,7 +101,8 @@ trait RelationMethods
      *
      * @return MorphsMany
      */
-    public function morphsMany($morphsMany) {
+    public function morphsMany($morphsMany)
+    {
         return new MorphsMany($this, $morphsMany);
     }
 
@@ -103,7 +111,8 @@ trait RelationMethods
      *
      * @return MorphedBy
      */
-    public function morphedBy($morphedBy) {
+    public function morphedBy($morphedBy)
+    {
         return new MorphedBy($this, $morphedBy);
     }
 

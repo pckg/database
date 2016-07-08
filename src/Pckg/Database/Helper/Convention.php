@@ -4,6 +4,7 @@ namespace Pckg\Database\Helper;
 
 /**
  * Class Convention
+ *
  * @package Pckg\Database\Helper
  */
 class Convention
@@ -11,6 +12,7 @@ class Convention
 
     /**
      * @param $input
+     *
      * @return string
      */
     public static function nameOne($input)
@@ -52,6 +54,7 @@ class Convention
 
     /**
      * @param $input
+     *
      * @return string
      */
     public static function nameMultiple($input)
@@ -86,6 +89,7 @@ class Convention
 
     /**
      * @param $text
+     *
      * @return string
      */
     public static function toCamel($text)
@@ -105,6 +109,7 @@ class Convention
 
     /**
      * @param $text
+     *
      * @return string
      */
     public static function fromCamel($text)
@@ -113,7 +118,10 @@ class Convention
         $text = str_split($text, 1);
 
         foreach ($text AS $index => $char) {
-            if ($char != strtolower($char) && $index != 0 && (isset($text[$index - 1]) && $text[$index - 1] != "/" && $text[$index - 1] != "\\")) {
+            if ($char != strtolower(
+                    $char
+                ) && $index != 0 && (isset($text[$index - 1]) && $text[$index - 1] != "/" && $text[$index - 1] != "\\")
+            ) {
                 $return .= "_";
             }
 

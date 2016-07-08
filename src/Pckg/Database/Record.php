@@ -9,6 +9,7 @@ use Pckg\Database\Record\RecordInterface;
 
 /**
  * Class Record
+ *
  * @package Pckg\Database
  */
 class Record extends Object implements RecordInterface
@@ -133,7 +134,11 @@ class Record extends Object implements RecordInterface
         /**
          * Return value via getter
          */
-        if (!in_array($key, ['value', 'relations']) && method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+        if (!in_array($key, ['value', 'relations']) && method_exists(
+                $this,
+                'get' . ucfirst(Convention::toCamel($key))
+            )
+        ) {
             return $this->{'get' . ucfirst(Convention::toCamel($key))}();
         }
 
@@ -162,6 +167,7 @@ class Record extends Object implements RecordInterface
 
         /**
          * Return value from empty relation.
+         *
          * @T00D00 - optimize this
          */
         if (method_exists($entity, $key)) {
@@ -179,7 +185,12 @@ class Record extends Object implements RecordInterface
             return chain($chains);
         }
 
-        dd('Method (key) ' . $key . ' doesnt exist in ' . get_class($entity) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this), db(8));
+        dd(
+            'Method (key) ' . $key . ' doesnt exist in ' . get_class(
+                $entity
+            ) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this),
+            db(8)
+        );
     }
 
     public function __call($method, $args)
@@ -205,7 +216,7 @@ class Record extends Object implements RecordInterface
         $chains = [];
         foreach (get_class_methods($entity) as $method) {
             if (substr($method, 0, strlen($overloadMethod)) == $overloadMethod && substr($method, -9) == 'Extension') {
-                $chains[] = function () use ($method, $entity, $key) {
+                $chains[] = function() use ($method, $entity, $key) {
                     return $entity->$method($this, $key);
                 };
             }
@@ -269,7 +280,8 @@ class Record extends Object implements RecordInterface
         return array_key_exists($key, $this->relations);
     }
 
-    public function getRelationIfSet($name) {
+    public function getRelationIfSet($name)
+    {
         if (!isset($this->relations[$name])) {
             return null;
         }
@@ -411,7 +423,8 @@ class Record extends Object implements RecordInterface
         return $repository->insert($this, $entity);
     }
 
-    public function refetch() {
+    public function refetch()
+    {
         $entity = $this->getEntity();
         foreach ($this->data as $key => $val) {
             $entity->where($key, $val);
@@ -419,13 +432,14 @@ class Record extends Object implements RecordInterface
         $record = $entity->one();
 
         if ($record) {
-        $this->data = $record->getData();
+            $this->data = $record->getData();
         }
 
         return $this;
     }
 
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
 

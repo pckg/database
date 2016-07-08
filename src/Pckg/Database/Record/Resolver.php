@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
+use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Concept\Reflect\Resolver as ResolverInterface;
 use Pckg\Database\Record;
@@ -28,6 +29,7 @@ class Resolver implements ResolverInterface
          */
         return [
             Record::class => function ($class) {
+                throw new Exception('Is this needed? Empty class will be created ...');
                 return new $class();
                 $result = Reflect::create($class)
                     ->getEntity()

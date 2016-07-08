@@ -22,6 +22,8 @@ trait QueryBuilder
      */
     protected $query;
 
+    protected $prevQuery;
+
     /**
      * @return Query|Select
      */
@@ -31,7 +33,13 @@ trait QueryBuilder
             : $this->resetQuery()->getQuery();
     }
 
+    public function getPrevQuery() {
+        return $this->prevQuery;
+    }
+
     public function resetQuery() {
+        $this->prevQuery = $this->query;
+
         $this->query = (new Select());
 
         if (isset($this->table)) {

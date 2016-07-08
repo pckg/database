@@ -52,6 +52,12 @@ interface Repository
      */
     public function insert(Record $record, Entity $entity);
 
+    /**
+     * @param Query $query
+     * @param null  $recordClass
+     *
+     * @return mixed|\PDOStatement
+     */
     public function prepareQuery(Query $query, $recordClass = null);
 
     public function executePrepared($prepare);

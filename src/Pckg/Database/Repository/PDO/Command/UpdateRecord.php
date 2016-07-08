@@ -115,10 +115,9 @@ class UpdateRecord
         $this->repository->executePrepared($prepare);
 
         /**
-         * @T00D00 - We should return number of updated records or something?
+         * Return number of updated records.
          */
-
-        return true;
+        return $prepare->rowCount();
     }
 
     /**

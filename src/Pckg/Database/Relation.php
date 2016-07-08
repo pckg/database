@@ -184,8 +184,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @T00D00 - join type needs to be dynamic!
-     *
      * @return string
      */
     public function getKeyCondition() {
@@ -217,7 +215,10 @@ abstract class Relation implements RelationInterface
         }
 
         foreach ($this->getQuery()->getSelect() as $key => $select) {
-            $query->addSelect([$key => $select]);
+            /**
+             * Is this ok to be commented?
+             */
+            //$query->addSelect([$key => $select]);
         }
 
         return $this;

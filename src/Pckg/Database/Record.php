@@ -129,7 +129,7 @@ class Record extends Object implements RecordInterface
         if (!$key) {
             dd("no key", debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
         }
-        
+
         /**
          * Return value via getter
          */

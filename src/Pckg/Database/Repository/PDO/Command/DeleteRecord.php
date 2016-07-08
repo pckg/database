@@ -78,10 +78,9 @@ class DeleteRecord
         $this->repository->executePrepared($prepare);
 
         /**
-         * @T00D00 - We should return number of deleted records or something?
+         * Return number of deleted records.
          */
-
-        return true;
+        return $prepare->rowCount();
     }
 
 }

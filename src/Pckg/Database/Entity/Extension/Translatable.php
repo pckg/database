@@ -81,9 +81,6 @@ trait Translatable
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix;
         $repository = $this->getRepository();
 
-        /**
-         * @T00D00 - language should be binded (PDO) ...
-         */
         $relation = $this->hasMany((new Entity($repository))->setTable($translaTable))
                          ->foreignKey('id')
                          ->fill('_translations')

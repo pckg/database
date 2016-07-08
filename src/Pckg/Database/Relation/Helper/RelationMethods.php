@@ -34,8 +34,8 @@ trait RelationMethods
      *
      * @return HasMany
      */
-    public function hasMany($hasMany) {
-        return (new HasMany($this, $hasMany));
+    public function hasMany($hasMany, callable $callback = null) {
+        return $this->returnRelation(HasMany::class, $hasMany, $callback);
     }
 
     /**

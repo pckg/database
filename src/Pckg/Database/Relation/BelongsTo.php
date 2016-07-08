@@ -79,8 +79,6 @@ class BelongsTo extends Relation
     }
 
     /**
-     * @T00D00 - join type needs to be dynamic!
-     *
      * @return string
      */
     public function getKeyCondition() {

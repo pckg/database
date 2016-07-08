@@ -78,7 +78,7 @@ trait Permissionable
 
         $relation = $this->hasMany((new Entity($repository))->setTable($permissionTable))
                          ->foreignKey('id')
-                         ->fill('_permissions')
+                         ->fill('allPermissions')
                          ->addSelect(['`' . $permissionTable . '`.*']);
 
         if ($callable) {

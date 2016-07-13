@@ -58,6 +58,28 @@ class Record extends Object implements RecordInterface
         return $this;
     }
 
+    public static function create($data = [])
+    {
+        $record = new self($data);
+
+        $record->save();
+
+        return $record;
+    }
+
+    public static function getOrCreate(array $data)
+    {
+        $entity = (new self)->getEntity();
+
+        $record = $entity->whereArr($data)->one();
+
+        if (!$record) {
+            $record = static::create($data);
+        }
+
+        return $record;
+    }
+
     public function hasKey($key)
     {
         if (array_key_exists($key, $this->data)) {
@@ -358,12 +380,14 @@ class Record extends Object implements RecordInterface
     public function save(Entity $entity = null, Repository $repository = null)
     {
         if (isset($this->data['id'])) {
-            return $this->update($entity, $repository);
+            $this->update($entity, $repository);
 
         } else {
-            return $this->insert($entity, $repository);
+            $this->insert($entity, $repository);
 
         }
+
+        return $this;
     }
 
     /**

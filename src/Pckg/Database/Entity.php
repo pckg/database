@@ -408,10 +408,14 @@ class Entity implements EntityInterface
      * @throws Exception
      * @return Collection
      * */
-    public function allOrFail()
+    public function allOrFail(callable $callback = null)
     {
-        if ($results = $this->all()) {
+        if (($results = $this->all()) && $results->count()) {
             return $results;
+        }
+
+        if ($callback) {
+            return $callback();
         }
 
         throw new Exception('No records found');

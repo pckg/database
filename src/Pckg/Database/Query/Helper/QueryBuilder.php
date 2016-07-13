@@ -110,6 +110,15 @@ trait QueryBuilder
         return $this;
     }
 
+    public function whereArr($data, $operator = '=')
+    {
+        foreach ($data as $key => $value) {
+            $this->where($key, $value, $operator);
+        }
+
+        return $this;
+    }
+
     public function orWhere($key, $value = true, $operator = '=')
     {
         $this->getQuery()->getWhere()->setGlue('OR');

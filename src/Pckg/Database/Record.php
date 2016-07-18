@@ -207,6 +207,8 @@ class Record extends Object implements RecordInterface
             return chain($chains);
         }
 
+        return null;
+
         dd(
             'Method (key) ' . $key . ' doesnt exist in ' . get_class(
                 $entity

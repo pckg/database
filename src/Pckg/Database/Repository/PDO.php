@@ -29,6 +29,8 @@ class PDO extends AbstractRepository implements Repository
 
     protected $name;
 
+    protected $recordClass = null;
+
     /**
      * @param \PDO $connection
      */
@@ -140,10 +142,11 @@ class PDO extends AbstractRepository implements Repository
 
     public function prepareQuery(Query $query, $recordClass = null)
     {
+        $this->recordClass = $recordClass;
         $sql = $query->buildSQL();
         $prepare = measure(
             'Prepare query: ' . $sql,
-            function() use ($query, $sql, $recordClass) {
+            function() use ($query, $sql) {
                 $binds = $query->buildBinds();
                 $prepare = $this->getConnection()->prepare($sql);
 
@@ -164,11 +167,7 @@ class PDO extends AbstractRepository implements Repository
                     }
                 }
 
-                if ($recordClass) {
-                    $prepare->setFetchMode(\PDO::FETCH_CLASS, $recordClass);
-                } else {
-                    $prepare->setFetchMode(\PDO::FETCH_OBJ);
-                }
+                $prepare->setFetchMode(\PDO::FETCH_ASSOC);
 
                 return $prepare;
             }
@@ -208,6 +207,42 @@ class PDO extends AbstractRepository implements Repository
         $execute = $this->executePrepared($prepare);
 
         return $this->fetchAllPrepared($prepare);
+    }
+
+    public function fetchAllPrepared($prepare)
+    {
+        return measure(
+            'Fetching prepared',
+            function() use ($prepare) {
+                $records = $this->transformRecordsToObjects($prepare->fetchAll());
+
+                return $records;
+            }
+        );
+    }
+
+    public function fetchPrepared($prepare)
+    {
+        return measure(
+            'Fetching prepared',
+            function() use ($prepare) {
+                $records = $this->transformRecordsToObjects($prepare->fetchAll());
+
+                return $records ? $records[0] : null;
+            }
+        );
+    }
+
+    public function transformRecordsToObjects($records)
+    {
+        if ($this->recordClass) {
+            $recordClass = $this->recordClass;
+            foreach ($records as &$record) {
+                $record = (new $recordClass)->setData($record);
+            }
+        }
+
+        return $records;
     }
 
 }

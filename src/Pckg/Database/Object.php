@@ -13,7 +13,7 @@ class Object
     /**
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @param array $values
@@ -34,11 +34,6 @@ class Object
 
     public function keyExists($key)
     {
-        if (!$this->data) {
-            // array_key_exists() expects parameter 2 to be array, null given
-            return false;
-        }
-
         return array_key_exists($key, $this->data);
     }
 

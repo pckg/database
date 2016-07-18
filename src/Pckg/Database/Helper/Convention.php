@@ -107,6 +107,11 @@ class Convention
         return ucfirst(str_replace("_", "", implode($text)));
     }
 
+    public static function toPascal($text)
+    {
+        return ucfirst(static::toCamel($text));
+    }
+
     /**
      * @param $text
      *

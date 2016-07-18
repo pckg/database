@@ -110,7 +110,7 @@ class Record extends Object implements RecordInterface
 
     public function __isset($key)
     {
-        if (method_exists($this, 'get' . ucfirst(Convention::toCamel($key)))) {
+        if (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
             return true;
         }
 
@@ -156,12 +156,8 @@ class Record extends Object implements RecordInterface
         /**
          * Return value via getter
          */
-        if (!in_array($key, ['value', 'relations']) && method_exists(
-                $this,
-                'get' . ucfirst(Convention::toCamel($key))
-            )
-        ) {
-            return $this->{'get' . ucfirst(Convention::toCamel($key))}();
+        if (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
+            return $this->{'get' . Convention::toPascal($key) . 'Attribute'}();
         }
 
         /**
@@ -270,8 +266,8 @@ class Record extends Object implements RecordInterface
                     } elseif ($this->hasRelation($key)) {
                         $values[$key] = $this->getRelationIfSet($key);
 
-                    } elseif (method_exists($this, 'get' . ucfirst($key))) {
-                        $values[$key] = $this->{'get' . ucfirst($key)}();
+                    } elseif (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
+                        $values[$key] = $this->{'get' . Convention::toPascal($key) . 'Attribute'}();
 
                     }
                 }

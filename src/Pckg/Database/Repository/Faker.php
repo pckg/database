@@ -36,9 +36,13 @@ class Faker extends AbstractRepository implements Repository
         return $this;
     }
 
-    public function prepareQuery(Query $query, $recordClass)
+    public function prepareQuery(Query $query, $recordClass = null)
     {
         return new Fetcher($this, $query, $recordClass);
     }
 
+    public function getCache()
+    {
+        // TODO: Implement getCache() method.
+    }
 }

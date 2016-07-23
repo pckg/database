@@ -4,6 +4,7 @@ namespace Pckg\Database\Repository;
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
+use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 
@@ -84,5 +85,30 @@ class Custom implements Repository
     public function getConnection()
     {
         // TODO: Implement getConnection() method.
+    }
+
+    public function prepareQuery(Query $query, $recordClass = null)
+    {
+        // TODO: Implement prepareQuery() method.
+    }
+
+    public function executePrepared($prepare)
+    {
+        // TODO: Implement executePrepared() method.
+    }
+
+    public function fetchAllPrepared($prepare)
+    {
+        // TODO: Implement fetchAllPrepared() method.
+    }
+
+    public function fetchPrepared($prepare)
+    {
+        // TODO: Implement fetchPrepared() method.
+    }
+
+    public function getCache()
+    {
+        // TODO: Implement getCache() method.
     }
 }

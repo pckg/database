@@ -1,6 +1,6 @@
 <?php namespace Pckg\Database\Relation;
 
-use Pckg\Collection;
+use Pckg\CollectionInterface;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
@@ -13,7 +13,7 @@ class MorphedBy extends Relation
         // TODO: Implement fillRecord() method.
     }
 
-    function fillCollection(Collection $collection)
+    function fillCollection(CollectionInterface $collection)
     {
         die("morphedBy");
         // TODO: Implement fillCollection() method.

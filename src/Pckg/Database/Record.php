@@ -2,7 +2,6 @@
 
 namespace Pckg\Database;
 
-use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record\RecordInterface;
@@ -168,7 +167,7 @@ class Record extends Object implements RecordInterface
         }
 
         /**
-         * Return value from existing relation (Collection/Record).
+         * Return value from existing relation (Collection or Record).
          */
         if ($this->relationExists($key)) {
             return $this->getRelation($key);

@@ -233,8 +233,9 @@ abstract class Relation implements RelationInterface
         foreach ($this->getQuery()->getSelect() as $key => $select) {
             /**
              * Is this ok to be commented?
+             * Noup, it is not: non-working if commented ($entity->joinHasOneRelation(...addSelect()))
              */
-            //$query->addSelect([$key => $select]);
+            $query->addSelect([$key => $select]);
         }
 
         return $this;

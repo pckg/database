@@ -75,7 +75,7 @@ class InsertRecord
 
             if ($this->record->{$this->entity->getPrimaryKey()}) {
                 /**
-                 * Primary key is already set to record, we need to update it.
+                 * Primary key is already set, we need to update it.
                  */
                 $insert[$this->entity->getPrimaryKey()] = $this->record->{$this->entity->getPrimaryKey()};
                 $this->insert($table, $insert);

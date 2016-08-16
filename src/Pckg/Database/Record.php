@@ -68,7 +68,7 @@ class Record extends Object implements RecordInterface
 
     public static function getOrCreate(array $data)
     {
-        $entity = (new self)->getEntity();
+        $entity = (new static)->getEntity();
 
         $record = $entity->whereArr($data)->one();
 

@@ -79,6 +79,23 @@ class Record extends Object implements RecordInterface
         return $record;
     }
 
+    public function updateIf($data)
+    {
+        $updated = false;
+        foreach ($data as $key => $val) {
+            if ($val) {
+                $this->{$key} = $val;
+                $updated = true;
+            }
+        }
+
+        if ($updated) {
+            $this->save();
+        }
+
+        return $this;
+    }
+
     public function hasKey($key)
     {
         if (array_key_exists($key, $this->data)) {

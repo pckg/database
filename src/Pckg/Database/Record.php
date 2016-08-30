@@ -2,6 +2,7 @@
 
 namespace Pckg\Database;
 
+use JsonSerializable;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record\RecordInterface;
@@ -11,7 +12,7 @@ use Pckg\Database\Record\RecordInterface;
  *
  * @package Pckg\Database
  */
-class Record extends Object implements RecordInterface
+class Record extends Object implements RecordInterface, JsonSerializable
 {
 
     /**
@@ -59,7 +60,7 @@ class Record extends Object implements RecordInterface
 
     public static function create($data = [])
     {
-        $record = new self($data);
+        $record = new static($data);
 
         $record->save();
 
@@ -264,12 +265,12 @@ class Record extends Object implements RecordInterface
     /**
      * @return array
      */
-    public function __toArray($values = null, $depth = 5, $withToArray = true)
+    public function __toArray($values = null, $depth = 6, $withToArray = true)
     {
         $return = [];
 
         if (!$depth) {
-            return;
+            return [];
         }
 
         if (!$values) {
@@ -292,7 +293,7 @@ class Record extends Object implements RecordInterface
 
         foreach ($values as $key => $value) {
             if (is_object($value)) {
-                $return[$key] = $this->__toArray($value->__toArray(null, $depth - 1), $depth - 1, $withToArray);
+                $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
 
             } else if (is_array($value)) {
                 $return[$key] = $this->__toArray($value, $depth - 1, $withToArray);
@@ -309,6 +310,11 @@ class Record extends Object implements RecordInterface
     public function toJSON()
     {
         return json_encode($this->__toArray());
+    }
+
+    function jsonSerialize()
+    {
+        return $this->__toArray();
     }
 
     public function relationExists($key)
@@ -483,5 +489,4 @@ class Record extends Object implements RecordInterface
     {
         return $this->data;
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Helper;
 
+use Exception;
 use Pckg\Database\Repository;
 use Pckg\Framework\Cache as FrameworkCache;
 use PDO;
@@ -216,6 +217,10 @@ class Cache extends FrameworkCache
      */
     public function getTableFields($table)
     {
+        if (!$table) {
+            throw new Exception('Table should be set!');
+        }
+
         return array_keys($this->cache['fields'][$table]);
     }
 

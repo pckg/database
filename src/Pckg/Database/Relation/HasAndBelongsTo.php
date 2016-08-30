@@ -78,6 +78,7 @@ class HasAndBelongsTo extends HasMany
                 foreach ($middleCollection as $middleRecord) {
                     $middleRecord->setRelation($leftForeignKey, $rightRecord);
                     $rightRecord->setRelation($leftCollectionKey, $middleRecord);
+                    $rightRecord->setRelation('pivot', $middleRecord);
                 }
             }
         }
@@ -138,6 +139,8 @@ class HasAndBelongsTo extends HasMany
                     $keyedLeftCollection[$middleRecord->{$leftForeignKey}]
                         ->getRelation($rightCollectionKey)
                         ->push($keyedRightCollection[$middleRecord->{$rightForeignKey}]);
+                    $keyedRightCollection[$middleRecord->{$rightForeignKey}]
+                        ->setRelation('pivot', $middleRecord);
                 }
             }
         }

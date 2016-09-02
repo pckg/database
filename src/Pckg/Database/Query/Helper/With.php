@@ -43,7 +43,8 @@ trait With
                 /**
                  * We are calling relation function without arguments: $entity->something();.
                  */
-                $relation = $object->{lcfirst(substr($method, strlen($prefix)))}();
+                $relationMethod = substr($method, strlen($prefix));
+                $relation = $object->{lcfirst($relationMethod)}();
 
                 if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
                     /**

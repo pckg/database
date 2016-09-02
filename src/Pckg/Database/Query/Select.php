@@ -67,8 +67,8 @@ class Select extends Query
                "FROM " . $this->buildTable() . " " .
                ($this->join ? $this->buildJoin() : '') .
                $this->buildWhere() .
-               ($this->having ? $this->buildHaving() : '') .
                ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
+               ($this->having ? $this->buildHaving() : '') .
                ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
                ($this->limit ? ' LIMIT ' . $this->limit : '');
 

@@ -87,15 +87,25 @@ abstract class Query
         return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
     }
 
+    public function having($key, $value = true, $operator = '=')
+    {
+        return $this->addCondition($key, $value, $operator, 'having');
+    }
+
     public function where($key, $value = true, $operator = '=')
+    {
+        return $this->addCondition($key, $value, $operator, 'where');
+    }
+
+    private function addCondition($key, $value = true, $operator = '=', $part)
     {
         if (is_object($key) && $key instanceof Raw) {
             $sql = $key->buildSQL();
-            $this->where->push($sql);
+            $this->{$part}->push($sql);
             if ($binds = $key->buildBinds()) {
                 //$this->bind($binds, 'where');
                 foreach ($binds as $bind) {
-                    $this->bind($bind, 'where');
+                    $this->bind($bind, $part);
                 }
             }
 
@@ -114,7 +124,7 @@ abstract class Query
         }
 
         if (is_callable($key)) {
-            $key($this->where);
+            $key($this->{$part});
 
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_array($value)) {
@@ -123,24 +133,29 @@ abstract class Query
                      * This is probable not needed.
                      */
                     // $this->where->push($this->makeKey($key));
-                    $this->where->push('0 = 1');
+                    $this->{$part}->push('0 = 1');
                 } else {
-                    $this->where->push(
+                    $this->{$part}->push(
                         $this->makeKey($key) . ' ' . $operator . '(' . str_repeat('?, ', count($value) - 1) . '?)'
                     );
-                    $this->bind($value, 'where');
+                    $this->bind($value, $part);
                 }
 
             } else if ($value instanceof Query) {
-                $this->where->push($this->makeKey($key) . ' ' . $operator . '(' . $value->buildSQL() . ')');
+                $this->{$part}->push($this->makeKey($key) . ' ' . $operator . '(' . $value->buildSQL() . ')');
                 if ($binds = $value->buildBinds()) {
-                    $this->bind($binds, 'where');
+                    $this->bind($binds, $part);
                 }
 
+            } else if ($value instanceof Entity) {
+                $this->{$part}->push($this->makeKey($key) . ' ' . $operator . '(' . $value->getQuery()->buildSQL() . ')');
+                if ($binds = $value->getQuery()->buildBinds()) {
+                    $this->bind($binds, $part);
+                }
             }
 
         } elseif ($operator == 'IS' || $operator == 'IS NOT') {
-            $this->where->push(
+            $this->{$part}->push(
                 $this->makeKey(
                     $key
                 ) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
@@ -149,14 +164,14 @@ abstract class Query
                 $this->bind($value, 'where');
             }
         } elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
-            $this->where->push($this->makeKey($key) . ' ' . $operator . ' ?');
-            $this->bind($value, 'where');
+            $this->{$part}->push($this->makeKey($key) . ' ' . $operator . ' ?');
+            $this->bind($value, $part);
         } else {
-            $this->where->push(
+            $this->{$part}->push(
                 $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')
             );
             if ($value && $value !== true) {
-                $this->bind($value, 'where');
+                $this->bind($value, $part);
             }
         }
 

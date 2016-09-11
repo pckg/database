@@ -309,7 +309,7 @@ class Record extends Object implements RecordInterface, JsonSerializable
 
     public function toJSON()
     {
-        return json_encode($this->__toArray());
+        return json_encode($this->jsonSerialize());
     }
 
     function jsonSerialize()

@@ -9,7 +9,7 @@ use Pckg\Database\Query\Raw;
 abstract class Query
 {
 
-    protected $table, $alias, $join, $where, $groupBy, $having, $orderBy, $limit;
+    protected $table, $alias, $join = [], $where, $groupBy, $having, $orderBy, $limit;
 
     protected $sql;
 

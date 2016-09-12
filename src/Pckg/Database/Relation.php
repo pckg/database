@@ -242,6 +242,10 @@ abstract class Relation implements RelationInterface
             $query->addSelect([$key => $select]);
         }
 
+        foreach ($this->getQuery()->getJoin() as $join) {
+            $query->join($join, null, null, $this->getQuery()->getBinds('join'));
+        }
+
         return $this;
     }
 

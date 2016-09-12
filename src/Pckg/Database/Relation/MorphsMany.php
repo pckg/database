@@ -72,7 +72,7 @@ class MorphsMany extends HasAndBelongsTo
         $rightCollectionKey = $this->fill;
 
         // get records from middle (mtm) entity
-        message('getting middle collection ' . get_class($middleEntity) . ' ' . $polyKey . ' = ' . $record->id);
+        message('MorphsMany: getting middle collection ' . get_class($middleEntity) . ' ' . $polyKey . ' = ' . $record->id . ' (' . $leftForeignKey . ')');
         $middleCollection = $this->getMiddleCollection($middleEntity, $polyKey, $record->id);
 
         // get right record ids and preset middle record with null values
@@ -90,11 +90,11 @@ class MorphsMany extends HasAndBelongsTo
 
         if ($arrRightIds) {
             // get all right records
-            message('getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
+            message('MorphsMany: getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
             $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
 
             // set relation
-            message('setting record relation ' . $rightCollectionKey . ' ' . $rightCollection->count());
+            message('MorphsMany: setting record relation ' . $rightCollectionKey . ' (count: ' . $rightCollection->count() . ')');
             $record->setRelation($rightCollectionKey, $rightCollection);
 
             // we also have to fill it with relations

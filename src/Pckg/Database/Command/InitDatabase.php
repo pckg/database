@@ -47,16 +47,25 @@ class InitDatabase extends AbstractChainOfReponsibility
 
         $configs = $this->config->get('database');
         foreach ($configs as $name => $config) {
+            $repository = null;
             if ($config['driver'] == 'faker') {
                 $repository = new RepositoryFaker(Factory::create());
+
+            } elseif ($config['driver'] == 'middleware') {
+                $repository = resolve($config['middleware'])->execute(
+                    function() {
+                    }
+                );
 
             } else {
                 $repository = $this->initPdoDatabase($config, $name);
 
             }
 
-            $this->context->bindIfNot(Repository::class, $repository);
-            $this->context->bind(Repository::class . '.' . $name, $repository);
+            if ($repository) {
+                $this->context->bindIfNot(Repository::class, $repository);
+                $this->context->bind(Repository::class . '.' . $name, $repository);
+            }
         }
 
         return $next();

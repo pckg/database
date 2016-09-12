@@ -485,8 +485,16 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $this;
     }
 
-    public function getData()
+    public function getData($key = null)
     {
-        return $this->data;
+        if (!$key) {
+            return $this->data;
+
+        } else if ($this->hasKey($key)) {
+            return $this->data[$key] ?? null;
+            
+        }
+
+        return null;
     }
 }

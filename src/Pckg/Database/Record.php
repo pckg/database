@@ -262,6 +262,25 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $chains;
     }
 
+    public function getToArrayValues()
+    {
+        $values = [];
+        foreach ($this->toArray as $key) {
+            if ($this->hasKey($key)) {
+                $values[$key] = $this->{$key};
+
+            } elseif ($this->hasRelation($key)) {
+                $values[$key] = $this->getRelationIfSet($key);
+
+            } elseif (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
+                $values[$key] = $this->{'get' . Convention::toPascal($key) . 'Attribute'}();
+
+            }
+        }
+
+        return $values;
+    }
+
     /**
      * @return array
      */
@@ -276,17 +295,8 @@ class Record extends Object implements RecordInterface, JsonSerializable
         if (!$values) {
             $values = $this->data;
             if ($withToArray && $this->toArray) {
-                foreach ($this->toArray as $key) {
-                    if ($this->hasKey($key)) {
-                        $values[$key] = $this->{$key};
-
-                    } elseif ($this->hasRelation($key)) {
-                        $values[$key] = $this->getRelationIfSet($key);
-
-                    } elseif (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
-                        $values[$key] = $this->{'get' . Convention::toPascal($key) . 'Attribute'}();
-
-                    }
+                foreach ($this->getToArrayValues() as $key => $value) {
+                    $values[$key] = $value;
                 }
             }
         }
@@ -492,7 +502,7 @@ class Record extends Object implements RecordInterface, JsonSerializable
 
         } else if ($this->hasKey($key)) {
             return $this->data[$key] ?? null;
-            
+
         }
 
         return null;

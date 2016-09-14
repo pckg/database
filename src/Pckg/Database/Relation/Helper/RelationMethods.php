@@ -71,9 +71,9 @@ trait RelationMethods
      *
      * @return HasAndBelongsTo
      */
-    public function hasAndBelongsTo($hasAndBelongsTo)
+    public function hasAndBelongsTo($entity, callable $callback = null)
     {
-        return new HasAndBelongsTo($this, $hasAndBelongsTo);
+        return $this->returnRelation(HasAndBelongsTo::class, $entity, $callback);
     }
 
     /**

@@ -221,13 +221,6 @@ class Record extends Object implements RecordInterface, JsonSerializable
         }
 
         return null;
-
-        dd(
-            'Method (key) ' . $key . ' doesnt exist in ' . get_class(
-                $entity
-            ) . ' (entity table is ' . $entity->getTable() . ') called from __get ' . get_class($this),
-            db(8)
-        );
     }
 
     public function __call($method, $args)

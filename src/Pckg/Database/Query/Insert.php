@@ -23,9 +23,11 @@ class Insert extends Query
      */
     function buildSQL()
     {
-        return "INSERT INTO `" . $this->table . "` " .
+        $sql = "INSERT INTO `" . $this->table . "` " .
                $this->buildKeys() .
                "VALUES " . $this->buildValues();
+
+        return $sql;
     }
 
     /**

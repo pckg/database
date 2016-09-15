@@ -52,7 +52,7 @@ class Insert extends Query
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
             $arrValues[] = '?';
-            $this->bind($val, 'values');
+            $this->bind($val == '' ? null : $val, 'values');
         }
 
         return "(" . implode(", ", $arrValues) . ") ";

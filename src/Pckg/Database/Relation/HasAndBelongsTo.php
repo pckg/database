@@ -57,14 +57,19 @@ class HasAndBelongsTo extends HasMany
         }
 
         // prepare record for mtm relation and right relation
-        $record->setRelation($this->fill, $middleCollection);
         $record->setRelation($rightCollectionKey, new Collection());
+        $record->setRelation($this->fill, $middleCollection);
         message($this->fill . ' - ' . $rightCollectionKey);
 
         if ($arrRightIds) {
             // get all right records
-            message('getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
-            $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
+            message(
+                'getting right collection ' . get_class($rightEntity) . ' ' . $this->rightPrimaryKey . ' ' . implode(
+                    ',',
+                    $arrRightIds
+                )
+            );
+            $rightCollection = $this->getRightCollection($rightEntity, $this->rightPrimaryKey, $arrRightIds);
 
             // set relation
             message('setting record relation ' . $rightCollectionKey . ' ' . $rightCollection->count());
@@ -154,18 +159,19 @@ class HasAndBelongsTo extends HasMany
          * Join middle entity
          */
         $middleQuery = $this->getMiddleEntity()->getQuery();
-        $this->getQuery()->join($this->join . ' ' . $middleQuery->getTable(),
-                                $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable(
-                                ) . '.' . $this->getLeftForeignKey()
+        $this->getQuery()->join(
+            $this->join . ' ' . $middleQuery->getTable(),
+            $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getLeftForeignKey()
         );
 
         /**
          * Join right entity
          */
         $rightQuery = $this->getRightEntity()->getQuery();
-        $this->getQuery()->join($this->join . ' ' . $rightQuery->getTable(),
-                                $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable(
-                                ) . '.' . $this->getRightForeignKey()
+        $this->getQuery()->join(
+            $this->join . ' ' . $rightQuery->getTable(),
+            $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getRightForeignKey(
+            )
         );
 
         /**

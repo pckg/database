@@ -127,7 +127,7 @@ abstract class Relation implements RelationInterface
         $this->fill = $this->getCalee();
     }
 
-    protected function getCalee($depth = 3)
+    protected function getCalee($depth = 4)
     {
         if (debug_backtrace()[$depth]['function'] == 'hasMany') {
             return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[$depth + 1]['function'];

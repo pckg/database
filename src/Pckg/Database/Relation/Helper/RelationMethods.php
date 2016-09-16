@@ -45,9 +45,9 @@ trait RelationMethods
      *
      * @return HasMany
      */
-    public function hasOne($hasOne, $alias = null)
+    public function hasOne($entity, $alias = null, callable $callback = null)
     {
-        $relation = new HasOne($this, $hasOne);
+        $relation = $this->returnRelation(HasOne::class, $entity, $callback);
 
         if ($alias) {
             $relation->getRightEntity()->setAlias($alias);
@@ -71,9 +71,9 @@ trait RelationMethods
      *
      * @return HasAndBelongsTo
      */
-    public function hasAndBelongsTo($hasAndBelongsTo)
+    public function hasAndBelongsTo($entity, callable $callback = null)
     {
-        return new HasAndBelongsTo($this, $hasAndBelongsTo);
+        return $this->returnRelation(HasAndBelongsTo::class, $entity, $callback);
     }
 
     /**
@@ -101,9 +101,9 @@ trait RelationMethods
      *
      * @return MorphsMany
      */
-    public function morphsMany($morphsMany)
+    public function morphsMany($entity, callable $callable = null)
     {
-        return new MorphsMany($this, $morphsMany);
+        return $this->returnRelation(MorphsMany::class, $entity, $callable);
     }
 
     /**
@@ -111,10 +111,10 @@ trait RelationMethods
      *
      * @return MorphedBy
      */
-    public function morphedBy($morphedBy)
+    public function morphedBy($entity, callable $callable = null)
     {
         // @T00D00
-        return new MorphedBy($this, $morphedBy);
+        return $this->returnRelation(MorphedBy::class, $entity, $callable);
     }
 
 }

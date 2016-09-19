@@ -401,7 +401,7 @@ class Entity implements EntityInterface
             return $callback();
         }
 
-        throw new Exception('No record found');
+        throw new Exception('No record ' . $this->getRecordClass() . ' found');
     }
 
     /**

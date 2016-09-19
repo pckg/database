@@ -3,6 +3,7 @@
 namespace Pckg\Database;
 
 use ArrayAccess;
+use Exception;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
 
@@ -148,7 +149,9 @@ abstract class Query
                 }
 
             } else if ($value instanceof Entity) {
-                $this->{$part}->push($this->makeKey($key) . ' ' . $operator . '(' . $value->getQuery()->buildSQL() . ')');
+                $this->{$part}->push(
+                    $this->makeKey($key) . ' ' . $operator . '(' . $value->getQuery()->buildSQL() . ')'
+                );
                 if ($binds = $value->getQuery()->buildBinds()) {
                     $this->bind($binds, $part);
                 }
@@ -287,7 +290,13 @@ abstract class Query
 
     public function primaryWhere(Entity $entity, $data, $table)
     {
-        foreach ($entity->getRepository()->getCache()->getTablePrimaryKeys($table) as $primaryKey) {
+        $primaryKeys = $entity->getRepository()->getCache()->getTablePrimaryKeys($table);
+
+        if (!$primaryKeys) {
+            throw new Exception('Primary key must be set on deletion!');
+        }
+
+        foreach ($primaryKeys as $primaryKey) {
             $this->where($primaryKey, $data[$primaryKey]);
         }
     }
@@ -300,7 +309,7 @@ abstract class Query
     {
         try {
             return $this->buildSQL();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
         }
     }

@@ -72,7 +72,11 @@ class MorphsMany extends HasAndBelongsTo
         $rightCollectionKey = $this->fill;
 
         // get records from middle (mtm) entity
-        message('MorphsMany: getting middle collection ' . get_class($middleEntity) . ' ' . $polyKey . ' = ' . $record->id . ' (' . $leftForeignKey . ')');
+        message(
+            'MorphsMany: getting middle collection ' . get_class(
+                $middleEntity
+            ) . ' ' . $polyKey . ' = ' . $record->id . ' (' . $leftForeignKey . ')'
+        );
         $middleCollection = $this->getMiddleCollection($middleEntity, $polyKey, $record->id);
 
         // get right record ids and preset middle record with null values
@@ -90,11 +94,16 @@ class MorphsMany extends HasAndBelongsTo
 
         if ($arrRightIds) {
             // get all right records
-            message('MorphsMany: getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds));
+            message(
+                'MorphsMany: getting right collection ' . get_class($rightEntity) . ' id ' . implode(',', $arrRightIds)
+            );
             $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
 
             // set relation
-            message('MorphsMany: setting record relation ' . $rightCollectionKey . ' (count: ' . $rightCollection->count() . ')');
+            message(
+                'MorphsMany: setting record relation ' . $rightCollectionKey . ' (count: ' . $rightCollection->count(
+                ) . ')'
+            );
             $record->setRelation($rightCollectionKey, $rightCollection);
 
             // we also have to fill it with relations
@@ -103,8 +112,11 @@ class MorphsMany extends HasAndBelongsTo
             // we need to link middle record with left and right records
             foreach ($rightCollection as $rightRecord) {
                 foreach ($middleCollection as $middleRecord) {
-                    $middleRecord->setRelation($leftForeignKey, $rightRecord);
-                    $rightRecord->setRelation($leftCollectionKey, $middleRecord);
+                    if ($middleRecord->{$leftForeignKey} == $rightRecord->id) {
+                        $middleRecord->setRelation($leftForeignKey, $rightRecord);
+                        $rightRecord->setRelation($leftCollectionKey, $middleRecord);
+                        break;
+                    }
                 }
             }
         }

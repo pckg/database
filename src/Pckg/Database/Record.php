@@ -2,6 +2,7 @@
 
 namespace Pckg\Database;
 
+use Carbon\Carbon;
 use JsonSerializable;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
@@ -23,6 +24,26 @@ class Record extends Object implements RecordInterface, JsonSerializable
     protected $relations = [];
 
     protected $toArray = [];
+
+    /**
+     * @var array
+     * @T00D00
+     */
+    protected $bind = [
+        'dt_added' => Carbon::class,
+    ];
+
+    /**
+     * @return array
+     * @T00D00
+     */
+    public function defaults()
+    {
+        return [
+            'created_at'   => date('Y-m-d H:i:s'),
+            'confirmed_at' => '0000-00-00 00:00:00',
+        ];
+    }
 
     public function __set($key, $val)
     {

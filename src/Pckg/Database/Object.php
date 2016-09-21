@@ -18,11 +18,9 @@ class Object
     /**
      * @param array $values
      */
-    public function __construct($values = [])
+    public function __construct($data = [])
     {
-        foreach ($values as $key => $val) {
-            $this->__set($key, $val);
-        }
+        $this->data = $data ?? [];
     }
 
     public function setData(array $data = [])

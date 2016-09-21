@@ -31,6 +31,14 @@ class PDO extends AbstractRepository implements Repository
 
     protected $recordClass = null;
 
+    public function __sleep()
+    {
+        return [
+            'name',
+            'recordClass',
+        ];
+    }
+
     /**
      * @param \PDO $connection
      */

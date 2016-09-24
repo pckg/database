@@ -16,6 +16,17 @@ use Pckg\Database\Relation;
 class HasMany extends Relation
 {
 
+    /**
+     * Attaches $sth to HasMany relation.
+     * For example, we attach user to status like: $status->attach($user);
+     *
+     * @return $this
+     */
+    public function attach($sth)
+    {
+        return $this;
+    }
+
     public function fillRecord(Record $record, $debug = false)
     {
         $primaryKey = $this->primaryKey;

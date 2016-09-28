@@ -13,6 +13,19 @@ class Collection extends \Pckg\Collection
                 $record->setEntityClass(get_class($entity));
             }
         );
+
+        return $this;
+    }
+
+    public function setSaved($saved = true)
+    {
+        $this->each(
+            function(Record $record) use ($saved) {
+                $record->setSaved($saved);
+            }
+        );
+
+        return $this;
     }
 
 }

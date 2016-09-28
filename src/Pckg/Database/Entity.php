@@ -327,6 +327,9 @@ class Entity implements EntityInterface
         $values = [];
         foreach ($keys as $table => $fields) {
             foreach ($fields as $field) {
+                /**
+                 * Add value if field exists in data array and repository has that field.
+                 */
                 if (array_key_exists($field, $dataArray) && $this->repository->getCache()->tableHasField(
                         $table,
                         $field
@@ -346,6 +349,7 @@ class Entity implements EntityInterface
             ) {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
                 if ($this->repository->getCache()->hasTable($this->table . $suffix)) {
+                    $table = $this->table . $suffix;
                     $values[$table] = array_merge(
                         $this->{$method}($record),
                         isset($values[$table]) && array_keys(

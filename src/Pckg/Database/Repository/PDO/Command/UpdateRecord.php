@@ -131,6 +131,19 @@ class UpdateRecord
     public function updateOrInsert($table, array $data = [])
     {
         $primaryKeys = $this->repository->getCache()->getTablePrimaryKeys($table);
+
+        /**
+         * @T00D00 - bug for translations, permissions ...!
+         */
+        if (!$primaryKeys) {
+            return;
+        }
+        foreach ($primaryKeys as $primaryKey) {
+            if (!isset($data[$primaryKey])) {
+                return;
+            }
+        }
+
         $this->entity->setTable($table);
         foreach ($primaryKeys as $primaryKey) {
             $this->entity->where($primaryKey, $data[$primaryKey]);

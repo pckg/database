@@ -25,6 +25,8 @@ class Record extends Object implements RecordInterface, JsonSerializable
 
     protected $toArray = [];
 
+    protected $saved = false;
+
     /**
      * @var array
      * @T00D00
@@ -43,6 +45,18 @@ class Record extends Object implements RecordInterface, JsonSerializable
             'created_at'   => date('Y-m-d H:i:s'),
             'confirmed_at' => '0000-00-00 00:00:00',
         ];
+    }
+
+    public function isSaved()
+    {
+        return $this->saved;
+    }
+
+    public function setSaved($saved = true)
+    {
+        $this->saved = $saved;
+
+        return $this;
     }
 
     public function __set($key, $val)
@@ -423,10 +437,7 @@ class Record extends Object implements RecordInterface, JsonSerializable
      */
     public function save(Entity $entity = null, Repository $repository = null)
     {
-        /**
-         * @T00D00
-         */
-        if (isset($this->data['id'])) {
+        if ($this->isSaved()) {
             $this->update($entity, $repository);
 
         } else {

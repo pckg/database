@@ -71,7 +71,7 @@ class GetRecords
                 $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
                 $entity->count(false);
             }
-            $collection->setEntity($entity);
+            $collection->setEntity($entity)->setSaved();
 
             return $entity->fillCollectionWithRelations($collection);
 
@@ -95,7 +95,7 @@ class GetRecords
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
-            $record->setEntity($entity);
+            $record->setEntity($entity)->setSaved();
 
             return $entity->fillRecordWithRelations($record);
         }

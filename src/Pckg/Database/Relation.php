@@ -239,7 +239,7 @@ abstract class Relation implements RelationInterface
              * Is this ok to be commented?
              * Noup, it is not: non-working if commented ($entity->joinHasOneRelation(...addSelect()))
              */
-            $query->addSelect([$key => $select]);
+            $query->prependSelect([$key => $select]);
         }
 
         foreach ($this->getQuery()->getJoin() as $join) {

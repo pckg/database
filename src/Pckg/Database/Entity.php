@@ -310,6 +310,10 @@ class Entity implements EntityInterface
         foreach (get_class_methods($this) as $method) {
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
+                if ($suffix) {
+                    // @T00D00
+                    continue;
+                }
                 if (substr(
                         $this->table,
                         strlen($this->table) - strlen($suffix)
@@ -348,6 +352,9 @@ class Entity implements EntityInterface
                                                                                  ) == 'ForeignKeys'
             ) {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
+                if ($suffix) {
+                    continue;
+                }
                 if ($this->repository->getCache()->hasTable($this->table . $suffix)) {
                     $table = $this->table . $suffix;
                     $values[$table] = array_merge(

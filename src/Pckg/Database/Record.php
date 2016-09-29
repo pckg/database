@@ -437,13 +437,15 @@ class Record extends Object implements RecordInterface, JsonSerializable
      */
     public function save(Entity $entity = null, Repository $repository = null)
     {
-        if ($this->isSaved()) {
+        if (isset($this->data['id']) || $this->isSaved()) {
             $this->update($entity, $repository);
 
         } else {
             $this->insert($entity, $repository);
 
         }
+
+        $this->setSaved(true);
 
         return $this;
     }

@@ -27,6 +27,8 @@ class Record extends Object implements RecordInterface, JsonSerializable
 
     protected $saved = false;
 
+    protected $deleted = false;
+
     /**
      * @var array
      * @T00D00
@@ -52,9 +54,21 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $this->saved;
     }
 
+    public function isDeleted()
+    {
+        return $this->saved;
+    }
+
     public function setSaved($saved = true)
     {
         $this->saved = $saved;
+
+        return $this;
+    }
+
+    public function setDeleted($deleted = true)
+    {
+        $this->deleted = $deleted;
 
         return $this;
     }

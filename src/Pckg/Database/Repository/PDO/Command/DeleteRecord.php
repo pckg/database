@@ -53,6 +53,9 @@ class DeleteRecord
             $this->delete($table, $data);
         }
 
+        $this->record->setSaved(false);
+        $this->record->setDeleted(true);
+
         return true;
     }
 

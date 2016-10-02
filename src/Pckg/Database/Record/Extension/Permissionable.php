@@ -5,7 +5,7 @@ trait Permissionable
 
     public function hasPermissionTo($action)
     {
-        return $this->permissions->has(
+        return $this->allPermissions->has(
             function($permission) use ($action) {
                 return $permission->action == $action;
             }

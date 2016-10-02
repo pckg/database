@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 use Exception;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Command\InitDatabase;
 use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
@@ -64,6 +65,15 @@ class Entity implements EntityInterface
         $this->repository = $repository;
 
         if (!$repository) {
+            if (!context()->exists($this->repositoryName)) {
+                $connectionName = $this->repositoryName == Repository::class
+                    ? 'default'
+                    : str_replace(Repository::class . '.', '', $this->repositoryName);
+                $config = config('database.' . $connectionName);
+                $repository = (new InitDatabase(config(), context()))->initPdoDatabase($config, $connectionName);
+                context()->bind($this->repositoryName, $repository);
+            }
+
             $this->repository = context()->get($this->repositoryName);
 
             if (!$this->repository) {

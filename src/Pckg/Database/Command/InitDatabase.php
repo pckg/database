@@ -47,6 +47,10 @@ class InitDatabase extends AbstractChainOfReponsibility
 
         $configs = $this->config->get('database');
         foreach ($configs as $name => $config) {
+            if (isset($config['lazy'])) {
+                continue;
+            }
+
             $repository = null;
             if ($config['driver'] == 'faker') {
                 $repository = new RepositoryFaker(Factory::create());

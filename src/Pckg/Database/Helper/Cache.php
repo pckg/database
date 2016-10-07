@@ -118,7 +118,14 @@ class Cache extends FrameworkCache
                     'type' => 'PRIMARY',
                 ];
             } else {
-                if ($first['Non_unique']) {
+                if (strpos($name, 'FOREIGN__') === 0) {
+                    /**
+                     * This is handled in buildRelations();
+                     */
+                    $this->cache['constraints'][$table][$first['Key_name']] = [
+                        'type' => 'FOREIGN',
+                    ];
+                } else if ($first['Non_unique']) {
                     $this->cache['constraints'][$table][$first['Key_name']] = [
                         'type' => 'KEY',
                     ];
@@ -190,7 +197,18 @@ class Cache extends FrameworkCache
         $prepare = $this->repository->getConnection()->prepare($sql);
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $result) {
-            var_dump($result);
+            $table = $result['TABLE_NAME'];
+            $primary = $result['COLUMN_NAME'];
+            $references = $result['REFERENCED_TABLE_NAME'];
+            $on = $result['REFERENCED_COLUMN_NAME'];
+            $key = 'FOREIGN__' . substr($table . '__' . $primary, -55);
+
+            $this->cache['constraints'][$table][$key] = [
+                'type'       => 'FOREIGN',
+                'primary'    => $primary,
+                'references' => $references,
+                'on'         => $on,
+            ];
         }
     }
 

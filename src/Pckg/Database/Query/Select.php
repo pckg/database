@@ -63,16 +63,33 @@ class Select extends Query
      */
     function buildSQL()
     {
-        $sql = "SELECT " . $this->buildSelect() . " " .
-               "FROM " . $this->buildTable() . " " .
-               ($this->join ? $this->buildJoin() : '') .
-               $this->buildWhere() .
-               ($this->groupBy ? ' GROUP BY ' . $this->groupBy : '') .
-               ($this->having ? $this->buildHaving() : '') .
-               ($this->orderBy ? ' ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy) : '') .
-               ($this->limit ? ' LIMIT ' . $this->limit : '');
+        $parts = ["SELECT " . $this->buildSelect(), "FROM " . $this->buildTable()];
 
-        return $sql;
+        if ($this->join) {
+            $parts[] = $this->buildJoin();
+        }
+
+        if ($this->where->hasChildren()) {
+            $parts[] = $this->buildWhere();
+        }
+
+        if ($this->groupBy) {
+            $parts[] = 'GROUP BY ' . $this->groupBy;
+        }
+
+        if ($this->having->hasChildren()) {
+            $parts[] = $this->buildHaving();
+        }
+
+        if ($this->orderBy) {
+            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy);
+        }
+
+        if ($this->limit) {
+            $parts[] = 'LIMIT ' . $this->limit;
+        }
+
+        return implode(' ', $parts);
     }
 
     public function buildSelect()

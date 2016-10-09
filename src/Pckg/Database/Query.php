@@ -80,12 +80,12 @@ abstract class Query
 
     public function buildWhere()
     {
-        return $this->where->hasChildren() ? ' WHERE ' . $this->where->build() : '';
+        return $this->where->hasChildren() ? 'WHERE ' . $this->where->build() : '';
     }
 
     public function buildHaving()
     {
-        return $this->having->hasChildren() ? ' HAVING ' . $this->having->build() : '';
+        return $this->having->hasChildren() ? 'HAVING ' . $this->having->build() : '';
     }
 
     public function having($key, $value = true, $operator = '=')

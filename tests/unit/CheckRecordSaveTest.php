@@ -1,7 +1,5 @@
 <?php
 
-use Codeception\Configuration;
-
 class CheckRecordSaveTest extends \Codeception\Test\Unit
 {
 

@@ -89,7 +89,9 @@ class Select extends Query
             $parts[] = 'LIMIT ' . $this->limit;
         }
 
-        return implode(' ', $parts);
+        $sql = implode(' ', $parts);
+
+        return $sql;
     }
 
     public function buildSelect()

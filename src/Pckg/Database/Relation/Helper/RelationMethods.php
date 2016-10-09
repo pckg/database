@@ -113,7 +113,6 @@ trait RelationMethods
      */
     public function morphedBy($entity, callable $callable = null)
     {
-        // @T00D00
         return $this->returnRelation(MorphedBy::class, $entity, $callable);
     }
 

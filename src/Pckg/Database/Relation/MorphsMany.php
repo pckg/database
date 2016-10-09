@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
+use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;

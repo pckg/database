@@ -18,7 +18,8 @@
   },
   "autoload": {
     "psr-0": {
-      "Pckg": "src\\"
+      "Pckg": "src\\",
+      "Test": "tests\\src\\"
     }
   },
   "minimum-stability": "dev"

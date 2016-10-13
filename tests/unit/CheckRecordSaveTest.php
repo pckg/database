@@ -1,5 +1,7 @@
 <?php
 
+use Test\Record\User;
+
 class CheckRecordSaveTest extends \Codeception\Test\Unit
 {
 
@@ -10,37 +12,38 @@ class CheckRecordSaveTest extends \Codeception\Test\Unit
 
     public function testIsSavedAndIsDeleted()
     {
-        $user = new \Pckg\Auth\Record\User();
+        $user = new User();
 
         $this->assertFalse($user->isSaved(), 'User isn\'t saved on construction.');
         $this->assertFalse($user->isDeleted(), 'User isn\'t deleted on construction.');
 
-        $user->email = 'test@test.si';
+        $user->username = 'testuser';
         $user->user_group_id = 1;
+        $user->language_id = 'si';
 
-        $this->assertFalse($user->isSaved(), 'User isn\t saved when changing data.');
-        $this->assertFalse($user->isDeleted(), 'User isn\t deleted when changing data.');
+        $this->assertFalse($user->isSaved(), 'User isn\'t saved when changing data.');
+        $this->assertFalse($user->isDeleted(), 'User isn\'t deleted when changing data.');
 
         $user->save();
 
         $this->assertTrue($user->isSaved(), 'User is saved after save().');
-        $this->assertTrue($user->isDeleted(), 'User isn\t deleted after save().');
+        $this->assertFalse($user->isDeleted(), 'User isn\'t deleted after save().');
 
         $user->update();
 
         $this->assertTrue($user->isSaved(), 'User is saved after update().');
-        $this->assertTrue($user->isDeleted(), 'User is deleted after update().');
+        $this->assertFalse($user->isDeleted(), 'User isn\'t deleted after update().');
 
         $user->delete();
 
         $this->assertFalse($user->isSaved(), 'User isn\'t saved after delete().');
-        $this->assertFalse($user->isDeleted(), 'User is deleted after delete().');
+        $this->assertTrue($user->isDeleted(), 'User is deleted after delete().');
     }
 
     // executed before each test
     protected function _before()
     {
-        $this->tester->loadPckg();
+        $this->tester->initPckg(__DIR__);
     }
 
     // executed after each test

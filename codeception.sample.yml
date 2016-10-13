@@ -22,3 +22,10 @@ modules:
 pckg:
     application: derive
     platform: bob.gonparty
+    database:
+      default: # test database
+        host:
+        user:
+        pass:
+        db:
+        charset:

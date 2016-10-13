@@ -82,7 +82,7 @@ class Select extends Query
         }
 
         if ($this->orderBy) {
-            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? $this->table . "." . $this->orderBy : $this->orderBy);
+            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? '`' . $this->table . "`.`" . $this->orderBy . '` ASC' : $this->orderBy);
         }
 
         if ($this->limit) {

@@ -139,7 +139,9 @@ abstract class Query
                     $this->{$part}->push(
                         $this->makeKey($key) . ' ' . $operator . '(' . str_repeat('?, ', count($value) - 1) . '?)'
                     );
-                    $this->bind($value, $part);
+                    foreach ($value as $val) {
+                        $this->bind($val, $part);
+                    }
                 }
 
             } else if ($value instanceof Query) {
@@ -236,20 +238,22 @@ abstract class Query
             $parts = [$parts];
         }
 
+        if (!$parts) {
+            $parts = array_keys($this->bind);
+        }
+
         foreach ($parts as $part) {
-            if (isset($this->bind[$part])) {
-                foreach ($this->bind[$part] as $bind) {
-                    $binds[] = $bind;
-                }
+            if (!isset($this->bind[$part])) {
+                continue;
+            }
+
+            foreach ($this->bind[$part] as $bind) {
+                $binds[] = $bind;
             }
         }
 
-        if (!$parts) {
-            foreach ($this->bind as $parts) {
-                foreach ($parts as $bind) {
-                    $binds[] = $bind;
-                }
-            }
+        if ($binds && is_array($binds[0])) {
+            dd($this, $binds);
         }
 
         return $binds;

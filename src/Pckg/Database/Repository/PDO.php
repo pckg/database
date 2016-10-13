@@ -162,6 +162,11 @@ class PDO extends AbstractRepository implements Repository
                     throw new Exception('Cannot prepare statement');
                 }
 
+                /**
+                 * Trigger query.prepared event.
+                 */
+                trigger(Query::class . '.prepared', ['sql' => $sql, 'binds' => $binds]);
+
                 $i = 1;
                 foreach ($binds as $key => $val) {
                     if (is_array($val)) {

@@ -50,6 +50,9 @@ class DeleteRecord
         $data = $this->entity->tabelizeRecord($this->record);
 
         foreach ($data as $table => $data) {
+            /*if ($this->entity->getRepository()->getCache()->hasTable($table . '_i18n')) {
+                $this->delete($table . '_i18n', $data);
+            */
             $this->delete($table, $data);
         }
 

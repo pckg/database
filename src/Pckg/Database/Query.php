@@ -213,7 +213,7 @@ abstract class Query
 
     private function makeKey($key)
     {
-        return is_numeric($key) || strpos($key, '`') === false || strpos($key, '.') ? $key : '`' . $key . '`';
+        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, '.') ? $key : '`' . $key . '`';
     }
 
     public function bind($val, $part)
@@ -301,7 +301,7 @@ abstract class Query
         }
 
         foreach ($primaryKeys as $primaryKey) {
-            $this->where($primaryKey, $data[$primaryKey]);
+            $this->where('`' . $primaryKey . '`', $data[$primaryKey]);
         }
     }
 

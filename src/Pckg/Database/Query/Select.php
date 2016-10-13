@@ -187,6 +187,9 @@ class Select extends Query
         $delete->setTable($this->table);
         $delete->getWhere()->setChildren($this->where->getChildren());
         $delete->setBind(['where' => $this->getBinds('where')]);
+        foreach ($this->join as $join) {
+            $delete->join($join);
+        }
 
         return $delete;
     }

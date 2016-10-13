@@ -17,7 +17,7 @@ class CheckRecordSaveTest extends \Codeception\Test\Unit
         $this->assertFalse($user->isSaved(), 'User isn\'t saved on construction.');
         $this->assertFalse($user->isDeleted(), 'User isn\'t deleted on construction.');
 
-        $user->username = 'testuser';
+        $user->username = 'testuser1';
         $user->user_group_id = 1;
         $user->language_id = 'si';
 

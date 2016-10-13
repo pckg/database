@@ -554,7 +554,7 @@ trait UnitTesterActions
      *
      * @see \Pckg\Framework\Test\Helper::importDatabase()
      */
-    public function importDatabase($repository, $connection, $file) {
+    public function importDatabase($filename) {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('importDatabase', func_get_args()));
     }
 

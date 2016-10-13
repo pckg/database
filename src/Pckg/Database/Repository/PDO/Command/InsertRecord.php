@@ -7,6 +7,8 @@ use Pckg\Database\Entity;
 use Pckg\Database\Query\Insert;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
+use Test\Record\User;
+use Test\Record\UserGroup;
 
 /**
  * Class InsertRecord

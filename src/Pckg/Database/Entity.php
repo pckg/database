@@ -312,27 +312,41 @@ class Entity implements EntityInterface
     public function tabelizeRecord(Record $record)
     {
         $dataArray = $record->__toArray(null, 1, false);
+        $extensionArray = [];
+
+        /**
+         * Holds all available fields in database table cache.
+         */
         $keys = [
             $this->table => $this->repository->getCache()->getTableFields($this->table),
         ];
 
-        // Get extensions - which extends table with another table - and their fields.
         foreach (get_class_methods($this) as $method) {
+            /**
+             * Get extension's fields.
+             */
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if ($suffix) {
-                    // @T00D00
-                    continue;
-                }
-                if (substr(
-                        $this->table,
-                        strlen($this->table) - strlen($suffix)
-                    ) != $suffix && $this->repository->getCache()->hasTable($this->table . $suffix)
+                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
+                    && $this->repository->getCache()->hasTable($this->table . $suffix)
                 ) {
-                    /**
-                     * @T00D00 ... propery save extensions ...
-                     */
                     $keys[$this->table . $suffix] = $this->{$method}();
+                }
+            }
+
+            /**
+             * Get extension's foreign key values.
+             */
+            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
+                                                                                     $method,
+                                                                                     -11
+                                                                                 ) == 'ForeignKeys'
+            ) {
+                $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
+                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
+                    && $this->repository->getCache()->hasTable($this->table . $suffix)
+                ) {
+                    $extensionArray[$this->table . $suffix] = $this->{$method}($record);
                 }
             }
         }
@@ -344,35 +358,13 @@ class Entity implements EntityInterface
                 /**
                  * Add value if field exists in data array and repository has that field.
                  */
-                if (array_key_exists($field, $dataArray) && $this->repository->getCache()->tableHasField(
-                        $table,
-                        $field
-                    )
+                if ($this->repository->getCache()->tableHasField($table, $field)
                 ) {
-                    $values[$table][$field] = $dataArray[$field];
-                }
-            }
-        }
-
-        // Get extensions' foreign keys
-        foreach (get_class_methods($this) as $method) {
-            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
-                                                                                     $method,
-                                                                                     -11
-                                                                                 ) == 'ForeignKeys'
-            ) {
-                $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
-                if ($suffix) {
-                    continue;
-                }
-                if ($this->repository->getCache()->hasTable($this->table . $suffix)) {
-                    $table = $this->table . $suffix;
-                    $values[$table] = array_merge(
-                        $this->{$method}($record),
-                        isset($values[$table]) && array_keys(
-                                                      $values
-                                                  )[0] == $table ? $values[$table] : []
-                    );
+                    if (array_key_exists($field, $dataArray)) {
+                        $values[$table][$field] = $dataArray[$field];
+                    } elseif (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
+                        $values[$table][$field] = $extensionArray[$table][$field];
+                    }
                 }
             }
         }
@@ -460,7 +452,6 @@ class Entity implements EntityInterface
 
         $prepare = $repository->prepareQuery($delete);
 
-//d($prepare);
         return $repository->executePrepared($prepare);
     }
 

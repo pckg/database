@@ -55,7 +55,7 @@ class Insert extends Query
             $this->bind($val == '' ? null : $val, 'values');
         }
 
-        return "(" . implode(", ", $arrValues) . ") ";
+        return "(" . implode(", ", $arrValues) . ")";
     }
 
     public function buildBinds()

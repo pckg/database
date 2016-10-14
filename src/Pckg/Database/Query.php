@@ -27,9 +27,13 @@ abstract class Query
         $this->where = clone $this->where;
     }
 
-    public static function raw($sql)
+    public static function raw($sql, $binds = [])
     {
         $query = new static($sql);
+
+        foreach ($binds as $bind) {
+            $query->bind($binds, 'main');
+        }
 
         return $query;
     }

@@ -346,7 +346,13 @@ class Entity implements EntityInterface
                 if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
                     && $this->repository->getCache()->hasTable($this->table . $suffix)
                 ) {
+                    // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
+                } elseif (strrpos($this->table, $suffix) == strlen($this->table) - strlen($suffix)
+                          && $this->repository->getCache()->hasTable($this->table)
+                ) {
+                    // extendee table
+                    $extensionArray[$this->table] = $this->{$method}($record);
                 }
             }
         }

@@ -59,23 +59,23 @@ trait Permissionable
     /**
      * @return array
      */
-    public function getPermissionableFields()
+    /*public function getPermissionableFields()
     {
         return $this->getRepository()->getCache()->getTableFields($this->table . $this->permissionableTableSuffix);
-    }
+    }*/
 
     /**
      * @param Record $record
      *
      * @return array
      */
-    public function getPermissionableForeignKeys(Record $record)
+    /*public function getPermissionableForeignKeys(Record $record)
     {
         return [
             $this->primaryKey                    => $record->{$this->primaryKey},
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
         ];
-    }
+    }*/
 
     public function allPermissions(callable $callable = null)
     {

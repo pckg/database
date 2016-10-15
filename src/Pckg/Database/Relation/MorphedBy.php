@@ -9,16 +9,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
 class MorphedBy extends MorphsMany
 {
 
-    public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
-    {
-        return (
-        new GetRecords(
-            $rightEntity->where($foreignKey, $primaryValue)
-                        ->where($this->morph, get_class($this->getLeftEntity()))
-        )
-        )->executeAll();
-    }
-
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
         return (

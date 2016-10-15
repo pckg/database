@@ -32,7 +32,8 @@ class Users extends Entity
     public function settings()
     {
         return $this->morphedBy(Settings::class)
-                    ->over('settings_morphs');
+                    ->over('settings_morphs')
+                    ->rightForeignKey('setting_id');
     }
 
 }

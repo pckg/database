@@ -107,9 +107,9 @@ CREATE TABLE `settings_morphs` (
 --
 
 INSERT INTO `settings_morphs` (`id`, `setting_id`, `poly_id`, `morph_id`, `value`) VALUES
-(1, 1, 1, '\\Test\\Entity\\Users', 'setting foo for admin 1'),
-(2, 1, 2, '\\Test\\Entity\\Users', 'setting foo for admin 2'),
-(3, 2, 1, '\\Test\\Entity\\Users', 'setting bar for admin 1');
+(1, 1, 1, 'Test\\Entity\\Users', 'setting foo for admin 1'),
+(2, 1, 2, 'Test\\Entity\\Users', 'setting foo for admin 2'),
+(3, 2, 1, 'Test\\Entity\\Users', 'setting bar for admin 1');
 
 -- --------------------------------------------------------
 

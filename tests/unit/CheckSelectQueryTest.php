@@ -203,6 +203,10 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
                     'sql'   => 'SELECT `settings_morphs`.* FROM `settings_morphs` WHERE (`settings_morphs`.`poly_id` IN(?, ?)) AND (`settings_morphs`.`morph_id` = ?)',
                     'binds' => [1, 2, Users::class],
                 ],
+                [
+                    'sql'   => 'SELECT `settings`.* FROM `settings` WHERE (`settings`.`id` IN(?, ?))',
+                    'binds' => [1, 2],
+                ],
             ],
             $this->tester->getListenedQueries()
         );
@@ -237,7 +241,7 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($all->first()->users->first()->categories->first()->users->first()->language);
         $this->assertNotEmpty($all->first()->users->first()->settings->first());
 
-        $this->assertCount(9, $this->tester->getListenedQueries());
+        $this->assertCount(10, $this->tester->getListenedQueries());
     }
 
     public function testAllTheWayLazyRelations()
@@ -270,8 +274,7 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($language->users->first()->categories->first()->users->first());
         $this->assertNotEmpty($language->users->first()->categories->first()->users->first()->language);
         $this->assertNotEmpty($language->users->first()->settings->first());
-
-        $this->assertCount(9, $this->tester->getListenedQueries());
+        $this->assertCount(10, $this->tester->getListenedQueries());
     }
 
     // executed before each test

@@ -43,9 +43,9 @@ trait RightEntity
         return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
     }
 
-    public function getForeignCollection(Entity $rightEntity, $foreignKey, $primaryValue)
+    public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
+        $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
             $entity->where(
@@ -62,9 +62,9 @@ trait RightEntity
         return (new GetRecords($entity))->executeAll();
     }
 
-    public function getForeignRecord(Entity $rightEntity, $foreignKey, $primaryValue)
+    public function getRightRecord(Entity $rightEntity, $foreignKey, $primaryValue)
     {
-        $entity = $rightEntity->where($foreignKey, $primaryValue, is_array($primaryValue) ? 'IN' : '=');
+        $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         /**
          * Add conditions applied on query.

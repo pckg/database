@@ -134,6 +134,10 @@ trait With
 
     public function fillCollectionWithRelations(CollectionInterface $collection)
     {
+        if (!$collection->count()) {
+            return $collection;
+        }
+
         foreach ($this->getWith() as $relation) {
             $relation->fillCollection($collection);
         }

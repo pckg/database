@@ -2,10 +2,10 @@
 
 namespace Pckg\Database\Relation;
 
+use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
-use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 /**
  * Class BelongsTo
@@ -24,63 +24,77 @@ class BelongsTo extends Relation
      */
     public function fillRecord(Record $record)
     {
-        $foreignKey = $this->foreignKey;
-        $primaryKey = $this->primaryKey;
-        $rightEntity = $this->getRightEntity();
+        message(
+            get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
+        );
 
-        if ($record->{$foreignKey}) {
-            $record->setRelation(
-                $this->fill,
-                (new GetRecords($rightEntity->where($primaryKey, $record->{$foreignKey})))->executeOne()
-            );
-        } else {
-            $record->setRelation($this->fill, null);
-        }
+        /**
+         * Get record from right entity.
+         */
+        $rightRecord = $this->getRightRecord(
+            $this->getRightEntity(),
+            $this->primaryKey,
+            $record->{$this->foreignKey}
+        );
 
+        /**
+         * Set relation.
+         */
+        $record->setRelation($this->fill, $rightRecord);
+
+        /**
+         * Fill relations.
+         */
         $this->fillRecordWithRelations($record);
     }
 
     public function fillCollection(CollectionInterface $collection)
     {
-        if (!$collection->count()) {
-            return $collection;
-        }
+        message(
+            get_class($collection->first()) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
+        );
 
-        $arrPrimaryIds = [];
-        $rightEntity = $this->getRightEntity();
-
-        $foreignKey = $this->foreignKey;
-        $primaryKey = $this->primaryKey;
-
-        foreach ($collection as $primaryRecord) {
-            if ($primaryRecord->{$foreignKey}) {
-                $arrPrimaryIds[$primaryRecord->{$foreignKey}] = $primaryRecord->{$foreignKey};
-                $primaryRecord->setRelation($this->fill, null);
+        /**
+         * Prepare relations on left records.
+         */
+        message('Left collection has ' . $collection->count() . ' record(s)');
+        $collection->each(
+            function($record) {
+                $record->setRelation($this->fill, new Collection());
             }
-        }
+        );
 
-        if ($arrPrimaryIds) {
-            $foreignCollection = $this->getForeignCollection(
-                $rightEntity,
-                $rightEntity->getPrimaryKey(),
-                $arrPrimaryIds
-            );
-            $foreignCollection->setEntity($rightEntity);
-            $this->fillCollectionWithRelations($foreignCollection);
+        /**
+         * Get records from right entity.
+         */
+        $rightCollection = $this->getRightCollection(
+            $this->getRightEntity(),
+            $this->primaryKey,
+            $collection->map($this->foreignKey)->unique()
+        );
+        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
-            message('BelongsTo: ' . $collection->count() . ' x ' . $foreignCollection->count());
-            foreach ($collection as $primaryRecord) {
-                foreach ($foreignCollection as $foreignRecord) {
-                    if ($primaryRecord->{$foreignKey} == $foreignRecord->{$primaryKey}) {
-                        $primaryRecord->setRelation($this->fill, $foreignRecord);
-                        break;
-                    }
-                }
+        /**
+         * Key collection for simpler processing.
+         */
+        $keyedRightCollection = $collection->keyBy($this->foreignKey);
+
+        /**
+         * Set relations on left records.
+         */
+        $collection->each(
+            function($record) use ($keyedRightCollection) {
+                $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->primaryKey}]);
             }
+        );
 
-            if ($this->after) {
-                $collection->each($this->after);
-            }
+        /**
+         * This is needed for special case in Records.php:129
+         */
+        if ($this->after) {
+            $collection->each($this->after);
         }
     }
 

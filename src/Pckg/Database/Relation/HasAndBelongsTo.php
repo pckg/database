@@ -6,7 +6,6 @@ use Pckg\CollectionInterface;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
-use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
@@ -23,134 +22,16 @@ class HasAndBelongsTo extends HasMany
 
     use MiddleEntity;
 
-    public function getLeftCollectionKey()
-    {
-        return Convention::nameMultiple($this->leftForeignKey);
-    }
-
-    public function getRightCollectionKey()
-    {
-        return Convention::nameMultiple($this->rightForeignKey);
-    }
-
-    public function fillRecord(Record $record)
-    {
-        $rightForeignKey = $this->rightForeignKey;
-        $leftForeignKey = $this->leftForeignKey;
-
-        $middleEntity = $this->getMiddleEntity();
-        $rightEntity = $this->getRightEntity();
-
-        $leftCollectionKey = $this->getLeftCollectionKey();
-        $rightCollectionKey = $this->fill;
-
-        // get records from middle (mtm) entity
-        message('getting middle collection ' . get_class($middleEntity) . ' ' . $leftForeignKey . ' = ' . $record->id);
-        $middleCollection = $this->getMiddleCollection($middleEntity, $leftForeignKey, $record->id);
-
-        // get right record ids and preset middle record with null values
-        $arrRightIds = [];
-        foreach ($middleCollection as $middleRecord) {
-            $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-            $middleRecord->setRelation($rightForeignKey, $record);
-            $middleRecord->setRelation($leftForeignKey, null);
-        }
-
-        // prepare record for mtm relation and right relation
-        $record->setRelation($rightCollectionKey, new Collection());
-        $record->setRelation($this->fill, $middleCollection);
-        message($this->fill . ' - ' . $rightCollectionKey);
-
-        if ($arrRightIds) {
-            // get all right records
-            message(
-                'getting right collection ' . get_class($rightEntity) . ' ' . $this->rightPrimaryKey . ' ' . implode(
-                    ',',
-                    $arrRightIds
-                )
-            );
-            $rightCollection = $this->getRightCollection($rightEntity, $this->rightPrimaryKey, $arrRightIds);
-
-            // set relation
-            message('setting record relation ' . $rightCollectionKey . ' ' . $rightCollection->count());
-            $record->setRelation($rightCollectionKey, $rightCollection);
-
-            // we also have to fill it with relations
-            $this->fillCollectionWithRelations($record->getRelation($rightCollectionKey));
-
-            // we need to link middle record with left and right records
-            foreach ($rightCollection as $rightRecord) {
-                foreach ($middleCollection as $middleRecord) {
-                    $middleRecord->setRelation($leftForeignKey, $rightRecord);
-                    $rightRecord->setRelation($leftCollectionKey, $middleRecord);
-                    $rightRecord->setRelation('pivot', $middleRecord);
-                }
-            }
-        }
-
-        // also fill current relation's relations
-        $this->fillRecordWithRelations($record);
-    }
-
     public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
         return (
         new GetRecords(
             $rightEntity->where(
                 $foreignKey,
-                $primaryValue,
-                is_array($primaryValue) ? 'IN' : '='
+                $primaryValue
             )
         )
         )->executeAll();
-    }
-
-    public function fillCollection(CollectionInterface $collection)
-    {
-        $arrLeftIds = [];
-
-        $rightForeignKey = $this->rightForeignKey;
-        $leftForeignKey = $this->leftForeignKey;
-
-        $middleEntity = $this->getMiddleEntity();
-        $rightEntity = $this->getRightEntity();
-
-        $rightCollectionKey = $this->fill;
-        foreach ($collection as $record) {
-            $arrLeftIds[$record->id] = $record->id;
-            $record->setRelation($rightCollectionKey, new Collection());
-        }
-
-        if ($arrLeftIds) {
-            // middle collection is filled with it's entity relations
-            $middleCollection = $this->getMiddleCollection($middleEntity, $leftForeignKey, $arrLeftIds);
-            $arrRightIds = [];
-            foreach ($middleCollection as $middleRecord) {
-                $arrRightIds[$middleRecord->{$rightForeignKey}] = $middleRecord->{$rightForeignKey};
-            }
-
-            if ($arrRightIds) {
-                // foreign collection is filled with it's entity relations
-                $rightCollection = $this->getRightCollection($rightEntity, 'id', $arrRightIds);
-
-                // we have to fill it with current relations
-                $this->fillCollectionWithRelations($rightCollection);
-
-                // prepare collections for faster processing
-                $keyedLeftCollection = $collection->keyBy('id');
-                $keyedRightCollection = $rightCollection->keyBy('id');
-
-                foreach ($middleCollection as $middleRecord) {
-                    $keyedLeftCollection[$middleRecord->{$leftForeignKey}]
-                        ->getRelation($rightCollectionKey)
-                        ->push($keyedRightCollection[$middleRecord->{$rightForeignKey}]);
-                    $keyedRightCollection[$middleRecord->{$rightForeignKey}]
-                        ->setRelation('pivot', $middleRecord);
-                }
-            }
-        }
-
-        $this->fillCollectionWithRelations($collection);
     }
 
     public function mergeToQuery(Select $query)
@@ -198,6 +79,139 @@ class HasAndBelongsTo extends HasMany
                 $this->getQuery()->addSelect([$key => $val]);
             }
         }
+    }
+
+    public function fillRecord(Record $record)
+    {
+        message(
+            get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity()) .
+            ' Over ' . get_class($this->getMiddleEntity())
+        );
+
+        /**
+         * Get records from middle entity.
+         */
+        $middleCollection = $this->getMiddleCollection(
+            $this->getMiddleEntity(),
+            $this->leftForeignKey,
+            $record->{$this->leftPrimaryKey}
+        );
+
+        /**
+         * Prepare relations on left record.
+         */
+        $record->setRelation($this->fill, new Collection());
+
+        /**
+         * Break with execution if collection is empty.
+         */
+        message('Middle collection has ' . $middleCollection->count() . ' record(s)');
+        if (!$middleCollection->count()) {
+            return;
+        }
+
+        /**
+         * Get records from right entity.
+         */
+        $rightCollection = $this->getRightCollection(
+            $this->getRightEntity(),
+            $this->rightPrimaryKey,
+            $middleCollection->map($this->rightForeignKey)->unique()
+        );
+        message('Right collection has ' . $rightCollection->count() . ' record(s)');
+
+        /**
+         * Key collections for simpler processing.
+         */
+        $keyedRightCollection = $rightCollection->keyBy($this->rightPrimaryKey);
+
+        /**
+         * Set middle collection's relations.
+         */
+        $middleCollection->each(
+            function($middleRecord) use ($record, $keyedRightCollection) {
+                $rightRecord = $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
+                $rightRecord->setRelation('pivot', $middleRecord);
+                $record->getRelation($this->fill)->push($rightRecord);
+            }
+        );
+
+        /**
+         * Fill relations.
+         */
+        $this->fillRecordWithRelations($record);
+    }
+
+    public function fillCollection(CollectionInterface $collection)
+    {
+        message(
+            'Collection of ' . get_class($collection->first()) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity()) .
+            ' Over ' . get_class($this->getMiddleEntity())
+        );
+
+        /**
+         * Get records from middle entity.
+         */
+        $middleCollection = $this->getMiddleCollection(
+            $this->getMiddleEntity(),
+            $this->leftForeignKey,
+            $collection->map($this->leftPrimaryKey)->unique()
+        );
+
+        /**
+         * Prepare relations on left records.
+         */
+        $collection->each(
+            function(Record $record) {
+                $record->setRelation($this->fill, new Collection());
+            }
+        );
+
+        /**
+         * Break with execution if collection is empty.
+         */
+        message('Middle collection has ' . $middleCollection->count() . ' record(s)');
+        if (!$middleCollection->count()) {
+            $this->fillCollectionWithRelations($collection);
+
+            return;
+        }
+
+        /**
+         * Get records from right entity.
+         */
+        $rightCollection = $this->getRightCollection(
+            $this->getRightEntity(),
+            $this->rightPrimaryKey,
+            $middleCollection->map($this->rightForeignKey)->unique()
+        );
+        message('Right collection has ' . $rightCollection->count() . ' record(s)');
+
+        /**
+         * Key collections for simpler processing.
+         */
+        $keyedLeftCollection = $collection->keyBy($this->leftPrimaryKey);
+        $keyedRightCollection = $rightCollection->keyBy($this->rightPrimaryKey);
+
+        /**
+         * Set middle collection's relations.
+         */
+        $middleCollection->each(
+            function($middleRecord) use ($keyedLeftCollection, $keyedRightCollection) {
+                $rightRecord = clone $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
+                $rightRecord->setRelation('pivot', $middleRecord);
+                $keyedLeftCollection[$middleRecord->{$this->leftForeignKey}]->getRelation($this->fill)->push(
+                    $rightRecord
+                );
+            }
+        );
+
+        /**
+         * Fill relations.
+         */
+        $this->fillCollectionWithRelations($collection);
     }
 
 }

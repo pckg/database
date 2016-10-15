@@ -2,8 +2,8 @@
 
 namespace Pckg\Database\Relation;
 
+use Pckg\Collection;
 use Pckg\CollectionInterface;
-use Pckg\Database\Collection;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
@@ -20,6 +20,8 @@ class HasMany extends Relation
      * Attaches $sth to HasMany relation.
      * For example, we attach user to status like: $status->attach($user);
      *
+     * @T00D00 - detach, ...
+     *
      * @return $this
      */
     public function attach($sth)
@@ -27,68 +29,79 @@ class HasMany extends Relation
         return $this;
     }
 
-    public function fillRecord(Record $record, $debug = false)
+    public function fillRecord(Record $record)
     {
-        $primaryKey = $this->primaryKey;
-        $foreignKey = $this->foreignKey;
+        message(
+            get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
+        );
 
-        $rightEntity = $this->getRightEntity();
-        $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $record->{$primaryKey});
-        $foreignCollection->setEntity($rightEntity);
+        /**
+         * Get records from right entity.
+         */
+        $rightCollection = $this->getRightCollection(
+            $this->getRightEntity(),
+            $this->foreignKey,
+            $record->{$this->primaryKey}
+        );
+        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
-        message('HasMany: 1 x ' . $foreignCollection->count());
-        $this->fillCollectionWithRelations($foreignCollection);
+        /**
+         * Set relation.
+         */
+        $record->setRelation($this->fill, $rightCollection);
 
-        foreach ($foreignCollection as $foreignRecord) {
-            $foreignRecord->setRelation($this->fill, new Collection());
-        }
-
-        $record->setRelation($this->fill, new Collection());
-        foreach ($foreignCollection as $foreignRecord) {
-            $record->getRelation($this->fill)->push($foreignRecord);
-        }
+        /**
+         * Fill relations.
+         */
+        $this->fillRecordWithRelations($record);
     }
 
     public function fillCollection(CollectionInterface $collection)
     {
-        if (!$collection->count()) {
-            return $collection;
-        }
+        message(
+            'Collection of ' . get_class($collection->first()) . ' (' . get_class($this->getLeftEntity()) . ')' .
+            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
+        );
 
-        $arrPrimaryIds = [];
-
-        $primaryKey = $this->primaryKey;
-        $foreignKey = $this->foreignKey;
-
-        $rightEntity = $this->getRightEntity();
-
-        foreach ($collection as $primaryRecord) {
-            $arrPrimaryIds[$primaryRecord->{$primaryKey}] = $primaryRecord->{$primaryKey};
-            $primaryRecord->setRelation($this->fill, new Collection());
-        }
-
-        if ($arrPrimaryIds) {
-            $foreignCollection = $this->getForeignCollection($rightEntity, $foreignKey, $arrPrimaryIds);
-            $foreignCollection->setEntity($rightEntity);
-            $this->fillCollectionWithRelations($foreignCollection);
-
-            message('HasMany: ' . $collection->count() . ' x ' . $foreignCollection->count());
-            $keyedCollection = $foreignCollection->groupBy($foreignKey);
-            foreach ($collection as $primaryRecord) {
-                if ($keyedCollection->keyExists($primaryRecord->{$primaryKey})) {
-                    $primaryRecord->setRelation(
-                        $this->fill,
-                        new Collection($keyedCollection->getKey($primaryRecord->{$primaryKey}))
-                    );
-                }
-                /*foreach ($foreignCollection as $foreignRecord) {
-                    if ($primaryRecord->{$primaryKey} == $foreignRecord->{$foreignKey}) {
-                        $primaryRecord->getRelation($this->fill)->push($foreignRecord);
-                        //break;
-                    }
-                }*/
+        /**
+         * Prepare relations on left records.
+         */
+        message('Left collection has ' . $collection->count() . ' record(s)');
+        $collection->each(
+            function(Record $record) {
+                $record->setRelation($this->fill, new Collection());
             }
-        }
+        );
+
+        /**
+         * Get records from right entity.
+         */
+        $rightCollection = $this->getRightCollection(
+            $this->getRightEntity(),
+            $this->foreignKey,
+            $collection->map($this->primaryKey)->unique()
+        );
+        message('Right collection has ' . $rightCollection->count() . ' record(s)');
+
+        /**
+         * Key collection for simpler processing.
+         */
+        $keyedCollection = $collection->keyBy($this->primaryKey);
+
+        /**
+         * Set relations on left records.
+         */
+        $rightCollection->each(
+            function($rightRecord) use ($keyedCollection) {
+                $keyedCollection[$rightRecord->{$this->foreignKey}]->getRelation($this->fill)->push($rightRecord);
+            }
+        );
+
+        /**
+         * Fill relations.
+         */
+        $this->fillCollectionWithRelations($collection);
     }
 
 }

@@ -235,6 +235,7 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($all->first()->users->first()->categories->first());
         $this->assertNotEmpty($all->first()->users->first()->categories->first()->users->first());
         $this->assertNotEmpty($all->first()->users->first()->categories->first()->users->first()->language);
+        $this->assertNotEmpty($all->first()->users->first()->settings->first());
 
         $this->assertCount(9, $this->tester->getListenedQueries());
     }
@@ -268,6 +269,7 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($language->users->first()->categories->first());
         $this->assertNotEmpty($language->users->first()->categories->first()->users->first());
         $this->assertNotEmpty($language->users->first()->categories->first()->users->first()->language);
+        $this->assertNotEmpty($language->users->first()->settings->first());
 
         $this->assertCount(9, $this->tester->getListenedQueries());
     }

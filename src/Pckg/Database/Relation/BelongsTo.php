@@ -6,6 +6,7 @@ use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
+use Test\Record\Language;
 
 /**
  * Class BelongsTo

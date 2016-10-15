@@ -133,13 +133,21 @@ trait Magic
         return null;
     }
 
+    /**
+     *
+     *
+     * @param $method
+     * @param $args
+     *
+     * @return mixed
+     */
     public function __call($method, $args)
     {
         /**
          * Return value from empty relation.
          */
         $entity = $this->getEntity();
-        $relation = $entity->callWith('with'.$method, $args, $entity, true);
+        $relation = $entity->callWith($method, $args, $entity, true);
         /**
          * This is not needed here?
          */

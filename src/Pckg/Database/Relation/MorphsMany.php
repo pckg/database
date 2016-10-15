@@ -27,20 +27,6 @@ class MorphsMany extends HasAndBelongsTo
         return $this;
     }
 
-    public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
-    {
-        if (!$primaryValue) {
-            return new Collection();
-        }
-        
-        return (
-        new GetRecords(
-            $rightEntity->where($foreignKey, $primaryValue)
-                        ->where($this->morph, get_class($this->getLeftEntity()))
-        )
-        )->executeAll();
-    }
-
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
         if (!$primaryValue) {

@@ -38,19 +38,26 @@ trait With
             $object = Reflect::create($object);
         }
 
+        /**
+         * Check if $method prefix is listed in autocallPrefixes.
+         */
         foreach ($this->autocallPrefixes as $prefix) {
-            if (substr($method, 0, strlen($prefix)) == $prefix) {
+            if (substr($method, 0, strlen($prefix)) === $prefix
+                && strtoupper(substr($method, strlen($prefix), 1)) == substr($method, strlen($prefix), 1)
+            ) {
                 /**
                  * We are calling relation function without arguments: $entity->something();.
                  */
                 $relationMethod = lcfirst(substr($method, strlen($prefix)));
-                $relation = $object->{$relationMethod}();
+                $relation = Reflect::method($object, $relationMethod, $args);
+                // $relation = $object->{$relationMethod}();
 
                 if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
                     /**
                      * If callback was added, we run it.
                      * Now, this is a problem if we're making join because query was already merged.
                      * So, we'll call this magically and provide both - relation and query.
+                     *
                      * @T00D00
                      */
                     Reflect::call($args[0], [$relation, $relation->getQuery()]);
@@ -58,7 +65,7 @@ trait With
                 /**
                  * We'll call $entity->with($relation), and return Relation;
                  */
-                $return = $this->{$prefix}($relation);
+                $return = $object->{$prefix}($relation);
 
                 /**
                  * Then we return relation.

@@ -2,7 +2,10 @@
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
+use Pckg\Database\Relation\HasAndBelongsTo;
+use Pckg\Database\Relation\HasMany;
 use Test\Entity\Categories;
+use Test\Entity\Languages;
 use Test\Entity\Users;
 
 class CheckSelectQueryTest extends \Codeception\Test\Unit
@@ -171,7 +174,7 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
                     'binds' => [1, 2],
                 ],
                 [
-                    'sql'   => 'SELECT `languages`.* FROM `languages` WHERE (`languages`.`id` IN(?, ?))',
+                    'sql'   => 'SELECT `languages`.* FROM `languages` WHERE (`languages`.`slug` IN(?, ?))',
                     'binds' => ['en', 'si'],
                 ],
             ],
@@ -203,6 +206,70 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
             ],
             $this->tester->getListenedQueries()
         );
+    }
+
+    public function testAllTheWayRelations()
+    {
+        $languages = new Languages();
+
+        $this->tester->listenToQueries();
+
+        $all = $languages->withUsers(
+            function(HasMany $users) {
+                $users->withUserGroup()
+                      ->withCategories(
+                          function(HasAndBelongsTo $categories) {
+                              $categories->withUsers(
+                                  function(HasMany $users) {
+                                      $users->withLanguage();
+                                  }
+                              );
+                          }
+                      )
+                      ->withSettings();
+            }
+        )->all();
+
+        $this->assertNotEmpty($all->first()->users->first());
+        $this->assertNotEmpty($all->first()->users->first()->userGroup);
+        $this->assertNotEmpty($all->first()->users->first()->categories->first());
+        $this->assertNotEmpty($all->first()->users->first()->categories->first()->users->first());
+        $this->assertNotEmpty($all->first()->users->first()->categories->first()->users->first()->language);
+
+        $this->assertCount(9, $this->tester->getListenedQueries());
+    }
+
+    public function testAllTheWayLazyRelations()
+    {
+        $languages = new Languages();
+
+        $this->tester->listenToQueries();
+
+        $language = $languages->where('id', 2)->one();
+
+        $language->users(
+            function(HasMany $users) {
+                $users->withUserGroup()
+                      ->withCategories(
+                          function(HasAndBelongsTo $categories) {
+                              $categories->withUsers(
+                                  function(HasMany $users) {
+                                      $users->withLanguage();
+                                  }
+                              );
+                          }
+                      )
+                      ->withSettings();
+            }
+        );
+
+        $this->assertNotEmpty($language->users->first());
+        $this->assertNotEmpty($language->users->first()->userGroup);
+        $this->assertNotEmpty($language->users->first()->categories->first());
+        $this->assertNotEmpty($language->users->first()->categories->first()->users->first());
+        $this->assertNotEmpty($language->users->first()->categories->first()->users->first()->language);
+
+        $this->assertCount(9, $this->tester->getListenedQueries());
     }
 
     // executed before each test

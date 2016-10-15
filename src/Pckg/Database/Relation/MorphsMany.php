@@ -29,6 +29,10 @@ class MorphsMany extends HasAndBelongsTo
 
     public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
+        if (!$primaryValue) {
+            return new Collection();
+        }
+        
         return (
         new GetRecords(
             $rightEntity->where($foreignKey, $primaryValue)
@@ -39,6 +43,10 @@ class MorphsMany extends HasAndBelongsTo
 
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
+        if (!$primaryValue) {
+            return new Collection();
+        }
+
         return (
         new GetRecords(
             $middleEntity->where($foreignKey, $primaryValue)

@@ -80,10 +80,6 @@ trait Magic
      */
     public function __get($key)
     {
-        if (!$key) {
-            dd("no key", debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS));
-        }
-
         /**
          * Return value via getter
          */
@@ -143,16 +139,14 @@ trait Magic
          * Return value from empty relation.
          */
         $entity = $this->getEntity();
-        $relation = $entity->callWith($method, $args, $entity, true);
+        $relation = $entity->callWith('with'.$method, $args, $entity, true);
         /**
-         * THis is not needed here?
+         * This is not needed here?
          */
-        // $relation->fill($method);
+        //$relation->fill($method);
         $relation->fillRecord($this);
 
-        $data = $this->getRelation($relation->getFill());
-
-        return $data;
+        return $this->getRelation($relation->getFill());
     }
 
 }

@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Relation\Helper;
 
+use Pckg\Collection;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
@@ -45,6 +46,10 @@ trait RightEntity
 
     public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
+        if (!$primaryValue) {
+            return new Collection();
+        }
+
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
@@ -64,6 +69,10 @@ trait RightEntity
 
     public function getRightRecord(Entity $rightEntity, $foreignKey, $primaryValue)
     {
+        if (!$primaryValue) {
+            return null;
+        }
+        
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         /**

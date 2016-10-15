@@ -35,6 +35,7 @@ class HasMany extends Relation
             get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
             ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
         );
+        message('Record, filling ' . $this->fill);
 
         /**
          * Get records from right entity.
@@ -67,7 +68,7 @@ class HasMany extends Relation
         /**
          * Prepare relations on left records.
          */
-        message('Left collection has ' . $collection->count() . ' record(s)');
+        message('Left collection has ' . $collection->count() . ' record(s), filling ' . $this->fill);
         $collection->each(
             function(Record $record) {
                 $record->setRelation($this->fill, new Collection());

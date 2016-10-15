@@ -59,8 +59,6 @@ class GetRecords
         $repository = $this->repository;
         $entity = $this->entity;
 
-        $this->checkBinds($entity->getQuery());
-
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
         if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
@@ -74,7 +72,6 @@ class GetRecords
             $collection->setEntity($entity)->setSaved();
 
             return $entity->fillCollectionWithRelations($collection);
-
         }
 
         return new Collection();

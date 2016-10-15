@@ -28,6 +28,7 @@ class BelongsTo extends Relation
             get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
             ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
         );
+        message('Record, filling ' . $this->fill);
 
         /**
          * Get record from right entity.
@@ -59,10 +60,10 @@ class BelongsTo extends Relation
         /**
          * Prepare relations on left records.
          */
-        message('Left collection has ' . $collection->count() . ' record(s)');
+        message('Left collection has ' . $collection->count() . ' record(s), filling ' . $this->fill);
         $collection->each(
             function($record) {
-                $record->setRelation($this->fill, new Collection());
+                $record->setRelation($this->fill, null);
             }
         );
 
@@ -79,14 +80,14 @@ class BelongsTo extends Relation
         /**
          * Key collection for simpler processing.
          */
-        $keyedRightCollection = $collection->keyBy($this->foreignKey);
+        $keyedRightCollection = $rightCollection->keyBy($this->primaryKey);
 
         /**
          * Set relations on left records.
          */
         $collection->each(
             function($record) use ($keyedRightCollection) {
-                $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->primaryKey}]);
+                $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->foreignKey}]);
             }
         );
 
@@ -96,6 +97,11 @@ class BelongsTo extends Relation
         if ($this->after) {
             $collection->each($this->after);
         }
+
+        /**
+         * Fill relations.
+         */
+        $this->fillCollectionWithRelations($collection);
     }
 
     /**

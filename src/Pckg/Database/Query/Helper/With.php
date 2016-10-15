@@ -43,19 +43,20 @@ trait With
                 /**
                  * We are calling relation function without arguments: $entity->something();.
                  */
-                $relationMethod = substr($method, strlen($prefix));
-                $relation = $object->{lcfirst($relationMethod)}();
+                $relationMethod = lcfirst(substr($method, strlen($prefix)));
+                $relation = $object->{$relationMethod}();
 
                 if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
                     /**
                      * If callback was added, we run it.
                      * Now, this is a problem if we're making join because query was already merged.
-                     * So, we'll call this magically and provide both.
+                     * So, we'll call this magically and provide both - relation and query.
+                     * @T00D00
                      */
                     Reflect::call($args[0], [$relation, $relation->getQuery()]);
                 }
                 /**
-                 * We'll return $entity->with($relation), which is Relation;
+                 * We'll call $entity->with($relation), and return Relation;
                  */
                 $return = $this->{$prefix}($relation);
 
@@ -123,6 +124,13 @@ trait With
         return $this;
     }
 
+    /**
+     * Fill record with all it's relations.
+     *
+     * @param Record $record
+     *
+     * @return Record
+     */
     public function fillRecordWithRelations(Record $record)
     {
         foreach ($this->getWith() as $relation) {
@@ -132,6 +140,13 @@ trait With
         return $record;
     }
 
+    /**
+     * Fill collection of records with all of their relations.
+     *
+     * @param CollectionInterface $collection
+     *
+     * @return CollectionInterface
+     */
     public function fillCollectionWithRelations(CollectionInterface $collection)
     {
         if (!$collection->count()) {

@@ -10,7 +10,6 @@ use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\MiddleEntity;
-use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 /**
  * Class HasAndBelongTo
@@ -21,18 +20,6 @@ class HasAndBelongsTo extends HasMany
 {
 
     use MiddleEntity;
-
-    public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
-    {
-        return (
-        new GetRecords(
-            $rightEntity->where(
-                $foreignKey,
-                $primaryValue
-            )
-        )
-        )->executeAll();
-    }
 
     public function mergeToQuery(Select $query)
     {
@@ -88,6 +75,7 @@ class HasAndBelongsTo extends HasMany
             ' ' . get_class($this) . ' ' . get_class($this->getRightEntity()) .
             ' Over ' . get_class($this->getMiddleEntity())
         );
+        message('Record, filling ' . $this->fill . ' and pivot');
 
         /**
          * Get records from middle entity.
@@ -152,21 +140,22 @@ class HasAndBelongsTo extends HasMany
         );
 
         /**
+         * Prepare relations on left records.
+         */
+        message('Left collection has ' . $collection->count() . ' record(s), filling ' . $this->fill);
+        $collection->each(
+            function(Record $record) {
+                $record->setRelation($this->fill, new Collection());
+            }
+        );
+
+        /**
          * Get records from middle entity.
          */
         $middleCollection = $this->getMiddleCollection(
             $this->getMiddleEntity(),
             $this->leftForeignKey,
             $collection->map($this->leftPrimaryKey)->unique()
-        );
-
-        /**
-         * Prepare relations on left records.
-         */
-        $collection->each(
-            function(Record $record) {
-                $record->setRelation($this->fill, new Collection());
-            }
         );
 
         /**

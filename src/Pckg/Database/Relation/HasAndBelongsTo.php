@@ -119,9 +119,11 @@ class HasAndBelongsTo extends HasMany
          */
         $middleCollection->each(
             function($middleRecord) use ($record, $keyedRightCollection) {
-                $rightRecord = $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
-                $rightRecord->setRelation('pivot', $middleRecord);
-                $record->getRelation($this->fill)->push($rightRecord);
+                if ($keyedRightCollection->hasKey($middleRecord->{$this->rightForeignKey})) {
+                    $rightRecord = $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
+                    $rightRecord->setRelation('pivot', $middleRecord);
+                    $record->getRelation($this->fill)->push($rightRecord);
+                }
             }
         );
 

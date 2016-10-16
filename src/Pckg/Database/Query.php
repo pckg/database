@@ -97,6 +97,14 @@ abstract class Query
         return $this->addCondition($key, $value, $operator, 'having');
     }
 
+    /**
+     * @return Parenthesis
+     */
+    public function getHaving()
+    {
+        return $this->having;
+    }
+
     public function where($key, $value = true, $operator = '=')
     {
         return $this->addCondition($key, $value, $operator, 'where');
@@ -201,11 +209,21 @@ abstract class Query
         return $this;
     }
 
+    public function getGroupBy()
+    {
+        return $this->groupBy;
+    }
+
     public function orderBy($orderBy)
     {
         $this->orderBy = $orderBy;
 
         return $this;
+    }
+
+    public function getOrderBy()
+    {
+        return $this->orderBy;
     }
 
     public function limit($limit)

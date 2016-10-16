@@ -255,6 +255,18 @@ abstract class Relation implements RelationInterface
             $query->join($join, null, null, $this->getQuery()->getBinds('join'));
         }
 
+        if ($groupBy = $this->getQuery()->getGroupBy()) {
+            $query->groupBy($groupBy);
+        }
+
+        if (($having = $this->getQuery()->getHaving()) && $having->hasChildren()) {
+            $query->having($having);
+        }
+
+        if ($orderBy = $this->getQuery()->getOrderBy()) {
+            $query->orderBy($orderBy);
+        }
+
         return $this;
     }
 

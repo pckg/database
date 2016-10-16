@@ -45,13 +45,13 @@ class HasAndBelongsTo extends HasMany
         /**
          * Add select fields
          */
-        foreach ($this->getSelect() as $key => $val) {
+        /*foreach ($this->getSelect() as $key => $val) {
             if (is_numeric($key)) {
                 $this->getQuery()->prependSelect([$val]);
             } else {
                 $this->getQuery()->addSelect([$key => $val]);
             }
-        }
+        }*/
         foreach ($this->getMiddleEntity()->getQuery()->getSelect() as $key => $val) {
             if (is_numeric($key)) {
                 $this->getQuery()->prependSelect([$val]);

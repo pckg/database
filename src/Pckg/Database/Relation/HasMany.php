@@ -95,7 +95,9 @@ class HasMany extends Relation
          */
         $rightCollection->each(
             function($rightRecord) use ($keyedCollection) {
-                $keyedCollection[$rightRecord->{$this->foreignKey}]->getRelation($this->fill)->push($rightRecord);
+                if ($keyedCollection->hasKey($rightRecord->{$this->foreignKey})) {
+                    $keyedCollection[$rightRecord->{$this->foreignKey}]->getRelation($this->fill)->push($rightRecord);
+                }
             }
         );
 

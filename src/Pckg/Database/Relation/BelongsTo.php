@@ -6,7 +6,6 @@ use Pckg\Collection;
 use Pckg\CollectionInterface;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
-use Test\Record\Language;
 
 /**
  * Class BelongsTo
@@ -88,7 +87,9 @@ class BelongsTo extends Relation
          */
         $collection->each(
             function($record) use ($keyedRightCollection) {
-                $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->foreignKey}]);
+                if ($keyedRightCollection->hasKey($record->{$this->foreignKey})) {
+                    $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->foreignKey}]);
+                }
             }
         );
 

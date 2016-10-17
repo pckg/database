@@ -41,19 +41,50 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                 ],
                 [
                     'sql'   => 'INSERT INTO `user_groups_i18n` (`id`, `language_id`) VALUES (?, ?)',
-                    'binds' => [4, 'en'],
+                    'binds' => [5, 'en'],
                 ],
                 [
                     'sql'   => 'UPDATE `user_groups` SET `id` = ?, `slug` = ? WHERE (`id` = ?)',
-                    'binds' => [4, 4, 'test2'],
+                    'binds' => [5, 5, 'test2'],
+                ],
+                [
+                    'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
+                    'binds' => [5, 'en'],
+                ],
+                [
+                    'sql'   => 'UPDATE `user_groups_i18n` SET `id` = ?, `language_id` = ?, `title` = ? WHERE (`id` = ?) AND (`language_id` = ?)',
+                    'binds' => [5, 5, 'en', 'en', 'test2title'],
+                ],
+            ],
+            $this->tester->getListenedQueries()
+        );
+
+        $this->tester->listenToQueries();
+        $userGroup = UserGroup::getOrCreate(
+            [
+                'slug' => 'untranslated',
+            ]
+        );
+        $userGroup->title = 'translated';
+        $userGroup->save();
+
+        $this->assertEquals(
+            [
+                [
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`slug` = ?) LIMIT 1',
+                    'binds' => ['untranslated'],
+                ],
+                [
+                    'sql'   => 'UPDATE `user_groups` SET `id` = ?, `slug` = ? WHERE (`id` = ?)',
+                    'binds' => [4, 4, 'untranslated'],
                 ],
                 [
                     'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
                     'binds' => [4, 'en'],
                 ],
                 [
-                    'sql'   => 'UPDATE `user_groups_i18n` SET `id` = ?, `language_id` = ?, `title` = ? WHERE (`id` = ?) AND (`language_id` = ?)',
-                    'binds' => [4, 4, 'en', 'en', 'test2title'],
+                    'sql'   => 'INSERT INTO `user_groups_i18n` (`id`, `language_id`, `title`) VALUES (?, ?, ?)',
+                    'binds' => [4, 'en', 'translated'],
                 ],
             ],
             $this->tester->getListenedQueries()

@@ -192,7 +192,8 @@ CREATE TABLE `user_groups` (
 INSERT INTO `user_groups` (`id`, `slug`) VALUES
 (1, 'admin'),
 (2, 'mod'),
-(3, 'user');
+(3, 'user'),
+(4, 'untranslated');
 
 -- --------------------------------------------------------
 

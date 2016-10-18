@@ -6,6 +6,7 @@ use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
 use Test\Entity\Categories;
 use Test\Entity\Languages;
+use Test\Entity\UserGroups;
 use Test\Entity\Users;
 
 class CheckSelectQueryTest extends \Codeception\Test\Unit
@@ -145,6 +146,55 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
                 [
                     'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`id` IN(?, ?, ?, ?, ?))',
                     'binds' => [1, 2, 3, 4, 5],
+                ],
+            ],
+            $this->tester->getListenedQueries()
+        );
+    }
+
+    public function testUserGroupsHasManyRelation()
+    {
+        $userGroupsEntity = new UserGroups();
+
+        $this->tester->listenToQueries();
+
+        $userGroupsWithUsers = $userGroupsEntity->where('id', [1, 2])
+                                                ->withUsers()
+                                                ->all();
+
+        $this->assertNotEmpty($userGroupsWithUsers[0]->users);
+        $this->assertNotEmpty($userGroupsWithUsers[1]->users);
+
+        $this->assertEquals(2, $userGroupsWithUsers->count());
+        $this->assertEquals(
+            [
+                [
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`id` IN(?, ?))',
+                    'binds' => [1, 2],
+                ],
+                [
+                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`user_group_id` IN(?, ?))',
+                    'binds' => [1, 2],
+                ],
+            ],
+            $this->tester->getListenedQueries()
+        );
+
+        $this->tester->listenToQueries();
+        $thirdGroup = $userGroupsEntity->where('id', 3)->one();
+        $thirdGroup->users;
+
+        $this->assertNotEmpty($thirdGroup->users);
+        $this->assertEquals(2, $thirdGroup->users->count());
+        $this->assertEquals(
+            [
+                [
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`id` = ?) LIMIT 1',
+                    'binds' => [3],
+                ],
+                [
+                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`user_group_id` = ?)',
+                    'binds' => [3],
                 ],
             ],
             $this->tester->getListenedQueries()

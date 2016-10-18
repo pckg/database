@@ -14,7 +14,7 @@ class UserGroups extends Entity
     public function users()
     {
         return $this->hasMany(Users::class)
-                    ->foreignKey('user_id');
+                    ->foreignKey('user_group_id');
     }
 
 }

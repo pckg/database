@@ -389,6 +389,8 @@ class Entity implements EntityInterface
 
         $this->resetQuery();
 
+        $this->resetRelations();
+
         return $one;
     }
 
@@ -402,6 +404,8 @@ class Entity implements EntityInterface
         $all = $this->repository->all($this);
 
         $this->resetQuery();
+
+        $this->resetRelations();
 
         return $all;
     }

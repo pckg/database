@@ -198,7 +198,13 @@ class Record extends Object implements RecordInterface, JsonSerializable
 
         foreach ($values as $key => $value) {
             if (is_object($value)) {
-                $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
+                if (method_exists($value, '__toArray')) {
+                    $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
+                    
+                } else {
+                    $return[$key] = (string)$value;
+
+                }
 
             } else if (is_array($value)) {
                 $return[$key] = $this->__toArray($value, $depth - 1, $withToArray);

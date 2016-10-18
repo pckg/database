@@ -35,20 +35,6 @@ class GetRecords
             ?: $this->entity->getRepository();
     }
 
-    protected function checkBinds(Query $query)
-    {
-        $binds = $query->getBinds();
-        $sql = $query->buildSQL();
-        $countBinds = 0;
-        foreach ($binds as $group => $bs) {
-            $countBinds += count($bs);
-        }
-        if (substr_count($sql, '?') != $countBinds) {
-            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-            dd($sql, $binds, substr_count($sql, '?'));
-        }
-    }
-
     /**
      * Prepare query from entity, fetch records and fill them with relations.
      *
@@ -86,8 +72,6 @@ class GetRecords
     {
         $repository = $this->repository;
         $entity = $this->entity;
-
-        $this->checkBinds($entity->getQuery());
 
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 

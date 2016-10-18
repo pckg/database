@@ -50,6 +50,11 @@ trait QueryBuilder
         return $this;
     }
 
+    public function resetRelations()
+    {
+        $this->with = [];
+    }
+
     public function setQuery($query)
     {
         $this->query = $query;

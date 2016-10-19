@@ -235,7 +235,9 @@ abstract class Query
 
     private function makeKey($key)
     {
-        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, '.') ? $key : '`' . $key . '`';
+        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.')
+            ? $key
+            : '`' . $key . '`';
     }
 
     public function bind($val, $part)
@@ -272,10 +274,6 @@ abstract class Query
             foreach ($this->bind[$part] as $bind) {
                 $binds[] = $bind;
             }
-        }
-
-        if ($binds && is_array($binds[0])) {
-            dd($this, $binds);
         }
 
         return $binds;

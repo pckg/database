@@ -74,7 +74,7 @@ class Cache extends FrameworkCache
             ['\\', '/'],
             '_',
             (get_class(app()) . '_' . get_class(env()))
-        ) . '_' . $repository->getName() . '_' . $repository->getConnection()->uniqueName . '.cache';
+        ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
     }
 
     /**

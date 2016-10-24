@@ -72,7 +72,8 @@ trait RightEntity
         if (!$primaryValue) {
             return null;
         }
-        
+
+        $rightEntity->setRepository($this->getLeftEntity()->getRepository());
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         /**

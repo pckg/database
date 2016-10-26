@@ -104,7 +104,7 @@ class Convention
             }
         }
 
-        return ucfirst(str_replace("_", "", implode($text)));
+        return str_replace("_", "", implode($text));
     }
 
     public static function toPascal($text)

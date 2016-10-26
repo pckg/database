@@ -78,7 +78,10 @@ class InitDatabase extends AbstractChainOfReponsibility
     public function initPdoDatabase($config, $name)
     {
         $pdo = new PDO(
-            "mysql:host=" . $config['host'] . ";charset=" . $config['charset'] . ";dbname=" . $config['db'],
+            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
+            (isset($config['db'])
+                ? ";dbname=" . $config['db']
+                : ''),
             $config['user'],
             $config['pass']
         );

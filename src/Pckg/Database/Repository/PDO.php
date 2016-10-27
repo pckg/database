@@ -189,6 +189,13 @@ class PDO extends AbstractRepository implements Repository
         return $prepare;
     }
 
+    public function prepareAndExecuteSql($sql, $binds = [])
+    {
+        $prepare = $this->prepareSQL($sql, $binds);
+
+        return $this->executePrepared($prepare);
+    }
+
     /**
      * @param $prepare \PDOStatement
      *

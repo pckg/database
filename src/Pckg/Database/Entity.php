@@ -379,7 +379,7 @@ class Entity implements EntityInterface
     }
 
     /**
-     * @return Record
+     * @return Record|mixed
      */
     public function one()
     {

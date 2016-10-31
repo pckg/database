@@ -140,6 +140,10 @@ abstract class Query
             $key($this->{$part});
 
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
+            if (is_string($value)) {
+                $value = [$value];
+            }
+
             if (is_array($value)) {
                 if (!$value) {
                     /**

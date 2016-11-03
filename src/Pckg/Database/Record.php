@@ -157,6 +157,34 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $chains;
     }
 
+    public function getExtensionValues()
+    {
+        $values = [];
+
+        return $values;
+
+        $entity = $this->getEntity();
+        foreach (get_class_methods($entity) as $method) {
+            /**
+             * Get extension's fields.
+             */
+            $keys = [];
+            if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
+                $suffix = $entity->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
+                if (!$suffix) {
+                    continue;
+                }
+                if (substr($entity->getTable(), strlen($entity->getTable()) - strlen($suffix)) != $suffix
+                    && $this->repository->getCache()->hasTable($entity->getTable() . $suffix)
+                ) {
+                    $keys[$entity->getTable() . $suffix] = $this->{$method}();
+                }
+            }
+        }
+
+        return $values;
+    }
+
     public function getToArrayValues()
     {
         $values = [];
@@ -187,10 +215,13 @@ class Record extends Object implements RecordInterface, JsonSerializable
             return [];
         }
 
-        if (!$values) {
+        if (is_null($values)) {
             $values = $this->data;
             if ($withToArray && $this->toArray) {
                 foreach ($this->getToArrayValues() as $key => $value) {
+                    $values[$key] = $value;
+                }
+                foreach ($this->getExtensionValues() as $key => $value) {
                     $values[$key] = $value;
                 }
             }
@@ -200,7 +231,7 @@ class Record extends Object implements RecordInterface, JsonSerializable
             if (is_object($value)) {
                 if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
-                    
+
                 } else {
                     $return[$key] = (string)$value;
 

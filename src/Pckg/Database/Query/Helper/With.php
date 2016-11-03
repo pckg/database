@@ -77,7 +77,10 @@ trait With
         }
 
         if (!method_exists($object, $method)) {
-            return null;
+            if (prod()) {
+                return null;
+            }
+
             throw new Exception('Method ' . $method . ' does not exist in ' . get_class($object));
         }
 

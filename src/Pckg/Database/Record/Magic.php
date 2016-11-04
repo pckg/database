@@ -147,6 +147,7 @@ trait Magic
          * Return value from empty relation.
          */
         $entity = $this->getEntity();
+
         $relation = $entity->callWith($method, $args, $entity, true);
         /**
          * This is not needed here?

@@ -215,11 +215,12 @@ abstract class Relation implements RelationInterface
     public function getKeyCondition()
     {
         $rightEntity = $this->getRightEntity();
+        $leftEntity = $this->getLeftEntity();
         $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
+        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
 
         return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-               ($this->primaryKey && $this->foreignKey ? ' ON `' . $this->getLeftEntity()->getTable(
-                   ) . '`.`' . $this->primaryKey . '`' .
+               ($this->primaryKey && $this->foreignKey ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
                                                          ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`' : '');
     }
 

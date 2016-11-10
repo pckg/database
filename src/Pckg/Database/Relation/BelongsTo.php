@@ -106,14 +106,16 @@ class BelongsTo extends Relation
         $this->fillCollectionWithRelations($collection);
     }
 
-    /**
-     * @return string
-     */
     public function getKeyCondition()
     {
-        return $this->join . ' `' . $this->getRightEntity()->getTable() . '`' .
-               ' ON `' . $this->getLeftEntity()->getTable() . '`.`' . $this->foreignKey . '`' .
-               ' = `' . $this->getRightEntity()->getTable() . '`.`' . $this->primaryKey . '`';
+        $rightEntity = $this->getRightEntity();
+        $leftEntity = $this->getLeftEntity();
+        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
+        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
+
+        return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
+               ($this->primaryKey && $this->foreignKey ? ' ON `' . $leftAlias . '`.`' . $this->foreignKey . '`' .
+                                                         ' = `' . $rightAlias . '`.`' . $this->primaryKey . '`' : '');
     }
 
 }

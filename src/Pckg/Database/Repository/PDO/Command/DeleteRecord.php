@@ -49,45 +49,46 @@ class DeleteRecord
     {
         $data = $this->entity->tabelizeRecord($this->record);
 
-        foreach ($data as $table => $data) {
-            /*if ($this->entity->getRepository()->getCache()->hasTable($table . '_i18n')) {
-                $this->delete($table . '_i18n', $data);
-            */
-            $this->delete($table, $data);
+        /**
+         * We need to get entity table extensions.
+         * Lets hardcode them for now.
+         */
+        $extensions = ['i18n', 'p17n', ''];
+        $table = $this->entity->getTable();
+        $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
+        foreach ($extensions as $ext) {
+            if ($ext) {
+                $ext = '_' . $ext;
+            }
+            if ($this->entity->getRepository()->getCache()->hasTable($table . $ext)) {
+                /**
+                 * We will delete record from $table ...
+                 */
+                $query = (new Delete())->setTable($table . $ext);
+
+                /**
+                 * ... add primary key condition ...
+                 */
+                foreach ($primaryKeys as $key) {
+                    $query->where($key, $data[$table][$key]);
+                }
+
+                /**
+                 * ... prepare query ...
+                 */
+                $prepare = $this->repository->prepareQuery($query);
+
+                /**
+                 *  ... and execute it.
+                 */
+                $this->repository->executePrepared($prepare);
+            }
         }
 
         $this->record->setSaved(false);
         $this->record->setDeleted(true);
 
         return true;
-    }
-
-    public function delete($table, array $data = [])
-    {
-        /**
-         * We will delete record from $table ...
-         */
-        $query = (new Delete())->setTable($table);
-
-        /**
-         * ... add primary key condition ...
-         */
-        $query->primaryWhere($this->entity, $data, $table);
-
-        /**
-         * ... prepare query ...
-         */
-        $prepare = $this->repository->prepareQuery($query, null);
-
-        /**
-         *  ... and execute it.
-         */
-        $this->repository->executePrepared($prepare);
-
-        /**
-         * Return number of deleted records.
-         */
-        return $prepare->rowCount();
     }
 
 }

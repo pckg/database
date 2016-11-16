@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Repository\PDO\Command;
 
+use Exception;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Delete;
 use Pckg\Database\Record;
@@ -56,6 +57,11 @@ class DeleteRecord
         $extensions = ['i18n', 'p17n', ''];
         $table = $this->entity->getTable();
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
+
+        if (!$primaryKeys) {
+            throw new Exception('Will NOT delete from table without primary keys ...');
+        }
+
         foreach ($extensions as $ext) {
             if ($ext) {
                 $ext = '_' . $ext;

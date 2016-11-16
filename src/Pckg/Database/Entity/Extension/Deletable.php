@@ -35,14 +35,14 @@ trait Deletable
      */
     public function onlyDeleted()
     {
-        $this->query->where($this->deletableField);
+        $this->where($this->deletableField);
 
         return $this;
     }
 
     public function nonDeleted()
     {
-        $this->query->where($this->deletableField, null);
+        $this->where($this->deletableField, null);
 
         return $this;
     }

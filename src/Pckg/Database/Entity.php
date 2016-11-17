@@ -11,6 +11,7 @@ use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record\RecordInterface;
 use Pckg\Database\Relation\Helper\RelationMethods;
+use Pckg\Framework\Exception\NotFound;
 
 /**
  * Presents table in database
@@ -424,7 +425,7 @@ class Entity implements EntityInterface
             return $callback();
         }
 
-        throw new Exception('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+        throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
     }
 
     /**

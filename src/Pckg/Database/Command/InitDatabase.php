@@ -3,6 +3,7 @@
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DebugBar;
+use Exception;
 use Faker\Factory;
 use Pckg\Concept\AbstractChainOfReponsibility;
 use Pckg\Concept\Context;
@@ -11,6 +12,7 @@ use Pckg\Database\Repository\Faker as RepositoryFaker;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use Pckg\Framework\Config;
 use PDO;
+use PDOException;
 
 /**
  * Class InitDatabase
@@ -34,7 +36,7 @@ class InitDatabase extends AbstractChainOfReponsibility
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(callable $next)
     {
@@ -77,14 +79,19 @@ class InitDatabase extends AbstractChainOfReponsibility
 
     public function initPdoDatabase($config, $name)
     {
-        $pdo = new PDO(
-            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
-            (isset($config['db'])
-                ? ";dbname=" . $config['db']
-                : ''),
-            $config['user'],
-            $config['pass']
-        );
+        try {
+            $pdo = new PDO(
+                "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
+                (isset($config['db'])
+                    ? ";dbname=" . $config['db']
+                    : ''),
+                $config['user'],
+                $config['pass']
+            );
+        } catch (PDOException $e) {
+            throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
+
+        }
 
         $pdo->uniqueName = $config['host'] . "-" . $config['db'];
 

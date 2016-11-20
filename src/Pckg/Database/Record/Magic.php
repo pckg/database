@@ -148,6 +148,9 @@ trait Magic
          */
         $entity = $this->getEntity();
 
+        /**
+         * @T00D00 - with should be called only if method starts with 'join' or 'with'
+         */
         $relation = $entity->callWith($method, $args, $entity, true);
         /**
          * This is not needed here?

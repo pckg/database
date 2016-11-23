@@ -6,6 +6,7 @@ use ArrayAccess;
 use Exception;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
+use Throwable;
 
 abstract class Query
 {
@@ -337,7 +338,7 @@ abstract class Query
     {
         try {
             return $this->buildSQL();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
         }
     }

@@ -66,6 +66,7 @@ class UpdateRecord
      */
     public function execute()
     {
+        $originalTable = $this->entity->getTable();
         $data = $this->entity->tabelizeRecord($this->record);
 
         foreach ($data as $table => $update) {
@@ -82,6 +83,7 @@ class UpdateRecord
 
             }
         }
+        $this->entity->setTable($originalTable);
 
         return true;
     }

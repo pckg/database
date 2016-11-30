@@ -3,6 +3,7 @@
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
+use Throwable;
 
 abstract class AbstractRepository implements Repository
 {
@@ -57,7 +58,7 @@ abstract class AbstractRepository implements Repository
             $execute = $prepare->execute();
 
             return $execute;
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             d('abstract repository', $e->getFile(), $e->getLine(), $e->getMessage(), $e->getTraceAsString());
         }
     }

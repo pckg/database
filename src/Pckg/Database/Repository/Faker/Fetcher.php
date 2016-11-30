@@ -4,6 +4,7 @@ use Faker\Generator;
 use Pckg\Collection;
 use Pckg\Database\Query;
 use Pckg\Database\Repository\Faker;
+use Throwable;
 
 class Fetcher
 {
@@ -62,7 +63,7 @@ class Fetcher
                 try {
                     $record->{$field} = $generator->{$field};
                     continue;
-                } catch (\Exception $e) {
+                } catch (Throwable $e) {
 
                 }
                 if ($meta['name'] == 'id') {
@@ -111,7 +112,7 @@ class Fetcher
                     try {
                         $record->{$field} = $generator->{$field};
                         continue;
-                    } catch (\Exception $e) {
+                    } catch (Throwable $e) {
                         dd($meta);
                     }
                 }

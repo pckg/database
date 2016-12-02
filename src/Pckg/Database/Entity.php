@@ -367,10 +367,10 @@ class Entity implements EntityInterface
                  */
                 if ($this->repository->getCache()->tableHasField($table, $field)
                 ) {
-                    if (array_key_exists($field, $dataArray)) {
-                        $values[$table][$field] = $dataArray[$field];
-                    } elseif (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
+                    if (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
                         $values[$table][$field] = $extensionArray[$table][$field];
+                    } elseif (array_key_exists($field, $dataArray)) {
+                        $values[$table][$field] = $dataArray[$field];
                     }
                 }
             }

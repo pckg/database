@@ -85,6 +85,23 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $record;
     }
 
+    public function duplicate(Entity $entity = null)
+    {
+        if (!$entity) {
+            $entity = $this->getEntity();
+        }
+
+        $data = $this->toArray();
+        if (isset($data['id'])) {
+            unset($data['id']);
+        }
+
+        $record = new static($data);
+        $record->save($entity);
+
+        return $record;
+    }
+
     public static function getOrCreate(array $data)
     {
         $entity = (new static)->getEntity();

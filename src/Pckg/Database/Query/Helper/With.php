@@ -60,7 +60,15 @@ trait With
                      *
                      * @T00D00
                      */
-                    Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                    if ($prefix == 'join') {
+                        $rightEntity = $relation->getRightEntity();
+                        $oldEntityQuery = $rightEntity->getQuery();
+                        $rightEntity->setQuery($relation->getQuery());
+                        Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                        $rightEntity->setQuery($oldEntityQuery);
+                    } else {
+                        Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                    }
                 }
                 /**
                  * We'll call $entity->with($relation), and return Relation;

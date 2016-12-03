@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Query;
 
+use Pckg\Database\Entity;
 use Pckg\Database\Query;
 
 /**
@@ -19,9 +20,18 @@ class Select extends Query
 
     protected $count = false;
 
+    protected $countRow = null;
+
     public function count($count = true)
     {
         $this->count = $count;
+
+        return $this;
+    }
+
+    public function countRow($row)
+    {
+        $this->countRow = $row;
 
         return $this;
     }
@@ -111,7 +121,10 @@ class Select extends Query
             }
         }
 
-        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') . implode(', ', $keys);
+        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') .
+               ($this->countRow ? 'COUNT(' . $this->countRow . ') AS `count`' : '') .
+               ($this->countRow && $keys && $this->groupBy ? ', ' : '') .
+               ($this->countRow && !$this->groupBy ? '' : implode(', ', $keys));
     }
 
     public function buildTable()
@@ -149,7 +162,17 @@ class Select extends Query
         }
 
         foreach ($fields as $key => $field) {
-            if (is_numeric($key)) {
+            if ($field instanceof Entity) {
+                $query = $field->getQuery();
+                $sql = '(' . $query->buildSQL() . ')';
+                $bind = $query->buildBinds();
+                $this->bind($bind, 'select');
+                if (is_numeric($key)) {
+                    $this->select[] = $sql;
+                } else {
+                    $this->select[$key] = $sql;
+                }
+            } elseif (is_numeric($key)) {
                 $this->select[] = $field;
             } else {
                 $this->select[$key] = $field;

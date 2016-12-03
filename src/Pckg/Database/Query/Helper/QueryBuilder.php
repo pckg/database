@@ -175,6 +175,13 @@ trait QueryBuilder
         return $this;
     }
 
+    public function countRow($row = '*')
+    {
+        $this->getQuery()->countRow($row);
+
+        return $this;
+    }
+
     public function addSelect($fields = [])
     {
         $this->getQuery()->addSelect($fields);

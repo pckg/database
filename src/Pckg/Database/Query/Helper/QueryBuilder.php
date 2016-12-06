@@ -22,6 +22,13 @@ trait QueryBuilder
 
     protected $prevQuery;
 
+    public function debug($debug = true)
+    {
+        $this->query->debug($debug);
+
+        return $this;
+    }
+
     /**
      * @return Query|Select
      */

@@ -17,6 +17,8 @@ abstract class Query
 
     protected $bind = [];
 
+    protected $debug = false;
+
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
@@ -28,12 +30,19 @@ abstract class Query
         $this->where = clone $this->where;
     }
 
-    public static function raw($sql, $binds = [])
+    public function debug($debug = true)
+    {
+        $this->debug = $debug;
+
+        return $this;
+    }
+
+    public static function raw($sql, $binds = [], $part = 'main')
     {
         $query = new static($sql);
 
         foreach ($binds as $bind) {
-            $query->bind($binds, 'main');
+            $query->bind($bind, $part);
         }
 
         return $query;

@@ -101,6 +101,10 @@ class Select extends Query
 
         $sql = implode(' ', $parts);
 
+        if ($this->debug) {
+            d($sql, $this->bind);
+        }
+
         return $sql;
     }
 
@@ -112,6 +116,12 @@ class Select extends Query
 
         $keys = [];
         foreach ($this->select as $key => $select) {
+            if ($select instanceof Query) {
+                foreach ($select->getBinds('select') as $bind) {
+                    // @changed
+                    $this->bind($bind, 'select');
+                }
+            }
             if (is_numeric($key)) {
                 $keys[] = $select;
 
@@ -155,7 +165,7 @@ class Select extends Query
      *
      * @return $this
      */
-    public function addSelect($fields)
+    public function addSelect($fields, $bind = [])
     {
         if (!is_array($fields)) {
             $fields = [$fields];
@@ -177,6 +187,10 @@ class Select extends Query
             } else {
                 $this->select[$key] = $field;
             }
+        }
+
+        if ($bind) {
+            $this->bind($bind, 'select');
         }
 
         return $this;

@@ -201,8 +201,13 @@ class Entity implements EntityInterface
 
     public function setAlias($alias)
     {
-        $this->alias = $alias;
-        $this->getQuery()->alias($alias);
+        /**
+         * @T00D00
+         */
+        if ($alias != $this->table) {
+            $this->alias = $alias;
+            $this->getQuery()->alias($alias);
+        }
 
         return $this;
     }

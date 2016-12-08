@@ -353,6 +353,12 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return Reflect::create($this->getEntityClass());
     }
 
+    public function setAndSave($key, $val = null)
+    {
+        $this->set($key, $val);
+        $this->save();
+    }
+
     /**
      * @return Record
      */

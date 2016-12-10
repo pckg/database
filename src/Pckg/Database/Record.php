@@ -224,6 +224,14 @@ class Record extends Object implements RecordInterface, JsonSerializable
     /**
      * @return array
      */
+    public function toArray($values = null, $depth = 6, $withToArray = true)
+    {
+        return $this->__toArray($values, $depth, $withToArray);
+    }
+
+    /**
+     * @return array
+     */
     public function __toArray($values = null, $depth = 6, $withToArray = true)
     {
         $return = [];

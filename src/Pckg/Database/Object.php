@@ -116,14 +116,6 @@ class Object
     /**
      * @return array
      */
-    public function toArray()
-    {
-        return $this->__toArray();
-    }
-
-    /**
-     * @return array
-     */
     public function __toArray()
     {
         return $this->data;

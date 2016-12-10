@@ -152,6 +152,11 @@ trait Magic
          * @T00D00 - with should be called only if method starts with 'join' or 'with'
          */
         $relation = $entity->callWith($method, $args, $entity, true);
+
+        if (!$relation && prod()) {
+            return null;
+        }
+
         /**
          * This is not needed here?
          */

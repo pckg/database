@@ -19,35 +19,13 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
 
-    protected function returnRelation($relation, $entity, callable $callback = null)
+    protected function returnRelation($relation, $entity, callable $callback = null, $alias = null)
     {
         $relation = new $relation($this, $entity);
 
         if ($callback) {
             $callback($relation);
         }
-
-        return $relation;
-    }
-
-    /**
-     * @param $hasMany
-     *
-     * @return HasMany
-     */
-    public function hasMany($hasMany, callable $callback = null)
-    {
-        return $this->returnRelation(HasMany::class, $hasMany, $callback);
-    }
-
-    /**
-     * @param $hasMany
-     *
-     * @return HasMany
-     */
-    public function hasOne($entity, $alias = null, callable $callback = null)
-    {
-        $relation = $this->returnRelation(HasOne::class, $entity, $callback);
 
         if ($alias) {
             $relation->getRightEntity()->setAlias($alias);
@@ -57,13 +35,35 @@ trait RelationMethods
     }
 
     /**
+     * @param $hasMany
+     *
+     * @return HasMany
+     */
+    public function hasMany($hasMany, callable $callback = null, $alias = null)
+    {
+        return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
+    }
+
+    /**
+     * @param $hasMany
+     *
+     * @return HasMany
+     */
+    public function hasOne($entity, callable $callback = null, $alias = null)
+    {
+        $relation = $this->returnRelation(HasOne::class, $entity, $callback, $alias);
+
+        return $relation;
+    }
+
+    /**
      * @param $belongsTo
      *
      * @return BelongsTo
      */
-    public function belongsTo($entity, callable $callback = null)
+    public function belongsTo($entity, callable $callback = null, $alias = null)
     {
-        return $this->returnRelation(BelongsTo::class, $entity, $callback);
+        return $this->returnRelation(BelongsTo::class, $entity, $callback, $alias);
     }
 
     /**
@@ -71,9 +71,9 @@ trait RelationMethods
      *
      * @return HasAndBelongsTo
      */
-    public function hasAndBelongsTo($entity, callable $callback = null)
+    public function hasAndBelongsTo($entity, callable $callback = null, $alias = null)
     {
-        return $this->returnRelation(HasAndBelongsTo::class, $entity, $callback);
+        return $this->returnRelation(HasAndBelongsTo::class, $entity, $callback, $alias);
     }
 
     /**
@@ -101,9 +101,9 @@ trait RelationMethods
      *
      * @return MorphsMany
      */
-    public function morphsMany($entity, callable $callable = null)
+    public function morphsMany($entity, callable $callable = null, $alias = null)
     {
-        return $this->returnRelation(MorphsMany::class, $entity, $callable);
+        return $this->returnRelation(MorphsMany::class, $entity, $callable, $alias);
     }
 
     /**
@@ -111,9 +111,9 @@ trait RelationMethods
      *
      * @return MorphedBy
      */
-    public function morphedBy($entity, callable $callable = null)
+    public function morphedBy($entity, callable $callable = null, $alias = null)
     {
-        return $this->returnRelation(MorphedBy::class, $entity, $callable);
+        return $this->returnRelation(MorphedBy::class, $entity, $callable, $alias);
     }
 
 }

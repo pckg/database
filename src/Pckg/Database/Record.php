@@ -52,15 +52,6 @@ class Record extends Object implements RecordInterface, JsonSerializable
         ];
     }
 
-    /**
-     * @param array $values
-     */
-    public function __construct($data = [], Entity $entity = null)
-    {
-        $this->data = $data ?? [];
-        $this->entity = $entity;
-    }
-
     public function isSaved()
     {
         return $this->saved;
@@ -85,9 +76,9 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $this;
     }
 
-    public static function create($data = [], Entity $entity = null)
+    public static function create($data = [])
     {
-        $record = new static($data, $entity);
+        $record = new static($data);
 
         $record->save();
 
@@ -111,16 +102,14 @@ class Record extends Object implements RecordInterface, JsonSerializable
         return $record;
     }
 
-    public static function getOrCreate(array $data, Entity $entity = null)
+    public static function getOrCreate(array $data)
     {
-        if (!$entity) {
-            $entity = (new static)->getEntity();
-        }
+        $entity = (new static)->getEntity();
 
         $record = $entity->whereArr($data)->one();
 
         if (!$record) {
-            $record = static::create($data, $entity);
+            $record = static::create($data);
         }
 
         return $record;

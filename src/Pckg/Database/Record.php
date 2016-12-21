@@ -58,7 +58,9 @@ class Record extends Object implements RecordInterface, JsonSerializable
     public function __construct($data = [], Entity $entity = null)
     {
         $this->data = $data ?? [];
-        $this->entity = $entity;
+        if ($entity) {
+            $this->entity = $entity;
+        }
     }
 
     public function isSaved()
@@ -348,10 +350,6 @@ class Record extends Object implements RecordInterface, JsonSerializable
      */
     public function getEntity()
     {
-        if (!is_object($this->entity)) {
-            //d("Not object", $this->getEntityClass(), get_class($this), $this->entity);
-        }
-
         return is_object($this->entity)
             ? $this->entity
             : $this->entity = Reflect::create($this->getEntityClass());

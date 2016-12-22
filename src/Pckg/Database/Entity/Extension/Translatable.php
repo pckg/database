@@ -239,14 +239,15 @@ trait Translatable
         $selects = [];
         $translaTable = $this->getTable() . $this->translatableTableSuffix;
         $fields = $this->getRepository()->getCache()->getTableFields($translaTable);
+        $translatableKey = '`' . $translaTable . '`.`id`';
         foreach ($fields as $field) {
             if (in_array($field, ['id', $this->translatableLanguageField])) {
                 continue;
             }
 
-            $translatableField = '`' . $translaTable . '`.`' . $field . '`';;
-            $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';;
-            $selects[] = 'IF(' . $translatableField . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' . $field . '`';
+            $translatableField = '`' . $translaTable . '`.`' . $field . '`';
+            $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';
+            $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' . $field . '`';
         }
 
         $relation = $this->join($this->translationsFallback($callable));

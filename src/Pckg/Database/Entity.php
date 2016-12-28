@@ -317,7 +317,7 @@ class Entity implements EntityInterface
      */
     public function tabelizeRecord(Record $record)
     {
-        $dataArray = $record->__toArray(null, 1, false);
+        $dataArray = $record->__toArray(null, 2, false);
         $extensionArray = [];
 
         /**

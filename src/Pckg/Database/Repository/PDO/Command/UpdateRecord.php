@@ -4,6 +4,7 @@ namespace Pckg\Database\Repository\PDO\Command;
 
 use Exception;
 use Pckg\Database\Entity;
+use Pckg\Database\Query\Raw;
 use Pckg\Database\Query\Update;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
@@ -97,6 +98,18 @@ class UpdateRecord
      */
     public function update($table, array $data = [])
     {
+        /**
+         * Flatten data for possible multivalued values like geometric POINT or so.
+         */
+        $cache = $this->repository->getCache();
+        foreach ($data as $key => &$val) {
+            if (is_array($val)) {
+                if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
+                    $val = new Raw('GeomFromText(\'POINT(' . (float)$val[0] . ' ' . (float)$val[1] . ')\')');
+                }
+            }
+        }
+
         /**
          * We will update record in $table with $data ...
          */

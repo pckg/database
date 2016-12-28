@@ -47,8 +47,15 @@ class Update extends Query
                 $val = null;
             }
 
-            $arrValues[] = $keyPart . '?';
-            $this->bind['set'][] = $val;
+            if (is_object($val) && $val instanceof Raw) {
+                $arrValues[] = $keyPart . $val->buildSQL();
+                foreach ($val->getBind() as $bind) {
+                    $this->bind($bind, 'set');
+                }
+            } else {
+                $arrValues[] = $keyPart . '?';
+                $this->bind($val, 'set');
+            }
         }
 
         return implode(", ", $arrValues);

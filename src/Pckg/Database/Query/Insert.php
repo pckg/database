@@ -51,8 +51,15 @@ class Insert extends Query
     {
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
-            $arrValues[] = '?';
-            $this->bind($val == '' ? null : $val, 'values');
+            if (is_object($val) && $val instanceof Raw) {
+                $arrValues[] = $val->buildSQL();
+                foreach ($val->getBind() as $bind) {
+                    $this->bind($bind, 'values');
+                }
+            } else {
+                $arrValues[] = '?';
+                $this->bind($val == '' ? null : $val, 'values');
+            }
         }
 
         return "(" . implode(", ", $arrValues) . ")";

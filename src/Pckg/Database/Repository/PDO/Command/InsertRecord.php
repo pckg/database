@@ -5,6 +5,7 @@ namespace Pckg\Database\Repository\PDO\Command;
 use Exception;
 use Pckg\Database\Entity;
 use Pckg\Database\Query\Insert;
+use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 
@@ -102,6 +103,18 @@ class InsertRecord
      */
     public function insert($table, array $data = [])
     {
+        /**
+         * Flatten data for possible multivalued values like geometric POINT or so.
+         */
+        $cache = $this->repository->getCache();
+        foreach ($data as $key => &$val) {
+            if (is_array($val)) {
+                if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
+                    $val = new Raw('POINT(? ?),0', $val);
+                }
+            }
+        }
+
         /**
          * We will insert $data into $table ...
          */

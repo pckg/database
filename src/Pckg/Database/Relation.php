@@ -210,11 +210,13 @@ abstract class Relation implements RelationInterface
         $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
         $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
 
-        return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
+        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
                ($this->primaryKey && $this->foreignKey
                    ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
                      ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
                    : '');
+
+        return $condition;
     }
 
     public function getAdditionalCondition()

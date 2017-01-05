@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Relation\Helper;
 
+use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasChildren;
@@ -21,6 +22,10 @@ trait RelationMethods
 
     protected function returnRelation($relation, $entity, callable $callback = null, $alias = null)
     {
+        if (is_string($entity)) {
+            $entity = Reflect::create($entity, ['alias' => $alias]);
+        }
+        
         $relation = new $relation($this, $entity);
 
         if ($alias) {

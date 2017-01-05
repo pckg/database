@@ -223,10 +223,8 @@ class Entity implements EntityInterface
         /**
          * @T00D00
          */
-        if ($alias != $this->table) {
-            $this->alias = $alias;
-            $this->getQuery()->alias($alias);
-        }
+        $this->alias = $alias;
+        $this->getQuery()->alias($alias);
 
         return $this;
     }

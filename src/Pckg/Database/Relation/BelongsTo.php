@@ -114,8 +114,10 @@ class BelongsTo extends Relation
         $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
 
         return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-               ($this->primaryKey && $this->foreignKey ? ' ON `' . $leftAlias . '`.`' . $this->foreignKey . '`' .
-                                                         ' = `' . $rightAlias . '`.`' . $this->primaryKey . '`' : '');
+               ($this->primaryKey && $this->foreignKey
+                   ? ' ON `' . $leftAlias . '`.`' . $this->foreignKey . '`' .
+                     ' = `' . $rightAlias . '`.`' . $this->primaryKey . '`'
+                   : '');
     }
 
 }

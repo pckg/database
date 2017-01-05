@@ -44,8 +44,9 @@ class Select extends Query
     public function table($table)
     {
         $this->table = $table;
+        $alias = $this->alias ?? $this->table;
 
-        if (!in_array('`' . $table . '`.*', $this->select)) {
+        if (!in_array('`' . $table . '`.*', $this->select) && !in_array('`' . $alias . '`.*', $this->select)) {
             $this->select[] = '`' . $table . '`.*';
         }
 
@@ -139,9 +140,9 @@ class Select extends Query
 
     public function buildTable()
     {
-        return '`' . $this->table . '`' . ($this->alias
-            ? ' AS `' . $this->alias . '`'
-            : '');
+        $alias = $this->alias ?? $this->table;
+
+        return '`' . $this->table . '` AS `' . $alias . '`';
     }
 
     public function buildBinds()

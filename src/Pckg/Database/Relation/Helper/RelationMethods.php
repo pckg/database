@@ -23,12 +23,12 @@ trait RelationMethods
     {
         $relation = new $relation($this, $entity);
 
-        if ($callback) {
-            $callback($relation);
-        }
-
         if ($alias) {
             $relation->getRightEntity()->setAlias($alias);
+        }
+
+        if ($callback) {
+            $callback($relation);
         }
 
         return $relation;

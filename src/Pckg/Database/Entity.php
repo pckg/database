@@ -61,9 +61,10 @@ class Entity implements EntityInterface
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null)
+    public function __construct(Repository $repository = null, $alias = null)
     {
         $this->repository = $repository;
+        $this->alias = $alias;
 
         if (!$repository) {
             if (!context()->exists($this->repositoryName)) {

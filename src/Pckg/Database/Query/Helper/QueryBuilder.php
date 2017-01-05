@@ -54,6 +54,10 @@ trait QueryBuilder
             $this->query->table($this->table);
         }
 
+        if (isset($this->alias)) {
+            $this->query->alias($this->alias);
+        }
+
         return $this;
     }
 

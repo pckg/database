@@ -245,15 +245,11 @@ abstract class Relation implements RelationInterface
         }
 
         foreach ($this->getQuery()->getSelect() as $key => $select) {
-            /**
-             * Is this ok to be commented?
-             * Noup, it is not: non-working if commented ($entity->joinHasOneRelation(...addSelect()))
-             */
             $query->prependSelect([$key => $select]);
         }
 
         foreach ($this->getQuery()->getJoin() as $join) {
-            $query->join($join, null, null, $this->getQuery()->getBinds('join'));
+            $query->join($join, null, null, $this->getQuery()->getBinds('join', true));
         }
 
         if ($groupBy = $this->getQuery()->getGroupBy()) {

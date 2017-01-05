@@ -3,6 +3,7 @@
 namespace Pckg\Database\Query\Helper;
 
 use Pckg\Concept\Reflect;
+use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Relation;
@@ -165,6 +166,10 @@ trait QueryBuilder
 
     public function orderBy($key)
     {
+        if ($this instanceof Entity) {
+            $key = $this->extendedKey($key);
+        }
+
         $this->getQuery()->orderBy($key);
 
         return $this;

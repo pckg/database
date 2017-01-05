@@ -88,6 +88,18 @@ class Entity implements EntityInterface
         $this->boot();
     }
 
+    public function extendedKey($key)
+    {
+        $cache = $this->repository->getCache();
+        if (!$cache->tableHasField($this->table, $key)) {
+            if ($cache->tableHasField($this->table . '_i18n', $key)) {
+                return '`' . $this->table . '_i18n`.`' . $key . '`';
+            }
+        }
+
+        return $key;
+    }
+
     /**
      * @param $method
      * @param $args

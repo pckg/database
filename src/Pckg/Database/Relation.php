@@ -91,15 +91,6 @@ abstract class Relation implements RelationInterface
             );
             Reflect::method($this->getRightEntity(), $method, $args);
 
-        } elseif (method_exists($this, 'getMiddleEntity') && method_exists($this->getMiddleEntity(), $method)) {
-            /**
-             * Then middle entity.
-             */
-            message(
-                get_class($this) . '->__call(' . $method . ') on middle entity ' . get_class($this->getMiddleEntity())
-            );
-            Reflect::method($this->getMiddleEntity(), $method, $args);
-
         } else {
             message(
                 get_class($this) . '->__call(' . $method . ') with right entity ' . get_class($this->getRightEntity())

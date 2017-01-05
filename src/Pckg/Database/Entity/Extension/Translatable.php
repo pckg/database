@@ -45,7 +45,7 @@ trait Translatable
      */
     public function initTranslatableExtension()
     {
-
+        
     }
 
     /**

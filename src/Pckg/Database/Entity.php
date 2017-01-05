@@ -84,6 +84,7 @@ class Entity implements EntityInterface
 
         $this->guessDefaults();
         $this->initExtensions();
+        $this->boot();
     }
 
     /**
@@ -158,6 +159,11 @@ class Entity implements EntityInterface
                 }
             }
         }
+    }
+
+    public function boot()
+    {
+        return $this;
     }
 
     public function getRecord()

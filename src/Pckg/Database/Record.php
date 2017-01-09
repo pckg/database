@@ -156,6 +156,10 @@ class Record extends Object implements RecordInterface, JsonSerializable
             return true;
         }
 
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable() . '_i18n', $key)) {
+            return true;
+        }
+
         return false;
     }
 

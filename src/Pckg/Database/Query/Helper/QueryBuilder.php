@@ -110,8 +110,8 @@ trait QueryBuilder
      */
     public function where($key, $value = true, $operator = '=')
     {
-        if ((isset($this->table) || isset($this->alias)) && is_string($key) && !strpos($key, '.')
-            && strpos($key, '`') === false && strpos($key, ' ') === false
+        if ((isset($this->table) || isset($this->alias)) && is_string($key)
+            && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false
         ) {
             if ($this->alias) {
                 $key = '`' . $this->alias . '`.`' . $key . '`';

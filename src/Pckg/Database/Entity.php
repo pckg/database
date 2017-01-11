@@ -85,6 +85,7 @@ class Entity implements EntityInterface
 
         $this->guessDefaults();
         $this->initExtensions();
+        $this->preboot();
         $this->boot();
     }
 
@@ -172,6 +173,11 @@ class Entity implements EntityInterface
                 }
             }
         }
+    }
+
+    public function preboot()
+    {
+        return $this;
     }
 
     public function boot()

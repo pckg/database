@@ -389,6 +389,7 @@ class Entity implements EntityInterface
         // fill array with tables and fields
         $values = [];
         foreach ($keys as $table => $fields) {
+            $values[$table] = [];
             foreach ($fields as $field) {
                 /**
                  * Add value if field exists in data array and repository has that field.

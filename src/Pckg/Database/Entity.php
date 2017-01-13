@@ -72,6 +72,9 @@ class Entity implements EntityInterface
                     ? 'default'
                     : str_replace(Repository::class . '.', '', $this->repositoryName);
                 $config = config('database.' . $connectionName);
+                if (!$config) {
+                    throw new Exception("No config found for " . $connectionName);
+                }
                 $repository = (new InitDatabase(config(), context()))->initPdoDatabase($config, $connectionName);
                 context()->bind($this->repositoryName, $repository);
             }

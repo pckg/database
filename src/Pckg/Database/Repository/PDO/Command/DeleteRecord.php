@@ -31,6 +31,8 @@ class DeleteRecord
      */
     protected $repository;
 
+    protected $table = null;
+
     /**
      * @param Record     $record
      * @param Entity     $entity
@@ -41,6 +43,13 @@ class DeleteRecord
         $this->record = $record;
         $this->entity = $entity;
         $this->repository = $repository;
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
     }
 
     /**
@@ -55,7 +64,7 @@ class DeleteRecord
          * Lets hardcode them for now.
          */
         $extensions = ['i18n', 'p17n', ''];
-        $table = $this->entity->getTable();
+        $table = $this->table ?? $this->entity->getTable();
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 
         if (!$primaryKeys) {

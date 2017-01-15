@@ -277,7 +277,22 @@ trait Translatable
 
     public function __getTranslatableExtension(Record $record, $key)
     {
-        if ($record->relationExists('_translations')) {
+        /**
+         * Check that translatable field exists in database.
+         */
+        if (!$this->getRepository()->getCache()->tableHasField($this->getTable() . $this->getTranslatableTableSuffix(), $key)) {
+            return null;
+        }
+
+        if (!$record->relationExists('_translations')) {
+            /**
+             * Fetch translations.
+             */
+            $record->withTranslations();
+
+            /**
+             * Translations were fetched by join.
+             */
             foreach ($record->getRelation('_translations') as $translation) {
                 if ($translation->keyExists($key)) {
                     return $translation->{$key};

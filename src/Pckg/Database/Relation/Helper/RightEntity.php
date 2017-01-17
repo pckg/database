@@ -50,7 +50,7 @@ trait RightEntity
             return new Collection();
         }
 
-        $rightEntity->setRepository($this->getLeftRepository());
+        // $rightEntity->setRepository($this->getLeftRepository());
 
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 

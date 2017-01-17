@@ -115,6 +115,9 @@ trait With
     public function with($relation, $callback = null)
     {
         if ($relation == $this) {
+            /**
+             * Why is this here?
+             */
             return $this;
         }
 

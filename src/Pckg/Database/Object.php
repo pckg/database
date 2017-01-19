@@ -15,6 +15,8 @@ class Object
      */
     protected $data = [];
 
+    protected $original = [];
+
     /**
      * @param array $values
      */
@@ -26,6 +28,48 @@ class Object
     public function setData(array $data = [])
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    public function data($key = null)
+    {
+        return $key
+            ? (array_key_exists($key, $this->data)
+                ? $this->data[$key]
+                : null)
+            : $this->data;
+    }
+
+    public function setOriginal(array $data = [])
+    {
+        $this->original = $data;
+
+        return $this;
+    }
+
+    public function original($key = null)
+    {
+        return $key
+            ? (array_key_exists($key, $this->original)
+                ? $this->original[$key]
+                : null)
+            : $this->original;
+    }
+
+    public function isOriginal($key = null)
+    {
+        return $this->data($key) == $this->original($key);
+    }
+
+    public function isDirty($key = null)
+    {
+        return $this->data($key) != $this->original($key);
+    }
+
+    public function setOriginalFromData()
+    {
+        $this->original = $this->data;
 
         return $this;
     }

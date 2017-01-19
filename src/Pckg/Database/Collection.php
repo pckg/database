@@ -1,11 +1,9 @@
 <?php namespace Pckg\Database;
 
-use Pckg\Database\Entity\EntityInterface;
-
 class Collection extends \Pckg\Collection
 {
 
-    public function setEntity(EntityInterface $entity)
+    public function setEntity(Entity $entity)
     {
         $this->each(
             function(Record $record) use ($entity) {
@@ -22,6 +20,17 @@ class Collection extends \Pckg\Collection
         $this->each(
             function(Record $record) use ($saved) {
                 $record->setSaved($saved);
+            }
+        );
+
+        return $this;
+    }
+
+    public function setOriginalFromData()
+    {
+        $this->each(
+            function(Record $record) {
+                $record->setOriginalFromData();
             }
         );
 

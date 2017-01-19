@@ -1,23 +1,20 @@
-<?php
-
-namespace Pckg\Database;
+<?php namespace Pckg\Database;
 
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Command\InitDatabase;
-use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
-use Pckg\Database\Record\RecordInterface;
 use Pckg\Database\Relation\Helper\RelationMethods;
+use Pckg\Database\Repository\PDO;
 use Pckg\Framework\Exception\NotFound;
 
 /**
  * Presents table in database
  *
  */
-class Entity implements EntityInterface
+class Entity
 {
 
     use RelationMethods, QueryBuilder, With;
@@ -29,9 +26,6 @@ class Entity implements EntityInterface
 
     protected $alias;
 
-    /**
-     * @var RecordInterface
-     */
     protected $record = Record::class;
 
     protected $primaryKey = 'id';
@@ -75,7 +69,7 @@ class Entity implements EntityInterface
                 if (!$config) {
                     throw new Exception("No config found for " . $connectionName);
                 }
-                $repository = (new InitDatabase(config(), context()))->initPdoDatabase($config, $connectionName);
+                $repository = (new InitDatabase())->initPdoDatabase($config, $connectionName);
                 context()->bind($this->repositoryName, $repository);
             }
 
@@ -277,11 +271,20 @@ class Entity implements EntityInterface
     }
 
     /**
-     * @return Repository
+     * @return Repository|PDO
      */
     public function getRepository()
     {
         return $this->repository;
+    }
+
+    public function getRepositoryIfEmpty($repository)
+    {
+        if ($repository) {
+            return $repository;
+        }
+
+        return $this->getRepository();
     }
 
     /**

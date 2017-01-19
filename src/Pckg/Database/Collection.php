@@ -1,7 +1,23 @@
 <?php namespace Pckg\Database;
 
+use Pckg\Database\Query\Helper\With;
+use Pckg\Database\Relation\Helper\CallWithRelation;
+
 class Collection extends \Pckg\Collection
 {
+
+    use With, CallWithRelation;
+
+    public function __call($method, $args)
+    {
+        if (!$this->count()) {
+            return $this;
+        }
+
+        $this->callWithRelation($method, $args, $this->first()->getEntity());
+
+        return $this;
+    }
 
     public function setEntity(Entity $entity)
     {

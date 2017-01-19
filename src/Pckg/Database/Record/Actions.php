@@ -73,7 +73,7 @@ trait Actions
         $update = $repository->update($this, $entity);
 
         $this->trigger(['updated', 'saved']);
-
+        
         return $update;
     }
 

@@ -14,6 +14,7 @@ trait Events
         if (!is_array($events)) {
             $events = [$events];
         }
+
         foreach ($events as $event) {
             dispatcher()->trigger(static::class . '.' . $event, $args);
         }

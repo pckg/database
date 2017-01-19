@@ -6,8 +6,10 @@ use Pckg\Database\Command\InitDatabase;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
+use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Exception\NotFound;
 
 /**
@@ -182,6 +184,9 @@ class Entity
         return $this;
     }
 
+    /**
+     * @return \Pckg\Database\Record
+     */
     public function getRecord()
     {
         $class = $this->getRecordClass();
@@ -344,7 +349,7 @@ class Entity
      *
      * @return array
      */
-    public function tabelizeRecord(Record $record)
+    public function tabelizeRecord(DatabaseRecord $record)
     {
         $dataArray = $record->__toArray(null, 2, false);
         $extensionArray = [];
@@ -512,6 +517,23 @@ class Entity
         $prepare = $repository->prepareQuery($insert);
 
         return $repository->executePrepared($prepare);
+    }
+
+    public function transformRecordToEntities(Record $record)
+    {
+        if (get_class($record) == $this->record) {
+            return $record;
+        }
+
+        $newRecord = $this->getRecord();
+        $newRecord->setData($record->data());
+        $newRecord->setOriginalFromData();
+
+        if ($record->isSaved()) {
+            $newRecord->setSaved();
+        }
+
+        return $newRecord;
     }
 
 }

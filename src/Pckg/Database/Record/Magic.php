@@ -1,9 +1,12 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Relation\Helper\CallWithRelation;
 
 trait Magic
 {
+
+    use CallWithRelation;
 
     public function __set($key, $val)
     {
@@ -115,6 +118,7 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
+        message(static::class . '.' . $key, 'optimize');
         if (method_exists($entity, $key)) {
             $relation = $entity->{$key}();
 
@@ -143,25 +147,12 @@ trait Magic
      */
     public function __call($method, $args)
     {
-        /**
-         * Return value from empty relation.
-         */
-        $entity = $this->getEntity();
+        message(static::class . '.' . $method . '()', 'optimize');
 
         /**
          * @T00D00 - with should be called only if method starts with 'join' or 'with'
          */
-        $relation = $entity->callWith($method, $args, $entity, true);
-
-        if (!$relation && prod()) {
-            return null;
-        }
-
-        /**
-         * This is not needed here?
-         */
-        //$relation->fill($method);
-        $relation->fillRecord($this);
+        $relation = $this->callWithRelation($method, $args, $this->getEntity());
 
         return $this->getRelation($relation->getFill());
     }

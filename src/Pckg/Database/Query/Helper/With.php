@@ -29,7 +29,7 @@ trait With
      * @param $method
      * @param $args
      *
-     * @return $this|Relation
+     * @return $this|Relation|mixed
      * @throws Exception
      */
     public function callWith($method, $args, $object, $returnRelation = false)

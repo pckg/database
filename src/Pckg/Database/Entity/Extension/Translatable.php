@@ -280,7 +280,11 @@ trait Translatable
         /**
          * Check that translatable field exists in database.
          */
-        if (!$this->getRepository()->getCache()->tableHasField($this->getTable() . $this->getTranslatableTableSuffix(), $key)) {
+        if (!$this->getRepository()->getCache()->tableHasField(
+            $this->getTable() . $this->getTranslatableTableSuffix(),
+            $key
+        )
+        ) {
             return null;
         }
 

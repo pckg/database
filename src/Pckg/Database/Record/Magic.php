@@ -120,6 +120,7 @@ trait Magic
          */
         message(static::class . '.' . $key, 'optimize');
         if (method_exists($entity, $key)) {
+            //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();
 
             $relation->fillRecord($this);

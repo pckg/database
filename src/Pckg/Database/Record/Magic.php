@@ -150,6 +150,7 @@ trait Magic
     public function __call($method, $args)
     {
         $entity = $this->getEntity();
+        
         if (strpos($method, 'create') === 0) {
             $relation = $entity->{lcfirst(substr($method, '6'))}();
 

@@ -9,7 +9,6 @@ use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
-use Pckg\Dynamic\Record\Record;
 use Pckg\Framework\Exception\NotFound;
 
 /**
@@ -187,11 +186,11 @@ class Entity
     /**
      * @return \Pckg\Database\Record
      */
-    public function getRecord()
+    public function getRecord($data = [])
     {
         $class = $this->getRecordClass();
 
-        $record = new $class;
+        $record = new $class($data);
         $record->setEntity($this);
         $record->setEntityClass(get_class($this));
 
@@ -457,15 +456,26 @@ class Entity
      */
     public function oneOrFail(callable $callback = null)
     {
+        if (!$callback) {
+            $callback = function() {
+                throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+            };
+        }
+
+        return $this->oneOr($callback);
+    }
+
+    /**
+     * @return Record
+     * @throws Exception
+     */
+    public function oneOr(callable $callback)
+    {
         if ($result = $this->one()) {
             return $result;
         }
 
-        if ($callback) {
-            return $callback();
-        }
-
-        throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+        return $callback();
     }
 
     /**

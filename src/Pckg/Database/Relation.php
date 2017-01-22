@@ -116,6 +116,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
+    }
+
     /**
      * @param $left
      * @param $right
@@ -211,10 +216,10 @@ abstract class Relation implements RelationInterface
         $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
 
         $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-               ($this->primaryKey && $this->foreignKey
-                   ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
-                     ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
-                   : '');
+                     ($this->primaryKey && $this->foreignKey
+                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
+                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
+                         : '');
 
         return $condition;
     }

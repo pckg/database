@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
 trait Magic
@@ -148,14 +149,33 @@ trait Magic
      */
     public function __call($method, $args)
     {
-        message(static::class . '.' . $method . '()', 'optimize');
+        $entity = $this->getEntity();
+        if (strpos($method, 'create') === 0) {
+            $relation = $entity->{lcfirst(substr($method, '6'))}();
 
-        /**
-         * @T00D00 - with should be called only if method starts with 'join' or 'with'
-         */
-        $relation = $this->callWithRelation($method, $args, $this->getEntity());
+            /**
+             * This is currently working for has many relations.
+             * $conversation->createMessage();
+             */
+            return $relation->getRightEntity()->getRecord(
+                array_merge(
+                    [
+                        $relation->getForeignKey() => $this->id,
+                    ],
+                    $args[0] ?? []
+                )
+            );
 
-        return $this->getRelation($relation->getFill());
+        } else {
+            message(static::class . '.' . $method . '()', 'optimize');
+
+            /**
+             * @T00D00 - with should be called only if method starts with 'join' or 'with'
+             */
+            $relation = $this->callWithRelation($method, $args, $entity);
+
+            return $this->getRelation($relation->getFill());
+        }
     }
 
 }

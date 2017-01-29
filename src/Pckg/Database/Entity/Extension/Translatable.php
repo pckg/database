@@ -72,7 +72,7 @@ trait Translatable
     public function getTranslatableForeignKeys(Record $record)
     {
         return [
-            $this->primaryKey => $record->{$this->primaryKey},
+            $this->primaryKey                => $record->{$this->primaryKey},
             $this->translatableLanguageField => $this->translatableLang->langId(),
         ];
     }
@@ -273,6 +273,11 @@ trait Translatable
         $this->translatableLang = $lang;
 
         return $this;
+    }
+
+    public function getTranslatableLang()
+    {
+        return $this->translatableLang;
     }
 
     public function __getTranslatableExtension(Record $record, $key)

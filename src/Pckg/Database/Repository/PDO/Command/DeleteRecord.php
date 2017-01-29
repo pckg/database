@@ -33,6 +33,8 @@ class DeleteRecord
 
     protected $table = null;
 
+    protected $data = [];
+
     /**
      * @param Record     $record
      * @param Entity     $entity
@@ -48,6 +50,13 @@ class DeleteRecord
     public function setTable($table)
     {
         $this->table = $table;
+
+        return $this;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
 
         return $this;
     }
@@ -84,8 +93,9 @@ class DeleteRecord
                 /**
                  * ... add primary key condition ...
                  */
+                $mergedData = array_merge($data[$table] ?? [], $this->data[$table] ?? []);
                 foreach ($primaryKeys as $key) {
-                    $query->where($key, $data[$table][$key]);
+                    $query->where($key, $mergedData[$key]);
                 }
 
                 /**

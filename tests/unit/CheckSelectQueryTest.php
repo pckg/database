@@ -47,15 +47,15 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `categories`.* FROM `categories` ORDER BY slug',
+                    'sql'   => 'SELECT `categories`.* FROM `categories` AS `categories` ORDER BY slug',
                     'binds' => [],
                 ],
                 [
-                    'sql'   => 'SELECT `categories`.* FROM `categories` WHERE (`categories`.`id` IN(?, ?, ?))',
+                    'sql'   => 'SELECT `categories`.* FROM `categories` AS `categories` WHERE (`categories`.`id` IN(?, ?, ?))',
                     'binds' => [1, 2, 3],
                 ],
                 [
-                    'sql'   => 'SELECT `categories`.* FROM `categories` WHERE (`categories`.`id` = ?)',
+                    'sql'   => 'SELECT `categories`.* FROM `categories` AS `categories` WHERE (`categories`.`id` = ?)',
                     'binds' => [1],
                 ],
             ],
@@ -92,15 +92,15 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`id` IN(?, ?, ?)) ORDER BY `users`.`id` ASC',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`id` IN(?, ?, ?)) ORDER BY `users`.`id` ASC',
                     'binds' => [3, 4, 5],
                 ],
                 [
-                    'sql'   => 'SELECT `users_categories`.* FROM `users_categories` WHERE (`users_categories`.`user_id` IN(?, ?, ?))',
+                    'sql'   => 'SELECT `users_categories`.* FROM `users_categories` AS `users_categories` WHERE (`users_categories`.`user_id` IN(?, ?, ?))',
                     'binds' => [3, 4, 5],
                 ],
                 [
-                    'sql'   => 'SELECT `categories`.* FROM `categories` WHERE (`categories`.`id` IN(?, ?, ?, ?, ?, ?, ?))',
+                    'sql'   => 'SELECT `categories`.* FROM `categories` AS `categories` WHERE (`categories`.`id` IN(?, ?, ?, ?, ?, ?, ?))',
                     'binds' => [2, 3, 5, 7, 8, 9, 10],
                 ],
             ],
@@ -136,15 +136,15 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `categories`.* FROM `categories` WHERE (`categories`.`id` IN(?, ?, ?))',
+                    'sql'   => 'SELECT `categories`.* FROM `categories` AS `categories` WHERE (`categories`.`id` IN(?, ?, ?))',
                     'binds' => [2, 3, 4],
                 ],
                 [
-                    'sql'   => 'SELECT `users_categories`.* FROM `users_categories` WHERE (`users_categories`.`category_id` IN(?, ?, ?))',
+                    'sql'   => 'SELECT `users_categories`.* FROM `users_categories` AS `users_categories` WHERE (`users_categories`.`category_id` IN(?, ?, ?))',
                     'binds' => [2, 3, 4],
                 ],
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`id` IN(?, ?, ?, ?, ?))',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`id` IN(?, ?, ?, ?, ?))',
                     'binds' => [1, 2, 3, 4, 5],
                 ],
             ],
@@ -169,11 +169,11 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`id` IN(?, ?))',
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` AS `user_groups` WHERE (`user_groups`.`id` IN(?, ?))',
                     'binds' => [1, 2],
                 ],
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`user_group_id` IN(?, ?))',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`user_group_id` IN(?, ?))',
                     'binds' => [1, 2],
                 ],
             ],
@@ -189,11 +189,11 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`id` = ?) LIMIT 1',
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` AS `user_groups` WHERE (`user_groups`.`id` = ?) LIMIT 1',
                     'binds' => [3],
                 ],
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`user_group_id` = ?)',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`user_group_id` = ?)',
                     'binds' => [3],
                 ],
             ],
@@ -216,15 +216,15 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`id` IN(?, ?, ?))',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`id` IN(?, ?, ?))',
                     'binds' => [2, 3, 4],
                 ],
                 [
-                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`id` IN(?, ?))',
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` AS `user_groups` WHERE (`user_groups`.`id` IN(?, ?))',
                     'binds' => [1, 2],
                 ],
                 [
-                    'sql'   => 'SELECT `languages`.* FROM `languages` WHERE (`languages`.`slug` IN(?, ?))',
+                    'sql'   => 'SELECT `languages`.* FROM `languages` AS `languages` WHERE (`languages`.`slug` IN(?, ?))',
                     'binds' => ['en', 'si'],
                 ],
             ],
@@ -246,15 +246,15 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `users`.* FROM `users` WHERE (`users`.`id` IN(?, ?))',
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`id` IN(?, ?))',
                     'binds' => [1, 2],
                 ],
                 [
-                    'sql'   => 'SELECT `settings_morphs`.* FROM `settings_morphs` WHERE (`settings_morphs`.`poly_id` IN(?, ?)) AND (`settings_morphs`.`morph_id` = ?)',
+                    'sql'   => 'SELECT `settings_morphs`.* FROM `settings_morphs` AS `settings_morphs` WHERE (`settings_morphs`.`poly_id` IN(?, ?)) AND (`settings_morphs`.`morph_id` = ?)',
                     'binds' => [1, 2, Users::class],
                 ],
                 [
-                    'sql'   => 'SELECT `settings`.* FROM `settings` WHERE (`settings`.`id` IN(?, ?))',
+                    'sql'   => 'SELECT `settings`.* FROM `settings` AS `settings` WHERE (`settings`.`id` IN(?, ?))',
                     'binds' => [1, 2],
                 ],
             ],

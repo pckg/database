@@ -150,7 +150,7 @@ trait Magic
     public function __call($method, $args)
     {
         $entity = $this->getEntity();
-        
+
         if (strpos($method, 'create') === 0) {
             $relation = $entity->{lcfirst(substr($method, '6'))}();
 
@@ -174,6 +174,10 @@ trait Magic
              * @T00D00 - with should be called only if method starts with 'join' or 'with'
              */
             $relation = $this->callWithRelation($method, $args, $entity);
+
+            if (!$relation) {
+                return null;
+            }
 
             return $this->getRelation($relation->getFill());
         }

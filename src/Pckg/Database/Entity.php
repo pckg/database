@@ -58,6 +58,13 @@ class Entity implements EntityInterface
      */
     protected $useCache;
 
+    public function isTranslatable()
+    {
+        return isset($this->translatableTableSuffix)
+            ? $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix)
+            : false;
+    }
+
     /**
      * @param Repository $repository
      */

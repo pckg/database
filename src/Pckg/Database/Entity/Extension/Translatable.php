@@ -83,12 +83,17 @@ trait Translatable
     public function translations(callable $callable = null)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix;
+        $translaTableAlias = $this->getAlias()
+            ? $this->getAlias() . $this->getTranslatableTableSuffix
+            : $translaTable;
         $repository = $this->getRepository();
 
-        $relation = $this->hasMany((new Entity($repository))->setTable($translaTable))
+        $relation = $this->hasMany(
+            (new Entity($repository, $translaTableAlias))->setTable($translaTable)->setAlias($translaTableAlias)
+        )
                          ->foreignKey('id')
                          ->fill('_translations')
-                         ->addSelect(['`' . $translaTable . '`.*'])
+                         ->addSelect(['`' . $translaTableAlias . '`.*'])
                          ->leftJoin();
 
         if ($callable) {
@@ -188,9 +193,12 @@ trait Translatable
     private function addTranslatableCondition(HasMany $relation)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+        $translaTableAlias = $this->getAlias()
+            ? $this->getAlias() . $this->getTranslatableTableSuffix()
+            : $translaTable;
 
         $relation->where(
-            '`' . $translaTable . '`.`' . $this->translatableLanguageField . '`',
+            '`' . $translaTableAlias . '`.`' . $this->translatableLanguageField . '`',
             $this->translatableLang->langId()
         );
     }
@@ -198,9 +206,12 @@ trait Translatable
     private function addTranslatableFallbackCondition(HasMany $relation)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+        $translaTableAlias = $this->getAlias()
+            ? $this->getAlias() . $this->getTranslatableTableSuffix()
+            : $translaTable;
 
         $relation->where(
-            '`' . $translaTable . '_f`.`' . $this->translatableLanguageField . '`',
+            '`' . $translaTableAlias . '_f`.`' . $this->translatableLanguageField . '`',
             'en'
         );
     }
@@ -264,9 +275,33 @@ trait Translatable
         return $this;
     }
 
+    public function getTranslatableLang()
+    {
+        return $this->translatableLang;
+    }
+
     public function __getTranslatableExtension(Record $record, $key)
     {
-        if ($record->relationExists('_translations')) {
+        /**
+         * Check that translatable field exists in database.
+         */
+        if (!$this->getRepository()->getCache()->tableHasField(
+            $this->getTable() . $this->getTranslatableTableSuffix(),
+            $key
+        )
+        ) {
+            return null;
+        }
+
+        if (!$record->relationExists('_translations')) {
+            /**
+             * Fetch translations.
+             */
+            $record->withTranslations();
+
+            /**
+             * Translations were fetched by join.
+             */
             foreach ($record->getRelation('_translations') as $translation) {
                 if ($translation->keyExists($key)) {
                     return $translation->{$key};

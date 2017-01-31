@@ -1,23 +1,21 @@
-<?php
-
-namespace Pckg\Database;
+<?php namespace Pckg\Database;
 
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Command\InitDatabase;
-use Pckg\Database\Entity\EntityInterface;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
-use Pckg\Database\Record\RecordInterface;
+use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
+use Pckg\Database\Repository\PDO;
 use Pckg\Framework\Exception\NotFound;
 
 /**
  * Presents table in database
  *
  */
-class Entity implements EntityInterface
+class Entity
 {
 
     use RelationMethods, QueryBuilder, With;
@@ -29,9 +27,6 @@ class Entity implements EntityInterface
 
     protected $alias;
 
-    /**
-     * @var RecordInterface
-     */
     protected $record = Record::class;
 
     protected $primaryKey = 'id';
@@ -68,9 +63,10 @@ class Entity implements EntityInterface
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null)
+    public function __construct(Repository $repository = null, $alias = null)
     {
         $this->repository = $repository;
+        $this->alias = $alias;
 
         if (!$repository) {
             if (!context()->exists($this->repositoryName)) {
@@ -78,7 +74,10 @@ class Entity implements EntityInterface
                     ? 'default'
                     : str_replace(Repository::class . '.', '', $this->repositoryName);
                 $config = config('database.' . $connectionName);
-                $repository = (new InitDatabase(config(), context()))->initPdoDatabase($config, $connectionName);
+                if (!$config) {
+                    throw new Exception("No config found for " . $connectionName);
+                }
+                $repository = (new InitDatabase())->initPdoDatabase($config, $connectionName);
                 context()->bind($this->repositoryName, $repository);
             }
 
@@ -91,6 +90,20 @@ class Entity implements EntityInterface
 
         $this->guessDefaults();
         $this->initExtensions();
+        $this->preboot();
+        $this->boot();
+    }
+
+    public function extendedKey($key)
+    {
+        $cache = $this->repository->getCache();
+        if (!$cache->tableHasField($this->table, $key)) {
+            if ($cache->tableHasField($this->table . '_i18n', $key)) {
+                return '`' . $this->table . '_i18n`.`' . $key . '`';
+            }
+        }
+
+        return $key;
     }
 
     /**
@@ -167,11 +180,24 @@ class Entity implements EntityInterface
         }
     }
 
-    public function getRecord()
+    public function preboot()
+    {
+        return $this;
+    }
+
+    public function boot()
+    {
+        return $this;
+    }
+
+    /**
+     * @return \Pckg\Database\Record
+     */
+    public function getRecord($data = [])
     {
         $class = $this->getRecordClass();
 
-        $record = new $class;
+        $record = new $class($data);
         $record->setEntity($this);
         $record->setEntityClass(get_class($this));
 
@@ -211,10 +237,8 @@ class Entity implements EntityInterface
         /**
          * @T00D00
          */
-        if ($alias != $this->table) {
-            $this->alias = $alias;
-            $this->getQuery()->alias($alias);
-        }
+        $this->alias = $alias;
+        $this->getQuery()->alias($alias);
 
         return $this;
     }
@@ -258,11 +282,20 @@ class Entity implements EntityInterface
     }
 
     /**
-     * @return Repository
+     * @return Repository|PDO
      */
     public function getRepository()
     {
         return $this->repository;
+    }
+
+    public function getRepositoryIfEmpty($repository)
+    {
+        if ($repository) {
+            return $repository;
+        }
+
+        return $this->getRepository();
     }
 
     /**
@@ -322,7 +355,7 @@ class Entity implements EntityInterface
      *
      * @return array
      */
-    public function tabelizeRecord(Record $record)
+    public function tabelizeRecord(DatabaseRecord $record)
     {
         $dataArray = $record->__toArray(null, 2, false);
         $extensionArray = [];
@@ -373,6 +406,7 @@ class Entity implements EntityInterface
         // fill array with tables and fields
         $values = [];
         foreach ($keys as $table => $fields) {
+            $values[$table] = [];
             foreach ($fields as $field) {
                 /**
                  * Add value if field exists in data array and repository has that field.
@@ -429,15 +463,26 @@ class Entity implements EntityInterface
      */
     public function oneOrFail(callable $callback = null)
     {
+        if (!$callback) {
+            $callback = function() {
+                throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+            };
+        }
+
+        return $this->oneOr($callback);
+    }
+
+    /**
+     * @return Record
+     * @throws Exception
+     */
+    public function oneOr(callable $callback)
+    {
         if ($result = $this->one()) {
             return $result;
         }
 
-        if ($callback) {
-            return $callback();
-        }
-
-        throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+        return $callback();
     }
 
     /**
@@ -489,6 +534,23 @@ class Entity implements EntityInterface
         $prepare = $repository->prepareQuery($insert);
 
         return $repository->executePrepared($prepare);
+    }
+
+    public function transformRecordToEntities(Record $record)
+    {
+        if (get_class($record) == $this->record) {
+            return $record;
+        }
+
+        $newRecord = $this->getRecord();
+        $newRecord->setData($record->data());
+        $newRecord->setOriginalFromData();
+
+        if ($record->isSaved()) {
+            $newRecord->setSaved();
+        }
+
+        return $newRecord;
     }
 
 }

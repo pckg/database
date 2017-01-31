@@ -56,6 +56,14 @@ interface Repository
      *
      * @return Record
      */
+    public function deleteTranslation(Record $record, Entity $entity, $language);
+
+    /**
+     * @param Record $record
+     * @param Entity $entity
+     *
+     * @return Record
+     */
     public function insert(Record $record, Entity $entity);
 
     /**

@@ -6,11 +6,9 @@ use DebugBar\DebugBar;
 use Exception;
 use Faker\Factory;
 use Pckg\Concept\AbstractChainOfReponsibility;
-use Pckg\Concept\Context;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\Faker as RepositoryFaker;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
-use Pckg\Framework\Config;
 use PDO;
 use PDOException;
 
@@ -22,72 +20,75 @@ use PDOException;
 class InitDatabase extends AbstractChainOfReponsibility
 {
 
-    protected $config;
-
-    protected $context;
-
-    /**
-     * @param Config $config
-     */
-    public function __construct(Config $config, Context $context)
-    {
-        $this->config = $config;
-        $this->context = $context;
-    }
-
     /**
      * @throws Exception
      */
     public function execute(callable $next)
     {
-        /**
-         * Skip database initialization if connections are not defined.
-         */
-        if (!$this->config->get('database')) {
-            return $next();
-        }
-
-        $configs = $this->config->get('database');
-        foreach ($configs as $name => $config) {
+        foreach (config('database', []) as $name => $config) {
+            /**
+             * Skip lazy initialize connections which will be estamblished on demand.
+             */
             if (isset($config['lazy'])) {
                 continue;
             }
 
-            $repository = null;
-            if ($config['driver'] == 'faker') {
-                $repository = new RepositoryFaker(Factory::create());
+            /**
+             * Create faker, middleware or pdo repository.
+             */
+            $repository = $this->getRepositoryByConfig($config, $name);
 
-            } elseif ($config['driver'] == 'middleware') {
-                $repository = resolve($config['middleware'])->execute(
-                    function() {
-                    }
-                );
-
-            } else {
-                $repository = $this->initPdoDatabase($config, $name);
-
-            }
-
-            if ($repository) {
-                $this->context->bindIfNot(Repository::class, $repository);
-                $this->context->bind(Repository::class . '.' . $name, $repository);
-            }
+            /**
+             * Bind repository to context so we can reuse it later.
+             */
+            context()->bindIfNot(Repository::class, $repository);
+            context()->bind(Repository::class . '.' . $name, $repository);
         }
 
         return $next();
     }
 
+    /**
+     * Instantiate connection for defined driver.
+     *
+     * @param $config
+     * @param $name
+     *
+     * @return RepositoryFaker|RepositoryPDO
+     * @throws Exception
+     */
+    protected function getRepositoryByConfig($config, $name)
+    {
+        if ($config['driver'] == 'faker') {
+            return new RepositoryFaker(Factory::create());
+
+        } elseif ($config['driver'] == 'middleware') {
+            return resolve($config['middleware'])->execute(
+                function() {
+                }
+            );
+
+        }
+
+        return $this->initPdoDatabase($config, $name);
+    }
+
+    public function createPdoConnectionByConfig($config)
+    {
+        return new PDO(
+            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
+            (isset($config['db'])
+                ? ";dbname=" . $config['db']
+                : ''),
+            $config['user'],
+            $config['pass']
+        );
+    }
+
     public function initPdoDatabase($config, $name)
     {
         try {
-            $pdo = new PDO(
-                "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
-                (isset($config['db'])
-                    ? ";dbname=" . $config['db']
-                    : ''),
-                $config['user'],
-                $config['pass']
-            );
+            $pdo = $this->createPdoConnectionByConfig($config);
         } catch (PDOException $e) {
             throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
 
@@ -95,8 +96,15 @@ class InitDatabase extends AbstractChainOfReponsibility
 
         $pdo->uniqueName = $config['host'] . "-" . $config['db'];
 
-        if ($this->context->exists(DebugBar::class)) {
-            $debugBar = $this->context->find(DebugBar::class);
+        $this->checkDebugBar($pdo, $name);
+
+        return new RepositoryPDO($pdo, $name);
+    }
+
+    protected function checkDebugBar($pdo, $name)
+    {
+        if (context()->exists(DebugBar::class)) {
+            $debugBar = context()->find(DebugBar::class);
             $tracablePdo = new TraceablePDO($pdo);
 
             if ($debugBar->hasCollector('pdo')) {
@@ -107,16 +115,8 @@ class InitDatabase extends AbstractChainOfReponsibility
 
             }
 
-            if (false && !isset($config['default'])) {
-                $pdoCollector->addConnection($tracablePdo, 'default');
-
-            } else {
-                $pdoCollector->addConnection($tracablePdo, $name);
-
-            }
+            $pdoCollector->addConnection($tracablePdo, $name);
         }
-
-        return new RepositoryPDO($pdo, $name);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace Pckg\Database\Query\Helper;
 
 use Pckg\Concept\Reflect;
+use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Relation;
@@ -24,7 +25,7 @@ trait QueryBuilder
 
     public function debug($debug = true)
     {
-        $this->query->debug($debug);
+        $this->getQuery()->debug($debug);
 
         return $this;
     }
@@ -52,6 +53,10 @@ trait QueryBuilder
 
         if (isset($this->table)) {
             $this->query->table($this->table);
+        }
+
+        if (isset($this->alias)) {
+            $this->query->alias($this->alias);
         }
 
         return $this;
@@ -105,8 +110,8 @@ trait QueryBuilder
      */
     public function where($key, $value = true, $operator = '=')
     {
-        if ((isset($this->table) || isset($this->alias)) && is_string($key) && !strpos($key, '.')
-            && strpos($key, '`') === false && strpos($key, ' ') === false
+        if ((isset($this->table) || isset($this->alias)) && is_string($key)
+            && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false
         ) {
             if ($this->alias) {
                 $key = '`' . $this->alias . '`.`' . $key . '`';
@@ -161,6 +166,10 @@ trait QueryBuilder
 
     public function orderBy($key)
     {
+        if ($this instanceof Entity) {
+            $key = $this->extendedKey($key);
+        }
+
         $this->getQuery()->orderBy($key);
 
         return $this;

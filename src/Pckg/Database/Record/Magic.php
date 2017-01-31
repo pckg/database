@@ -1,9 +1,13 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Helper\Convention;
+use Pckg\Database\Relation;
+use Pckg\Database\Relation\Helper\CallWithRelation;
 
 trait Magic
 {
+
+    use CallWithRelation;
 
     public function __set($key, $val)
     {
@@ -115,7 +119,9 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
+        message(static::class . '.' . $key, 'optimize');
         if (method_exists($entity, $key)) {
+            //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();
 
             $relation->fillRecord($this);
@@ -143,27 +149,38 @@ trait Magic
      */
     public function __call($method, $args)
     {
-        /**
-         * Return value from empty relation.
-         */
         $entity = $this->getEntity();
 
-        /**
-         * @T00D00 - with should be called only if method starts with 'join' or 'with'
-         */
-        $relation = $entity->callWith($method, $args, $entity, true);
+        if (strpos($method, 'create') === 0) {
+            $relation = $entity->{lcfirst(substr($method, '6'))}();
 
-        if (!$relation && prod()) {
-            return null;
+            /**
+             * This is currently working for has many relations.
+             * $conversation->createMessage();
+             */
+            return $relation->getRightEntity()->getRecord(
+                array_merge(
+                    [
+                        $relation->getForeignKey() => $this->id,
+                    ],
+                    $args[0] ?? []
+                )
+            );
+
+        } else {
+            message(static::class . '.' . $method . '()', 'optimize');
+
+            /**
+             * @T00D00 - with should be called only if method starts with 'join' or 'with'
+             */
+            $relation = $this->callWithRelation($method, $args, $entity);
+
+            if (!$relation) {
+                return null;
+            }
+
+            return $this->getRelation($relation->getFill());
         }
-
-        /**
-         * This is not needed here?
-         */
-        //$relation->fill($method);
-        $relation->fillRecord($this);
-
-        return $this->getRelation($relation->getFill());
     }
 
 }

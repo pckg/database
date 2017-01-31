@@ -31,6 +31,10 @@ class DeleteRecord
      */
     protected $repository;
 
+    protected $table = null;
+
+    protected $data = [];
+
     /**
      * @param Record     $record
      * @param Entity     $entity
@@ -41,6 +45,20 @@ class DeleteRecord
         $this->record = $record;
         $this->entity = $entity;
         $this->repository = $repository;
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
     }
 
     /**
@@ -55,7 +73,7 @@ class DeleteRecord
          * Lets hardcode them for now.
          */
         $extensions = ['i18n', 'p17n', ''];
-        $table = $this->entity->getTable();
+        $table = $this->table ?? $this->entity->getTable();
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 
         if (!$primaryKeys) {
@@ -75,8 +93,9 @@ class DeleteRecord
                 /**
                  * ... add primary key condition ...
                  */
+                $mergedData = array_merge($data[$table] ?? [], $this->data[$table] ?? []);
                 foreach ($primaryKeys as $key) {
-                    $query->where($key, $data[$table][$key]);
+                    $query->where($key, $mergedData[$key]);
                 }
 
                 /**

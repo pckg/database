@@ -111,4 +111,10 @@ class Custom implements Repository
     {
         // TODO: Implement getCache() method.
     }
+
+    public function deleteTranslation(Record $record, Entity $entity, $language)
+    {
+        // TODO: Implement deleteTranslation() method.
+    }
+
 }

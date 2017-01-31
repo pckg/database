@@ -1,6 +1,5 @@
 <?php
 
-use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Test\Record\UserGroup;
 
@@ -32,7 +31,7 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`slug` = ?) LIMIT 1',
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` AS `user_groups` WHERE (`user_groups`.`slug` = ?) LIMIT 1',
                     'binds' => ['test1'],
                 ],
                 [
@@ -48,7 +47,7 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                     'binds' => [5, 5, 'test2'],
                 ],
                 [
-                    'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
+                    'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` AS `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
                     'binds' => [5, 'en'],
                 ],
                 [
@@ -71,7 +70,7 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
         $this->assertEquals(
             [
                 [
-                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` WHERE (`user_groups`.`slug` = ?) LIMIT 1',
+                    'sql'   => 'SELECT `user_groups`.* FROM `user_groups` AS `user_groups` WHERE (`user_groups`.`slug` = ?) LIMIT 1',
                     'binds' => ['untranslated'],
                 ],
                 [
@@ -79,7 +78,7 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                     'binds' => [4, 4, 'untranslated'],
                 ],
                 [
-                    'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
+                    'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` AS `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
                     'binds' => [4, 'en'],
                 ],
                 [

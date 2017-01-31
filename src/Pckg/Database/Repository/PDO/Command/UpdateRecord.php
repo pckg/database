@@ -159,14 +159,13 @@ class UpdateRecord
             }
         }
 
-        $this->entity->setTable($table);
+        $entity = (new Entity($this->repository))->setTable($table);
         foreach ($primaryKeys as $primaryKey) {
-            $this->entity->where($primaryKey, $data[$primaryKey]);
+            $entity->where($primaryKey, $data[$primaryKey]);
         }
 
-        $this->entity->getQuery()->select(['`' . $table . '`.*']);
-
-        $record = $this->entity->one();
+        $entity->select(['`' . $table . '`.*']);
+        $record = $entity->one();
 
         if ($record) {
             return $this->update($table, $data);

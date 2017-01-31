@@ -45,4 +45,9 @@ class Faker extends AbstractRepository implements Repository
     {
         // TODO: Implement getCache() method.
     }
+
+    public function deleteTranslation(Record $record, Entity $entity, $language)
+    {
+        // TODO: Implement deleteTranslation() method.
+    }
 }

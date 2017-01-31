@@ -91,15 +91,6 @@ abstract class Relation implements RelationInterface
             );
             Reflect::method($this->getRightEntity(), $method, $args);
 
-        } elseif (method_exists($this, 'getMiddleEntity') && method_exists($this->getMiddleEntity(), $method)) {
-            /**
-             * Then middle entity.
-             */
-            message(
-                get_class($this) . '->__call(' . $method . ') on middle entity ' . get_class($this->getMiddleEntity())
-            );
-            Reflect::method($this->getMiddleEntity(), $method, $args);
-
         } else {
             message(
                 get_class($this) . '->__call(' . $method . ') with right entity ' . get_class($this->getRightEntity())
@@ -123,6 +114,11 @@ abstract class Relation implements RelationInterface
         $this->foreignKey = $foreignKey;
 
         return $this;
+    }
+
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
     }
 
     /**
@@ -219,9 +215,13 @@ abstract class Relation implements RelationInterface
         $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
         $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
 
-        return $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-               ($this->primaryKey && $this->foreignKey ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
-                                                         ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`' : '');
+        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
+                     ($this->primaryKey && $this->foreignKey
+                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
+                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
+                         : '');
+
+        return $condition;
     }
 
     public function getAdditionalCondition()
@@ -245,15 +245,11 @@ abstract class Relation implements RelationInterface
         }
 
         foreach ($this->getQuery()->getSelect() as $key => $select) {
-            /**
-             * Is this ok to be commented?
-             * Noup, it is not: non-working if commented ($entity->joinHasOneRelation(...addSelect()))
-             */
             $query->prependSelect([$key => $select]);
         }
 
         foreach ($this->getQuery()->getJoin() as $join) {
-            $query->join($join, null, null, $this->getQuery()->getBinds('join'));
+            $query->join($join, null, null, $this->getQuery()->getBinds('join', true));
         }
 
         if ($groupBy = $this->getQuery()->getGroupBy()) {

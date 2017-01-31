@@ -23,9 +23,11 @@ class Delete extends Query
      */
     function buildSQL()
     {
-        return "DELETE FROM `" . $this->table . "` " .
+        $sql = "DELETE FROM `" . $this->table . "` " .
                ($this->where ? $this->buildWhere() : '') .
                ($this->limit ? 'LIMIT ' . $this->limit : '');
+
+        return $sql;
     }
 
     function buildBinds()

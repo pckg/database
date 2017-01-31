@@ -15,6 +15,8 @@ trait RightEntity
      */
     protected $right;
 
+    protected $inheritRightRepository = true;
+
     /**
      * @return Entity
      * @throws \Exception
@@ -50,7 +52,9 @@ trait RightEntity
             return new Collection();
         }
 
-        $rightEntity->setRepository($this->getLeftRepository());
+        if ($this->inheritRightRepository) {
+            $rightEntity->setRepository($this->getLeftRepository());
+        }
 
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 
@@ -75,7 +79,9 @@ trait RightEntity
             return null;
         }
 
-        $rightEntity->setRepository($this->getLeftEntity()->getRepository());
+        if ($this->inheritRightRepository) {
+            $rightEntity->setRepository($this->getLeftEntity()->getRepository());
+        }
         $entity = $rightEntity->where($foreignKey, $primaryValue);
 
         /**
@@ -94,6 +100,13 @@ trait RightEntity
         }
 
         return (new GetRecords($entity))->executeOne();
+    }
+
+    public function inheritRightRepository($bool = true)
+    {
+        $this->inheritRightRepository = $bool;
+
+        return $this;
     }
 
 }

@@ -268,7 +268,7 @@ abstract class Query
         return $this;
     }
 
-    public function getBinds($parts = [])
+    public function getBinds($parts = [], $clear = false)
     {
         $binds = [];
 
@@ -285,8 +285,11 @@ abstract class Query
                 continue;
             }
 
-            foreach ($this->bind[$part] as $bind) {
+            foreach ($this->bind[$part] as $key => $bind) {
                 $binds[] = $bind;
+                if ($clear) {
+                    unset($this->bind[$part][$key]);
+                }
             }
         }
 

@@ -115,6 +115,20 @@ class PDO extends AbstractRepository implements Repository
         return $this;
     }
 
+    public function deleteTranslation(Record $record, Entity $entity, $language)
+    {
+        (new DeleteRecord($record, $entity, $this))->setTable($entity->getTable() . '_i18n')
+                                                   ->setData(
+                                                       [
+                                                           $entity->getTable() . '_i18n' => [
+                                                               'language_id' => $language,
+                                                           ],
+                                                       ]
+                                                   )->execute();
+
+        return $this;
+    }
+
     public function prepareSQL($sql, $binds = [])
     {
         $prepare = measure(

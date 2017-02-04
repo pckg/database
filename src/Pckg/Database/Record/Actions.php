@@ -73,7 +73,7 @@ trait Actions
         $update = $repository->update($this, $entity);
 
         $this->trigger(['updated', 'saved']);
-        
+
         return $update;
     }
 
@@ -184,6 +184,17 @@ trait Actions
         if (!$record) {
             $record = static::create($data, $entity);
         }
+
+        return $record;
+    }
+
+    public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
+    {
+        if (!$entity) {
+            $entity = (new static)->getEntity();
+        }
+
+        $record = $entity->whereArr($data)->oneOrFail($callable);
 
         return $record;
     }

@@ -298,14 +298,14 @@ trait Translatable
              * Fetch translations.
              */
             $record->withTranslations();
+        }
 
-            /**
-             * Translations were fetched by join.
-             */
-            foreach ($record->getRelation('_translations') as $translation) {
-                if ($translation->keyExists($key)) {
-                    return $translation->{$key};
-                }
+        /**
+         * Translations were fetched by join.
+         */
+        foreach ($record->getRelation('_translations') as $translation) {
+            if ($translation->keyExists($key)) {
+                return $translation->{$key};
             }
         }
     }

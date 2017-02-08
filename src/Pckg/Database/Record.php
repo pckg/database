@@ -27,6 +27,8 @@ class Record extends Object implements JsonSerializable
 
     protected $toArray = [];
 
+    protected $cache = [];
+
     /**
      * @var array
      * @T00D00
@@ -34,6 +36,15 @@ class Record extends Object implements JsonSerializable
     protected $bind = [
         'dt_added' => Carbon::class,
     ];
+
+    public function cache($key, callable $val)
+    {
+        if (!array_key_exists($key, $this->cache)) {
+            $this->cache[$key] = $val();
+        }
+
+        return $this->cache[$key];
+    }
 
     /**
      * @return array

@@ -19,6 +19,8 @@ abstract class Query
 
     protected $debug = false;
 
+    protected $diebug = false;
+
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
@@ -30,9 +32,21 @@ abstract class Query
         $this->where = clone $this->where;
     }
 
+    public function toRaw()
+    {
+        return new Raw('(' . $this->buildSQL() . ')', $this->buildBinds());
+    }
+
     public function debug($debug = true)
     {
         $this->debug = $debug;
+
+        return $this;
+    }
+
+    public function diebug($diebug = true)
+    {
+        $this->diebug = $diebug;
 
         return $this;
     }
@@ -256,7 +270,13 @@ abstract class Query
 
     public function bind($val, $part)
     {
-        $this->bind[$part][] = $val;
+        if (!is_array($val)) {
+            $val = [$val];
+        }
+
+        foreach ($val as $v) {
+            $this->bind[$part][] = $v;
+        }
 
         return $this;
     }

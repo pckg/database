@@ -30,6 +30,13 @@ trait QueryBuilder
         return $this;
     }
 
+    public function diebug($debug = true)
+    {
+        $this->getQuery()->diebug($debug);
+
+        return $this;
+    }
+
     /**
      * @return Query|Select
      */
@@ -65,6 +72,11 @@ trait QueryBuilder
     public function resetRelations()
     {
         $this->with = [];
+    }
+
+    public function toRaw()
+    {
+        return $this->query->toRaw();
     }
 
     public function setQuery($query)

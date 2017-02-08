@@ -102,7 +102,9 @@ class Select extends Query
 
         $sql = implode(' ', $parts);
 
-        if ($this->debug) {
+        if ($this->diebug) {
+            dd($sql, $this->bind);
+        } elseif ($this->debug) {
             d($sql, $this->bind);
         }
 
@@ -175,13 +177,18 @@ class Select extends Query
         foreach ($fields as $key => $field) {
             if ($field instanceof Entity) {
                 $query = $field->getQuery();
-                $sql = '(' . $query->buildSQL() . ')';
-                $bind = $query->buildBinds();
-                $this->bind($bind, 'select');
+                $this->bind($query->buildBinds(), 'select');
                 if (is_numeric($key)) {
-                    $this->select[] = $sql;
+                    $this->select[] = '(' . $query->buildSQL() . ')';
                 } else {
-                    $this->select[$key] = $sql;
+                    $this->select[$key] = '(' . $query->buildSQL() . ')';
+                }
+            } elseif ($field instanceof Raw) {
+                $this->bind($field->buildBinds(), 'select');
+                if (is_numeric($key)) {
+                    $this->select[] = $field->buildSQL();
+                } else {
+                    $this->select[$key] = $field->buildSQL();
                 }
             } elseif (is_numeric($key)) {
                 $this->select[] = $field;

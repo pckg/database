@@ -458,7 +458,7 @@ class Entity
     }
 
     /**
-     * @return Record
+     * @return Record|mixed
      * @throws Exception
      */
     public function oneOrFail(callable $callback = null)

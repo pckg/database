@@ -174,7 +174,7 @@ abstract class Query
                      * This is probable not needed.
                      */
                     // $this->where->push($this->makeKey($key));
-                    $this->{$part}->push('0 = 1');
+                    $this->{$part}->push($operator == 'IN' ? '0 = 1' : '1 = 1');
                 } else {
                     $this->{$part}->push(
                         $this->makeKey($key) . ' ' . $operator . '(' . str_repeat('?, ', count($value) - 1) . '?)'

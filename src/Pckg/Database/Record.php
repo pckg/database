@@ -27,6 +27,8 @@ class Record extends Object implements JsonSerializable
 
     protected $toArray = [];
 
+    protected $toJson = [];
+
     protected $cache = [];
 
     /**
@@ -117,16 +119,29 @@ class Record extends Object implements JsonSerializable
 
     public function getToArrayValues()
     {
+        return $this->getKeyValue($this->toArray);
+    }
+
+    public function getToJsonValues()
+    {
+        return $this->getKeyValue($this->toJson);
+    }
+
+    protected function getKeyValue($source)
+    {
         $values = [];
-        foreach ($this->toArray as $key) {
-            if ($this->hasKey($key)) {
-                $values[$key] = $this->{$key};
+        foreach ($source as $i => $j) {
+            $key = is_int($i) ? $j : $i;
+            $getter = $j;
 
-            } elseif ($this->hasRelation($key)) {
-                $values[$key] = $this->getRelationIfSet($key);
+            if ($this->hasKey($getter)) {
+                $values[$key] = $this->{$getter};
 
-            } elseif (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
-                $values[$key] = $this->{'get' . Convention::toPascal($key) . 'Attribute'}();
+            } elseif ($this->hasRelation($getter)) {
+                $values[$key] = $this->getRelationIfSet($getter);
+
+            } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
+                $values[$key] = $this->{'get' . Convention::toPascal($getter) . 'Attribute'}();
 
             }
         }

@@ -188,6 +188,13 @@ trait Actions
         return $record;
     }
 
+    /**
+     * @param array         $data
+     * @param Entity|null   $entity
+     * @param callable|null $callable
+     *
+     * @return mixed|Record
+     */
     public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
     {
         if (!$entity) {

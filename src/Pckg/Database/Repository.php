@@ -1,9 +1,6 @@
-<?php
-
-namespace Pckg\Database;
+<?php namespace Pckg\Database;
 
 use Exception;
-use Pckg\Collection;
 use PDO;
 
 /**

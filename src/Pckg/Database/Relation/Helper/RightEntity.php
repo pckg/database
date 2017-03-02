@@ -1,7 +1,7 @@
 <?php namespace Pckg\Database\Relation\Helper;
 
-use Pckg\Collection;
 use Pckg\Concept\Reflect;
+use Pckg\Database\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Parenthesis;

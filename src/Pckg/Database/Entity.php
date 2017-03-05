@@ -442,6 +442,16 @@ class Entity
     }
 
     /**
+     * @return Record|mixed
+     */
+    public function oneAnd($callback)
+    {
+        $one = $this->one();
+
+        return $callback($one);
+    }
+
+    /**
      * @return Collection
      */
     public function all()

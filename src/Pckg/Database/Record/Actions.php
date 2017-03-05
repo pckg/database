@@ -48,10 +48,8 @@ trait Actions
     {
         if ($this->isSaved()) {
             $this->update($entity, $repository);
-
         } else {
             $this->insert($entity, $repository);
-
         }
 
         return $this;
@@ -120,8 +118,12 @@ trait Actions
     public function refetch()
     {
         $entity = $this->getEntity();
-        foreach ($this->data as $key => $val) {
-            $entity->where($key, $val);
+        if (!$this->id) {
+            $entity->where('id', $this->id);
+        } else {
+            foreach ($this->data as $key => $val) {
+                $entity->where($key, $val);
+            }
         }
         $record = $entity->one();
 

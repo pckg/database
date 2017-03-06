@@ -146,7 +146,7 @@ trait Permissionable
     private function addPermissionableCondition(HasMany $relation)
     {
         $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
-
+        
         $relation->where(
             '`' . $permissionTable . '`.`' . $this->permissionablePermissionField . '`',
             $this->permissionableAuth->groupId()

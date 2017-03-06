@@ -45,7 +45,6 @@ trait Permissionable
      */
     public function initPermissionableExtension()
     {
-
     }
 
     /**
@@ -115,10 +114,8 @@ trait Permissionable
             $this->addPermissionableConditionIfNot($relation);
 
             $relation->reflect($callable, $this);
-
         } else {
             $this->addPermissionableCondition($relation);
-
         }
 
         return $relation;
@@ -161,6 +158,19 @@ trait Permissionable
         return $this->with($this->permissions($callable));
     }
 
+    public function withAllPermissions()
+    {
+        $permissionTable = $this->getPermissionableTable();
+        $repository = $this->getRepository();
+
+        $relation = $this->hasMany((new Entity($repository))->setTable($permissionTable))
+                         ->foreignKey('id')
+                         ->fill('allPermissions')
+                         ->addSelect(['`' . $permissionTable . '`.*']);
+
+        return $this->with($relation);
+    }
+
     public function joinPermissions(callable $callable = null)
     {
         return $this->join($this->permissions($callable));
@@ -192,6 +202,15 @@ trait Permissionable
                 }
             )
         )->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
+    }
+
+    public function usePermissionableTable()
+    {
+        if (strpos($this->table, $this->getPermissionableTableSuffix()) === false) {
+            $this->table = $this->getPermissionableTable();
+        }
+
+        return $this;
     }
 
 }

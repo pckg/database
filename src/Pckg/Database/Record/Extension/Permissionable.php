@@ -1,5 +1,7 @@
 <?php namespace Pckg\Database\Record\Extension;
 
+use Pckg\Database\Record;
+
 trait Permissionable
 {
 
@@ -10,6 +12,17 @@ trait Permissionable
                 return $permission->action == $action;
             }
         );
+    }
+
+    public function grantPermissionTo($action, $userGroupId = null)
+    {
+        $entity = $this->getEntity()->usePermissionableTable();
+
+        Record::create([
+                           'id'            => $this->id,
+                           'user_group_id' => $userGroupId,
+                           'action'        => $action,
+                       ], $entity);
     }
 
 }

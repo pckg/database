@@ -1,6 +1,6 @@
 {
   "name": "pckg/database",
-  "description": "PHP database implementation",
+  "description": "Just another php / orm / pdo implementation for simple and advanced data management",
   "homepage": "https://github.com/pckg/database",
   "license": "MIT",
   "authors": [

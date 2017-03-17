@@ -55,6 +55,10 @@ abstract class Query
     {
         $query = new static($sql);
 
+        if (!is_array($binds)) {
+            $binds = [$binds];
+        }
+
         foreach ($binds as $bind) {
             $query->bind($bind, $part);
         }
@@ -140,7 +144,9 @@ abstract class Query
             $sql = $key->buildSQL();
             $this->{$part}->push($sql);
             if ($binds = $key->buildBinds()) {
-                //$this->bind($binds, 'where');
+                if (!is_array($binds)) {
+                    $binds = [$binds];
+                }
                 foreach ($binds as $bind) {
                     $this->bind($bind, $part);
                 }

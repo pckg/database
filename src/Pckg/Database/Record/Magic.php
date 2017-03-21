@@ -124,6 +124,10 @@ trait Magic
             //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();
 
+            if (!$relation) {
+                return null;
+            }
+
             $relation->fillRecord($this);
 
             return $this->getRelation($relation->getFill());

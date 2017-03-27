@@ -42,7 +42,7 @@ trait Actions
     }
 
     /**
-     * @return Record
+     * @return Record|mixed
      */
     public function save(Entity $entity = null, Repository $repository = null)
     {

@@ -120,7 +120,10 @@ class HasAndBelongsTo extends HasMany
         $middleCollection->each(
             function($middleRecord) use ($record, $keyedRightCollection) {
                 if ($keyedRightCollection->hasKey($middleRecord->{$this->rightForeignKey})) {
-                    $rightRecord = $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
+                    /**
+                     * We need to clone record, otherwise we override pivot relation each time.
+                     */
+                    $rightRecord = clone $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
                     $rightRecord->setRelation('pivot', $middleRecord);
                     $record->getRelation($this->fill)->push($rightRecord);
                 }

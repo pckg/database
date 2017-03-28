@@ -8,10 +8,15 @@ trait PrevAndNext
         $entity = $this->getEntity();
 
         return $this->cache('prev', function() use ($entity) {
-            return (new $entity())->published()
-                                  ->where('dt_published', $this->dt_published, '<')
-                                  ->orderBy('dt_published DESC, ' . $entity->getTable() . '.id DESC')
-                                  ->one();
+            $entity = (new $entity())->published()
+                                     ->where('dt_published', $this->dt_published, '<')
+                                     ->orderBy('dt_published DESC, ' . $entity->getTable() . '.id DESC');
+
+            if ($entity->hasField('private')) {
+                $entity->where('private', null);
+            }
+
+            return $entity->one();
         });
     }
 
@@ -20,10 +25,15 @@ trait PrevAndNext
         $entity = $this->getEntity();
 
         return $this->cache('next', function() use ($entity) {
-            return (new $entity())->published()
-                                  ->where('dt_published', $this->dt_published, '>')
-                                  ->orderBy('dt_published ASC, ' . $entity->getTable() . '.id ASC')
-                                  ->one();
+            $entity = (new $entity())->published()
+                                     ->where('dt_published', $this->dt_published, '>')
+                                     ->orderBy('dt_published ASC, ' . $entity->getTable() . '.id ASC');
+
+            if ($entity->hasField('private')) {
+                $entity->where('private', null);
+            }
+
+            return $entity->one();
         });
     }
 

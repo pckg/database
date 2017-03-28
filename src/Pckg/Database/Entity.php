@@ -166,7 +166,6 @@ class Entity
 
             if ($class == Entity::class) {
                 $this->record = Record::class;
-
             } else {
                 if (strpos('\\Entity\\', $class)) {
                     $class = explode('\\', str_replace('\\Entity\\', '\\Record\\', $class));
@@ -321,10 +320,8 @@ class Entity
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
                 $this->{$method}();
-
             } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
                 Reflect::method($this, $method);
-
             }
         }
 
@@ -561,6 +558,11 @@ class Entity
         }
 
         return $newRecord;
+    }
+
+    public function hasField($field)
+    {
+        return $this->getRepository()->getCache()->tableHasField($this->table, $field);
     }
 
 }

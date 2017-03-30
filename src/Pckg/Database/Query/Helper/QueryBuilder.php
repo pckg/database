@@ -104,10 +104,8 @@ trait QueryBuilder
             }
 
             $table->mergeToQuery($this->getQuery());
-
         } else {
             $this->getQuery()->join($table, $on, $where);
-
         }
 
         return $this;
@@ -133,6 +131,13 @@ trait QueryBuilder
         }
 
         $this->getQuery()->where($key, $value, $operator);
+
+        return $this;
+    }
+
+    public function whereRaw($raw, $bind = [])
+    {
+        $this->getQuery()->where(Query\Raw::raw($raw), $bind);
 
         return $this;
     }

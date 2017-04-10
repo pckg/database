@@ -164,11 +164,12 @@ abstract class Query
 
         if (is_object($value) && $value instanceof Raw && $operator == '=') {
             $operator = 'IN';
+        } else if (is_object($value) && $value instanceof Entity) {
+            $operator = 'IN';
         }
 
         if (is_callable($key)) {
             $key($this->{$part});
-
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_string($value)) {
                 $value = [$value];
@@ -189,13 +190,11 @@ abstract class Query
                         $this->bind($val, $part);
                     }
                 }
-
             } else if ($value instanceof Query) {
                 $this->{$part}->push($this->makeKey($key) . ' ' . $operator . '(' . $value->buildSQL() . ')');
                 if ($binds = $value->buildBinds()) {
                     $this->bind($binds, $part);
                 }
-
             } else if ($value instanceof Entity) {
                 $this->{$part}->push(
                     $this->makeKey($key) . ' ' . $operator . '(' . $value->getQuery()->buildSQL() . ')'
@@ -204,7 +203,6 @@ abstract class Query
                     $this->bind($binds, $part);
                 }
             }
-
         } elseif ($operator == 'IS' || $operator == 'IS NOT') {
             $this->{$part}->push(
                 $this->makeKey(

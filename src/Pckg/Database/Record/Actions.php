@@ -143,6 +143,15 @@ trait Actions
             unset($data['id']);
         }
 
+        foreach ($data as $key => &$val) {
+            if ($key && array_key_exists($key . '_x', $data) && array_key_exists($key . '_y', $data)) {
+                $val = [
+                    $data[$key . '_x'],
+                    $data[$key . '_y']
+                ];
+            }
+        }
+
         $record = new static($data);
         $record->save($entity);
 

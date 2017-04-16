@@ -29,12 +29,6 @@ class HasMany extends Relation
 
     public function fillRecord(Record $record)
     {
-        message(
-            get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
-            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
-        );
-        message('Record, filling ' . $this->fill);
-
         /**
          * Get records from right entity.
          */
@@ -43,7 +37,6 @@ class HasMany extends Relation
             $this->foreignKey,
             $record->{$this->primaryKey}
         );
-        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
         /**
          * Set relation.
@@ -58,15 +51,9 @@ class HasMany extends Relation
 
     public function fillCollection(CollectionInterface $collection)
     {
-        message(
-            'Collection of ' . get_class($collection->first()) . ' (' . get_class($this->getLeftEntity()) . ')' .
-            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity())
-        );
-
         /**
          * Prepare relations on left records.
          */
-        message('Left collection has ' . $collection->count() . ' record(s), filling ' . $this->fill);
         $collection->each(
             function(Record $record) {
                 $record->setRelation($this->fill, new Collection());
@@ -81,7 +68,6 @@ class HasMany extends Relation
             $this->foreignKey,
             $collection->map($this->primaryKey)->unique()
         );
-        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
         /**
          * Key collection for simpler processing.

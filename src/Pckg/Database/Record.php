@@ -6,6 +6,9 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record\Actions;
 use Pckg\Database\Record\Events;
+use Pckg\Database\Record\Extension\Deletable;
+use Pckg\Database\Record\Extension\Permissionable;
+use Pckg\Database\Record\Extension\Translatable;
 use Pckg\Database\Record\Magic;
 use Pckg\Database\Record\Relations;
 use Pckg\Database\Record\Transformations;
@@ -20,6 +23,8 @@ class Record extends Object implements JsonSerializable
 
     use Magic, Actions, Relations, Transformations, Events;
 
+    use Deletable, Translatable, Permissionable;
+
     /**
      * @var
      */
@@ -30,6 +35,8 @@ class Record extends Object implements JsonSerializable
     protected $toJson = [];
 
     protected $cache = [];
+
+    protected $ready = false;
 
     /**
      * @var array
@@ -65,10 +72,15 @@ class Record extends Object implements JsonSerializable
      */
     public function __construct($data = [], Entity $entity = null)
     {
-        $this->data = $data ?? [];
+        if (!$this->data) {
+            $this->data = $data ?? [];
+        }
+
         if ($entity) {
             $this->entity = $entity;
         }
+
+        $this->ready = true;
     }
 
     public function hasKey($key)
@@ -136,13 +148,10 @@ class Record extends Object implements JsonSerializable
 
             if ($this->hasKey($getter)) {
                 $values[$key] = $this->{$getter};
-
             } elseif ($this->hasRelation($getter)) {
                 $values[$key] = $this->getRelationIfSet($getter);
-
             } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
                 $values[$key] = $this->{'get' . Convention::toPascal($getter) . 'Attribute'}();
-
             }
         }
 
@@ -238,10 +247,8 @@ class Record extends Object implements JsonSerializable
     {
         if (!$key) {
             return $this->data;
-
         } else if ($this->hasKey($key)) {
             return $this->data[$key] ?? null;
-
         }
 
         return null;

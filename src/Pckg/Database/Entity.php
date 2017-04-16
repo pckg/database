@@ -3,6 +3,10 @@
 use Exception;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Command\InitDatabase;
+use Pckg\Database\Entity\Extension\Deletable;
+use Pckg\Database\Entity\Extension\Paginatable;
+use Pckg\Database\Entity\Extension\Permissionable;
+use Pckg\Database\Entity\Extension\Translatable;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Helper\QueryBuilder;
 use Pckg\Database\Query\Helper\With;
@@ -19,6 +23,7 @@ class Entity
 {
 
     use RelationMethods, QueryBuilder, With;
+    use Permissionable, Deletable, Translatable, Paginatable;
 
     /**
      * @var string
@@ -52,13 +57,6 @@ class Entity
      * @var bool
      */
     protected $useCache;
-
-    public function isTranslatable()
-    {
-        return isset($this->translatableTableSuffix)
-            ? $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix)
-            : false;
-    }
 
     /**
      * @param Repository $repository

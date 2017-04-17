@@ -78,13 +78,6 @@ class HasAndBelongsTo extends HasMany
 
     public function fillRecord(Record $record)
     {
-        message(
-            get_class($record) . ' (' . get_class($this->getLeftEntity()) . ')' .
-            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity()) .
-            ' Over ' . get_class($this->getMiddleEntity())
-        );
-        message('Record, filling ' . $this->fill . ' and pivot');
-
         /**
          * Get records from middle entity.
          */
@@ -102,7 +95,6 @@ class HasAndBelongsTo extends HasMany
         /**
          * Break with execution if collection is empty.
          */
-        message('Middle collection has ' . $middleCollection->count() . ' record(s)');
         if (!$middleCollection->count()) {
             return;
         }
@@ -115,7 +107,6 @@ class HasAndBelongsTo extends HasMany
             $this->rightPrimaryKey,
             $middleCollection->map($this->rightForeignKey)->unique()
         );
-        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
         /**
          * Key collections for simpler processing.
@@ -146,16 +137,9 @@ class HasAndBelongsTo extends HasMany
 
     public function fillCollection(CollectionInterface $collection)
     {
-        message(
-            'Collection of ' . get_class($collection->first()) . ' (' . get_class($this->getLeftEntity()) . ')' .
-            ' ' . get_class($this) . ' ' . get_class($this->getRightEntity()) .
-            ' Over ' . get_class($this->getMiddleEntity())
-        );
-
         /**
          * Prepare relations on left records.
          */
-        message('Left collection has ' . $collection->count() . ' record(s), filling ' . $this->fill);
         $collection->each(
             function(Record $record) {
                 $record->setRelation($this->fill, new Collection());
@@ -174,7 +158,6 @@ class HasAndBelongsTo extends HasMany
         /**
          * Break with execution if collection is empty.
          */
-        message('Middle collection has ' . $middleCollection->count() . ' record(s)');
         if (!$middleCollection->count()) {
             $this->fillCollectionWithRelations($collection);
 
@@ -189,7 +172,6 @@ class HasAndBelongsTo extends HasMany
             $this->rightPrimaryKey,
             $middleCollection->map($this->rightForeignKey)->unique()
         );
-        message('Right collection has ' . $rightCollection->count() . ' record(s)');
 
         /**
          * Key collections for simpler processing.

@@ -11,7 +11,10 @@ trait Magic
 
     public function __set($key, $val)
     {
-        if (array_key_exists($key, $this->data)) {
+        if (!$this->ready) {
+            $this->data[$key] = $val;
+
+        } else if (array_key_exists($key, $this->data)) {
             /**
              * Fill value to existing data.
              */
@@ -119,6 +122,9 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
+        if (static::class . '.' . $key == 'Pckg\Dynamic\Record\Field.settings') {
+            //db();dd();
+        }
         message(static::class . '.' . $key, 'optimize');
         if (method_exists($entity, $key)) {
             //$relation = $this->callWithRelation($key, [], $entity);

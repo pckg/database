@@ -80,22 +80,15 @@ abstract class Relation implements RelationInterface
              * First overload Query.
              * @T00D00 - why is this needed?
              */
-            message(get_class($this) . '->__call(' . $method . ') on query ' . get_class($this->getQuery()));
             Reflect::method($this->getQuery(), $method, $args);
 
         } elseif (method_exists($this->getRightEntity(), $method)) {
             /**
              * Then right entity.
              */
-            message(
-                get_class($this) . '->__call(' . $method . ') on right entity ' . get_class($this->getRightEntity())
-            );
             Reflect::method($this->getRightEntity(), $method, $args);
 
         } else {
-            message(
-                get_class($this) . '->__call(' . $method . ') with right entity ' . get_class($this->getRightEntity())
-            );
             $this->callWith($method, $args, $this->getRightEntity());
 
         }

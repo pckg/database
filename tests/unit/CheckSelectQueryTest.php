@@ -1,9 +1,9 @@
 <?php
 
-use Pckg\Database\Entity;
-use Pckg\Database\Query;
+use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Relation\MorphedBy;
 use Test\Entity\Categories;
 use Test\Entity\Languages;
 use Test\Entity\UserGroups;
@@ -325,6 +325,41 @@ class CheckSelectQueryTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($language->users->first()->categories->first()->users->first()->language);
         $this->assertNotEmpty($language->users->first()->settings->first());
         $this->assertCount(10, $this->tester->getListenedQueries());
+    }
+
+    public function testDeepJoinRelation()
+    {
+        $this->tester->listenToQueries();
+
+        $languages = (new Languages())
+            ->joinUsers(function(HasMany $users) {
+                $users->leftJoin();
+                $users->joinUsersCategories(function(HasMany $usersCategories) {
+                    $usersCategories->leftJoin();
+                    $usersCategories->joinCategory(function(BelongsTo $category) {
+                        $category->leftJoin();
+                        $category->joinSettings(function(MorphedBy $settings) {
+                            $settings->leftJoin();
+                        });
+                    });
+                });
+            })->all();
+
+        $queries = $this->tester->getListenedQueries();
+
+        $this->assertEquals([
+                                [
+                                    'sql'   => 'SELECT `settings_morphs`.*, `settings`.*, `languages`.* FROM `languages` AS `languages` ' .
+                                               'LEFT JOIN `users` AS `users` ON `languages`.`slug` = `users`.`language_id` ' .
+                                               'LEFT JOIN `users_categories` AS `users_categories` ON `users`.`id` = `users_categories`.`user_id` ' .
+                                               'LEFT JOIN `categories` AS `categories` ON `users_categories`.`category_id` = `categories`.`id` ' .
+                                               'LEFT JOIN `settings_morphs` AS `settings_morphs` ON `categories`.`id` = `settings_morphs`.`poly_id` AND `settings_morphs`.`morph_id` = ? ' .
+                                               'LEFT JOIN `settings` AS `settings` ON `settings`.`id` = `settings_morphs`.`setting_id`',
+                                    'binds' => [
+                                        Categories::class,
+                                    ],
+                                ],
+                            ], $queries);
     }
 
     // executed before each test

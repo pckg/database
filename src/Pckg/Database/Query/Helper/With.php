@@ -68,7 +68,7 @@ trait With
                     }
                 }
                 /**
-                 * We'll call $entity->with($relation), and return Relation;
+                 * We'll call $entity->with($relation) or $entity->join($relation), and return Relation;
                  */
                 $return = $object->{$prefix}($relation);
 

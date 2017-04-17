@@ -29,6 +29,11 @@ class Users extends Entity
                     ->rightForeignKey('category_id');
     }
 
+    public function usersCategories() {
+        return $this->hasMany(UsersCategories::class)
+            ->foreignKey('user_id');
+    }
+
     public function settings()
     {
         return $this->morphedBy(Settings::class)

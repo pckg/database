@@ -13,4 +13,11 @@ class Categories extends Entity
                     ->rightForeignKey('user_id');
     }
 
+    public function settings()
+    {
+        return $this->morphedBy(Settings::class)
+                    ->over('settings_morphs')
+                    ->rightForeignKey('setting_id');
+    }
+
 }

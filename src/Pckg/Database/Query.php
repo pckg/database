@@ -217,7 +217,7 @@ abstract class Query
             $this->bind($value, $part);
         } else {
             $this->{$part}->push(
-                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')
+                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . ($operator ? $operator . ' ?' : '')) : ' IS NULL')
             );
             if ($value && $value !== true) {
                 $this->bind($value, $part);

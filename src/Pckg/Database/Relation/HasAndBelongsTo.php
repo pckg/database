@@ -3,12 +3,9 @@
 namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
-use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
-use Pckg\Database\Entity;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Record;
-use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\MiddleEntity;
 
 /**
@@ -21,49 +18,60 @@ class HasAndBelongsTo extends HasMany
 
     use MiddleEntity;
 
+    public function getMiddleKeyCondition()
+    {
+        $middleQuery = $this->getMiddleEntity()->getQuery();
+
+        return '`' . $this->getLeftEntity()->getTable() . '`.`id` = ' .
+               '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
+    }
+
+    public function getMiddleKeyBinds()
+    {
+        return [];
+    }
+
     public function mergeToQuery(Select $query)
     {
         /**
          * Join middle entity
          */
         $middleQuery = $this->getMiddleEntity()->getQuery();
-        $this->getQuery()->join(
-            $this->join . ' ' . $middleQuery->getTable(),
-            $this->getLeftEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getLeftForeignKey()
+
+        $middleAlias = $middleQuery->getAlias() ?? $middleQuery->getTable();
+        $query->join(
+            $this->join . ' `' . $middleQuery->getTable() . '` AS `' . $middleAlias . '`',
+            $this->getMiddleKeyCondition(),
+            null,
+            $this->getMiddleKeyBinds()
         );
 
         /**
          * Join right entity
          */
         $rightQuery = $this->getRightEntity()->getQuery();
-        $this->getQuery()->join(
-            $this->join . ' ' . $rightQuery->getTable(),
-            $this->getRightEntity()->getTable() . '.id = ' . $middleQuery->getTable() . '.' . $this->getRightForeignKey(
-            )
+        $rightAlias = $rightQuery->getAlias() ?? $rightQuery->getTable();
+        $query->join(
+            $this->join . ' `' . $rightQuery->getTable() . '` AS `' . $rightAlias . '`',
+            '`' . $this->getRightEntity()->getTable() . '`.`id` = `' . $middleQuery->getTable() . '`.`' .
+            $this->getRightForeignKey() . '`'
         );
 
         /**
          * Add select fields
          */
-        /*foreach ($this->getSelect() as $key => $val) {
-            if (is_numeric($key)) {
-                $this->getQuery()->prependSelect([$val]);
-            } else {
-                $this->getQuery()->addSelect([$key => $val]);
-            }
-        }*/
         foreach ($this->getMiddleEntity()->getQuery()->getSelect() as $key => $val) {
             if (is_numeric($key)) {
-                $this->getQuery()->prependSelect([$val]);
+                $query->prependSelect([$val]);
             } else {
-                $this->getQuery()->addSelect([$key => $val]);
+                $query->addSelect([$key => $val]);
             }
         }
         foreach ($this->getRightEntity()->getQuery()->getSelect() as $key => $val) {
             if (is_numeric($key)) {
-                $this->getQuery()->prependSelect([$val]);
+                $query->prependSelect([$val]);
             } else {
-                $this->getQuery()->addSelect([$key => $val]);
+                $query->addSelect([$key => $val]);
             }
         }
     }

@@ -17,6 +17,7 @@ trait With
         'withRequired',
         'with',
         'join',
+        'leftJoin',
         'where',
     ];
 
@@ -57,20 +58,27 @@ trait With
                      *
                      * @T00D00
                      */
-                    if ($prefix == 'join') {
+                    if ($prefix == 'join' || $prefix == 'leftJoin') {
                         $rightEntity = $relation->getRightEntity();
                         $oldEntityQuery = $rightEntity->getQuery();
                         $rightEntity->setQuery($relation->getQuery());
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                        if ($prefix == 'leftJoin') {
+                            $relation->leftJoin();
+                        }
                         $rightEntity->setQuery($oldEntityQuery);
                     } else {
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                    }
+                } else {
+                    if ($prefix == 'leftJoin') {
+                        $relation->leftJoin();
                     }
                 }
                 /**
                  * We'll call $entity->with($relation) or $entity->join($relation), and return Relation;
                  */
-                $return = $object->{$prefix}($relation);
+                $return = $object->{$prefix == 'leftJoin' ? 'join' : $prefix}($relation);
 
                 /**
                  * Then we return relation.
@@ -124,10 +132,8 @@ trait With
 
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
-
         } else {
             $this->with[] = $this->{$relation}();
-
         }
 
         return $this;

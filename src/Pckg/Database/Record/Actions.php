@@ -223,6 +223,21 @@ trait Actions
         return $record;
     }
 
+    public static function getOrNew(array $data, Entity $entity = null)
+    {
+        if (!$entity) {
+            $entity = (new static)->getEntity();
+        }
+
+        $record = $entity->whereArr($data)->one();
+
+        if (!$record) {
+            $record = new static($data, $entity);
+        }
+
+        return $record;
+    }
+
     /**
      * @param array         $data
      * @param Entity|null   $entity

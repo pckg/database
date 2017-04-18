@@ -122,9 +122,6 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
-        if (static::class . '.' . $key == 'Pckg\Dynamic\Record\Field.settings') {
-            //db();dd();
-        }
         message(static::class . '.' . $key, 'optimize');
         if (method_exists($entity, $key)) {
             //$relation = $this->callWithRelation($key, [], $entity);

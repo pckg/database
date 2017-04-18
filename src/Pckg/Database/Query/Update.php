@@ -28,6 +28,12 @@ class Update extends Query
                $this->buildWhere() .
                ($this->limit ? ' LIMIT ' . $this->limit : '');
 
+        if ($this->diebug) {
+            dd($sql, $this->bind);
+        } elseif ($this->debug) {
+            d($sql, $this->bind);
+        }
+
         return $sql;
     }
 

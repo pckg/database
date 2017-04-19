@@ -248,8 +248,9 @@ class PDO extends AbstractRepository implements Repository
         return measure(
             'Fetching prepared',
             function() use ($prepare) {
-                $prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                $records = $prepare->fetchAll();
+                $records = $this->transformRecordsToObjects($prepare->fetchAll());
+                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
+                //$records = $prepare->fetchAll();
 
                 return $records;
             }
@@ -261,12 +262,25 @@ class PDO extends AbstractRepository implements Repository
         return measure(
             'Fetching prepared',
             function() use ($prepare) {
-                $prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                $records = $prepare->fetchAll();
+                $records = $this->transformRecordsToObjects($prepare->fetchAll());
+                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
+                //$records = $prepare->fetchAll();
 
                 return $records ? $records[0] : null;
             }
         );
+    }
+
+    public function transformRecordsToObjects($records)
+    {
+        if ($this->recordClass) {
+            $recordClass = $this->recordClass;
+            foreach ($records as &$record) {
+                $record = (new $recordClass($record))/*->setData($record)*/;
+            }
+        }
+
+        return $records;
     }
 
 }

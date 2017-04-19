@@ -73,7 +73,7 @@ class Record extends Object implements JsonSerializable
     public function __construct($data = [], Entity $entity = null)
     {
         if (!$this->data) {
-            $this->data = $data ?? [];
+            $this->data = is_array($data) && $data ? $data : [];
         }
 
         if ($entity) {

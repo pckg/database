@@ -234,6 +234,13 @@ trait QueryBuilder
         return $this;
     }
 
+    public function selectCount()
+    {
+        $this->getQuery()->select(['count' => 'COUNT(*)']);
+
+        return $this;
+    }
+
     public function getSelect()
     {
         return $this->getQuery()->getSelect();

@@ -164,7 +164,7 @@ abstract class Query
 
         if (is_object($value) && $value instanceof Raw && $operator == '=') {
             $operator = 'IN';
-        } else if (is_object($value) && $value instanceof Entity) {
+        } else if (is_object($value) && $value instanceof Entity && !in_array($operator, ['IN', 'NOT IN'])) {
             $operator = 'IN';
         }
 

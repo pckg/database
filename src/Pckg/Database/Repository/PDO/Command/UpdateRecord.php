@@ -77,11 +77,9 @@ class UpdateRecord
 
             if ($table == $this->entity->getTable()) {
                 $this->update($table, $update);
-
             } else {
                 // we don't know if children exists
                 $this->updateOrInsert($table, $update);
-
             }
         }
         $this->entity->setTable($originalTable);
@@ -147,12 +145,17 @@ class UpdateRecord
     {
         $primaryKeys = $this->repository->getCache()->getTablePrimaryKeys($table);
 
+        if (strpos($table, '_i18n')) {
+            $primaryKeys = array_union($primaryKeys, ['language_id']);
+        }
+
         /**
          * @T00D00 - bug for translations, permissions ...!
          */
         if (!$primaryKeys) {
             return;
         }
+
         foreach ($primaryKeys as $primaryKey) {
             if (!isset($data[$primaryKey])) {
                 return;

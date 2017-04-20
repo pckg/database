@@ -217,7 +217,8 @@ abstract class Query
             $this->bind($value, $part);
         } else {
             $this->{$part}->push(
-                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . ($operator ? $operator . ' ?' : '')) : ' IS NULL')
+                $this->makeKey($key) .
+                ($value ? ($value === true ? '' : ' ' . ($operator ? $operator . ' ?' : '')) : ' IS NULL')
             );
             if ($value && $value !== true) {
                 $this->bind($value, $part);
@@ -359,6 +360,10 @@ abstract class Query
 
         if (!$primaryKeys) {
             throw new Exception('Primary key must be set on deletion!');
+        }
+
+        if (strpos($table, '_i18n')) {
+            $primaryKeys = array_union($primaryKeys, ['language_id']);
         }
 
         foreach ($primaryKeys as $primaryKey) {

@@ -363,7 +363,9 @@ abstract class Query
         }
 
         if (strpos($table, '_i18n')) {
-            $primaryKeys = array_union($primaryKeys, ['language_id']);
+            $primaryKeys = ['id', 'language_id'];
+        } elseif (strpos($table, '_p17n')) {
+            $primaryKeys = ['id', 'user_group_id'];
         }
 
         foreach ($primaryKeys as $primaryKey) {

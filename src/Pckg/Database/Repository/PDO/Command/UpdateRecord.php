@@ -146,7 +146,9 @@ class UpdateRecord
         $primaryKeys = $this->repository->getCache()->getTablePrimaryKeys($table);
 
         if (strpos($table, '_i18n')) {
-            $primaryKeys = array_union($primaryKeys, ['language_id']);
+            $primaryKeys = ['id', 'language_id'];
+        } elseif (strpos($table, '_p17n')) {
+            $primaryKeys = ['id', 'user_group_id'];
         }
 
         /**

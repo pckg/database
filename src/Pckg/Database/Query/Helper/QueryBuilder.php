@@ -104,6 +104,13 @@ trait QueryBuilder
             }
 
             $table->mergeToQuery($this->getQuery());
+        } elseif ($table instanceof Entity) {
+            $this->getQuery()->join(
+                'LEFT JOIN (' . $table->getQuery()->buildSQL() . ') AS `' . $where . '`',
+                $where . '.' . $on,
+                null,
+                $table->getQuery()->getBinds()
+            );
         } else {
             $this->getQuery()->join($table, $on, $where);
         }
@@ -234,9 +241,16 @@ trait QueryBuilder
         return $this;
     }
 
-    public function selectCount()
+    public function selectCount($as = 'count', $what = '*')
     {
-        $this->getQuery()->select(['count' => 'COUNT(*)']);
+        $this->getQuery()->select([$as => 'COUNT(' . $what . ')']);
+
+        return $this;
+    }
+
+    public function addCount($as = 'count', $what = '*')
+    {
+        $this->getQuery()->addSelect([$as => 'COUNT(' . $what . ')']);
 
         return $this;
     }

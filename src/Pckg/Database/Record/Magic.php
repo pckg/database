@@ -1,7 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Helper\Convention;
-use Pckg\Database\Relation;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
 trait Magic
@@ -13,34 +12,28 @@ trait Magic
     {
         if (!$this->ready) {
             $this->data[$key] = $val;
-
         } else if (array_key_exists($key, $this->data)) {
             /**
              * Fill value to existing data.
              */
             $this->data[$key] = $val;
-
         } else if (array_key_exists($key, $this->relations)) {
             /**
              * Fill value to existing relation.
              */
             $this->relations[$key] = $val;
-
         } else if ($this->hasKey($key)) {
             /**
              * Fill value to new data.
              */
             $this->data[$key] = $val;
-
         } else if ($this->hasRelation($key)) {
             /**
              * Fill value to existing relation.
              */
             $this->relations[$key] = $val;
-
         } else {
             $this->data[$key] = $val;
-
         }
 
         return $this;
@@ -137,6 +130,22 @@ trait Magic
         }
 
         /**
+         * Return value from advanced relation.
+         */
+        if (method_exists($entity, 'get' . ucfirst($key) . 'Subquery')) {
+            $subqueryEntity = $entity->{'get' . ucfirst($key) . 'Subquery'}();
+            $groupBy = $subqueryEntity->getQuery()->getGroupBy();
+            if ($field = end(explode('.', $groupBy))) {
+                $subqueryEntity->where($field, $this->id);
+            }
+            $result = $subqueryEntity->one()->data();
+            $field = end($result);
+            $this->data[$key] = $field;
+
+            return $field;
+        }
+
+        /**
          * Return value from extension.
          */
         if ($chains = $this->getEntityChains($entity, $key, '__get')) {
@@ -173,7 +182,6 @@ trait Magic
                     $args[0] ?? []
                 )
             );
-
         } else {
             message(static::class . '.' . $method . '()', 'optimize');
 

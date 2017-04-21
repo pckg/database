@@ -130,6 +130,13 @@ trait Magic
         }
 
         /**
+         * Return value from extension.
+         */
+        if ($chains = $this->getEntityChains($entity, $key, '__get')) {
+            return chain($chains);
+        }
+
+        /**
          * Return value from advanced relation.
          */
         if (method_exists($entity, 'get' . ucfirst($key) . 'Subquery')) {
@@ -143,13 +150,6 @@ trait Magic
             $this->data[$key] = $field;
 
             return $field;
-        }
-
-        /**
-         * Return value from extension.
-         */
-        if ($chains = $this->getEntityChains($entity, $key, '__get')) {
-            return chain($chains);
         }
 
         return null;

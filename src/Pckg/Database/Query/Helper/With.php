@@ -89,6 +89,18 @@ trait With
             }
         }
 
+        /*if (method_exists($object, 'get' . ucfirst($method) . 'Subquery')) {
+            $subqueryEntity = $object->{'get' . ucfirst($method) . 'Subquery'}();
+            $groupBy = $subqueryEntity->getQuery()->getGroupBy();
+            if ($field = end(explode('.', $groupBy))) {
+                $subqueryEntity->where($field, $this->id);
+            }
+            $result = $subqueryEntity->one()->data();
+            $field = end($result);
+
+            return $field;
+        }*/
+
         if (!method_exists($object, $method)) {
             if (prod()) {
                 return null;

@@ -50,7 +50,7 @@ trait With
                 $relation = Reflect::method($object, $relationMethod, $args);
                 // $relation = $object->{$relationMethod}();
 
-                if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+                if (isset($args[0]) && ($args[0] instanceof Closure || is_only_callable($args[0]))) {
                     /**
                      * If callback was added, we run it.
                      * Now, this is a problem if we're making join because query was already merged.
@@ -114,7 +114,7 @@ trait With
          */
         $relation = Reflect::method($object, $method, $args);
 
-        if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+        if (isset($args[0]) && ($args[0] instanceof Closure || is_only_callable($args[0]))) {
             Reflect::call($args[0], [$relation, $relation->getQuery()]);
         }
 
@@ -138,7 +138,7 @@ trait With
             return $this;
         }
 
-        if (is_callable($callback)) {
+        if (is_only_callable($callback)) {
             Reflect::call($callback, [$relation, $relation->getQuery()]);
         }
 

@@ -96,7 +96,7 @@ trait QueryBuilder
     public function join($table, $on = null, $where = null)
     {
         if ($table instanceof Relation) {
-            if (is_callable($on)) {
+            if (is_only_callable($on)) {
                 /**
                  * Is this needed?
                  */

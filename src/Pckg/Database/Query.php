@@ -168,7 +168,7 @@ abstract class Query
             $operator = 'IN';
         }
 
-        if (is_callable($key)) {
+        if (is_only_callable($key)) {
             $key($this->{$part});
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_string($value)) {

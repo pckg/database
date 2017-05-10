@@ -106,8 +106,8 @@ trait QueryBuilder
             $table->mergeToQuery($this->getQuery());
         } elseif ($table instanceof Entity) {
             $this->getQuery()->join(
-                'LEFT JOIN (' . $table->getQuery()->buildSQL() . ') AS `' . $where . '`',
-                $where . '.' . $on,
+                'LEFT JOIN (' . $table->getQuery()->buildSQL() . ') AS `' . $where . '` ON ' . $where . '.' . $on,
+                null,
                 null,
                 $table->getQuery()->getBinds()
             );

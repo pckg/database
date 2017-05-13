@@ -12,9 +12,14 @@ class Object
 
     /**
      * @var array
+     * @T00D00 - rename this to $_data
      */
     protected $data = [];
 
+    /**
+     * @var array
+     * @T00D00 - rename this to $_original
+     */
     protected $original = [];
 
     /**

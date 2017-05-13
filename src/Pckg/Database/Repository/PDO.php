@@ -227,6 +227,7 @@ class PDO extends AbstractRepository implements Repository
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
+
             throw new Exception(
                 'Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString
             );

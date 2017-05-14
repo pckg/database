@@ -39,6 +39,8 @@ trait Actions
     {
         $this->set($key, $val);
         $this->save();
+
+        return $this;
     }
 
     /**

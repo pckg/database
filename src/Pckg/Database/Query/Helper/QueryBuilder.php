@@ -96,7 +96,7 @@ trait QueryBuilder
     public function join($table, $on = null, $where = null)
     {
         if ($table instanceof Relation) {
-            if (is_callable($on)) {
+            if (is_only_callable($on)) {
                 /**
                  * Is this needed?
                  */
@@ -104,6 +104,13 @@ trait QueryBuilder
             }
 
             $table->mergeToQuery($this->getQuery());
+        } elseif ($table instanceof Entity) {
+            $this->getQuery()->join(
+                'LEFT JOIN (' . $table->getQuery()->buildSQL() . ') AS `' . $where . '` ON ' . $where . '.' . $on,
+                null,
+                null,
+                $table->getQuery()->getBinds()
+            );
         } else {
             $this->getQuery()->join($table, $on, $where);
         }
@@ -230,6 +237,20 @@ trait QueryBuilder
     public function select($fields = [])
     {
         $this->getQuery()->select($fields);
+
+        return $this;
+    }
+
+    public function selectCount($as = 'count', $what = '*')
+    {
+        $this->getQuery()->select([$as => 'COUNT(' . $what . ')']);
+
+        return $this;
+    }
+
+    public function addCount($as = 'count', $what = '*')
+    {
+        $this->getQuery()->addSelect([$as => 'COUNT(' . $what . ')']);
 
         return $this;
     }

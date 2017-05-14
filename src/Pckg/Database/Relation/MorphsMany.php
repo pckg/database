@@ -2,8 +2,6 @@
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
-use Pckg\Database\Record;
-use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 class MorphsMany extends HasAndBelongsTo
@@ -39,6 +37,18 @@ class MorphsMany extends HasAndBelongsTo
                          ->where($this->morph, get_class($this->getLeftEntity()))
         )
         )->executeAll();
+    }
+
+    public function getMiddleKeyCondition()
+    {
+        $middleQuery = $this->getMiddleEntity()->getQuery();
+
+        return parent::getMiddleKeyCondition() . ' AND `' . $middleQuery->getTable() . '`.`' . $this->morph . '` = ?';
+    }
+
+    public function getMiddleKeyBinds()
+    {
+        return [get_class($this->getLeftEntity())];
     }
 
 }

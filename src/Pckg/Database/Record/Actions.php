@@ -83,7 +83,7 @@ trait Actions
      *
      * @return Record
      */
-    public function delete(Entity $entity = null, Repository $repository = null)
+    public function forceDelete(Entity $entity = null, Repository $repository = null)
     {
         $entity = $this->getEntityIfEmpty($entity);
         $repository = $entity->getRepositoryIfEmpty($repository);
@@ -95,6 +95,30 @@ trait Actions
         $this->trigger(['deleted', 'saved']);
 
         return $delete;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function softDelete(Entity $entity = null, Repository $repository = null)
+    {
+        $this->trigger(['softDeleting']);
+
+        $this->deleted_at = date('Y-m-d H:i:s');
+
+        $this->trigger(['softDeleted']);
+
+        return $this->update($entity, $repository);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function delete(Entity $entity = null, Repository $repository = null)
+    {
+        return $this->getEntity()->isDeletable()
+            ? $this->softDelete($entity, $repository)
+            : $this->forceDelete($entity, $repository);
     }
 
     /**
@@ -145,6 +169,15 @@ trait Actions
             unset($data['id']);
         }
 
+        foreach ($data as $key => &$val) {
+            if ($key && array_key_exists($key . '_x', $data) && array_key_exists($key . '_y', $data)) {
+                $val = [
+                    $data[$key . '_x'],
+                    $data[$key . '_y'],
+                ];
+            }
+        }
+
         $record = new static($data);
         $record->save($entity);
 
@@ -187,6 +220,21 @@ trait Actions
 
         if (!$record) {
             $record = static::create($data, $entity);
+        }
+
+        return $record;
+    }
+
+    public static function getOrNew(array $data, Entity $entity = null)
+    {
+        if (!$entity) {
+            $entity = (new static)->getEntity();
+        }
+
+        $record = $entity->whereArr($data)->one();
+
+        if (!$record) {
+            $record = new static($data, $entity);
         }
 
         return $record;

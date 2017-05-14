@@ -164,11 +164,11 @@ abstract class Query
 
         if (is_object($value) && $value instanceof Raw && $operator == '=') {
             $operator = 'IN';
-        } else if (is_object($value) && $value instanceof Entity) {
+        } else if (is_object($value) && $value instanceof Entity && !in_array($operator, ['IN', 'NOT IN'])) {
             $operator = 'IN';
         }
 
-        if (is_callable($key)) {
+        if (is_only_callable($key)) {
             $key($this->{$part});
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_string($value)) {
@@ -217,7 +217,8 @@ abstract class Query
             $this->bind($value, $part);
         } else {
             $this->{$part}->push(
-                $this->makeKey($key) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' IS NULL')
+                $this->makeKey($key) .
+                ($value ? ($value === true ? '' : ' ' . ($operator ? $operator . ' ?' : '')) : ' IS NULL')
             );
             if ($value && $value !== true) {
                 $this->bind($value, $part);
@@ -359,6 +360,12 @@ abstract class Query
 
         if (!$primaryKeys) {
             throw new Exception('Primary key must be set on deletion!');
+        }
+
+        if (strpos($table, '_i18n')) {
+            $primaryKeys = ['id', 'language_id'];
+        } elseif (strpos($table, '_p17n')) {
+            $primaryKeys = ['id', 'user_group_id'];
         }
 
         foreach ($primaryKeys as $primaryKey) {

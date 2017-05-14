@@ -152,13 +152,15 @@ class Select extends Query
         return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
     }
 
-    public function select($fields)
+    public function select($fields, $bind = [])
     {
         if (!is_array($fields)) {
             $fields = [$fields];
         }
 
         $this->select = $fields;
+
+        $this->bind($bind, 'select');
 
         return $this;
     }

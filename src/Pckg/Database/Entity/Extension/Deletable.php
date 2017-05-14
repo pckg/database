@@ -47,4 +47,9 @@ trait Deletable
         return $this;
     }
 
+    public function isDeletable()
+    {
+        return $this->getRepository()->getCache()->tableHasField($this->table, $this->deletableField);
+    }
+
 }

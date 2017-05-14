@@ -45,7 +45,6 @@ trait Translatable
      */
     public function initTranslatableExtension()
     {
-
     }
 
     /**
@@ -109,10 +108,8 @@ trait Translatable
             );
 
             $this->addTranslatableConditionIfNot($relation);
-
         } else {
             $this->addTranslatableCondition($relation);
-
         }
 
         return $relation;
@@ -147,10 +144,8 @@ trait Translatable
             );
 
             $this->addTranslatableFallbackConditionIfNot($relation);
-
         } else {
             $this->addTranslatableFallbackCondition($relation);
-
         }
 
         return $relation;
@@ -258,7 +253,8 @@ trait Translatable
 
             $translatableField = '`' . $translaTable . '`.`' . $field . '`';
             $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';
-            $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' . $field . '`';
+            $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' .
+                         $field . '`';
         }
 
         $relation = $this->join($this->translationsFallback($callable));
@@ -316,6 +312,28 @@ trait Translatable
 
         if ($this->getRepository()->getCache()->tableHasField($table, $key)) {
             return true;
+        }
+
+        return false;
+    }
+
+    public function isTranslatable()
+    {
+        return $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix);
+    }
+
+    public function isTranslated()
+    {
+        foreach ($this->getQuery()->getJoin() as $join) {
+            if ($this->getAlias()) {
+                if (is_string($join) && strpos($join, '`' . $this->getAlias() . '_i18n`')) {
+                    return true;
+                }
+            } else {
+                if (is_string($join) && strpos($join, '`' . $this->getTable() . '_i18n`')) {
+                    return true;
+                }
+            }
         }
 
         return false;

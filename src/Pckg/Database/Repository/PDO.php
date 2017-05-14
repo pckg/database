@@ -227,6 +227,7 @@ class PDO extends AbstractRepository implements Repository
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
+
             throw new Exception(
                 'Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString
             );
@@ -249,6 +250,8 @@ class PDO extends AbstractRepository implements Repository
             'Fetching prepared',
             function() use ($prepare) {
                 $records = $this->transformRecordsToObjects($prepare->fetchAll());
+                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
+                //$records = $prepare->fetchAll();
 
                 return $records;
             }
@@ -261,6 +264,8 @@ class PDO extends AbstractRepository implements Repository
             'Fetching prepared',
             function() use ($prepare) {
                 $records = $this->transformRecordsToObjects($prepare->fetchAll());
+                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
+                //$records = $prepare->fetchAll();
 
                 return $records ? $records[0] : null;
             }
@@ -272,7 +277,7 @@ class PDO extends AbstractRepository implements Repository
         if ($this->recordClass) {
             $recordClass = $this->recordClass;
             foreach ($records as &$record) {
-                $record = (new $recordClass)->setData($record);
+                $record = (new $recordClass($record))/*->setData($record)*/;
             }
         }
 

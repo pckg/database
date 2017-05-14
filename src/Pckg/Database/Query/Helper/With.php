@@ -17,6 +17,7 @@ trait With
         'withRequired',
         'with',
         'join',
+        'leftJoin',
         'where',
     ];
 
@@ -49,7 +50,7 @@ trait With
                 $relation = Reflect::method($object, $relationMethod, $args);
                 // $relation = $object->{$relationMethod}();
 
-                if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+                if (isset($args[0]) && ($args[0] instanceof Closure || is_only_callable($args[0]))) {
                     /**
                      * If callback was added, we run it.
                      * Now, this is a problem if we're making join because query was already merged.
@@ -57,20 +58,27 @@ trait With
                      *
                      * @T00D00
                      */
-                    if ($prefix == 'join') {
+                    if ($prefix == 'join' || $prefix == 'leftJoin') {
                         $rightEntity = $relation->getRightEntity();
                         $oldEntityQuery = $rightEntity->getQuery();
                         $rightEntity->setQuery($relation->getQuery());
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                        if ($prefix == 'leftJoin') {
+                            $relation->leftJoin();
+                        }
                         $rightEntity->setQuery($oldEntityQuery);
                     } else {
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
                     }
+                } else {
+                    if ($prefix == 'leftJoin') {
+                        $relation->leftJoin();
+                    }
                 }
                 /**
-                 * We'll call $entity->with($relation), and return Relation;
+                 * We'll call $entity->with($relation) or $entity->join($relation), and return Relation;
                  */
-                $return = $object->{$prefix}($relation);
+                $return = $object->{$prefix == 'leftJoin' ? 'join' : $prefix}($relation);
 
                 /**
                  * Then we return relation.
@@ -80,6 +88,18 @@ trait With
                     : $return;
             }
         }
+
+        /*if (method_exists($object, 'get' . ucfirst($method) . 'Subquery')) {
+            $subqueryEntity = $object->{'get' . ucfirst($method) . 'Subquery'}();
+            $groupBy = $subqueryEntity->getQuery()->getGroupBy();
+            if ($field = end(explode('.', $groupBy))) {
+                $subqueryEntity->where($field, $this->id);
+            }
+            $result = $subqueryEntity->one()->data();
+            $field = end($result);
+
+            return $field;
+        }*/
 
         if (!method_exists($object, $method)) {
             if (prod()) {
@@ -94,7 +114,7 @@ trait With
          */
         $relation = Reflect::method($object, $method, $args);
 
-        if (isset($args[0]) && ($args[0] instanceof Closure || is_callable($args[0]))) {
+        if (isset($args[0]) && ($args[0] instanceof Closure || is_only_callable($args[0]))) {
             Reflect::call($args[0], [$relation, $relation->getQuery()]);
         }
 
@@ -118,16 +138,14 @@ trait With
             return $this;
         }
 
-        if (is_callable($callback)) {
+        if (is_only_callable($callback)) {
             Reflect::call($callback, [$relation, $relation->getQuery()]);
         }
 
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
-
         } else {
             $this->with[] = $this->{$relation}();
-
         }
 
         return $this;

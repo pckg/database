@@ -8,6 +8,7 @@ use Pckg\Database\Entity\Extension\Adapter\Lang;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Framework\Locale\Lang as LocaleLang;
 
 /**
  * Class Translatable
@@ -264,8 +265,17 @@ trait Translatable
         return $relation;
     }
 
-    public function setTranslatableLang(Lang $lang)
+    /**
+     * @param Lang|string $lang
+     *
+     * @return $this
+     */
+    public function setTranslatableLang($lang)
     {
+        if (is_string($lang)) {
+            $lang = new LocaleLang($lang);
+        }
+
         $this->translatableLang = $lang;
 
         return $this;

@@ -108,7 +108,7 @@ trait QueryBuilder
             $query = $table->getQuery();
 
             $this->getQuery()->join(
-                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON ' . $where . '.' . $on,
+                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON (' . (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
                 null,
                 null,
                 $query->buildBinds()

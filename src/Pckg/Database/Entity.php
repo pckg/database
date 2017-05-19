@@ -92,6 +92,11 @@ class Entity
         $this->boot();
     }
 
+    public function __clone()
+    {
+        $this->query = clone $this->query;
+    }
+
     public function extendedKey($key)
     {
         $cache = $this->repository->getCache();

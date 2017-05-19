@@ -30,6 +30,7 @@ abstract class Query
     public function __clone()
     {
         $this->where = clone $this->where;
+        $this->having = clone $this->having;
     }
 
     public function toRaw()
@@ -380,7 +381,7 @@ abstract class Query
     public function __toString()
     {
         try {
-            return $this->buildSQL();
+            return (string)$this->buildSQL();
         } catch (Throwable $e) {
             dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
         }

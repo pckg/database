@@ -216,6 +216,9 @@ abstract class Query
         } elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
             $this->{$part}->push($this->makeKey($key) . ' ' . $operator . ' ?');
             $this->bind($value, $part);
+        } elseif ($operator == 'BETWEEN') {
+            $this->{$part}->push($this->makeKey($key) . ' ' . $operator . ' ? AND ?');
+            $this->bind($value, $part);
         } else {
             $this->{$part}->push(
                 $this->makeKey($key) .

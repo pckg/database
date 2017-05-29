@@ -170,4 +170,9 @@ class Object
         return $this->data;
     }
 
+    function jsonSerialize()
+    {
+        return $this->__toArray();
+    }
+
 }

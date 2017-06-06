@@ -108,7 +108,8 @@ trait QueryBuilder
             $query = $table->getQuery();
 
             $this->getQuery()->join(
-                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON (' . (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
+                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON (' .
+                (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
                 null,
                 null,
                 $query->buildBinds()
@@ -186,6 +187,13 @@ trait QueryBuilder
     public function groupBy($key)
     {
         $this->getQuery()->groupBy($key);
+
+        return $this;
+    }
+
+    public function addGroupBy($key)
+    {
+        $this->getQuery()->addGroupBy($key);
 
         return $this;
     }

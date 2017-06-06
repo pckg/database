@@ -246,6 +246,17 @@ abstract class Query
         return $this;
     }
 
+    public function addGroupBy($groupBy)
+    {
+        if ($this->groupBy) {
+            $this->groupBy .= ', ';
+        }
+
+        $this->groupBy .= $groupBy;
+
+        return $this;
+    }
+
     public function getGroupBy()
     {
         return $this->groupBy;

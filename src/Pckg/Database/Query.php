@@ -159,6 +159,14 @@ abstract class Query
             $value = $value->__toArray();
         }
 
+        if (is_array($value)) {
+            if (count($value) == 0) {
+                $value = null;
+            } else if (count($value) == 1) {
+                $value = end($value);
+            }
+        }
+
         if (is_array($value) && $operator == '=') {
             $operator = 'IN';
         }
@@ -220,10 +228,17 @@ abstract class Query
             $this->{$part}->push($this->makeKey($key) . ' ' . $operator . ' ? AND ?');
             $this->bind($value, $part);
         } else {
-            $this->{$part}->push(
-                $this->makeKey($key) .
-                ($value ? ($value === true ? '' : ' ' . ($operator ? $operator . ' ?' : '')) : ' IS NULL')
-            );
+            $valuePrefix = $value === true ? '' : ' ';
+            $valueSuffix = !$value && $operator
+                ? ' IS NULL'
+                : '';
+            $operatorSql = $operator && ($value && $value !== true)
+                ? $operator . ' ?'
+                : '';
+            $suffix = $value
+                ? $valuePrefix . $operatorSql
+                : $valueSuffix;
+            $this->{$part}->push($this->makeKey($key) . $suffix);
             if ($value && $value !== true) {
                 $this->bind($value, $part);
             }

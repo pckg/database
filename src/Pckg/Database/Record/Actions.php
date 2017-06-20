@@ -210,13 +210,18 @@ trait Actions
         return $record;
     }
 
-    public static function getOrCreate(array $data, Entity $entity = null)
+    public static function gets(array $data, Entity $entity = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();
         }
 
-        $record = $entity->whereArr($data)->one();
+        return $entity->whereArr($data)->one();
+    }
+
+    public static function getOrCreate(array $data, Entity $entity = null)
+    {
+        $record = static::gets($data, $entity);
 
         if (!$record) {
             $record = static::create($data, $entity);
@@ -227,11 +232,7 @@ trait Actions
 
     public static function getOrNew(array $data, Entity $entity = null)
     {
-        if (!$entity) {
-            $entity = (new static)->getEntity();
-        }
-
-        $record = $entity->whereArr($data)->one();
+        $record = static::gets($data, $entity);
 
         if (!$record) {
             $record = new static($data, $entity);

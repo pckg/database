@@ -57,6 +57,15 @@ trait Actions
         return $this;
     }
 
+    public function saveAs($overwrite = [])
+    {
+        $data = $this->data();
+        $data['id'] = null;
+        $data = array_merge($data, $overwrite);
+
+        return (new static($data))->save();
+    }
+
     /**
      * @param Entity|null     $entity
      * @param Repository|null $repository

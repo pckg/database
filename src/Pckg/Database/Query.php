@@ -141,19 +141,32 @@ abstract class Query
 
     private function addCondition($key, $value = true, $operator = '=', $part)
     {
-        if (is_object($key) && $key instanceof Raw) {
-            $sql = $key->buildSQL();
-            $this->{$part}->push($sql);
-            if ($binds = $key->buildBinds()) {
-                if (!is_array($binds)) {
-                    $binds = [$binds];
+        if (is_object($key)) {
+            if ($key instanceof Raw) {
+                $sql = $key->buildSQL();
+                $this->{$part}->push($sql);
+                if ($binds = $key->buildBinds()) {
+                    if (!is_array($binds)) {
+                        $binds = [$binds];
+                    }
+                    foreach ($binds as $bind) {
+                        $this->bind($bind, $part);
+                    }
                 }
-                foreach ($binds as $bind) {
-                    $this->bind($bind, $part);
-                }
-            }
 
-            return $this;
+                return $this;
+            } elseif ($key instanceof Parenthesis) {
+                $sql = $key->build();
+                $this->{$part}->push($sql);
+
+                if ($binds = $key->getBinds()) {
+                    foreach ($binds as $bind) {
+                        $this->bind($bind, $part);
+                    }
+                }
+
+                return $this;
+            }
         }
         if (is_object($value) && object_implements($value, ArrayAccess::class)) {
             $value = $value->__toArray();

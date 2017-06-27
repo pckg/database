@@ -210,6 +210,12 @@ trait Actions
         return $this;
     }
 
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this
+     */
     public static function create($data = [], Entity $entity = null)
     {
         $record = new static($data, $entity);

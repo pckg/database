@@ -230,7 +230,9 @@ abstract class Query
         } else {
             $valuePrefix = $value === true ? '' : ' ';
             $valueSuffix = !$value && $operator
-                ? ' IS NULL'
+                ? (in_array($operator, ['IS NULL', 'IS NOT NULL'])
+                    ? ' ' . $operator
+                    : ' IS NULL')
                 : '';
             $operatorSql = $operator && ($value && $value !== true)
                 ? $operator . ' ?'

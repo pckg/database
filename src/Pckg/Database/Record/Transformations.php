@@ -73,4 +73,9 @@ trait Transformations
         return $this->__toArray();
     }
 
+    public function transform(callable $callable)
+    {
+        return $callable($this);
+    }
+
 }

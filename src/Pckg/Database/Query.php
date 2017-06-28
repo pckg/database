@@ -141,6 +141,7 @@ abstract class Query
 
     private function addCondition($key, $value = true, $operator = '=', $part)
     {
+        $hasValue = $value || strlen($value);
         if (is_object($key)) {
             if ($key instanceof Raw) {
                 $sql = $key->buildSQL();
@@ -198,7 +199,7 @@ abstract class Query
             }
 
             if (is_array($value)) {
-                if (!$value) {
+                if (!$hasValue) {
                     /**
                      * This is probable not needed.
                      */
@@ -229,9 +230,9 @@ abstract class Query
             $this->{$part}->push(
                 $this->makeKey(
                     $key
-                ) . ($value ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
+                ) . ($hasValue ? ($value === true ? '' : ' ' . $operator . ' ?') : ' ' . $operator . ' NULL')
             );
-            if ($value && $value !== true) {
+            if ($hasValue && $value !== true) {
                 $this->bind($value, 'where');
             }
         } elseif ($operator == 'LIKE' || $operator == 'NOT LIKE') {
@@ -242,19 +243,19 @@ abstract class Query
             $this->bind($value, $part);
         } else {
             $valuePrefix = $value === true ? '' : ' ';
-            $valueSuffix = !$value && $operator
+            $valueSuffix = !$hasValue && $operator
                 ? (in_array($operator, ['IS NULL', 'IS NOT NULL'])
                     ? ' ' . $operator
                     : ' IS NULL')
                 : '';
-            $operatorSql = $operator && ($value && $value !== true)
+            $operatorSql = $operator && (($value || strlen($value)) && $value !== true)
                 ? $operator . ' ?'
                 : '';
-            $suffix = $value
+            $suffix = $hasValue
                 ? $valuePrefix . $operatorSql
                 : $valueSuffix;
             $this->{$part}->push($this->makeKey($key) . $suffix);
-            if ($value && $value !== true) {
+            if ($hasValue && $value !== true) {
                 $this->bind($value, $part);
             }
         }

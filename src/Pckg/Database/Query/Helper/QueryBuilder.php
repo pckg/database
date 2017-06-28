@@ -37,6 +37,13 @@ trait QueryBuilder
         return $this;
     }
 
+    public function distinct()
+    {
+        $this->getQuery()->distinct();
+
+        return $this;
+    }
+
     /**
      * @return Query|Select
      */

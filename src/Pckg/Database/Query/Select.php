@@ -20,7 +20,16 @@ class Select extends Query
 
     protected $count = false;
 
+    protected $distinct = false;
+
     protected $countRow = null;
+
+    public function distinct($set = true)
+    {
+        $this->distinct = $set;
+
+        return $this;
+    }
 
     public function count($count = true)
     {
@@ -93,7 +102,8 @@ class Select extends Query
         }
 
         if ($this->orderBy) {
-            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? '`' . $this->table . "`.`" . $this->orderBy . '` ASC' : $this->orderBy);
+            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? '`' . $this->table . "`.`" . $this->orderBy .
+                                                               '` ASC' : $this->orderBy);
         }
 
         if ($this->limit) {
@@ -127,14 +137,13 @@ class Select extends Query
             }
             if (is_numeric($key)) {
                 $keys[] = $select;
-
             } else {
                 $keys[] = $select . ' AS `' . $key . '`';
-
             }
         }
 
         return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') .
+               ($this->distinct ? 'DISTINCT ' : '') .
                ($this->countRow ? 'COUNT(' . $this->countRow . ') AS `count`' : '') .
                ($this->countRow && $keys && $this->groupBy ? ', ' : '') .
                ($this->countRow && !$this->groupBy ? '' : implode(', ', $keys));

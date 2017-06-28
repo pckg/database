@@ -141,7 +141,6 @@ abstract class Query
 
     private function addCondition($key, $value = true, $operator = '=', $part)
     {
-        $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
         if (is_object($key)) {
             if ($key instanceof Raw) {
                 $sql = $key->buildSQL();
@@ -181,8 +180,12 @@ abstract class Query
             }
         }
 
+        $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
+
         if (is_array($value) && $operator == '=') {
             $operator = 'IN';
+        } elseif (!is_array($value) && in_array($operator, ['IN', 'NOT IN'])) {
+            $value = [$value];
         }
 
         if (is_object($value) && $value instanceof Raw && $operator == '=') {
@@ -194,10 +197,6 @@ abstract class Query
         if (is_only_callable($key)) {
             $key($this->{$part});
         } else if ($operator == 'IN' || $operator == 'NOT IN') {
-            if (is_string($value)) {
-                $value = [$value];
-            }
-
             if (is_array($value)) {
                 if (!$hasValue) {
                     /**

@@ -182,13 +182,13 @@ abstract class Query
 
         $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
 
-        if (is_array($value) && $operator == '=') {
-            $operator = 'IN';
-        } elseif (!is_array($value) && in_array($operator, ['IN', 'NOT IN'])) {
+        if (!is_array($value) && !is_object($value) && in_array($operator, ['IN', 'NOT IN'])) {
             $value = [$value];
         }
 
-        if (is_object($value) && $value instanceof Raw && $operator == '=') {
+        if (is_array($value) && $operator == '=') {
+            $operator = 'IN';
+        } else if (is_object($value) && $value instanceof Raw && $operator == '=') {
             $operator = 'IN';
         } else if (is_object($value) && $value instanceof Entity && !in_array($operator, ['IN', 'NOT IN'])) {
             $operator = 'IN';

@@ -141,7 +141,7 @@ abstract class Query
 
     private function addCondition($key, $value = true, $operator = '=', $part)
     {
-        $hasValue = $value || strlen($value);
+        $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
         if (is_object($key)) {
             if ($key instanceof Raw) {
                 $sql = $key->buildSQL();

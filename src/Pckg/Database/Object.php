@@ -175,4 +175,11 @@ class Object
         return $this->__toArray();
     }
 
+    public function dd()
+    {
+        dd($this->data());
+
+        return $this;
+    }
+
 }

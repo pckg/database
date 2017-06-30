@@ -452,6 +452,18 @@ class Entity
     }
 
     /**
+     * @return Record|mixed
+     */
+    public function oneAndIf($callback)
+    {
+        $one = $this->one();
+
+        return $one
+            ? $callback($one)
+            : $one;
+    }
+
+    /**
      * @return Collection
      */
     public function all()
@@ -465,6 +477,16 @@ class Entity
         $this->resetRelations();
 
         return $all;
+    }
+
+    public function allAnd(callable $callback)
+    {
+        return $callback($this->all());
+    }
+
+    public function allAndEach(callable $callback)
+    {
+        return $this->all()->each($callback);
     }
 
     /**

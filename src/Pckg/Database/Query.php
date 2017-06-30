@@ -21,6 +21,12 @@ abstract class Query
 
     protected $diebug = false;
 
+    const LIKE = 'LIKE';
+
+    const IN = 'IN';
+
+    const NOT_LIKE = 'NOT LIKE';
+
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');

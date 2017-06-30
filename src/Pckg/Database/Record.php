@@ -30,10 +30,6 @@ class Record extends Object implements JsonSerializable
      */
     protected $entity = Entity::class;
 
-    protected $toArray = [];
-
-    protected $toJson = [];
-
     protected $cache = [];
 
     protected $ready = false;

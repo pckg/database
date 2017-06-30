@@ -5,6 +5,23 @@ use Pckg\Database\Object;
 trait Transformations
 {
 
+    protected $toArray = [];
+
+    protected $toJson = [];
+
+    public function addToArray($items = [])
+    {
+        if (!is_array($items)) {
+            $items = [$items];
+        }
+
+        foreach ($items as $item) {
+            $this->toArray[] = $item;
+        }
+
+        return $this;
+    }
+
     /**
      * @return array
      */

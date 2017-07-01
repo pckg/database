@@ -90,9 +90,18 @@ trait Transformations
         return $this->__toArray();
     }
 
-    public function transform(callable $callable)
+    public function transform($map)
     {
-        return $callable($this);
+        if (is_callable($map)) {
+            return $map($this);
+        }
+
+        $data = [];
+        foreach ($map as $key) {
+            $data[$key] = $this->{$key};
+        }
+
+        return $data;
     }
 
 }

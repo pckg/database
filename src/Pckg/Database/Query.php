@@ -433,7 +433,11 @@ abstract class Query
         try {
             return (string)$this->buildSQL();
         } catch (Throwable $e) {
-            dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
+            if (dev()) {
+                dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
+            }
+
+            throw $e;
         }
     }
 

@@ -214,7 +214,7 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return $this
+     * @return $this|Record
      */
     public static function create($data = [], Entity $entity = null)
     {

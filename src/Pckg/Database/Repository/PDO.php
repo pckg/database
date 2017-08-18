@@ -40,6 +40,13 @@ class PDO extends AbstractRepository implements Repository
         ];
     }
 
+    public function __wakeup()
+    {
+        $initDatabase = (new InitDatabase());
+        $repository = $initDatabase->createRepositoryConnection(config('database.' . $this->name), $this->name);
+        $this->connection = $repository->getConnection();
+    }
+
     /**
      * @param \PDO $connection
      */
@@ -74,12 +81,6 @@ class PDO extends AbstractRepository implements Repository
      */
     public function getConnection()
     {
-        if (!$this->connection) {
-            $initDatabase = (new InitDatabase());
-            $repository = $initDatabase->createRepositoryConnection(config('database.' . $this->name), $this->name);
-            $this->connection = $repository->getConnection();
-        }
-
         return $this->connection;
     }
 

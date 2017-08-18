@@ -83,7 +83,8 @@ class Cache extends FrameworkCache
     protected function buildTables()
     {
         $sql = 'SHOW TABLES';
-        $prepare = $this->repository->getConnection()->prepare($sql);
+        $connection = $this->repository->getConnection();
+        $prepare = $connection->prepare($sql);
         $prepare->execute();
 
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $table) {
@@ -100,7 +101,8 @@ class Cache extends FrameworkCache
         $this->cache['constraints'][$table] = [];
 
         $sql = 'SHOW INDEX IN `' . $table . '`';
-        $prepare = $this->repository->getConnection()->prepare($sql);
+        $connection = $this->repository->getConnection();
+        $prepare = $connection->prepare($sql);
         $prepare->execute();
 
         $indexes = [];

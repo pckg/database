@@ -33,19 +33,26 @@ class InitDatabase extends AbstractChainOfReponsibility
                 continue;
             }
 
-            /**
-             * Create faker, middleware or pdo repository.
-             */
-            $repository = $this->getRepositoryByConfig($config, $name);
-
-            /**
-             * Bind repository to context so we can reuse it later.
-             */
-            context()->bindIfNot(Repository::class, $repository);
-            context()->bind(Repository::class . '.' . $name, $repository);
+            $this->createRepositoryConnection($config, $name);
         }
 
         return $next();
+    }
+
+    public function createRepositoryConnection($config, $name)
+    {
+        /**
+         * Create faker, middleware or pdo repository.
+         */
+        $repository = $this->getRepositoryByConfig($config, $name);
+
+        /**
+         * Bind repository to context so we can reuse it later.
+         */
+        context()->bindIfNot(Repository::class, $repository);
+        context()->bind(Repository::class . '.' . $name, $repository);
+
+        return $repository;
     }
 
     /**
@@ -61,13 +68,11 @@ class InitDatabase extends AbstractChainOfReponsibility
     {
         if ($config['driver'] == 'faker') {
             return new RepositoryFaker(Factory::create());
-
         } elseif ($config['driver'] == 'middleware') {
             return resolve($config['middleware'])->execute(
                 function() {
                 }
             );
-
         }
 
         return $this->initPdoDatabase($config, $name);
@@ -91,7 +96,6 @@ class InitDatabase extends AbstractChainOfReponsibility
             $pdo = $this->createPdoConnectionByConfig($config);
         } catch (PDOException $e) {
             throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
-
         }
 
         $pdo->uniqueName = $config['host'] . "-" . $config['db'];
@@ -109,10 +113,8 @@ class InitDatabase extends AbstractChainOfReponsibility
 
             if ($debugBar->hasCollector('pdo')) {
                 $pdoCollector = $debugBar->getCollector('pdo');
-
             } else {
                 $debugBar->addCollector($pdoCollector = new PDOCollector());
-
             }
 
             $pdoCollector->addConnection($tracablePdo, $name);

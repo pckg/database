@@ -18,20 +18,6 @@ before_script:
   #- "sh -e /etc/init.d/xvfb start"
   #- sleep 3 # give xvfb some time to start
 install:
-  # Install Apache
-  # - sudo apt-get update -qq
-  # - sudo apt-get install -y --force-yes apache2 libapache2-mod-php7.0 php-curl php-mysql php-intl > /dev/null
-  # - sudo chmod 777 -R /home/travis/build/redCOMPONENT-COM/redSHOP/
-  # - sudo ln -s /home/travis/build/redCOMPONENT-COM/redSHOP/tests/system/joomla-cms/ /var/www/joomla-cms #Add     joomla to apache htdocs
-  # - sudo sed -i -e "s,AllowOverride[ ]None,AllowOverride All,g" /etc/apache2/sites-available/default
-  # - sudo /etc/init.d/apache2 restart
-  # - composer install --dev --prefer-dist
-
-  # Window manager
-  #- echo "c10"
-  #- "sudo apt-get install fluxbox -y --force-yes"
-  #- echo "c11"
-  #- "fluxbox &"
 
   # Selenium server
   - "wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.1.jar"

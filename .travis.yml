@@ -3,6 +3,14 @@ php:
   - '7.0'
 node_js:
   - "0.10"
+before_script:
+  # XVFB
+  - "export DISPLAY=:99.0"
+  - "Xvfb :99.0 -extension RANDR > /dev/null &"
+
+  #- "export DISPLAY=:99.0"
+  #- "sh -e /etc/init.d/xvfb start"
+  #- sleep 3 # give xvfb some time to start
 install:
   # Install Apache
   # - sudo apt-get update -qq
@@ -13,14 +21,6 @@ install:
   # - sudo /etc/init.d/apache2 restart
   # - composer install --dev --prefer-dist
 
-  # XVFB
-  - "export DISPLAY=:99.0"
-  - "Xvfb :99.0 -extension RANDR > /dev/null &"
-
-  #- "export DISPLAY=:99.0"
-  #- "sh -e /etc/init.d/xvfb start"
-  #- sleep 3 # give xvfb some time to start
-
   # Window manager
   #- echo "c10"
   #- "sudo apt-get install fluxbox -y --force-yes"
@@ -28,8 +28,8 @@ install:
   #- "fluxbox &"
 
   # Selenium server
-  - "wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar"
-  - "sudo java -jar selenium-server-standalone-2.53.1.jar > /dev/null 2>/dev/null &"
+  - "wget http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.1.jar"
+  - "sudo java -jar selenium-server-standalone-3.5.1.jar > /dev/null 2>/dev/null &"
   #- sleep 30 # gives enough time to Selenium to start
   - "php www/index.php -S 127.0.0.1:8888 -t . >/dev/null 2>&1 &"
   # Start up the webdriver.
@@ -47,6 +47,8 @@ script:
 addons:
   hosts:
     - derive.travis
+  firefox: latest
+  chrome: stable
 sudo: true
 cache:
   bundler: true
@@ -57,3 +59,13 @@ cache:
     - $HOME/.composer/cache
     - $HOME/.npm
     - $HOME/.cache # includes bowers cache
+notifications:
+  webhooks:
+    urls:
+      - http://condo.foobar.si/webhook
+      - http://center.foobar.si/webhook
+    on_success: always # default: always
+    on_failure: always # default: always
+    on_start: always   # default: never
+    on_cancel: always # default: always
+    on_error: always # default: always

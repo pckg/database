@@ -1,6 +1,12 @@
 language: php
 php:
   - '7.0'
+  - '7.1'
+  - '7.2'
+git:
+  depth: 5
+services:
+  - mysql
 node_js:
   - "0.10"
 before_script:
@@ -34,7 +40,7 @@ install:
   - "php www/index.php -S 127.0.0.1:8888 -t . >/dev/null 2>&1 &"
   # Start up the webdriver.
   - phantomjs --webdriver=4444 >/dev/null 2>&1 &
-  - composer install --prefer-dist --optimize-autoloader
+  - composer install
   - "wget http://codeception.com/codecept.phar"
   - "cp ./codeception.sample.travis.yml ./codeception.yml"
   #- "cp ./tests/acceptance.suite.sample.travis.yml ./tests/acceptance.suite.yml"

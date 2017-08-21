@@ -53,6 +53,7 @@ cache:
     - $HOME/.npm
     - $HOME/.cache # includes bowers cache
 notifications:
+  email: false
   webhooks:
     urls:
       - http://condo.foobar.si/webhook

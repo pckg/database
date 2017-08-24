@@ -27,6 +27,8 @@ abstract class Query
 
     const NOT_LIKE = 'NOT LIKE';
 
+    const NOT_IN = 'NOT IN';
+
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');

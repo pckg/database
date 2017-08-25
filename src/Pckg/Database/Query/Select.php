@@ -262,6 +262,21 @@ class Select extends Query
         return $delete;
     }
 
+    /**
+     * @return Update
+     */
+    public function transformToUpdate()
+    {
+        $update = new Update();
+        $update->setTable($this->table);
+        $update->getWhere()->setChildren($this->where->getChildren());
+        $update->setBind(['where' => $this->getBinds('where')]);
+        $update->debug($this->debug);
+        $update->diebug($this->diebug);
+
+        return $update;
+    }
+
     public function mergeToQuery(Select $query)
     {
         foreach ($this->getSelect() as $key => $select) {

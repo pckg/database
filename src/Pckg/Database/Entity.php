@@ -58,6 +58,8 @@ class Entity
      */
     protected $useCache;
 
+    protected $setData = [];
+
     /**
      * @param Repository $repository
      */
@@ -557,13 +559,35 @@ class Entity
 
     public function insert(Repository $repository = null)
     {
-        if (!$this->repository) {
+        if (!$repository) {
             $repository = $this->getRepository();
         }
 
         $insert = $this->getQuery()->transformToInsert();
 
         $prepare = $repository->prepareQuery($insert);
+
+        return $repository->executePrepared($prepare);
+    }
+
+    public function set($data = [])
+    {
+        $this->setData = $data;
+
+        return $this;
+    }
+
+    public function update(Repository $repository = null)
+    {
+        if (!$repository) {
+            $repository = $this->getRepository();
+        }
+
+        $update = $this->getQuery()->transformToUpdate();
+
+        $update->setSet($this->setData);
+
+        $prepare = $repository->prepareQuery($update);
 
         return $repository->executePrepared($prepare);
     }

@@ -154,7 +154,7 @@ trait QueryBuilder
 
     public function whereRaw($raw, $bind = [])
     {
-        $this->getQuery()->where(Query\Raw::raw($raw), $bind);
+        $this->getQuery()->where(Query\Raw::raw($raw, $bind));
 
         return $this;
     }

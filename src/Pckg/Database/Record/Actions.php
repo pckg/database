@@ -245,6 +245,12 @@ trait Actions
         return $record;
     }
 
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return mixed|Record
+     */
     public static function getOrNew(array $data, Entity $entity = null)
     {
         $record = static::gets($data, $entity);

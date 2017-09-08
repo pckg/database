@@ -7,7 +7,7 @@ namespace Pckg\Database;
  *
  * @package Pckg\Database
  */
-class Object implements \ArrayAccess
+class Object
 {
 
     /**
@@ -28,26 +28,6 @@ class Object implements \ArrayAccess
     public function __construct($data = [])
     {
         $this->data = $data ?? [];
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        return $this->__set($offset, $value);
-    }
-
-    public function offsetExists($offset)
-    {
-        return $this->__isset($offset);
-    }
-
-    public function offsetUnset($offset)
-    {
-        return $this->__unset($offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
     }
 
     public function setData(array $data = [])

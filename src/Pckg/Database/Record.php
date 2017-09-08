@@ -1,7 +1,6 @@
 <?php namespace Pckg\Database;
 
 use Carbon\Carbon;
-use JsonSerializable;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Record\Actions;
@@ -18,7 +17,7 @@ use Pckg\Database\Record\Transformations;
  *
  * @package Pckg\Database
  */
-class Record extends Object implements JsonSerializable
+class Record extends Object
 {
 
     use Magic, Actions, Relations, Transformations, Events;

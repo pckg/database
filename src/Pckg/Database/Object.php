@@ -1,13 +1,14 @@
-<?php
+<?php namespace Pckg\Database;
 
-namespace Pckg\Database;
+use ArrayAccess;
+use JsonSerializable;
 
 /**
  * Class Object
  *
  * @package Pckg\Database
  */
-class Object
+class Object implements ArrayAccess, JsonSerializable
 {
 
     /**
@@ -28,6 +29,26 @@ class Object
     public function __construct($data = [])
     {
         $this->data = $data ?? [];
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        return $this->__set($offset, $value);
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+
+    public function offsetUnset($offset)
+    {
+        return $this->__unset($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
     }
 
     public function setData(array $data = [])

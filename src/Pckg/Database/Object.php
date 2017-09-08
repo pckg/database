@@ -26,7 +26,7 @@ class Object implements ArrayAccess, JsonSerializable
     /**
      * @param array $values
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->data = $data ?? [];
     }

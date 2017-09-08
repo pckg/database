@@ -321,7 +321,8 @@ abstract class Query
 
     private function makeKey($key)
     {
-        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.')
+        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.') ||
+               strpos($key, ',') || strpos($key, '(')
             ? $key
             : '`' . $key . '`';
     }

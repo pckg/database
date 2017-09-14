@@ -5,6 +5,7 @@ use Pckg\Database\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Query\Parenthesis;
+use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 trait RightEntity

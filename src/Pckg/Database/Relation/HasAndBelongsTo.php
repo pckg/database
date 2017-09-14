@@ -181,8 +181,9 @@ class HasAndBelongsTo extends HasMany
 
         /**
          * Set middle collection's relations.
+         * This should be sorted by right collection, right? :)
          */
-        $middleCollection->each(
+        /*$middleCollection->each(
             function($middleRecord) use ($keyedLeftCollection, $keyedRightCollection) {
                 if ($keyedRightCollection->hasKey($middleRecord->{$this->rightForeignKey})) {
                     $rightRecord = clone $keyedRightCollection[$middleRecord->{$this->rightForeignKey}];
@@ -192,7 +193,18 @@ class HasAndBelongsTo extends HasMany
                     );
                 }
             }
-        );
+        );*/
+        $groupedMiddleCollection = $middleCollection->groupBy($this->rightForeignKey);
+        $keyedRightCollection->each(function($rightRecord) use ($keyedLeftCollection, $groupedMiddleCollection, $rightCollection) {
+            (new Collection($groupedMiddleCollection[$rightRecord->{$this->rightPrimaryKey}] ?? []))
+                ->each(function($middleRecord) use ($rightRecord, $keyedLeftCollection) {
+                    $rightRecord = clone $rightRecord;
+                    $rightRecord->setRelation('pivot', $middleRecord);
+                    $keyedLeftCollection[$middleRecord->{$this->leftForeignKey}]->getRelation($this->fill)->push(
+                        $rightRecord
+                    );
+                });
+        });
 
         /**
          * Fill relations.

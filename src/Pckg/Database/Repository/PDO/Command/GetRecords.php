@@ -2,9 +2,9 @@
 
 namespace Pckg\Database\Repository\PDO\Command;
 
+use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
-use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 use PDO;
@@ -38,7 +38,7 @@ class GetRecords
     /**
      * Prepare query from entity, fetch records and fill them with relations.
      *
-     * @return Collection
+     * @return CollectionInterface
      */
     public function executeAll()
     {

@@ -34,6 +34,13 @@ trait QueryBuilder
     {
         $this->getQuery()->diebug($debug);
 
+        foreach ($this->getWith() as $relation) {
+            $relation->getRightEntity()->debug($debug);
+            if (method_exists($relation, 'getMiddleEntity')) {
+                $relation->getMiddleEntity()->debug($debug);
+            }
+        }
+
         return $this;
     }
 

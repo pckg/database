@@ -241,7 +241,7 @@ class Cache extends FrameworkCache
             throw new Exception('Table should be set!');
         }
 
-        return array_keys($this->cache['fields'][$table]);
+        return array_keys($this->cache['fields'][$table] ?? []);
     }
 
     /**

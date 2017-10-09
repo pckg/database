@@ -16,6 +16,11 @@ trait Actions
         return $this->saved;
     }
 
+    public function isNew()
+    {
+        return !$this->saved && !$this->id;
+    }
+
     public function isDeleted()
     {
         return $this->deleted;

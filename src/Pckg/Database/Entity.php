@@ -444,6 +444,39 @@ class Entity
     }
 
     /**
+     * @return Record
+     */
+    public function oneOrNew()
+    {
+        $this->applyExtensions();
+
+        $binds = $this->query->getBinds();
+
+        $record = $this->repository->one($this);
+
+        if (!$record) {
+            $data = [];
+            $where = $this->query->getWhere();
+            foreach ($where->getChildren() as $i => $sql) {
+                $start = strpos($sql, '.') ?? null;
+                $start = strpos($sql, '`', $start) ?? null;
+                $end = strpos($sql, '`', $start + 1) ?? null;
+                $length = $end ? $end - $start - 1 : null;
+                $field = substr($sql, $start + 1, $length);
+                $data[$field] = $binds[$i];
+            }
+
+            $record = $this->getRecord($data);
+        }
+
+        $this->resetQuery();
+
+        $this->resetRelations();
+
+        return $record;
+    }
+
+    /**
      * @return Record|mixed
      */
     public function oneAnd($callback)

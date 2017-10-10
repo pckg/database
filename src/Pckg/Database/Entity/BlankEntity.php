@@ -305,8 +305,12 @@ class BlankEntity
     {
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
-                $this->{$method}();
+                Reflect::method($this, $method);
             } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
+                $extension = substr($method, 6, -12);
+                if (method_exists($this, 'check' . $extension . 'Dependencies')) {
+                    Reflect::method($this, 'check' . $extension . 'Dependencies');
+                }
                 Reflect::method($this, $method);
             }
         }

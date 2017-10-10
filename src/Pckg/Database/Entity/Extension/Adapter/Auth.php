@@ -1,24 +1,16 @@
-<?php
+<?php namespace Pckg\Database\Entity\Extension\Adapter;
 
-namespace Pckg\Database\Entity\Extension\Adapter;
-
-/**
- * Interface Auth
- *
- * @package Pckg\Database\Entity\Extension\Adapter
- *          Interface for Permissionable Extension
- */
-interface Auth
+class Auth implements AuthInterface
 {
 
-    /**
-     * @return integer|null
-     */
-    public function groupId();
+    public function groupId()
+    {
+        return null;
+    }
 
-    /**
-     * @return integer|null
-     */
-    public function userId();
+    public function userId()
+    {
+        return null;
+    }
 
 }

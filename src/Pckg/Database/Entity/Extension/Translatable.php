@@ -4,11 +4,11 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Adapter\Lang;
+use Pckg\Database\Entity\Extension\Adapter\LangInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Locale\Lang as LocaleLang;
+use Pckg\Locale\LangInterface as LocaleLang;
 
 /**
  * Class Translatable
@@ -29,14 +29,28 @@ trait Translatable
     protected $translatableLanguageField = 'language_id';
 
     /**
-     * @var Lang
+     * @var LangInterface
      */
     protected $translatableLang;
 
     /**
-     * @param Lang $lang
+     * @param AuthInterface $auth
      */
-    public function injectTranslatableDependencies(Lang $lang)
+    public function checkTranslatableDependencies()
+    {
+        /**
+         * @T00D00 - check if we're able to resolve AuthInterface implementation.
+         *         If not, use default.
+         */
+        if (!Reflect::canResolve(LangInterface::class)) {
+            context()->bind(LangInterface::class, new Entity\Extension\Adapter\Lang());
+        }
+    }
+
+    /**
+     * @param LangInterface $lang
+     */
+    public function injectTranslatableDependencies(LangInterface $lang)
     {
         $this->translatableLang = $lang;
     }
@@ -266,7 +280,7 @@ trait Translatable
     }
 
     /**
-     * @param Lang|string $lang
+     * @param LangInterface|string $lang
      *
      * @return $this
      */

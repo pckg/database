@@ -1,19 +1,11 @@
-<?php
+<?php namespace Pckg\Database\Entity\Extension\Adapter;
 
-namespace Pckg\Database\Entity\Extension\Adapter;
-
-/**
- * Interface Lang
- *
- * @package Pckg\Database\Entity\Extension\Adapter
- *          Interface for Translatable Extension
- */
-interface Lang
+class Lang implements LangInterface
 {
 
-    /**
-     * @return string
-     */
-    public function langId();
+    public function langId()
+    {
+        return 'en';
+    }
 
 }

@@ -4,7 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Adapter\Auth;
+use Pckg\Database\Entity\Extension\Adapter\AuthInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
@@ -33,9 +33,23 @@ trait Permissionable
     protected $permissionableAuth;
 
     /**
-     * @param Auth $auth
+     * @param AuthInterface $auth
      */
-    public function injectPermissionableDependencies(Auth $auth)
+    public function checkPermissionableDependencies()
+    {
+        /**
+         * @T00D00 - check if we're able to resolve AuthInterface implementation.
+         *         If not, use default.
+         */
+        if (!Reflect::canResolve(AuthInterface::class)) {
+            context()->bind(AuthInterface::class, new Entity\Extension\Adapter\Auth());
+        }
+    }
+
+    /**
+     * @param AuthInterface $auth
+     */
+    public function injectPermissionableDependencies(AuthInterface $auth)
     {
         $this->permissionableAuth = $auth;
     }

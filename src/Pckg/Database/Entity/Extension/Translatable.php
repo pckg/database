@@ -8,7 +8,7 @@ use Pckg\Database\Entity\Extension\Adapter\Lang;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Framework\Locale\Lang as LocaleLang;
+use Pckg\Locale\Lang as LocaleLang;
 
 /**
  * Class Translatable

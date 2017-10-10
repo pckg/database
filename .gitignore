@@ -5,3 +5,4 @@ codeception.yml
 
 # DEPENDENCIES
 vendor/
+./composer.lock

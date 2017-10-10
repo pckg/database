@@ -13,6 +13,7 @@
     "pckg/concept": "dev-master",
     "pckg/collection": "dev-master",
     "pckg/framework": "dev-master",
+    "pckg/auth": "dev-master",
     "maximebf/debugbar": "1.*",
     "fzaninotto/faker": "1.*"
   },

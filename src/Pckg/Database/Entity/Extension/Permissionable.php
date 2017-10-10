@@ -2,9 +2,9 @@
 
 namespace Pckg\Database\Entity\Extension;
 
-use Pckg\Auth\Entity\Adapter\Auth;
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
+use Pckg\Database\Entity\Extension\Adapter\Auth;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
@@ -35,7 +35,7 @@ trait Permissionable
     /**
      * @param Auth $lang
      */
-    public function injectPermissionableDependencies(Auth $lang)
+    public function injectPermissionableDependencies(Auth $lang = null)
     {
         $this->permissionableAuth = $lang;
     }

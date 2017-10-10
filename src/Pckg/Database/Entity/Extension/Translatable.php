@@ -4,7 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Adapter\LangInterface;
+use Pckg\Locale\LangInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;

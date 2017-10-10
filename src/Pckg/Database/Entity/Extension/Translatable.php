@@ -36,7 +36,7 @@ trait Translatable
     /**
      * @param Lang $lang
      */
-    public function injectTranslatableDependencies(Lang $lang = null)
+    public function injectTranslatableDependencies(Lang $lang)
     {
         $this->translatableLang = $lang;
     }

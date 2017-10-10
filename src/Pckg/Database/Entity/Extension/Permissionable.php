@@ -33,11 +33,11 @@ trait Permissionable
     protected $permissionableAuth;
 
     /**
-     * @param Auth $lang
+     * @param Auth $auth
      */
-    public function injectPermissionableDependencies(Auth $lang = null)
+    public function injectPermissionableDependencies(Auth $auth)
     {
-        $this->permissionableAuth = $lang;
+        $this->permissionableAuth = $auth;
     }
 
     /**

@@ -3,8 +3,8 @@
 namespace Pckg\Database\Helper;
 
 use Exception;
+use Pckg\Cache\Cache as PckgCache;
 use Pckg\Database\Repository;
-use Pckg\Framework\Cache as FrameworkCache;
 use PDO;
 
 /**
@@ -13,7 +13,7 @@ use PDO;
  * @package Pckg\Database\Helper
  *          Provides simple cache for database fields and relations.
  */
-class Cache extends FrameworkCache
+class Cache extends PckgCache
 {
 
     /**
@@ -71,10 +71,10 @@ class Cache extends FrameworkCache
     public static function getCachePathByRepository(Repository $repository)
     {
         return path('cache') . 'framework/pckg_database_repository_' . str_replace(
-            ['\\', '/'],
-            '_',
-            (get_class(app()) . '_' . get_class(env()))
-        ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
+                ['\\', '/'],
+                '_',
+                (get_class(app()) . '_' . get_class(env()))
+            ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
     }
 
     /**
@@ -157,11 +157,12 @@ class Cache extends FrameworkCache
                 'type'      => strpos($field['Type'], '(')
                     ? substr($field['Type'], 0, strpos($field['Type'], '('))
                     : $field['Type'],
-                'limit'     => str_replace([') unsigne'], '', substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
-                    $field['Type'],
-                    strpos($field['Type'], '(') + 1,
-                    strpos($field['Type'], ')') ? -1 : null
-                )),
+                'limit'     => str_replace([') unsigne'], '',
+                                           substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
+                                               $field['Type'],
+                                               strpos($field['Type'], '(') + 1,
+                                               strpos($field['Type'], ')') ? -1 : null
+                                           )),
                 'null'      => $field['Null'] == 'YES',
                 'key'       => $field['Key'] == 'PRI'
                     ? 'primary'
@@ -286,9 +287,9 @@ class Cache extends FrameworkCache
     public function tableHasConstraint($table, $constraint)
     {
         return isset($this->cache['constraints'][$table]) && array_key_exists(
-            $constraint,
-            $this->cache['constraints'][$table]
-        );
+                $constraint,
+                $this->cache['constraints'][$table]
+            );
     }
 
     /**

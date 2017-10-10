@@ -4,6 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
+use Pckg\Database\Entity\Extension\Adapter\Auth as AuthAdapter;
 use Pckg\Database\Entity\Extension\Adapter\AuthInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
@@ -42,7 +43,7 @@ trait Permissionable
          *         If not, use default.
          */
         if (!Reflect::canResolve(AuthInterface::class)) {
-            context()->bind(AuthInterface::class, new Entity\Extension\Adapter\Auth());
+            context()->bind(AuthInterface::class, new AuthAdapter());
         }
     }
 

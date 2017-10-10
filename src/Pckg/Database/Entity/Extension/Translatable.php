@@ -4,12 +4,12 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Locale\Lang;
-use Pckg\Locale\LangInterface;
+use Pckg\Database\Entity\Extension\Adapter\Lang as LangAdapter;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
-use Pckg\Locale\LangInterface as LocaleLang;
+use Pckg\Locale\Lang;
+use Pckg\Locale\LangInterface;
 
 /**
  * Class Translatable
@@ -41,7 +41,7 @@ trait Translatable
          *         If not, use default.
          */
         if (!Reflect::canResolve(LangInterface::class)) {
-            context()->bind(LangInterface::class, new Entity\Extension\Adapter\Lang());
+            context()->bind(LangInterface::class, new LangAdapter());
         }
     }
 

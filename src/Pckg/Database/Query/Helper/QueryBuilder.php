@@ -107,7 +107,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function join($table, $on = null, $where = null)
+    public function join($table, $on = null, $where = null, $binds = [])
     {
         if ($table instanceof Relation) {
             if (is_only_callable($on)) {
@@ -129,7 +129,7 @@ trait QueryBuilder
                 $query->buildBinds()
             );
         } else {
-            $this->getQuery()->join($table, $on, $where);
+            $this->getQuery()->join($table, $on, $where, $binds);
         }
 
         return $this;

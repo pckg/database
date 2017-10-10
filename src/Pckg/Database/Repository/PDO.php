@@ -227,7 +227,7 @@ class PDO extends AbstractRepository implements Repository
     public function executePrepared($prepare)
     {
         $execute = measure(
-            'Execute query: ' . $prepare->queryString,
+            'Execute query: ' . str_replace("\n", " ", $prepare->queryString),
             function() use ($prepare) {
                 return $prepare->execute();
             }

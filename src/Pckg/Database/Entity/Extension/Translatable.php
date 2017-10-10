@@ -4,6 +4,7 @@ namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
+use Pckg\Locale\Lang;
 use Pckg\Locale\LangInterface;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
@@ -33,9 +34,6 @@ trait Translatable
      */
     protected $translatableLang;
 
-    /**
-     * @param AuthInterface $auth
-     */
     public function checkTranslatableDependencies()
     {
         /**
@@ -287,7 +285,7 @@ trait Translatable
     public function setTranslatableLang($lang)
     {
         if (is_string($lang)) {
-            $lang = new LocaleLang($lang);
+            $lang = new Lang($lang);
         }
 
         $this->translatableLang = $lang;

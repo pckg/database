@@ -2,7 +2,6 @@
 
 use Exception;
 use Pckg\Concept\Reflect;
-use Pckg\Database\Command\InitDatabase;
 use Pckg\Database\Entity\Extension\Deletable;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Database\Entity\Extension\Permissionable;
@@ -13,6 +12,7 @@ use Pckg\Database\Query\Helper\With;
 use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
+use Pckg\Database\Repository\RepositoryFactory;
 use Pckg\Framework\Exception\NotFound;
 
 /**
@@ -65,28 +65,12 @@ class Entity
      */
     public function __construct(Repository $repository = null, $alias = null)
     {
-        $this->repository = $repository;
-        $this->alias = $alias;
-
         if (!$repository) {
-            if (!context()->exists($this->repositoryName)) {
-                $connectionName = $this->repositoryName == Repository::class
-                    ? 'default'
-                    : str_replace(Repository::class . '.', '', $this->repositoryName);
-                $config = config('database.' . $connectionName);
-                if (!$config) {
-                    throw new Exception("No config found for " . $connectionName);
-                }
-                $repository = (new InitDatabase())->initPdoDatabase($config, $connectionName);
-                context()->bind($this->repositoryName, $repository);
-            }
-
-            $this->repository = context()->get($this->repositoryName);
-
-            if (!$this->repository) {
-                throw new Exception('Cannot prepare repository');
-            }
+            $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
         }
+
+        $this->alias = $alias;
+        $this->repository = $repository;
 
         $this->guessDefaults();
         $this->initExtensions();

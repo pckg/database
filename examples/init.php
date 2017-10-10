@@ -10,6 +10,10 @@ use Entity\Groups;
 use Entity\Items;
 use Pckg\Database\Repository\RepositoryFactory;
 
+/**
+ * Create connection with RepositoryFactory.
+ * This will also bind connection as default connection.
+ */
 RepositoryFactory::createPdoRepository('mysql:host=localhost;charset=utf8;dbname=devdb', 'devuser', 'devpass');
 
 /**

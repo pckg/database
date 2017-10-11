@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Repository\PDO\Command;
+<?php namespace Pckg\Database\Repository\PDO\Command;
 
 use Exception;
 use Pckg\Database\Entity;

@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query\Helper;
+<?php namespace Pckg\Database\Query\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;

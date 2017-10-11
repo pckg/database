@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database;
+<?php namespace Pckg\Database;
 
 use ArrayAccess;
 use Exception;

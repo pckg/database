@@ -1,9 +1,7 @@
-<?php
-
-namespace Pckg\Database\Entity\Extension;
+<?php namespace Pckg\Database\Entity\Extension;
 
 /**
- * Class SoftDelete
+ * Class Deletable
  *
  * @package Pckg\Database\Entity\Extension
  */
@@ -29,8 +27,6 @@ trait Deletable
     }
 
     /**
-     * @param bool|true $enabled
-     *
      * @return $this
      */
     public function onlyDeleted()
@@ -40,6 +36,9 @@ trait Deletable
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function nonDeleted()
     {
         $this->where($this->deletableField, null);
@@ -47,6 +46,9 @@ trait Deletable
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function isDeletable()
     {
         return $this->getRepository()->getCache()->tableHasField($this->table, $this->deletableField);

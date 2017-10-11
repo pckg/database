@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Entity\Extension;
+<?php namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Timeable

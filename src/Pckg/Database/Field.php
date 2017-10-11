@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database;
+<?php namespace Pckg\Database;
 
     /**
      * Presents custom objectized field in record

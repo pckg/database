@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Repository;
+<?php namespace Pckg\Database\Repository;
 
 use Pckg\Collection;
 use Pckg\Database\Entity;

@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Helper;
+<?php namespace Pckg\Database\Helper;
 
 /**
  * Class Convention

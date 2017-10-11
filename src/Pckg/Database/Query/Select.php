@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query;
+<?php namespace Pckg\Database\Query;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;

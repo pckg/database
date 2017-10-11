@@ -67,6 +67,9 @@ class Update extends Query
 
     // builders
 
+    /**
+     * @return array
+     */
     function buildBinds()
     {
         return $this->getBinds(['set', 'where', 'limit']);

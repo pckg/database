@@ -13,6 +13,9 @@ use Pckg\Database\Relation;
 class HasOne extends HasMany
 {
 
+    /**
+     * @param Record $record
+     */
     public function fillRecord(Record $record)
     {
         /**
@@ -35,6 +38,9 @@ class HasOne extends HasMany
         $this->fillRecordWithRelations($record);
     }
 
+    /**
+     * @param CollectionInterface $collection
+     */
     public function fillCollection(CollectionInterface $collection)
     {
         /**

@@ -10,13 +10,30 @@ use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;
 use PDOException;
 
+/**
+ * Class RepositoryFactory
+ *
+ * @package Pckg\Database\Repository
+ */
 class RepositoryFactory
 {
 
+    /**
+     * @var array
+     */
     protected static $repositories = [];
 
+    /**
+     *
+     */
     const DEFAULT_NAME = 'default';
 
+    /**
+     * @param $name
+     *
+     * @return mixed|null|\Pckg\Database\Repository\PDO
+     * @throws Exception
+     */
     public static function getOrCreateRepository($name)
     {
         $name = $name == Repository::class
@@ -49,6 +66,15 @@ class RepositoryFactory
         return $repository;
     }
 
+    /**
+     * @param        $dsn
+     * @param        $username
+     * @param null   $passwd
+     * @param null   $options
+     * @param string $name
+     *
+     * @return PDO
+     */
     public static function createPdoRepository(
         $dsn, $username, $passwd = null, $options = null, $name = self::DEFAULT_NAME
     ) {
@@ -67,11 +93,20 @@ class RepositoryFactory
         return $connection;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getDefaultRepository()
     {
         return static::$repositories[static::DEFAULT_NAME] ?? null;
     }
 
+    /**
+     * @param $config
+     * @param $name
+     *
+     * @return Faker|\Pckg\Database\Repository\PDO
+     */
     public static function createRepositoryConnection($config, $name)
     {
         /**
@@ -111,6 +146,11 @@ class RepositoryFactory
         return static::initPdoDatabase($config, $name);
     }
 
+    /**
+     * @param $config
+     *
+     * @return PDO
+     */
     public static function createPdoConnectionByConfig($config)
     {
         return new PDO(
@@ -123,6 +163,13 @@ class RepositoryFactory
         );
     }
 
+    /**
+     * @param $config
+     * @param $name
+     *
+     * @return \Pckg\Database\Repository\PDO
+     * @throws Exception
+     */
     public static function initPdoDatabase($config, $name)
     {
         try {
@@ -138,6 +185,10 @@ class RepositoryFactory
         return new RepositoryPDO($pdo, $name);
     }
 
+    /**
+     * @param $pdo
+     * @param $name
+     */
     protected static function checkDebugBar($pdo, $name)
     {
         if (context()->exists(DebugBar::class)) {

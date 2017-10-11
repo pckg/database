@@ -4,11 +4,22 @@ use Pckg\Database\Entity;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
+/**
+ * Class AbstractRepository
+ *
+ * @package Pckg\Database\Repository
+ */
 abstract class AbstractRepository implements Repository
 {
 
+    /**
+     * @var
+     */
     protected $connection;
 
+    /**
+     * @var
+     */
     protected $cache;
 
     /**
@@ -29,6 +40,9 @@ abstract class AbstractRepository implements Repository
         return $this->connection;
     }
 
+    /**
+     * @return mixed
+     */
     abstract public function getCache();
 
     /**
@@ -51,6 +65,11 @@ abstract class AbstractRepository implements Repository
         return (new GetRecords($entity, $this))->executeAll();
     }
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function executePrepared($prepare)
     {
         $execute = $prepare->execute();
@@ -58,6 +77,11 @@ abstract class AbstractRepository implements Repository
         return $execute;
     }
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchAllPrepared($prepare)
     {
         return measure(
@@ -68,6 +92,11 @@ abstract class AbstractRepository implements Repository
         );
     }
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchPrepared($prepare)
     {
         return $prepare->fetch();

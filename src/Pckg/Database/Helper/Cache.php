@@ -53,6 +53,9 @@ class Cache extends PckgCache
         }
     }
 
+    /**
+     *
+     */
     protected function buildCache()
     {
         $this->buildTables();
@@ -61,11 +64,19 @@ class Cache extends PckgCache
         parent::buildCache();
     }
 
+    /**
+     * @return string
+     */
     protected function getCachePath()
     {
         return static::getCachePathByRepository($this->repository);
     }
 
+    /**
+     * @param Repository $repository
+     *
+     * @return string
+     */
     public static function getCachePathByRepository(Repository $repository)
     {
         return path('cache') . 'framework/pckg_database_repository_' . str_replace(
@@ -94,6 +105,9 @@ class Cache extends PckgCache
         }
     }
 
+    /**
+     * @param $table
+     */
     protected function buildConstraints($table)
     {
         $this->cache['constraints'][$table] = [];

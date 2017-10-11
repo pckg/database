@@ -1,8 +1,18 @@
 <?php namespace Pckg\Database\Entity\Extension;
 
+/**
+ * Class Paginatable
+ *
+ * @package Pckg\Database\Entity\Extension
+ */
 trait Paginatable
 {
 
+    /**
+     * @param $num
+     *
+     * @return $this
+     */
     public function page($num)
     {
         $perPage = (int)$this->getQuery()->getLimit();

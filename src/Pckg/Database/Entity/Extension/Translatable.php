@@ -32,6 +32,9 @@ trait Translatable
      */
     protected $translatableLang;
 
+    /**
+     *
+     */
     public function checkTranslatableDependencies()
     {
         /**
@@ -162,6 +165,9 @@ trait Translatable
         return $relation;
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableFallbackConditionIfNot(HasMany $relation)
     {
         $foundLanguageCondition = false;
@@ -179,6 +185,9 @@ trait Translatable
         }
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableConditionIfNot(HasMany $relation)
     {
         $foundLanguageCondition = false;
@@ -196,6 +205,9 @@ trait Translatable
         }
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableCondition(HasMany $relation)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
@@ -209,6 +221,9 @@ trait Translatable
         );
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableFallbackCondition(HasMany $relation)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
@@ -222,16 +237,29 @@ trait Translatable
         );
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function withTranslations(callable $callable = null)
     {
         return $this->with($this->translations($callable));
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function joinTranslations(callable $callable = null)
     {
         return $this->join($this->translations($callable));
     }
 
+    /**
+     * @return mixed
+     */
     public function withTranslation()
     {
         return $this->withTranslations(
@@ -241,12 +269,22 @@ trait Translatable
         );
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function joinTranslation(callable $callable = null)
     {
         return $this->join($this->translations($callable))
                     ->prependSelect([$this->getTable() . $this->translatableTableSuffix . '.*']);
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return $this
+     */
     public function joinFallbackTranslation(callable $callable = null)
     {
         if ($this->translatableLang->langId() == 'en') {
@@ -291,11 +329,20 @@ trait Translatable
         return $this;
     }
 
+    /**
+     * @return LangInterface
+     */
     public function getTranslatableLang()
     {
         return $this->translatableLang;
     }
 
+    /**
+     * @param Record $record
+     * @param        $key
+     *
+     * @return null
+     */
     public function __getTranslatableExtension(Record $record, $key)
     {
         /**
@@ -326,6 +373,11 @@ trait Translatable
         }
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function __issetTranslatableExtension($key)
     {
         $table = $this->getTable() . $this->translatableTableSuffix;
@@ -337,11 +389,17 @@ trait Translatable
         return false;
     }
 
+    /**
+     * @return mixed
+     */
     public function isTranslatable()
     {
         return $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix);
     }
 
+    /**
+     * @return bool
+     */
     public function isTranslated()
     {
         foreach ($this->getQuery()->getJoin() as $join) {

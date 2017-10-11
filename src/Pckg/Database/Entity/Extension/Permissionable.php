@@ -89,6 +89,11 @@ trait Permissionable
         ];
     }*/
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function allPermissions(callable $callable = null)
     {
         $permissionTable = $this->getPermissionableTable();
@@ -134,6 +139,9 @@ trait Permissionable
         return $relation;
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addPermissionableConditionIfNot(HasMany $relation)
     {
         $foundGroupCondition = false;
@@ -151,11 +159,17 @@ trait Permissionable
         }
     }
 
+    /**
+     * @return string
+     */
     public function getPermissionableTable()
     {
         return $this->getTable() . $this->getPermissionableTableSuffix();
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addPermissionableCondition(HasMany $relation)
     {
         $permissionTable = $this->getTable() . $this->getPermissionableTableSuffix;
@@ -166,11 +180,19 @@ trait Permissionable
         );
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function withPermissions(callable $callable = null)
     {
         return $this->with($this->permissions($callable));
     }
 
+    /**
+     * @return mixed
+     */
     public function withAllPermissions()
     {
         $permissionTable = $this->getPermissionableTable();
@@ -184,11 +206,19 @@ trait Permissionable
         return $this->with($relation);
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function joinPermissions(callable $callable = null)
     {
         return $this->join($this->permissions($callable));
     }
 
+    /**
+     * @return mixed
+     */
     public function withPermission()
     {
         return $this->withPermissions(
@@ -198,12 +228,22 @@ trait Permissionable
         );
     }
 
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
     public function joinPermission(callable $callable = null)
     {
         return $this->join($this->permissions($callable))
                     ->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
     }
 
+    /**
+     * @param $permission
+     *
+     * @return mixed
+     */
     public function joinPermissionTo($permission)
     {
         $self = $this;
@@ -217,6 +257,9 @@ trait Permissionable
         )->prependSelect([$this->getTable() . $this->permissionableTableSuffix . '.*']);
     }
 
+    /**
+     * @return $this
+     */
     public function usePermissionableTable()
     {
         if (strpos($this->table, $this->getPermissionableTableSuffix()) === false) {
@@ -226,6 +269,9 @@ trait Permissionable
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function isPermissionable()
     {
         return $this->getRepository()->getCache()->hasTable($this->table . $this->permissionableTableSuffix);

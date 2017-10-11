@@ -4,19 +4,44 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
+/**
+ * Class MiddleEntity
+ *
+ * @package Pckg\Database\Relation\Helper
+ */
 trait MiddleEntity
 {
 
+    /**
+     * @var
+     */
     protected $middle;
 
+    /**
+     * @var string
+     */
     protected $leftForeignKey = 'poly_id';
 
+    /**
+     * @var
+     */
     protected $rightForeignKey;
 
+    /**
+     * @var string
+     */
     protected $leftPrimaryKey = 'id';
 
+    /**
+     * @var string
+     */
     protected $rightPrimaryKey = 'id';
 
+    /**
+     * @param $leftPrimaryKey
+     *
+     * @return $this
+     */
     public function leftPrimaryKey($leftPrimaryKey)
     {
         $this->leftPrimaryKey = $leftPrimaryKey;
@@ -24,6 +49,11 @@ trait MiddleEntity
         return $this;
     }
 
+    /**
+     * @param $rightPrimaryKey
+     *
+     * @return $this
+     */
     public function rightPrimaryKey($rightPrimaryKey)
     {
         $this->rightPrimaryKey = $rightPrimaryKey;
@@ -31,6 +61,11 @@ trait MiddleEntity
         return $this;
     }
 
+    /**
+     * @param $leftForeignKey
+     *
+     * @return $this
+     */
     public function leftForeignKey($leftForeignKey)
     {
         $this->leftForeignKey = $leftForeignKey;
@@ -38,6 +73,11 @@ trait MiddleEntity
         return $this;
     }
 
+    /**
+     * @param $rightForeignKey
+     *
+     * @return $this
+     */
     public function rightForeignKey($rightForeignKey)
     {
         $this->rightForeignKey = $rightForeignKey;
@@ -45,11 +85,17 @@ trait MiddleEntity
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getLeftForeignKey()
     {
         return $this->leftForeignKey;
     }
 
+    /**
+     * @return mixed
+     */
     public function getRightForeignKey()
     {
         return $this->rightForeignKey;
@@ -74,11 +120,19 @@ trait MiddleEntity
         return $this->middle;
     }
 
+    /**
+     * @return \Pckg\Database\Repository|\Pckg\Database\Repository\PDO
+     */
     public function getMiddleRepository()
     {
         return $this->getMiddleEntity()->getRepository();
     }
 
+    /**
+     * @param $middle
+     *
+     * @return $this
+     */
     public function over($middle)
     {
         $this->middle = $middle;
@@ -86,6 +140,13 @@ trait MiddleEntity
         return $this;
     }
 
+    /**
+     * @param Entity $middleEntity
+     * @param        $foreignKey
+     * @param        $primaryValue
+     *
+     * @return \Pckg\CollectionInterface
+     */
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
         return (new GetRecords($middleEntity->where($foreignKey, $primaryValue)))->executeAll();

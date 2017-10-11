@@ -3,11 +3,22 @@
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
+/**
+ * Class Magic
+ *
+ * @package Pckg\Database\Record
+ */
 trait Magic
 {
 
     use CallWithRelation;
 
+    /**
+     * @param $key
+     * @param $val
+     *
+     * @return $this
+     */
     public function __set($key, $val)
     {
         if (!$this->ready) {
@@ -39,6 +50,11 @@ trait Magic
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function __isset($key)
     {
         if (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {

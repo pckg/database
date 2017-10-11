@@ -41,6 +41,9 @@ class BelongsTo extends Relation
         $this->fillRecordWithRelations($record);
     }
 
+    /**
+     * @param CollectionInterface $collection
+     */
     public function fillCollection(CollectionInterface $collection)
     {
         /**
@@ -90,6 +93,9 @@ class BelongsTo extends Relation
         $this->fillCollectionWithRelations($collection);
     }
 
+    /**
+     * @return string
+     */
     public function getKeyCondition()
     {
         $rightEntity = $this->getRightEntity();

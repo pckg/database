@@ -31,26 +31,52 @@ class Object implements ArrayAccess, JsonSerializable
         $this->data = $data ?? [];
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     *
+     * @return Object
+     */
     public function offsetSet($offset, $value)
     {
         return $this->__set($offset, $value);
     }
 
+    /**
+     * @param mixed $offset
+     *
+     * @return bool
+     */
     public function offsetExists($offset)
     {
         return $this->__isset($offset);
     }
 
+    /**
+     * @param mixed $offset
+     *
+     * @return Object
+     */
     public function offsetUnset($offset)
     {
         return $this->__unset($offset);
     }
 
+    /**
+     * @param mixed $offset
+     *
+     * @return null
+     */
     public function offsetGet($offset)
     {
         return $this->__get($offset);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
     public function setData(array $data = [])
     {
         $this->data = $data;
@@ -58,6 +84,11 @@ class Object implements ArrayAccess, JsonSerializable
         return $this;
     }
 
+    /**
+     * @param null $key
+     *
+     * @return array|mixed|null
+     */
     public function data($key = null)
     {
         return $key
@@ -67,6 +98,11 @@ class Object implements ArrayAccess, JsonSerializable
             : $this->data;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
     public function setOriginal(array $data = [])
     {
         $this->original = $data;
@@ -74,6 +110,11 @@ class Object implements ArrayAccess, JsonSerializable
         return $this;
     }
 
+    /**
+     * @param null $key
+     *
+     * @return array|mixed|null
+     */
     public function original($key = null)
     {
         return $key
@@ -83,16 +124,29 @@ class Object implements ArrayAccess, JsonSerializable
             : $this->original;
     }
 
+    /**
+     * @param null $key
+     *
+     * @return bool
+     */
     public function isOriginal($key = null)
     {
         return $this->data($key) == $this->original($key);
     }
 
+    /**
+     * @param null $key
+     *
+     * @return bool
+     */
     public function isDirty($key = null)
     {
         return $this->data($key) != $this->original($key);
     }
 
+    /**
+     * @return $this
+     */
     public function setOriginalFromData()
     {
         $this->original = $this->data;
@@ -100,11 +154,21 @@ class Object implements ArrayAccess, JsonSerializable
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function keyExists($key)
     {
         return array_key_exists($key, $this->data);
     }
 
+    /**
+     * @param $key
+     *
+     * @return mixed|null
+     */
     public function getValue($key)
     {
         return array_key_exists($key, $this->data)
@@ -112,6 +176,11 @@ class Object implements ArrayAccess, JsonSerializable
             : null;
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
     public function __unset($key)
     {
         unset($this->data[$key]);
@@ -191,11 +260,17 @@ class Object implements ArrayAccess, JsonSerializable
         return $this->data;
     }
 
+    /**
+     * @return array
+     */
     function jsonSerialize()
     {
         return $this->__toArray();
     }
 
+    /**
+     * @return $this
+     */
     public function dd()
     {
         dd($this->data());

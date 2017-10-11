@@ -29,8 +29,14 @@ class Record extends Object
      */
     protected $entity = Entity::class;
 
+    /**
+     * @var array
+     */
     protected $cache = [];
 
+    /**
+     * @var bool
+     */
     protected $ready = false;
 
     /**
@@ -41,6 +47,12 @@ class Record extends Object
         'dt_added' => Carbon::class,
     ];
 
+    /**
+     * @param          $key
+     * @param callable $val
+     *
+     * @return mixed
+     */
     public function cache($key, callable $val)
     {
         if (!array_key_exists($key, $this->cache)) {
@@ -78,6 +90,11 @@ class Record extends Object
         $this->ready = true;
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function hasKey($key)
     {
         if (array_key_exists($key, $this->data)) {
@@ -96,6 +113,9 @@ class Record extends Object
         return false;
     }
 
+    /**
+     * @return array
+     */
     public function getExtensionValues()
     {
         $values = [];
@@ -124,16 +144,27 @@ class Record extends Object
         return $values;
     }
 
+    /**
+     * @return array
+     */
     public function getToArrayValues()
     {
         return $this->getKeyValue($this->toArray);
     }
 
+    /**
+     * @return array
+     */
     public function getToJsonValues()
     {
         return $this->getKeyValue($this->toJson);
     }
 
+    /**
+     * @param $source
+     *
+     * @return array
+     */
     protected function getKeyValue($source)
     {
         $values = [];
@@ -153,6 +184,13 @@ class Record extends Object
         return $values;
     }
 
+    /**
+     * @param Entity $entity
+     * @param        $key
+     * @param        $overloadMethod
+     *
+     * @return array
+     */
     private function getEntityChains(Entity $entity, $key, $overloadMethod)
     {
         $chains = [];
@@ -167,6 +205,11 @@ class Record extends Object
         return $chains;
     }
 
+    /**
+     * @param $class
+     *
+     * @return $this
+     */
     public function setEntityClass($class)
     {
         $this->entity = $class;
@@ -194,6 +237,11 @@ class Record extends Object
             : $this->entity = Reflect::create($this->getEntityClass());
     }
 
+    /**
+     * @param $entity
+     *
+     * @return Entity
+     */
     public function getEntityIfEmpty($entity)
     {
         if ($entity) {
@@ -217,6 +265,11 @@ class Record extends Object
         return $this->prepareEntity();
     }
 
+    /**
+     * @param $entity
+     *
+     * @return $this
+     */
     public function setEntity($entity)
     {
         $this->entity = $entity;

@@ -18,6 +18,14 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
 
+    /**
+     * @param               $relation
+     * @param               $entity
+     * @param callable|null $callback
+     * @param null          $alias
+     *
+     * @return mixed
+     */
     protected function returnRelation($relation, $entity, callable $callback = null, $alias = null)
     {
         if (is_string($entity)) {

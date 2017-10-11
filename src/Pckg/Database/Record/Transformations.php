@@ -2,13 +2,29 @@
 
 use Pckg\Database\Object;
 
+/**
+ * Class Transformations
+ *
+ * @package Pckg\Database\Record
+ */
 trait Transformations
 {
 
+    /**
+     * @var array
+     */
     protected $toArray = [];
 
+    /**
+     * @var array
+     */
     protected $toJson = [];
 
+    /**
+     * @param array $items
+     *
+     * @return $this
+     */
     public function addToArray($items = [])
     {
         if (!is_array($items)) {
@@ -30,6 +46,13 @@ trait Transformations
         return $this->__toArray($values, $depth, $withToArray);
     }
 
+    /**
+     * @param null $values
+     * @param int  $depth
+     * @param bool $withToArray
+     *
+     * @return Object
+     */
     public function toObject($values = null, $depth = 6, $withToArray = true)
     {
         $array = $this->toArray($values, $depth, $withToArray);
@@ -80,16 +103,27 @@ trait Transformations
         return $return;
     }
 
+    /**
+     * @return string
+     */
     public function toJSON()
     {
         return json_encode($this->jsonSerialize());
     }
 
+    /**
+     * @return array
+     */
     function jsonSerialize()
     {
         return $this->__toArray();
     }
 
+    /**
+     * @param $map
+     *
+     * @return array
+     */
     public function transform($map)
     {
         if (is_callable($map)) {

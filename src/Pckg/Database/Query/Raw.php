@@ -2,9 +2,20 @@
 
 use Pckg\Database\Query;
 
+/**
+ * Class Raw
+ *
+ * @package Pckg\Database\Query
+ */
 class Raw extends Query
 {
 
+    /**
+     * Raw constructor.
+     *
+     * @param null  $sql
+     * @param array $bind
+     */
     public function __construct($sql = null, $bind = [])
     {
         parent::__construct();
@@ -13,11 +24,17 @@ class Raw extends Query
         $this->bind = $bind;
     }
 
+    /**
+     * @return null
+     */
     public function buildSQL()
     {
         return $this->sql ?? $this->where->build();
     }
 
+    /**
+     * @return array
+     */
     public function buildBinds()
     {
         return $this->bind;

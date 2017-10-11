@@ -25,10 +25,19 @@ class PDO extends AbstractRepository implements Repository
      */
     protected $connection;
 
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var null
+     */
     protected $recordClass = null;
 
+    /**
+     * @return array
+     */
     public function __sleep()
     {
         return [
@@ -37,6 +46,9 @@ class PDO extends AbstractRepository implements Repository
         ];
     }
 
+    /**
+     *
+     */
     public function __wakeup()
     {
         $repository = RepositoryFactory::createRepositoryConnection(config('database.' . $this->name), $this->name);
@@ -52,6 +64,9 @@ class PDO extends AbstractRepository implements Repository
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
@@ -119,6 +134,13 @@ class PDO extends AbstractRepository implements Repository
         return $this;
     }
 
+    /**
+     * @param Record $record
+     * @param Entity $entity
+     * @param        $language
+     *
+     * @return $this
+     */
     public function deleteTranslation(Record $record, Entity $entity, $language)
     {
         (new DeleteRecord($record, $entity, $this))->setTable($entity->getTable() . '_i18n')
@@ -133,6 +155,12 @@ class PDO extends AbstractRepository implements Repository
         return $this;
     }
 
+    /**
+     * @param       $sql
+     * @param array $binds
+     *
+     * @return mixed
+     */
     public function prepareSQL($sql, $binds = [])
     {
         $prepare = measure(
@@ -166,6 +194,12 @@ class PDO extends AbstractRepository implements Repository
         return $prepare;
     }
 
+    /**
+     * @param Query $query
+     * @param null  $recordClass
+     *
+     * @return mixed
+     */
     public function prepareQuery(Query $query, $recordClass = null)
     {
         $this->recordClass = $recordClass;
@@ -207,6 +241,12 @@ class PDO extends AbstractRepository implements Repository
         return $prepare;
     }
 
+    /**
+     * @param       $sql
+     * @param array $binds
+     *
+     * @return mixed
+     */
     public function prepareAndExecuteSql($sql, $binds = [])
     {
         $prepare = $this->prepareSQL($sql, $binds);
@@ -240,6 +280,11 @@ class PDO extends AbstractRepository implements Repository
         return $execute;
     }
 
+    /**
+     * @param Query $query
+     *
+     * @return mixed
+     */
     public function prepareExecuteAndFetchAll(Query $query)
     {
         $prepare = $this->prepareQuery($query);
@@ -248,6 +293,11 @@ class PDO extends AbstractRepository implements Repository
         return $this->fetchAllPrepared($prepare);
     }
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchAllPrepared($prepare)
     {
         return measure(
@@ -262,6 +312,11 @@ class PDO extends AbstractRepository implements Repository
         );
     }
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchPrepared($prepare)
     {
         return measure(
@@ -276,6 +331,11 @@ class PDO extends AbstractRepository implements Repository
         );
     }
 
+    /**
+     * @param $records
+     *
+     * @return mixed
+     */
     public function transformRecordsToObjects($records)
     {
         if ($this->recordClass) {

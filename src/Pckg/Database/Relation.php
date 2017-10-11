@@ -46,18 +46,39 @@ abstract class Relation implements RelationInterface
      */
     protected $on;
 
+    /**
+     * @var
+     */
     protected $onAdditional;
 
+    /**
+     * @var
+     */
     protected $record;
 
+    /**
+     * @var
+     */
     protected $fill;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var
+     */
     protected $primaryCollectionKey;
 
+    /**
+     * @var
+     */
     protected $foreignKey;
 
+    /**
+     * @var array
+     */
     protected $select = [];
 
     /**
@@ -65,6 +86,9 @@ abstract class Relation implements RelationInterface
      */
     protected $query;
 
+    /**
+     * @var
+     */
     protected $after;
 
     /**
@@ -96,6 +120,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $primaryKey
+     *
+     * @return $this
+     */
     public function primaryKey($primaryKey)
     {
         $this->primaryKey = $primaryKey;
@@ -103,6 +132,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $foreignKey
+     *
+     * @return $this
+     */
     public function foreignKey($foreignKey)
     {
         $this->foreignKey = $foreignKey;
@@ -110,6 +144,9 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getForeignKey()
     {
         return $this->foreignKey;
@@ -126,6 +163,11 @@ abstract class Relation implements RelationInterface
         $this->fill = $this->getCalee();
     }
 
+    /**
+     * @param int $depth
+     *
+     * @return mixed
+     */
     protected function getCalee($depth = 4)
     {
         if (debug_backtrace()[$depth]['function'] == 'hasMany') {
@@ -155,6 +197,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $fill
+     *
+     * @return $this
+     */
     public function fill($fill)
     {
         $this->fill = $fill;
@@ -162,6 +209,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $after
+     *
+     * @return $this
+     */
     public function after($after)
     {
         $this->after = $after;
@@ -169,6 +221,9 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFill()
     {
         return $this->fill;
@@ -192,6 +247,11 @@ abstract class Relation implements RelationInterface
         return $this->getLeftEntity()->getRepository();
     }
 
+    /**
+     * @param Record $record
+     *
+     * @return $this
+     */
     public function onRecord(Record $record)
     {
         $this->record = $record;
@@ -218,6 +278,9 @@ abstract class Relation implements RelationInterface
         return $condition;
     }
 
+    /**
+     * @return string
+     */
     public function getAdditionalCondition()
     {
         return $this->onAdditional
@@ -225,6 +288,11 @@ abstract class Relation implements RelationInterface
             : '';
     }
 
+    /**
+     * @param Select $query
+     *
+     * @return $this
+     */
     public function mergeToQuery(Select $query)
     {
         $query->join(
@@ -261,6 +329,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param callable $callable
+     * @param          $entity
+     * @param null     $query
+     */
     public function reflect(callable $callable, $entity, $query = null)
     {
         Reflect::call(

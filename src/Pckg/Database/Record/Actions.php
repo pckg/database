@@ -4,28 +4,53 @@ use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 
+/**
+ * Class Actions
+ *
+ * @package Pckg\Database\Record
+ */
 trait Actions
 {
 
+    /**
+     * @var bool
+     */
     protected $saved = false;
 
+    /**
+     * @var bool
+     */
     protected $deleted = false;
 
+    /**
+     * @return bool
+     */
     public function isSaved()
     {
         return $this->saved;
     }
 
+    /**
+     * @return bool
+     */
     public function isNew()
     {
         return !$this->saved && !$this->id;
     }
 
+    /**
+     * @return bool
+     */
     public function isDeleted()
     {
         return $this->deleted;
     }
 
+    /**
+     * @param bool $saved
+     *
+     * @return $this
+     */
     public function setSaved($saved = true)
     {
         $this->saved = $saved;
@@ -33,6 +58,11 @@ trait Actions
         return $this;
     }
 
+    /**
+     * @param bool $deleted
+     *
+     * @return $this
+     */
     public function setDeleted($deleted = true)
     {
         $this->deleted = $deleted;
@@ -40,6 +70,12 @@ trait Actions
         return $this;
     }
 
+    /**
+     * @param      $key
+     * @param null $val
+     *
+     * @return $this
+     */
     public function setAndSave($key, $val = null)
     {
         $this->set($key, $val);
@@ -62,6 +98,11 @@ trait Actions
         return $this;
     }
 
+    /**
+     * @param array $overwrite
+     *
+     * @return mixed
+     */
     public function saveAs($overwrite = [])
     {
         $data = $this->data();
@@ -155,6 +196,9 @@ trait Actions
         return $insert;
     }
 
+    /**
+     * @return $this
+     */
     public function refetch()
     {
         $entity = $this->getEntity();
@@ -174,6 +218,11 @@ trait Actions
         return $this;
     }
 
+    /**
+     * @param Entity|null $entity
+     *
+     * @return static
+     */
     public function duplicate(Entity $entity = null)
     {
         $entity = $this->getEntityIfEmpty($entity);
@@ -198,6 +247,11 @@ trait Actions
         return $record;
     }
 
+    /**
+     * @param $data
+     *
+     * @return $this
+     */
     public function updateIf($data)
     {
         $updated = false;
@@ -230,6 +284,12 @@ trait Actions
         return $record;
     }
 
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return mixed|Record
+     */
     public static function gets(array $data, Entity $entity = null)
     {
         if (!$entity) {
@@ -239,6 +299,12 @@ trait Actions
         return $entity->whereArr($data)->one();
     }
 
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this|mixed|Record
+     */
     public static function getOrCreate(array $data, Entity $entity = null)
     {
         $record = static::gets($data, $entity);

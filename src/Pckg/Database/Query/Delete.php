@@ -28,6 +28,9 @@ class Delete extends Query
         return $sql;
     }
 
+    /**
+     * @return array
+     */
     function buildBinds()
     {
         return $this->getBinds(['where', 'limit']);

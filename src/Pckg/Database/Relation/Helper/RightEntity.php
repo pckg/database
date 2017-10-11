@@ -8,6 +8,11 @@ use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
+/**
+ * Class RightEntity
+ *
+ * @package Pckg\Database\Relation\Helper
+ */
 trait RightEntity
 {
 
@@ -16,6 +21,9 @@ trait RightEntity
      */
     protected $right;
 
+    /**
+     * @var bool
+     */
     protected $inheritRightRepository = true;
 
     /**
@@ -40,6 +48,9 @@ trait RightEntity
         return $this->getRightEntity()->getRepository();
     }
 
+    /**
+     * @return string
+     */
     public function getRightForeignKey()
     {
         $class = explode('\\', get_class($this->getRightEntity()));
@@ -47,6 +58,13 @@ trait RightEntity
         return lcfirst(Convention::nameOne(array_pop($class))) . '_id';
     }
 
+    /**
+     * @param Entity $rightEntity
+     * @param        $foreignKey
+     * @param        $primaryValue
+     *
+     * @return \Pckg\CollectionInterface|Collection
+     */
     public function getRightCollection(Entity $rightEntity, $foreignKey, $primaryValue)
     {
         if (!$primaryValue) {
@@ -74,6 +92,13 @@ trait RightEntity
         return (new GetRecords($entity))->executeAll();
     }
 
+    /**
+     * @param Entity $rightEntity
+     * @param        $foreignKey
+     * @param        $primaryValue
+     *
+     * @return null|\Pckg\Database\Record
+     */
     public function getRightRecord(Entity $rightEntity, $foreignKey, $primaryValue)
     {
         if (!$primaryValue) {
@@ -103,6 +128,11 @@ trait RightEntity
         return (new GetRecords($entity))->executeOne();
     }
 
+    /**
+     * @param bool $bool
+     *
+     * @return $this
+     */
     public function inheritRightRepository($bool = true)
     {
         $this->inheritRightRepository = $bool;

@@ -63,6 +63,9 @@ class Insert extends Query
         return "(" . implode(", ", $arrValues) . ")";
     }
 
+    /**
+     * @return array
+     */
     public function buildBinds()
     {
         return $this->getBinds(['keys', 'values']);

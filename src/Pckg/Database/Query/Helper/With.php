@@ -7,6 +7,11 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
+/**
+ * Class With
+ *
+ * @package Pckg\Database\Query\Helper
+ */
 trait With
 {
 
@@ -21,6 +26,9 @@ trait With
         'where',
     ];
 
+    /**
+     * @var array
+     */
     protected $with = [];
 
     /**
@@ -117,6 +125,9 @@ trait With
         return $relation;
     }
 
+    /**
+     * @return array
+     */
     public function getWith()
     {
         return $this->with;

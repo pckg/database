@@ -6,15 +6,36 @@ use Pckg\Database\Query;
 use Pckg\Database\Repository\Faker;
 use Throwable;
 
+/**
+ * Class Fetcher
+ *
+ * @package Pckg\Database\Repository\Faker
+ */
 class Fetcher
 {
 
+    /**
+     * @var Faker
+     */
     protected $faker;
 
+    /**
+     * @var Query
+     */
     protected $query;
 
+    /**
+     * @var
+     */
     protected $recordClass;
 
+    /**
+     * Fetcher constructor.
+     *
+     * @param Faker $faker
+     * @param Query $query
+     * @param       $recordClass
+     */
     public function __construct(Faker $faker, Query $query, $recordClass)
     {
         $this->faker = $faker;
@@ -22,6 +43,9 @@ class Fetcher
         $this->recordClass = $recordClass;
     }
 
+    /**
+     * @return $this
+     */
     public function execute()
     {
         return $this;
@@ -35,6 +59,9 @@ class Fetcher
         return $this->faker->getConnection();
     }
 
+    /**
+     * @return array
+     */
     public function fetchAll()
     {
         $limit = (int)$this->query->getLimit();
@@ -50,6 +77,11 @@ class Fetcher
         return $collection;
     }
 
+    /**
+     * @param int $i
+     *
+     * @return mixed
+     */
     public function fetch($i = 1)
     {
         $generator = $this->getGenerator();

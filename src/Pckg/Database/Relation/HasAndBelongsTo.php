@@ -16,6 +16,9 @@ class HasAndBelongsTo extends HasMany
 
     use MiddleEntity;
 
+    /**
+     * @return string
+     */
     public function getMiddleKeyCondition()
     {
         $middleQuery = $this->getMiddleEntity()->getQuery();
@@ -24,11 +27,17 @@ class HasAndBelongsTo extends HasMany
                '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
     }
 
+    /**
+     * @return array
+     */
     public function getMiddleKeyBinds()
     {
         return [];
     }
 
+    /**
+     * @param Select $query
+     */
     public function mergeToQuery(Select $query)
     {
         /**
@@ -74,6 +83,9 @@ class HasAndBelongsTo extends HasMany
         }
     }
 
+    /**
+     * @param Record $record
+     */
     public function fillRecord(Record $record)
     {
         /**
@@ -133,6 +145,9 @@ class HasAndBelongsTo extends HasMany
         $this->fillRecordWithRelations($record);
     }
 
+    /**
+     * @param CollectionInterface $collection
+     */
     public function fillCollection(CollectionInterface $collection)
     {
         /**

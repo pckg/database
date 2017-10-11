@@ -14,6 +14,11 @@ use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
 use Pckg\Database\Repository\RepositoryFactory;
 
+/**
+ * Class Entity
+ *
+ * @package Pckg\Database
+ */
 class Entity
 {
 
@@ -25,10 +30,19 @@ class Entity
      */
     protected $table;
 
+    /**
+     * @var null
+     */
     protected $alias;
 
+    /**
+     * @var
+     */
     protected $record = Record::class;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
     /**
@@ -36,6 +50,9 @@ class Entity
      */
     protected $repository;
 
+    /**
+     * @var
+     */
     protected $repositoryName = Repository::class;
 
     /**
@@ -53,6 +70,9 @@ class Entity
      */
     protected $useCache;
 
+    /**
+     * @var array
+     */
     protected $setData = [];
 
     /**
@@ -73,11 +93,19 @@ class Entity
         $this->boot();
     }
 
+    /**
+     *
+     */
     public function __clone()
     {
         $this->query = clone $this->query;
     }
 
+    /**
+     * @param $key
+     *
+     * @return string
+     */
     public function extendedKey($key)
     {
         $cache = $this->repository->getCache();
@@ -163,11 +191,17 @@ class Entity
         }
     }
 
+    /**
+     * @return $this
+     */
     public function preboot()
     {
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function boot()
     {
         return $this;
@@ -195,6 +229,11 @@ class Entity
         return $this->record;
     }
 
+    /**
+     * @param $class
+     *
+     * @return $this
+     */
     public function setRecordClass($class)
     {
         $this->record = $class;
@@ -215,6 +254,11 @@ class Entity
         return $this;
     }
 
+    /**
+     * @param $alias
+     *
+     * @return $this
+     */
     public function setAlias($alias)
     {
         /**
@@ -226,6 +270,9 @@ class Entity
         return $this;
     }
 
+    /**
+     * @return null
+     */
     public function getAlias()
     {
         return $this->alias;
@@ -239,11 +286,17 @@ class Entity
         return $this->table;
     }
 
+    /**
+     * @return string
+     */
     public function getPrimaryKey()
     {
         return $this->primaryKey;
     }
 
+    /**
+     * @return array
+     */
     public function getFields()
     {
         return $this->fields ?: $this->getRepository()->getCache()->getTableFields($this->table);
@@ -272,6 +325,11 @@ class Entity
         return $this->repository;
     }
 
+    /**
+     * @param $repository
+     *
+     * @return Repository|PDO
+     */
     public function getRepositoryIfEmpty($repository)
     {
         if ($repository) {
@@ -512,11 +570,21 @@ class Entity
         return $all;
     }
 
+    /**
+     * @param callable $callback
+     *
+     * @return mixed
+     */
     public function allAnd(callable $callback)
     {
         return $callback($this->all());
     }
 
+    /**
+     * @param callable $callback
+     *
+     * @return $this|\Pckg\Collection\Each
+     */
     public function allAndEach(callable $callback)
     {
         return $this->all()->each($callback);
@@ -567,6 +635,9 @@ class Entity
         throw new Exception('No records found');
     }
 
+    /**
+     * @return int
+     */
     public function total()
     {
         return $this->count()
@@ -575,6 +646,11 @@ class Entity
                     ->total();
     }
 
+    /**
+     * @param Repository|null $repository
+     *
+     * @return mixed
+     */
     public function delete(Repository $repository = null)
     {
         if (!$repository) {
@@ -588,6 +664,11 @@ class Entity
         return $repository->executePrepared($prepare);
     }
 
+    /**
+     * @param Repository|null $repository
+     *
+     * @return mixed
+     */
     public function insert(Repository $repository = null)
     {
         if (!$repository) {
@@ -601,6 +682,11 @@ class Entity
         return $repository->executePrepared($prepare);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
     public function set($data = [])
     {
         $this->setData = $data;
@@ -608,6 +694,11 @@ class Entity
         return $this;
     }
 
+    /**
+     * @param Repository|null $repository
+     *
+     * @return mixed
+     */
     public function update(Repository $repository = null)
     {
         if (!$repository) {
@@ -623,6 +714,11 @@ class Entity
         return $repository->executePrepared($prepare);
     }
 
+    /**
+     * @param Record $record
+     *
+     * @return Record
+     */
     public function transformRecordToEntities(Record $record)
     {
         if (get_class($record) == $this->record) {
@@ -640,6 +736,11 @@ class Entity
         return $newRecord;
     }
 
+    /**
+     * @param $field
+     *
+     * @return bool
+     */
     public function hasField($field)
     {
         return $this->getRepository()->getCache()->tableHasField($this->table, $field);

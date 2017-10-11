@@ -6,44 +6,125 @@ use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
 use Throwable;
 
+/**
+ * Class Query
+ *
+ * @package Pckg\Database
+ */
 abstract class Query
 {
 
-    protected $table, $alias, $join = [], $where, $groupBy, $having, $orderBy, $limit;
+    /**
+     * @var
+     */
+    protected $table;
 
+    /**
+     * @var
+     */
+    protected $alias;
+
+    /**
+     * @var array
+     */
+    protected $join = [];
+
+    /**
+     * @var $this
+     */
+    protected $where;
+
+    /**
+     * @var
+     */
+    protected $groupBy;
+
+    /**
+     * @var $this
+     */
+    protected $having;
+
+    /**
+     * @var
+     */
+    protected $orderBy;
+
+    /**
+     * @var
+     */
+    protected $limit;
+
+    /**
+     * @var
+     */
     protected $sql;
 
+    /**
+     * @var array
+     */
     protected $bind = [];
 
+    /**
+     * @var bool
+     */
     protected $debug = false;
 
+    /**
+     * @var bool
+     */
     protected $diebug = false;
 
+    /**
+     *
+     */
     const LIKE = 'LIKE';
 
+    /**
+     *
+     */
     const IN = 'IN';
 
+    /**
+     *
+     */
     const NOT_LIKE = 'NOT LIKE';
 
+    /**
+     *
+     */
     const NOT_IN = 'NOT IN';
 
+    /**
+     * Query constructor.
+     */
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
     }
 
+    /**
+     *
+     */
     public function __clone()
     {
         $this->where = clone $this->where;
         $this->having = clone $this->having;
     }
 
+    /**
+     * @return Raw
+     */
     public function toRaw()
     {
         return new Raw('(' . $this->buildSQL() . ')', $this->buildBinds());
     }
 
+    /**
+     * @param bool $debug
+     *
+     * @return $this
+     */
     public function debug($debug = true)
     {
         $this->debug = $debug;
@@ -51,6 +132,11 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param bool $diebug
+     *
+     * @return $this
+     */
     public function diebug($diebug = true)
     {
         $this->diebug = $diebug;
@@ -58,6 +144,13 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param        $sql
+     * @param array  $binds
+     * @param string $part
+     *
+     * @return static
+     */
     public static function raw($sql, $binds = [], $part = 'main')
     {
         $query = new static($sql);
@@ -73,11 +166,19 @@ abstract class Query
         return $query;
     }
 
+    /**
+     * @return array
+     */
     public function getBind()
     {
         return $this->bind;
     }
 
+    /**
+     * @param $table
+     *
+     * @return $this
+     */
     public function table($table)
     {
         $this->table = $table;
@@ -85,11 +186,19 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getTable()
     {
         return $this->table;
     }
 
+    /**
+     * @param $alias
+     *
+     * @return $this
+     */
     public function alias($alias)
     {
         $this->alias = $alias;
@@ -97,36 +206,61 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getAlias()
     {
         return $this->alias;
     }
 
+    /**
+     * @return mixed
+     */
     public function getLimit()
     {
         return $this->limit;
     }
 
+    /**
+     * @return $this
+     */
     public function getWhere()
     {
         return $this->where;
     }
 
+    /**
+     * @return string
+     */
     public function buildJoin()
     {
         return implode(" ", $this->join);
     }
 
+    /**
+     * @return string
+     */
     public function buildWhere()
     {
         return $this->where->hasChildren() ? 'WHERE ' . $this->where->build() : '';
     }
 
+    /**
+     * @return string
+     */
     public function buildHaving()
     {
         return $this->having->hasChildren() ? 'HAVING ' . $this->having->build() : '';
     }
 
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     *
+     * @return Query
+     */
     public function having($key, $value = true, $operator = '=')
     {
         return $this->addCondition($key, $value, $operator, 'having');
@@ -140,11 +274,26 @@ abstract class Query
         return $this->having;
     }
 
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     *
+     * @return Query
+     */
     public function where($key, $value = true, $operator = '=')
     {
         return $this->addCondition($key, $value, $operator, 'where');
     }
 
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     * @param        $part
+     *
+     * @return $this
+     */
     private function addCondition($key, $value = true, $operator = '=', $part)
     {
         if (is_object($key)) {
@@ -268,6 +417,13 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     *
+     * @return Query
+     */
     public function orWhere($key, $value = true, $operator = '=')
     {
         $this->where->setGlue('OR');
@@ -275,6 +431,11 @@ abstract class Query
         return $this->where($key, $value, $operator);
     }
 
+    /**
+     * @param $groupBy
+     *
+     * @return $this
+     */
     public function groupBy($groupBy)
     {
         $this->groupBy = $groupBy;
@@ -282,6 +443,11 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param $groupBy
+     *
+     * @return $this
+     */
     public function addGroupBy($groupBy)
     {
         if ($this->groupBy) {
@@ -293,11 +459,19 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getGroupBy()
     {
         return $this->groupBy;
     }
 
+    /**
+     * @param $orderBy
+     *
+     * @return $this
+     */
     public function orderBy($orderBy)
     {
         $this->orderBy = $orderBy;
@@ -305,11 +479,19 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getOrderBy()
     {
         return $this->orderBy;
     }
 
+    /**
+     * @param $limit
+     *
+     * @return $this
+     */
     public function limit($limit)
     {
         $this->limit = $limit;
@@ -317,6 +499,11 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return int|string
+     */
     private function makeKey($key)
     {
         return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.') ||
@@ -325,6 +512,12 @@ abstract class Query
             : '`' . $key . '`';
     }
 
+    /**
+     * @param $val
+     * @param $part
+     *
+     * @return $this
+     */
     public function bind($val, $part)
     {
         if (!is_array($val)) {
@@ -338,6 +531,11 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param $bind
+     *
+     * @return $this
+     */
     public function setBind($bind)
     {
         $this->bind = $bind;
@@ -345,6 +543,12 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @param array $parts
+     * @param bool  $clear
+     *
+     * @return array
+     */
     public function getBinds($parts = [], $clear = false)
     {
         $binds = [];
@@ -373,6 +577,14 @@ abstract class Query
         return $binds;
     }
 
+    /**
+     * @param       $table
+     * @param null  $on
+     * @param null  $where
+     * @param array $binds
+     *
+     * @return $this
+     */
     public function join($table, $on = null, $where = null, $binds = [])
     {
         if (!$on) {
@@ -394,11 +606,17 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getJoin()
     {
         return $this->join;
     }
 
+    /**
+     *
+     */
     public function makeJoinsLeft()
     {
         foreach ($this->join as &$join) {
@@ -406,6 +624,13 @@ abstract class Query
         }
     }
 
+    /**
+     * @param Entity $entity
+     * @param        $data
+     * @param        $table
+     *
+     * @throws Exception
+     */
     public function primaryWhere(Entity $entity, $data, $table)
     {
         $primaryKeys = $entity->getRepository()->getCache()->getTablePrimaryKeys($table);
@@ -425,10 +650,20 @@ abstract class Query
         }
     }
 
+    /**
+     * @return mixed
+     */
     abstract public function buildSQL();
 
+    /**
+     * @return mixed
+     */
     abstract public function buildBinds();
 
+    /**
+     * @return string
+     * @throws Throwable
+     */
     public function __toString()
     {
         try {

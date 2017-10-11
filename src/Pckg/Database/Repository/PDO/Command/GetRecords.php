@@ -20,6 +20,9 @@ class GetRecords
      */
     protected $entity;
 
+    /**
+     * @var Repository|Repository\PDO
+     */
     protected $repository;
 
     /**

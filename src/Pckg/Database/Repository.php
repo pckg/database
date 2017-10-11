@@ -71,12 +71,30 @@ interface Repository
      */
     public function prepareQuery(Query $query, $recordClass = null);
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function executePrepared($prepare);
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchAllPrepared($prepare);
 
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
     public function fetchPrepared($prepare);
 
+    /**
+     * @return mixed
+     */
     public function getCache();
 
 }

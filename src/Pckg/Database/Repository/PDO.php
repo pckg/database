@@ -3,7 +3,6 @@
 namespace Pckg\Database\Repository;
 
 use Exception;
-use Pckg\Database\Command\InitDatabase;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
@@ -42,8 +41,7 @@ class PDO extends AbstractRepository implements Repository
 
     public function __wakeup()
     {
-        $initDatabase = (new InitDatabase());
-        $repository = $initDatabase->createRepositoryConnection(config('database.' . $this->name), $this->name);
+        $repository = RepositoryFactory::createRepositoryConnection(config('database.' . $this->name), $this->name);
         $this->connection = $repository->getConnection();
     }
 

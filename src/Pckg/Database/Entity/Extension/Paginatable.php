@@ -23,10 +23,8 @@ trait Paginatable
 
         if ($num > 1) {
             $this->limit((($num - 1) * $perPage) . ', ' . $perPage);
-
         } else {
             $this->limit($perPage);
-
         }
 
         return $this;

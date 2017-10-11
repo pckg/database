@@ -102,19 +102,17 @@ abstract class Relation implements RelationInterface
         if (method_exists($this->getQuery(), $method)) {
             /**
              * First overload Query.
+             *
              * @T00D00 - why is this needed?
              */
             Reflect::method($this->getQuery(), $method, $args);
-
         } elseif (method_exists($this->getRightEntity(), $method)) {
             /**
              * Then right entity.
              */
             Reflect::method($this->getRightEntity(), $method, $args);
-
         } else {
             $this->callWith($method, $args, $this->getRightEntity());
-
         }
 
         return $this;

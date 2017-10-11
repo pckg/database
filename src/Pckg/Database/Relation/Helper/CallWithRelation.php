@@ -28,10 +28,8 @@ trait CallWithRelation
 
         if ($this instanceof Collection) {
             $relation->fillCollection($this);
-
         } else if ($this instanceof Record) {
             $relation->fillRecord($this);
-
         }
 
         return $relation;

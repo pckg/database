@@ -1,7 +1,6 @@
 <?php namespace Pckg\Database\Repository;
 
 use Faker\Generator;
-use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;

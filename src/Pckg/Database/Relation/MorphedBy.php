@@ -2,8 +2,6 @@
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
-use Pckg\Database\Record;
-use Pckg\Database\Relation;
 use Pckg\Database\Repository\PDO\Command\GetRecords;
 
 /**

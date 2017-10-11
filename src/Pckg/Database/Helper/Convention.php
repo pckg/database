@@ -82,7 +82,6 @@ class Convention
         }
 
         return $multiple . ($i18n ? "_i18n" : "");
-
     }
 
     /**

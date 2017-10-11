@@ -1,6 +1,5 @@
 <?php namespace Pckg\Database\Repository;
 
-use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Record;

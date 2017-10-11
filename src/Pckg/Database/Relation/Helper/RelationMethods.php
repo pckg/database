@@ -31,7 +31,7 @@ trait RelationMethods
         if (is_string($entity)) {
             $entity = Reflect::create($entity, ['alias' => $alias]);
         }
-        
+
         $relation = new $relation($this, $entity);
 
         if ($alias) {

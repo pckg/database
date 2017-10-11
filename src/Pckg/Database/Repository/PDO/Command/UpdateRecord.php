@@ -68,9 +68,13 @@ class UpdateRecord
     public function execute()
     {
         $originalTable = $this->entity->getTable();
-        $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record, true);
 
         foreach ($data as $table => $update) {
+            if (!$update) {
+                continue;
+            }
+
             if ($this->tables && !in_array($table, $this->tables)) {
                 continue;
             }

@@ -342,10 +342,24 @@ class BlankEntity
      *
      * @return array
      */
-    public function tabelizeRecord(DatabaseRecord $record)
+    public function tabelizeRecord(DatabaseRecord $record, $onlyDirty = false)
     {
         $dataArray = $record->__toArray(null, 2, false);
         $extensionArray = [];
+
+        if ($onlyDirty) {
+            foreach ($dataArray as $key => $val) {
+                /**
+                 * Leave only dirty and primary keys.
+                 * @T00D00 - What if primary id has changed?
+                 */
+                if ($record->isDirty($key) || $key == 'id') {
+                    continue;
+                }
+
+                unset($dataArray[$key]);
+            }
+        }
 
         /**
          * Holds all available fields in database table cache.

@@ -39,14 +39,6 @@ trait Transformations
     }
 
     /**
-     * @return array
-     */
-    public function toArray($values = null, $depth = 6, $withToArray = true)
-    {
-        return $this->__toArray($values, $depth, $withToArray);
-    }
-
-    /**
      * @param null $values
      * @param int  $depth
      * @param bool $withToArray
@@ -61,6 +53,14 @@ trait Transformations
         }
 
         return new Object($array);
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray($values = null, $depth = 6, $withToArray = true)
+    {
+        return $this->__toArray($values, $depth, $withToArray);
     }
 
     /**

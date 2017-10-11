@@ -126,11 +126,13 @@ trait With
     }
 
     /**
-     * @return array
+     *
      */
-    public function getWith()
+    public function withRequired(Relation $relation)
     {
-        return $this->with;
+        $this->with($relation);
+
+        return $this;
     }
 
     /**
@@ -159,16 +161,6 @@ trait With
     }
 
     /**
-     *
-     */
-    public function withRequired(Relation $relation)
-    {
-        $this->with($relation);
-
-        return $this;
-    }
-
-    /**
      * Fill record with all it's relations.
      *
      * @param Record $record
@@ -182,6 +174,14 @@ trait With
         }
 
         return $record;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWith()
+    {
+        return $this->with;
     }
 
     /**

@@ -37,6 +37,48 @@ trait QueryBuilder
     }
 
     /**
+     * @return Query|Select
+     */
+    public function getQuery()
+    {
+        return $this->query
+            ? $this->query
+            : $this->resetQuery()->getQuery();
+    }
+
+    /**
+     * @param $query
+     *
+     * @return $this
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetQuery()
+    {
+        $this->prevQuery = $this->query;
+
+        $this->query = (new Select());
+
+        if (isset($this->table)) {
+            $this->query->table($this->table);
+        }
+
+        if (isset($this->alias)) {
+            $this->query->alias($this->alias);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param bool $debug
      *
      * @return $this
@@ -66,41 +108,11 @@ trait QueryBuilder
     }
 
     /**
-     * @return Query|Select
-     */
-    public function getQuery()
-    {
-        return $this->query
-            ? $this->query
-            : $this->resetQuery()->getQuery();
-    }
-
-    /**
      * @return mixed
      */
     public function getPrevQuery()
     {
         return $this->prevQuery;
-    }
-
-    /**
-     * @return $this
-     */
-    public function resetQuery()
-    {
-        $this->prevQuery = $this->query;
-
-        $this->query = (new Select());
-
-        if (isset($this->table)) {
-            $this->query->table($this->table);
-        }
-
-        if (isset($this->alias)) {
-            $this->query->alias($this->alias);
-        }
-
-        return $this;
     }
 
     /**
@@ -117,18 +129,6 @@ trait QueryBuilder
     public function toRaw()
     {
         return $this->query->toRaw();
-    }
-
-    /**
-     * @param $query
-     *
-     * @return $this
-     */
-    public function setQuery($query)
-    {
-        $this->query = $query;
-
-        return $this;
     }
 
     /**
@@ -167,31 +167,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param        $key
-     * @param        $value
-     * @param string $operator
-     *
-     * @return $this
-     */
-    public function where($key, $value = true, $operator = '=')
-    {
-        if ((isset($this->table) || isset($this->alias)) && is_string($key)
-            && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false &&
-            strpos($key, ',') === false && strpos($key, '(') === false
-        ) {
-            if ($this->alias) {
-                $key = '`' . $this->alias . '`.`' . $key . '`';
-            } else {
-                $key = '`' . $this->table . '`.`' . $key . '`';
-            }
-        }
-
-        $this->getQuery()->where($key, $value, $operator);
-
-        return $this;
-    }
-
-    /**
      * @param       $raw
      * @param array $bind
      *
@@ -215,6 +190,31 @@ trait QueryBuilder
         foreach ($data as $key => $value) {
             $this->where($key, $value, $operator);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param        $key
+     * @param        $value
+     * @param string $operator
+     *
+     * @return $this
+     */
+    public function where($key, $value = true, $operator = '=')
+    {
+        if ((isset($this->table) || isset($this->alias)) && is_string($key)
+            && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false &&
+            strpos($key, ',') === false && strpos($key, '(') === false
+        ) {
+            if ($this->alias) {
+                $key = '`' . $this->alias . '`.`' . $key . '`';
+            } else {
+                $key = '`' . $this->table . '`.`' . $key . '`';
+            }
+        }
+
+        $this->getQuery()->where($key, $value, $operator);
 
         return $this;
     }

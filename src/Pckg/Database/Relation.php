@@ -92,6 +92,31 @@ abstract class Relation implements RelationInterface
     protected $after;
 
     /**
+     * @param $left
+     * @param $right
+     */
+    public function __construct($left, $right)
+    {
+        $this->left = $left;
+        $this->right = $right;
+        $this->fill = $this->getCalee();
+    }
+
+    /**
+     * @param int $depth
+     *
+     * @return mixed
+     */
+    protected function getCalee($depth = 4)
+    {
+        if (debug_backtrace()[$depth]['function'] == 'hasMany') {
+            return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[$depth + 1]['function'];
+        }
+
+        return debug_backtrace()[$depth]['function'];
+    }
+
+    /**
      * @param $method
      * @param $args
      *
@@ -151,31 +176,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $left
-     * @param $right
-     */
-    public function __construct($left, $right)
-    {
-        $this->left = $left;
-        $this->right = $right;
-        $this->fill = $this->getCalee();
-    }
-
-    /**
-     * @param int $depth
-     *
-     * @return mixed
-     */
-    protected function getCalee($depth = 4)
-    {
-        if (debug_backtrace()[$depth]['function'] == 'hasMany') {
-            return debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[$depth + 1]['function'];
-        }
-
-        return debug_backtrace()[$depth]['function'];
-    }
-
-    /**
      * @return $this
      */
     public function leftJoin()
@@ -228,21 +228,21 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @return Entity
-     * @throws \Exception
-     */
-    public function getLeftEntity()
-    {
-        return $this->left; // left is always entity
-    }
-
-    /**
      * @return Repository
      * @throws \Exception
      */
     public function getLeftRepository()
     {
         return $this->getLeftEntity()->getRepository();
+    }
+
+    /**
+     * @return Entity
+     * @throws \Exception
+     */
+    public function getLeftEntity()
+    {
+        return $this->left; // left is always entity
     }
 
     /**
@@ -255,25 +255,6 @@ abstract class Relation implements RelationInterface
         $this->record = $record;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getKeyCondition()
-    {
-        $rightEntity = $this->getRightEntity();
-        $leftEntity = $this->getLeftEntity();
-        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
-        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
-
-        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-                     ($this->primaryKey && $this->foreignKey
-                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
-                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
-                         : '');
-
-        return $condition;
     }
 
     /**
@@ -325,6 +306,25 @@ abstract class Relation implements RelationInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKeyCondition()
+    {
+        $rightEntity = $this->getRightEntity();
+        $leftEntity = $this->getLeftEntity();
+        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
+        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
+
+        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
+                     ($this->primaryKey && $this->foreignKey
+                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
+                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
+                         : '');
+
+        return $condition;
     }
 
     /**

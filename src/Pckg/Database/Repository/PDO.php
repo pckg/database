@@ -36,6 +36,15 @@ class PDO extends AbstractRepository implements Repository
     protected $recordClass = null;
 
     /**
+     * @param \PDO $connection
+     */
+    public function __construct(\PDO $connection, $name = 'default')
+    {
+        $this->setConnection($connection);
+        $this->name = $name;
+    }
+
+    /**
      * @return array
      */
     public function __sleep()
@@ -53,15 +62,6 @@ class PDO extends AbstractRepository implements Repository
     {
         $repository = RepositoryFactory::createRepositoryConnection(config('database.' . $this->name), $this->name);
         $this->connection = $repository->getConnection();
-    }
-
-    /**
-     * @param \PDO $connection
-     */
-    public function __construct(\PDO $connection, $name = 'default')
-    {
-        $this->setConnection($connection);
-        $this->name = $name;
     }
 
     /**
@@ -85,14 +85,6 @@ class PDO extends AbstractRepository implements Repository
         }
 
         return $context->get($key);
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getConnection()
-    {
-        return $this->connection;
     }
 
     /**
@@ -161,6 +153,19 @@ class PDO extends AbstractRepository implements Repository
      *
      * @return mixed
      */
+    public function prepareAndExecuteSql($sql, $binds = [])
+    {
+        $prepare = $this->prepareSQL($sql, $binds);
+
+        return $this->executePrepared($prepare);
+    }
+
+    /**
+     * @param       $sql
+     * @param array $binds
+     *
+     * @return mixed
+     */
     public function prepareSQL($sql, $binds = [])
     {
         $prepare = measure(
@@ -192,6 +197,53 @@ class PDO extends AbstractRepository implements Repository
         );
 
         return $prepare;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * @param $prepare \PDOStatement
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function executePrepared($prepare)
+    {
+        $execute = measure(
+            'Execute query: ' . str_replace("\n", " ", $prepare->queryString),
+            function() use ($prepare) {
+                return $prepare->execute();
+            }
+        );
+
+        if (!$execute) {
+            $errorInfo = $prepare->errorInfo();
+
+            throw new Exception(
+                'Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString
+            );
+        }
+
+        return $execute;
+    }
+
+    /**
+     * @param Query $query
+     *
+     * @return mixed
+     */
+    public function prepareExecuteAndFetchAll(Query $query)
+    {
+        $prepare = $this->prepareQuery($query);
+        $execute = $this->executePrepared($prepare);
+
+        return $this->fetchAllPrepared($prepare);
     }
 
     /**
@@ -242,58 +294,6 @@ class PDO extends AbstractRepository implements Repository
     }
 
     /**
-     * @param       $sql
-     * @param array $binds
-     *
-     * @return mixed
-     */
-    public function prepareAndExecuteSql($sql, $binds = [])
-    {
-        $prepare = $this->prepareSQL($sql, $binds);
-
-        return $this->executePrepared($prepare);
-    }
-
-    /**
-     * @param $prepare \PDOStatement
-     *
-     * @return mixed
-     * @throws Exception
-     */
-    public function executePrepared($prepare)
-    {
-        $execute = measure(
-            'Execute query: ' . str_replace("\n", " ", $prepare->queryString),
-            function() use ($prepare) {
-                return $prepare->execute();
-            }
-        );
-
-        if (!$execute) {
-            $errorInfo = $prepare->errorInfo();
-
-            throw new Exception(
-                'Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString
-            );
-        }
-
-        return $execute;
-    }
-
-    /**
-     * @param Query $query
-     *
-     * @return mixed
-     */
-    public function prepareExecuteAndFetchAll(Query $query)
-    {
-        $prepare = $this->prepareQuery($query);
-        $execute = $this->executePrepared($prepare);
-
-        return $this->fetchAllPrepared($prepare);
-    }
-
-    /**
      * @param $prepare
      *
      * @return mixed
@@ -308,25 +308,6 @@ class PDO extends AbstractRepository implements Repository
                 //$records = $prepare->fetchAll();
 
                 return $records;
-            }
-        );
-    }
-
-    /**
-     * @param $prepare
-     *
-     * @return mixed
-     */
-    public function fetchPrepared($prepare)
-    {
-        return measure(
-            'Fetching prepared',
-            function() use ($prepare) {
-                $records = $this->transformRecordsToObjects($prepare->fetchAll());
-                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                //$records = $prepare->fetchAll();
-
-                return $records ? $records[0] : null;
             }
         );
     }
@@ -347,6 +328,25 @@ class PDO extends AbstractRepository implements Repository
         }
 
         return $records;
+    }
+
+    /**
+     * @param $prepare
+     *
+     * @return mixed
+     */
+    public function fetchPrepared($prepare)
+    {
+        return measure(
+            'Fetching prepared',
+            function() use ($prepare) {
+                $records = $this->transformRecordsToObjects($prepare->fetchAll());
+                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
+                //$records = $prepare->fetchAll();
+
+                return $records ? $records[0] : null;
+            }
+        );
     }
 
 }

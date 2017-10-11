@@ -27,6 +27,15 @@ trait RightEntity
     protected $inheritRightRepository = true;
 
     /**
+     * @return Repository
+     * @throws \Exception
+     */
+    public function getRightRepository()
+    {
+        return $this->getRightEntity()->getRepository();
+    }
+
+    /**
      * @return Entity
      * @throws \Exception
      */
@@ -37,15 +46,6 @@ trait RightEntity
         }
 
         return $this->right;
-    }
-
-    /**
-     * @return Repository
-     * @throws \Exception
-     */
-    public function getRightRepository()
-    {
-        return $this->getRightEntity()->getRepository();
     }
 
     /**

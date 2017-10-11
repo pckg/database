@@ -53,6 +53,16 @@ class Object implements ArrayAccess, JsonSerializable
     }
 
     /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return array_key_exists($key, $this->data) && $this->data[$key];
+    }
+
+    /**
      * @param mixed $offset
      *
      * @return Object
@@ -60,6 +70,18 @@ class Object implements ArrayAccess, JsonSerializable
     public function offsetUnset($offset)
     {
         return $this->__unset($offset);
+    }
+
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
+    public function __unset($key)
+    {
+        unset($this->data[$key]);
+
+        return $this;
     }
 
     /**
@@ -73,6 +95,31 @@ class Object implements ArrayAccess, JsonSerializable
     }
 
     /**
+     * @param $key
+     *
+     * @return null
+     */
+    public function __get($key)
+    {
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
+            : null;
+    }
+
+    /**
+     * @param $key
+     * @param $val
+     *
+     * @return $this
+     */
+    public function __set($key, $val)
+    {
+        $this->data[$key] = $val;
+
+        return $this;
+    }
+
+    /**
      * @param array $data
      *
      * @return $this
@@ -82,20 +129,6 @@ class Object implements ArrayAccess, JsonSerializable
         $this->data = $data;
 
         return $this;
-    }
-
-    /**
-     * @param null $key
-     *
-     * @return array|mixed|null
-     */
-    public function data($key = null)
-    {
-        return $key
-            ? (array_key_exists($key, $this->data)
-                ? $this->data[$key]
-                : null)
-            : $this->data;
     }
 
     /**
@@ -113,6 +146,30 @@ class Object implements ArrayAccess, JsonSerializable
     /**
      * @param null $key
      *
+     * @return bool
+     */
+    public function isOriginal($key = null)
+    {
+        return $this->data($key) == $this->original($key);
+    }
+
+    /**
+     * @param null $key
+     *
+     * @return array|mixed|null
+     */
+    public function data($key = null)
+    {
+        return $key
+            ? (array_key_exists($key, $this->data)
+                ? $this->data[$key]
+                : null)
+            : $this->data;
+    }
+
+    /**
+     * @param null $key
+     *
      * @return array|mixed|null
      */
     public function original($key = null)
@@ -122,16 +179,6 @@ class Object implements ArrayAccess, JsonSerializable
                 ? $this->original[$key]
                 : null)
             : $this->original;
-    }
-
-    /**
-     * @param null $key
-     *
-     * @return bool
-     */
-    public function isOriginal($key = null)
-    {
-        return $this->data($key) == $this->original($key);
     }
 
     /**
@@ -178,18 +225,6 @@ class Object implements ArrayAccess, JsonSerializable
 
     /**
      * @param $key
-     *
-     * @return $this
-     */
-    public function __unset($key)
-    {
-        unset($this->data[$key]);
-
-        return $this;
-    }
-
-    /**
-     * @param $key
      * @param $val
      *
      * @return Object
@@ -218,38 +253,11 @@ class Object implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
-     * @return null
+     * @return array
      */
-    public function __get($key)
+    function jsonSerialize()
     {
-        return array_key_exists($key, $this->data)
-            ? $this->data[$key]
-            : null;
-    }
-
-    /**
-     * @param $key
-     * @param $val
-     *
-     * @return $this
-     */
-    public function __set($key, $val)
-    {
-        $this->data[$key] = $val;
-
-        return $this;
-    }
-
-    /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        return array_key_exists($key, $this->data) && $this->data[$key];
+        return $this->__toArray();
     }
 
     /**
@@ -258,14 +266,6 @@ class Object implements ArrayAccess, JsonSerializable
     public function __toArray()
     {
         return $this->data;
-    }
-
-    /**
-     * @return array
-     */
-    function jsonSerialize()
-    {
-        return $this->__toArray();
     }
 
     /**

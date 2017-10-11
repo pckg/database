@@ -23,11 +23,85 @@ trait Actions
     protected $deleted = false;
 
     /**
-     * @return bool
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this|mixed|Record
      */
-    public function isSaved()
+    public static function getOrCreate(array $data, Entity $entity = null)
     {
-        return $this->saved;
+        $record = static::gets($data, $entity);
+
+        if (!$record) {
+            $record = static::create($data, $entity);
+        }
+
+        return $record;
+    }
+
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return mixed|Record
+     */
+    public static function gets(array $data, Entity $entity = null)
+    {
+        if (!$entity) {
+            $entity = (new static)->getEntity();
+        }
+
+        return $entity->whereArr($data)->one();
+    }
+
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this|Record
+     */
+    public static function create($data = [], Entity $entity = null)
+    {
+        $record = new static($data, $entity);
+
+        $record->save();
+
+        return $record;
+    }
+
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return mixed|Record
+     */
+    public static function getOrNew(array $data, Entity $entity = null)
+    {
+        $record = static::gets($data, $entity);
+
+        if (!$record) {
+            $record = new static($data, $entity);
+        }
+
+        return $record;
+    }
+
+    /**
+     * @param array         $data
+     * @param Entity|null   $entity
+     * @param callable|null $callable
+     *
+     * @return mixed|Record
+     */
+    public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
+    {
+        if (!$entity) {
+            $entity = (new static)->getEntity();
+        }
+
+        $record = $entity->whereArr($data)->oneOrFail($callable);
+
+        return $record;
     }
 
     /**
@@ -44,18 +118,6 @@ trait Actions
     public function isDeleted()
     {
         return $this->deleted;
-    }
-
-    /**
-     * @param bool $saved
-     *
-     * @return $this
-     */
-    public function setSaved($saved = true)
-    {
-        $this->saved = $saved;
-
-        return $this;
     }
 
     /**
@@ -99,17 +161,23 @@ trait Actions
     }
 
     /**
-     * @param array $overwrite
-     *
-     * @return mixed
+     * @return bool
      */
-    public function saveAs($overwrite = [])
+    public function isSaved()
     {
-        $data = $this->data();
-        $data['id'] = null;
-        $data = array_merge($data, $overwrite);
+        return $this->saved;
+    }
 
-        return (new static($data))->save();
+    /**
+     * @param bool $saved
+     *
+     * @return $this
+     */
+    public function setSaved($saved = true)
+    {
+        $this->saved = $saved;
+
+        return $this;
     }
 
     /**
@@ -138,18 +206,42 @@ trait Actions
      *
      * @return Record
      */
-    public function forceDelete(Entity $entity = null, Repository $repository = null)
+    public function insert(Entity $entity = null, Repository $repository = null)
     {
         $entity = $this->getEntityIfEmpty($entity);
         $repository = $entity->getRepositoryIfEmpty($repository);
 
-        $this->trigger(['saving', 'deleting']);
+        $this->trigger(['saving', 'inserting']);
 
-        $delete = $repository->delete($this, $entity);
+        $insert = $repository->insert($this, $entity);
 
-        $this->trigger(['deleted', 'saved']);
+        $this->trigger(['inserted', 'saved']);
 
-        return $delete;
+        return $insert;
+    }
+
+    /**
+     * @param array $overwrite
+     *
+     * @return mixed
+     */
+    public function saveAs($overwrite = [])
+    {
+        $data = $this->data();
+        $data['id'] = null;
+        $data = array_merge($data, $overwrite);
+
+        return (new static($data))->save();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function delete(Entity $entity = null, Repository $repository = null)
+    {
+        return $this->getEntity()->isDeletable()
+            ? $this->softDelete($entity, $repository)
+            : $this->forceDelete($entity, $repository);
     }
 
     /**
@@ -167,33 +259,23 @@ trait Actions
     }
 
     /**
-     * @return mixed
-     */
-    public function delete(Entity $entity = null, Repository $repository = null)
-    {
-        return $this->getEntity()->isDeletable()
-            ? $this->softDelete($entity, $repository)
-            : $this->forceDelete($entity, $repository);
-    }
-
-    /**
      * @param Entity|null     $entity
      * @param Repository|null $repository
      *
      * @return Record
      */
-    public function insert(Entity $entity = null, Repository $repository = null)
+    public function forceDelete(Entity $entity = null, Repository $repository = null)
     {
         $entity = $this->getEntityIfEmpty($entity);
         $repository = $entity->getRepositoryIfEmpty($repository);
 
-        $this->trigger(['saving', 'inserting']);
+        $this->trigger(['saving', 'deleting']);
 
-        $insert = $repository->insert($this, $entity);
+        $delete = $repository->delete($this, $entity);
 
-        $this->trigger(['inserted', 'saved']);
+        $this->trigger(['deleted', 'saved']);
 
-        return $insert;
+        return $delete;
     }
 
     /**
@@ -267,88 +349,6 @@ trait Actions
         }
 
         return $this;
-    }
-
-    /**
-     * @param array       $data
-     * @param Entity|null $entity
-     *
-     * @return $this|Record
-     */
-    public static function create($data = [], Entity $entity = null)
-    {
-        $record = new static($data, $entity);
-
-        $record->save();
-
-        return $record;
-    }
-
-    /**
-     * @param array       $data
-     * @param Entity|null $entity
-     *
-     * @return mixed|Record
-     */
-    public static function gets(array $data, Entity $entity = null)
-    {
-        if (!$entity) {
-            $entity = (new static)->getEntity();
-        }
-
-        return $entity->whereArr($data)->one();
-    }
-
-    /**
-     * @param array       $data
-     * @param Entity|null $entity
-     *
-     * @return $this|mixed|Record
-     */
-    public static function getOrCreate(array $data, Entity $entity = null)
-    {
-        $record = static::gets($data, $entity);
-
-        if (!$record) {
-            $record = static::create($data, $entity);
-        }
-
-        return $record;
-    }
-
-    /**
-     * @param array       $data
-     * @param Entity|null $entity
-     *
-     * @return mixed|Record
-     */
-    public static function getOrNew(array $data, Entity $entity = null)
-    {
-        $record = static::gets($data, $entity);
-
-        if (!$record) {
-            $record = new static($data, $entity);
-        }
-
-        return $record;
-    }
-
-    /**
-     * @param array         $data
-     * @param Entity|null   $entity
-     * @param callable|null $callable
-     *
-     * @return mixed|Record
-     */
-    public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
-    {
-        if (!$entity) {
-            $entity = (new static)->getEntity();
-        }
-
-        $record = $entity->whereArr($data)->oneOrFail($callable);
-
-        return $record;
     }
 
 }

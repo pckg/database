@@ -96,72 +96,6 @@ class Entity
     /**
      *
      */
-    public function __clone()
-    {
-        $this->query = clone $this->query;
-    }
-
-    /**
-     * @param $key
-     *
-     * @return string
-     */
-    public function extendedKey($key)
-    {
-        $cache = $this->repository->getCache();
-        if (!$cache->tableHasField($this->table, $key)) {
-            if ($cache->tableHasField($this->table . '_i18n', $key)) {
-                return '`' . $this->table . '_i18n`.`' . $key . '`';
-            }
-        }
-
-        return $key;
-    }
-
-    /**
-     * @param $method
-     * @param $args
-     *
-     * @return $this
-     * @throws Exception
-     */
-    public static function __callStatic($method, $args)
-    {
-        $entity = Reflect::create(static::class);
-
-        return Reflect::method($entity, $method, $args);
-    }
-
-    /**
-     * @param $method
-     * @param $args
-     *
-     * @return $this
-     */
-    public function __call($method, $args)
-    {
-        $relation = $this->callWith($method, $args, $this);
-
-        return $this;
-    }
-
-    /**
-     * @param $property
-     *
-     * @return mixed
-     */
-    public function __get($property)
-    {
-        if (method_exists($this, $property)) {
-            return $this->{$property}();
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     */
     protected function guessDefaults()
     {
         if (!$this->table) {
@@ -194,6 +128,26 @@ class Entity
     /**
      * @return $this
      */
+    public function initExtensions()
+    {
+        foreach (get_class_methods($this) as $method) {
+            if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
+                Reflect::method($this, $method);
+            } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
+                $extension = substr($method, 6, -12);
+                if (method_exists($this, 'check' . $extension . 'Dependencies')) {
+                    Reflect::method($this, 'check' . $extension . 'Dependencies');
+                }
+                Reflect::method($this, $method);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function preboot()
     {
         return $this;
@@ -208,25 +162,69 @@ class Entity
     }
 
     /**
-     * @return \Pckg\Database\Record
+     * @param $method
+     * @param $args
+     *
+     * @return $this
+     * @throws Exception
      */
-    public function getRecord($data = [])
+    public static function __callStatic($method, $args)
     {
-        $class = $this->getRecordClass();
+        $entity = Reflect::create(static::class);
 
-        $record = new $class($data);
-        $record->setEntity($this);
-        $record->setEntityClass(get_class($this));
-
-        return $record;
+        return Reflect::method($entity, $method, $args);
     }
 
     /**
+     *
+     */
+    public function __clone()
+    {
+        $this->query = clone $this->query;
+    }
+
+    /**
+     * @param $key
+     *
+     * @return string
+     */
+    public function extendedKey($key)
+    {
+        $cache = $this->repository->getCache();
+        if (!$cache->tableHasField($this->table, $key)) {
+            if ($cache->tableHasField($this->table . '_i18n', $key)) {
+                return '`' . $this->table . '_i18n`.`' . $key . '`';
+            }
+        }
+
+        return $key;
+    }
+
+    /**
+     * @param $method
+     * @param $args
+     *
+     * @return $this
+     */
+    public function __call($method, $args)
+    {
+        $relation = $this->callWith($method, $args, $this);
+
+        return $this;
+    }
+
+    /**
+     * @param $property
+     *
      * @return mixed
      */
-    public function getRecordClass()
+    public function __get($property)
     {
-        return $this->record;
+        if (method_exists($this, $property)) {
+            return $this->{$property}();
+        }
+
+        return null;
     }
 
     /**
@@ -242,16 +240,11 @@ class Entity
     }
 
     /**
-     * @param $table
-     *
-     * @return $this
+     * @return null
      */
-    public function setTable($table)
+    public function getAlias()
     {
-        $this->table = $table;
-        $this->getQuery()->table($table);
-
-        return $this;
+        return $this->alias;
     }
 
     /**
@@ -271,19 +264,24 @@ class Entity
     }
 
     /**
-     * @return null
-     */
-    public function getAlias()
-    {
-        return $this->alias;
-    }
-
-    /**
      * @return mixed
      */
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * @param $table
+     *
+     * @return $this
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+        $this->getQuery()->table($table);
+
+        return $this;
     }
 
     /**
@@ -302,9 +300,18 @@ class Entity
         return $this->fields ?: $this->getRepository()->getCache()->getTableFields($this->table);
     }
 
+    /**
+     * @return Repository|PDO
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
     /*
      * Set repository/connection
      * */
+
     /**
      * @param Repository $repository
      *
@@ -315,14 +322,6 @@ class Entity
         $this->repository = $repository;
 
         return $this;
-    }
-
-    /**
-     * @return Repository|PDO
-     */
-    public function getRepository()
-    {
-        return $this->repository;
     }
 
     /**
@@ -347,46 +346,6 @@ class Entity
     public function addExtension($extension)
     {
         $this->extensions[] = $extension;
-
-        return $this;
-    }
-
-    /*
-     * Find out which methods are extensions and init them.
-     * */
-    /**
-     * @return $this
-     */
-    public function initExtensions()
-    {
-        foreach (get_class_methods($this) as $method) {
-            if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
-                Reflect::method($this, $method);
-            } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
-                $extension = substr($method, 6, -12);
-                if (method_exists($this, 'check' . $extension . 'Dependencies')) {
-                    Reflect::method($this, 'check' . $extension . 'Dependencies');
-                }
-                Reflect::method($this, $method);
-            }
-        }
-
-        return $this;
-    }
-
-    /*
-     * Find out which methods are extensions and init them.
-     * */
-    /**
-     * @return $this
-     */
-    public function applyExtensions()
-    {
-        foreach (get_class_methods($this) as $method) {
-            if (substr($method, 0, 4) == 'apply' && substr($method, -9) == 'Extension') {
-                $this->{$method}();
-            }
-        }
 
         return $this;
     }
@@ -483,21 +442,9 @@ class Entity
         return $values;
     }
 
-    /**
-     * @return Record|mixed
-     */
-    public function one()
-    {
-        $this->applyExtensions();
-
-        $one = $this->repository->one($this);
-
-        $this->resetQuery();
-
-        $this->resetRelations();
-
-        return $one;
-    }
+    /*
+     * Find out which methods are extensions and init them.
+     * */
 
     /**
      * @return Record
@@ -532,6 +479,46 @@ class Entity
         return $record;
     }
 
+    /*
+     * Find out which methods are extensions and init them.
+     * */
+
+    /**
+     * @return $this
+     */
+    public function applyExtensions()
+    {
+        foreach (get_class_methods($this) as $method) {
+            if (substr($method, 0, 4) == 'apply' && substr($method, -9) == 'Extension') {
+                $this->{$method}();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return \Pckg\Database\Record
+     */
+    public function getRecord($data = [])
+    {
+        $class = $this->getRecordClass();
+
+        $record = new $class($data);
+        $record->setEntity($this);
+        $record->setEntityClass(get_class($this));
+
+        return $record;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRecordClass()
+    {
+        return $this->record;
+    }
+
     /**
      * @return Record|mixed
      */
@@ -545,6 +532,22 @@ class Entity
     /**
      * @return Record|mixed
      */
+    public function one()
+    {
+        $this->applyExtensions();
+
+        $one = $this->repository->one($this);
+
+        $this->resetQuery();
+
+        $this->resetRelations();
+
+        return $one;
+    }
+
+    /**
+     * @return Record|mixed
+     */
     public function oneAndIf($callback)
     {
         $one = $this->one();
@@ -552,6 +555,16 @@ class Entity
         return $one
             ? $callback($one)
             : $one;
+    }
+
+    /**
+     * @param callable $callback
+     *
+     * @return mixed
+     */
+    public function allAnd(callable $callback)
+    {
+        return $callback($this->all());
     }
 
     /**
@@ -568,16 +581,6 @@ class Entity
         $this->resetRelations();
 
         return $all;
-    }
-
-    /**
-     * @param callable $callback
-     *
-     * @return mixed
-     */
-    public function allAnd(callable $callback)
-    {
-        return $callback($this->all());
     }
 
     /**

@@ -17,25 +17,6 @@ class HasAndBelongsTo extends HasMany
     use MiddleEntity;
 
     /**
-     * @return string
-     */
-    public function getMiddleKeyCondition()
-    {
-        $middleQuery = $this->getMiddleEntity()->getQuery();
-
-        return '`' . $this->getLeftEntity()->getTable() . '`.`id` = ' .
-               '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
-    }
-
-    /**
-     * @return array
-     */
-    public function getMiddleKeyBinds()
-    {
-        return [];
-    }
-
-    /**
      * @param Select $query
      */
     public function mergeToQuery(Select $query)
@@ -81,6 +62,25 @@ class HasAndBelongsTo extends HasMany
                 $query->addSelect([$key => $val]);
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiddleKeyCondition()
+    {
+        $middleQuery = $this->getMiddleEntity()->getQuery();
+
+        return '`' . $this->getLeftEntity()->getTable() . '`.`id` = ' .
+               '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
+    }
+
+    /**
+     * @return array
+     */
+    public function getMiddleKeyBinds()
+    {
+        return [];
     }
 
     /**

@@ -51,14 +51,6 @@ class Fetcher
     }
 
     /**
-     * @return Generator
-     */
-    public function getGenerator()
-    {
-        return $this->faker->getConnection();
-    }
-
-    /**
      * @return array
      */
     public function fetchAll()
@@ -139,6 +131,14 @@ class Fetcher
         }
 
         return $record;
+    }
+
+    /**
+     * @return Generator
+     */
+    public function getGenerator()
+    {
+        return $this->faker->getConnection();
     }
 
 }

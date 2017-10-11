@@ -65,28 +65,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @return string
-     */
-    protected function getCachePath()
-    {
-        return static::getCachePathByRepository($this->repository);
-    }
-
-    /**
-     * @param Repository $repository
-     *
-     * @return string
-     */
-    public static function getCachePathByRepository(Repository $repository)
-    {
-        return path('cache') . 'framework/pckg_database_repository_' . str_replace(
-                ['\\', '/'],
-                '_',
-                (get_class(app()) . '_' . get_class(env()))
-            ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
-    }
-
-    /**
      *
      */
     protected function buildTables()
@@ -102,6 +80,40 @@ class Cache extends PckgCache
             $this->buildFields($table);
             $this->buildConstraints($table);
             $this->buildPrimaryKeys($table);
+        }
+    }
+
+    /**
+     * @param $table
+     */
+    protected function buildFields($table)
+    {
+        $this->cache['tables'][$table] = [];
+        $this->cache['fields'][$table] = [];
+        $sql = 'SHOW FULL COLUMNS IN ';
+        $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
+        $prepare->execute();
+        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
+            $field['Field'] = strtolower($field['Field']);
+            $this->cache['fields'][$table][$field['Field']] = [
+                'name'      => $field['Field'],
+                'type'      => strpos($field['Type'], '(')
+                    ? substr($field['Type'], 0, strpos($field['Type'], '('))
+                    : $field['Type'],
+                'limit'     => str_replace([') unsigne'], '',
+                                           substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
+                                               $field['Type'],
+                                               strpos($field['Type'], '(') + 1,
+                                               strpos($field['Type'], ')') ? -1 : null
+                                           )),
+                'null'      => $field['Null'] == 'YES',
+                'key'       => $field['Key'] == 'PRI'
+                    ? 'primary'
+                    : $field['Key'],
+                'default'   => $field['Default'],
+                'extra'     => $field['Extra'],
+                'relations' => [],
+            ];
         }
     }
 
@@ -155,40 +167,6 @@ class Cache extends PckgCache
     /**
      * @param $table
      */
-    protected function buildFields($table)
-    {
-        $this->cache['tables'][$table] = [];
-        $this->cache['fields'][$table] = [];
-        $sql = 'SHOW FULL COLUMNS IN ';
-        $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
-        $prepare->execute();
-        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
-            $field['Field'] = strtolower($field['Field']);
-            $this->cache['fields'][$table][$field['Field']] = [
-                'name'      => $field['Field'],
-                'type'      => strpos($field['Type'], '(')
-                    ? substr($field['Type'], 0, strpos($field['Type'], '('))
-                    : $field['Type'],
-                'limit'     => str_replace([') unsigne'], '',
-                                           substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
-                                               $field['Type'],
-                                               strpos($field['Type'], '(') + 1,
-                                               strpos($field['Type'], ')') ? -1 : null
-                                           )),
-                'null'      => $field['Null'] == 'YES',
-                'key'       => $field['Key'] == 'PRI'
-                    ? 'primary'
-                    : $field['Key'],
-                'default'   => $field['Default'],
-                'extra'     => $field['Extra'],
-                'relations' => [],
-            ];
-        }
-    }
-
-    /**
-     * @param $table
-     */
     protected function buildPrimaryKeys($table)
     {
         $this->cache['tables'][$table]['primaryKeys'] = array_column(
@@ -232,22 +210,6 @@ class Cache extends PckgCache
      *
      * @return array
      */
-    public function getTable($table)
-    {
-        return array_merge(
-            $this->cache['tables'][$table],
-            [
-                'fields'      => $this->cache['fields'][$table],
-                'constraints' => $this->cache['constraints'][$table],
-            ]
-        );
-    }
-
-    /**
-     * @param $table
-     *
-     * @return array
-     */
     public function getTableFields($table)
     {
         if (!$table) {
@@ -266,6 +228,22 @@ class Cache extends PckgCache
     public function getField($field, $table)
     {
         return $this->getTable($table)['fields'][$field];
+    }
+
+    /**
+     * @param $table
+     *
+     * @return array
+     */
+    public function getTable($table)
+    {
+        return array_merge(
+            $this->cache['tables'][$table],
+            [
+                'fields'      => $this->cache['fields'][$table],
+                'constraints' => $this->cache['constraints'][$table],
+            ]
+        );
     }
 
     /**
@@ -322,6 +300,28 @@ class Cache extends PckgCache
     public function getTablePrimaryKeys($table)
     {
         return $this->cache['tables'][$table]['primaryKeys'];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCachePath()
+    {
+        return static::getCachePathByRepository($this->repository);
+    }
+
+    /**
+     * @param Repository $repository
+     *
+     * @return string
+     */
+    public static function getCachePathByRepository(Repository $repository)
+    {
+        return path('cache') . 'framework/pckg_database_repository_' . str_replace(
+                ['\\', '/'],
+                '_',
+                (get_class(app()) . '_' . get_class(env()))
+            ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
     }
 
 }

@@ -102,6 +102,14 @@ trait MiddleEntity
     }
 
     /**
+     * @return \Pckg\Database\Repository|\Pckg\Database\Repository\PDO
+     */
+    public function getMiddleRepository()
+    {
+        return $this->getMiddleEntity()->getRepository();
+    }
+
+    /**
      * @return Entity
      * @throws \Exception
      */
@@ -118,14 +126,6 @@ trait MiddleEntity
         }
 
         return $this->middle;
-    }
-
-    /**
-     * @return \Pckg\Database\Repository|\Pckg\Database\Repository\PDO
-     */
-    public function getMiddleRepository()
-    {
-        return $this->getMiddleEntity()->getRepository();
     }
 
     /**

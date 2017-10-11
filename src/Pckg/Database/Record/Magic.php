@@ -15,43 +15,6 @@ trait Magic
 
     /**
      * @param $key
-     * @param $val
-     *
-     * @return $this
-     */
-    public function __set($key, $val)
-    {
-        if (!$this->ready) {
-            $this->data[$key] = $val;
-        } else if (array_key_exists($key, $this->data)) {
-            /**
-             * Fill value to existing data.
-             */
-            $this->data[$key] = $val;
-        } else if (array_key_exists($key, $this->relations)) {
-            /**
-             * Fill value to existing relation.
-             */
-            $this->relations[$key] = $val;
-        } else if ($this->hasKey($key)) {
-            /**
-             * Fill value to new data.
-             */
-            $this->data[$key] = $val;
-        } else if ($this->hasRelation($key)) {
-            /**
-             * Fill value to existing relation.
-             */
-            $this->relations[$key] = $val;
-        } else {
-            $this->data[$key] = $val;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $key
      *
      * @return bool
      */
@@ -169,6 +132,43 @@ trait Magic
         }
 
         return null;
+    }
+
+    /**
+     * @param $key
+     * @param $val
+     *
+     * @return $this
+     */
+    public function __set($key, $val)
+    {
+        if (!$this->ready) {
+            $this->data[$key] = $val;
+        } else if (array_key_exists($key, $this->data)) {
+            /**
+             * Fill value to existing data.
+             */
+            $this->data[$key] = $val;
+        } else if (array_key_exists($key, $this->relations)) {
+            /**
+             * Fill value to existing relation.
+             */
+            $this->relations[$key] = $val;
+        } else if ($this->hasKey($key)) {
+            /**
+             * Fill value to new data.
+             */
+            $this->data[$key] = $val;
+        } else if ($this->hasRelation($key)) {
+            /**
+             * Fill value to existing relation.
+             */
+            $this->relations[$key] = $val;
+        } else {
+            $this->data[$key] = $val;
+        }
+
+        return $this;
     }
 
     /**

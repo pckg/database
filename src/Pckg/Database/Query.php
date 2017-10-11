@@ -15,6 +15,26 @@ abstract class Query
 {
 
     /**
+     *
+     */
+    const LIKE = 'LIKE';
+
+    /**
+     *
+     */
+    const IN = 'IN';
+
+    /**
+     *
+     */
+    const NOT_LIKE = 'NOT LIKE';
+
+    /**
+     *
+     */
+    const NOT_IN = 'NOT IN';
+
+    /**
      * @var
      */
     protected $table;
@@ -75,32 +95,53 @@ abstract class Query
     protected $diebug = false;
 
     /**
-     *
-     */
-    const LIKE = 'LIKE';
-
-    /**
-     *
-     */
-    const IN = 'IN';
-
-    /**
-     *
-     */
-    const NOT_LIKE = 'NOT LIKE';
-
-    /**
-     *
-     */
-    const NOT_IN = 'NOT IN';
-
-    /**
      * Query constructor.
      */
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
+    }
+
+    /**
+     * @param        $sql
+     * @param array  $binds
+     * @param string $part
+     *
+     * @return static
+     */
+    public static function raw($sql, $binds = [], $part = 'main')
+    {
+        $query = new static($sql);
+
+        if (!is_array($binds)) {
+            $binds = [$binds];
+        }
+
+        foreach ($binds as $bind) {
+            $query->bind($bind, $part);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param $val
+     * @param $part
+     *
+     * @return $this
+     */
+    public function bind($val, $part)
+    {
+        if (!is_array($val)) {
+            $val = [$val];
+        }
+
+        foreach ($val as $v) {
+            $this->bind[$part][] = $v;
+        }
+
+        return $this;
     }
 
     /**
@@ -119,6 +160,16 @@ abstract class Query
     {
         return new Raw('(' . $this->buildSQL() . ')', $this->buildBinds());
     }
+
+    /**
+     * @return mixed
+     */
+    abstract public function buildSQL();
+
+    /**
+     * @return mixed
+     */
+    abstract public function buildBinds();
 
     /**
      * @param bool $debug
@@ -145,33 +196,23 @@ abstract class Query
     }
 
     /**
-     * @param        $sql
-     * @param array  $binds
-     * @param string $part
-     *
-     * @return static
-     */
-    public static function raw($sql, $binds = [], $part = 'main')
-    {
-        $query = new static($sql);
-
-        if (!is_array($binds)) {
-            $binds = [$binds];
-        }
-
-        foreach ($binds as $bind) {
-            $query->bind($bind, $part);
-        }
-
-        return $query;
-    }
-
-    /**
      * @return array
      */
     public function getBind()
     {
         return $this->bind;
+    }
+
+    /**
+     * @param $bind
+     *
+     * @return $this
+     */
+    public function setBind($bind)
+    {
+        $this->bind = $bind;
+
+        return $this;
     }
 
     /**
@@ -264,26 +305,6 @@ abstract class Query
     public function having($key, $value = true, $operator = '=')
     {
         return $this->addCondition($key, $value, $operator, 'having');
-    }
-
-    /**
-     * @return Parenthesis
-     */
-    public function getHaving()
-    {
-        return $this->having;
-    }
-
-    /**
-     * @param        $key
-     * @param bool   $value
-     * @param string $operator
-     *
-     * @return Query
-     */
-    public function where($key, $value = true, $operator = '=')
-    {
-        return $this->addCondition($key, $value, $operator, 'where');
     }
 
     /**
@@ -418,6 +439,27 @@ abstract class Query
     }
 
     /**
+     * @param $key
+     *
+     * @return int|string
+     */
+    private function makeKey($key)
+    {
+        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.') ||
+               strpos($key, ',') || strpos($key, '(')
+            ? $key
+            : '`' . $key . '`';
+    }
+
+    /**
+     * @return Parenthesis
+     */
+    public function getHaving()
+    {
+        return $this->having;
+    }
+
+    /**
      * @param        $key
      * @param bool   $value
      * @param string $operator
@@ -429,6 +471,18 @@ abstract class Query
         $this->where->setGlue('OR');
 
         return $this->where($key, $value, $operator);
+    }
+
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     *
+     * @return Query
+     */
+    public function where($key, $value = true, $operator = '=')
+    {
+        return $this->addCondition($key, $value, $operator, 'where');
     }
 
     /**
@@ -495,50 +549,6 @@ abstract class Query
     public function limit($limit)
     {
         $this->limit = $limit;
-
-        return $this;
-    }
-
-    /**
-     * @param $key
-     *
-     * @return int|string
-     */
-    private function makeKey($key)
-    {
-        return is_numeric($key) || strpos($key, '`') !== false || strpos($key, ' ') !== false || strpos($key, '.') ||
-               strpos($key, ',') || strpos($key, '(')
-            ? $key
-            : '`' . $key . '`';
-    }
-
-    /**
-     * @param $val
-     * @param $part
-     *
-     * @return $this
-     */
-    public function bind($val, $part)
-    {
-        if (!is_array($val)) {
-            $val = [$val];
-        }
-
-        foreach ($val as $v) {
-            $this->bind[$part][] = $v;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $bind
-     *
-     * @return $this
-     */
-    public function setBind($bind)
-    {
-        $this->bind = $bind;
 
         return $this;
     }
@@ -649,16 +659,6 @@ abstract class Query
             $this->where('`' . $primaryKey . '`', $data[$primaryKey]);
         }
     }
-
-    /**
-     * @return mixed
-     */
-    abstract public function buildSQL();
-
-    /**
-     * @return mixed
-     */
-    abstract public function buildBinds();
 
     /**
      * @return string

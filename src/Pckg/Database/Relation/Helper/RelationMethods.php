@@ -19,6 +19,16 @@ trait RelationMethods
 {
 
     /**
+     * @param $hasMany
+     *
+     * @return HasMany
+     */
+    public function hasMany($hasMany, callable $callback = null, $alias = null)
+    {
+        return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
+    }
+
+    /**
      * @param               $relation
      * @param               $entity
      * @param callable|null $callback
@@ -43,16 +53,6 @@ trait RelationMethods
         }
 
         return $relation;
-    }
-
-    /**
-     * @param $hasMany
-     *
-     * @return HasMany
-     */
-    public function hasMany($hasMany, callable $callback = null, $alias = null)
-    {
-        return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
     }
 
     /**

@@ -19,14 +19,14 @@ class RepositoryFactory
 {
 
     /**
-     * @var array
-     */
-    protected static $repositories = [];
-
-    /**
      *
      */
     const DEFAULT_NAME = 'default';
+
+    /**
+     * @var array
+     */
+    protected static $repositories = [];
 
     /**
      * @param $name
@@ -67,6 +67,65 @@ class RepositoryFactory
     }
 
     /**
+     * @param $config
+     * @param $name
+     *
+     * @return \Pckg\Database\Repository\PDO
+     * @throws Exception
+     */
+    public static function initPdoDatabase($config, $name)
+    {
+        try {
+            $pdo = static::createPdoConnectionByConfig($config);
+        } catch (PDOException $e) {
+            throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
+        }
+
+        $pdo->uniqueName = $config['host'] . "-" . $config['db'];
+
+        static::checkDebugBar($pdo, $name);
+
+        return new RepositoryPDO($pdo, $name);
+    }
+
+    /**
+     * @param $config
+     *
+     * @return PDO
+     */
+    public static function createPdoConnectionByConfig($config)
+    {
+        return new PDO(
+            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
+            (isset($config['db'])
+                ? ";dbname=" . $config['db']
+                : ''),
+            $config['user'],
+            $config['pass']
+        );
+    }
+
+    /**
+     * @param $pdo
+     * @param $name
+     */
+    protected static function checkDebugBar($pdo, $name)
+    {
+        if (context()->exists(DebugBar::class)) {
+            $debugBar = context()->find(DebugBar::class);
+            $tracablePdo = new TraceablePDO($pdo);
+
+            if ($debugBar->hasCollector('pdo')) {
+                $pdoCollector = $debugBar->getCollector('pdo');
+            } else {
+                $debugBar->addCollector($pdoCollector = new PDOCollector());
+            }
+
+            $pdoCollector->addConnection($tracablePdo, $name);
+        }
+    }
+
+    /**
      * @param        $dsn
      * @param        $username
      * @param null   $passwd
@@ -91,14 +150,6 @@ class RepositoryFactory
         static::$repositories[$name] = $connection;
 
         return $connection;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getDefaultRepository()
-    {
-        return static::$repositories[static::DEFAULT_NAME] ?? null;
     }
 
     /**
@@ -147,62 +198,11 @@ class RepositoryFactory
     }
 
     /**
-     * @param $config
-     *
-     * @return PDO
+     * @return mixed|null
      */
-    public static function createPdoConnectionByConfig($config)
+    public function getDefaultRepository()
     {
-        return new PDO(
-            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
-            (isset($config['db'])
-                ? ";dbname=" . $config['db']
-                : ''),
-            $config['user'],
-            $config['pass']
-        );
-    }
-
-    /**
-     * @param $config
-     * @param $name
-     *
-     * @return \Pckg\Database\Repository\PDO
-     * @throws Exception
-     */
-    public static function initPdoDatabase($config, $name)
-    {
-        try {
-            $pdo = static::createPdoConnectionByConfig($config);
-        } catch (PDOException $e) {
-            throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
-        }
-
-        $pdo->uniqueName = $config['host'] . "-" . $config['db'];
-
-        static::checkDebugBar($pdo, $name);
-
-        return new RepositoryPDO($pdo, $name);
-    }
-
-    /**
-     * @param $pdo
-     * @param $name
-     */
-    protected static function checkDebugBar($pdo, $name)
-    {
-        if (context()->exists(DebugBar::class)) {
-            $debugBar = context()->find(DebugBar::class);
-            $tracablePdo = new TraceablePDO($pdo);
-
-            if ($debugBar->hasCollector('pdo')) {
-                $pdoCollector = $debugBar->getCollector('pdo');
-            } else {
-                $debugBar->addCollector($pdoCollector = new PDOCollector());
-            }
-
-            $pdoCollector->addConnection($tracablePdo, $name);
-        }
+        return static::$repositories[static::DEFAULT_NAME] ?? null;
     }
 
 }

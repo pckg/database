@@ -266,32 +266,6 @@ class Select extends Query
     }
 
     /**
-     * @param array $fields
-     *
-     * @return $this
-     */
-    public function prependSelect($fields = [])
-    {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        foreach ($fields as $field) {
-            array_unshift($this->select, $field);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSelect()
-    {
-        return $this->select;
-    }
-
-    /**
      * @return Delete
      */
     public function transformToDelete()
@@ -360,6 +334,32 @@ class Select extends Query
 
         if ($orderBy = $this->getOrderBy()) {
             $query->orderBy($orderBy);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelect()
+    {
+        return $this->select;
+    }
+
+    /**
+     * @param array $fields
+     *
+     * @return $this
+     */
+    public function prependSelect($fields = [])
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        foreach ($fields as $field) {
+            array_unshift($this->select, $field);
         }
 
         return $this;

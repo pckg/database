@@ -23,6 +23,14 @@ abstract class AbstractRepository implements Repository
     protected $cache;
 
     /**
+     * @return PDO
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
      * @param \PDO $connection
      */
     public function setConnection($connection)
@@ -30,14 +38,6 @@ abstract class AbstractRepository implements Repository
         $this->connection = $connection;
 
         return $this;
-    }
-
-    /**
-     * @return PDO
-     */
-    public function getConnection()
-    {
-        return $this->connection;
     }
 
     /**

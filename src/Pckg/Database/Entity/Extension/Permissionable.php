@@ -61,11 +61,19 @@ trait Permissionable
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getPermissionableTableSuffix()
+    public function withAllPermissions()
     {
-        return $this->permissionableTableSuffix;
+        $permissionTable = $this->getPermissionableTable();
+        $repository = $this->getRepository();
+
+        $relation = $this->hasMany((new Entity($repository))->setTable($permissionTable))
+                         ->foreignKey('id')
+                         ->fill('allPermissions')
+                         ->addSelect(['`' . $permissionTable . '`.*']);
+
+        return $this->with($relation);
     }
 
     /**
@@ -88,6 +96,51 @@ trait Permissionable
             $this->permissionablePermissionField => $this->permissionableAuth->groupId(),
         ];
     }*/
+
+    /**
+     * @return string
+     */
+    public function getPermissionableTable()
+    {
+        return $this->getTable() . $this->getPermissionableTableSuffix();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPermissionableTableSuffix()
+    {
+        return $this->permissionableTableSuffix;
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
+    public function joinPermissions(callable $callable = null)
+    {
+        return $this->join($this->permissions($callable));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function permissions(callable $callable = null)
+    {
+        $relation = $this->allPermissions()
+                         ->innerJoin();
+
+        if ($callable) {
+            $this->addPermissionableConditionIfNot($relation);
+
+            $relation->reflect($callable, $this);
+        } else {
+            $this->addPermissionableCondition($relation);
+        }
+
+        return $relation;
+    }
 
     /**
      * @param callable|null $callable
@@ -121,25 +174,6 @@ trait Permissionable
     }
 
     /**
-     * @return mixed
-     */
-    public function permissions(callable $callable = null)
-    {
-        $relation = $this->allPermissions()
-                         ->innerJoin();
-
-        if ($callable) {
-            $this->addPermissionableConditionIfNot($relation);
-
-            $relation->reflect($callable, $this);
-        } else {
-            $this->addPermissionableCondition($relation);
-        }
-
-        return $relation;
-    }
-
-    /**
      * @param HasMany $relation
      */
     private function addPermissionableConditionIfNot(HasMany $relation)
@@ -160,14 +194,6 @@ trait Permissionable
     }
 
     /**
-     * @return string
-     */
-    public function getPermissionableTable()
-    {
-        return $this->getTable() . $this->getPermissionableTableSuffix();
-    }
-
-    /**
      * @param HasMany $relation
      */
     private function addPermissionableCondition(HasMany $relation)
@@ -181,42 +207,6 @@ trait Permissionable
     }
 
     /**
-     * @param callable|null $callable
-     *
-     * @return mixed
-     */
-    public function withPermissions(callable $callable = null)
-    {
-        return $this->with($this->permissions($callable));
-    }
-
-    /**
-     * @return mixed
-     */
-    public function withAllPermissions()
-    {
-        $permissionTable = $this->getPermissionableTable();
-        $repository = $this->getRepository();
-
-        $relation = $this->hasMany((new Entity($repository))->setTable($permissionTable))
-                         ->foreignKey('id')
-                         ->fill('allPermissions')
-                         ->addSelect(['`' . $permissionTable . '`.*']);
-
-        return $this->with($relation);
-    }
-
-    /**
-     * @param callable|null $callable
-     *
-     * @return mixed
-     */
-    public function joinPermissions(callable $callable = null)
-    {
-        return $this->join($this->permissions($callable));
-    }
-
-    /**
      * @return mixed
      */
     public function withPermission()
@@ -226,6 +216,16 @@ trait Permissionable
                 $query->where($this->permissionablePermissionField, $this->permissionableAuth->groupId());
             }
         );
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
+    public function withPermissions(callable $callable = null)
+    {
+        return $this->with($this->permissions($callable));
     }
 
     /**

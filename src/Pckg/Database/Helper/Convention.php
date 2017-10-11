@@ -89,6 +89,16 @@ class Convention
      *
      * @return string
      */
+    public static function toPascal($text)
+    {
+        return ucfirst(static::toCamel($text));
+    }
+
+    /**
+     * @param $text
+     *
+     * @return string
+     */
     public static function toCamel($text)
     {
         $text = str_split($text, 1);
@@ -102,16 +112,6 @@ class Convention
         }
 
         return str_replace("_", "", implode($text));
-    }
-
-    /**
-     * @param $text
-     *
-     * @return string
-     */
-    public static function toPascal($text)
-    {
-        return ucfirst(static::toCamel($text));
     }
 
     /**

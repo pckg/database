@@ -391,7 +391,12 @@ abstract class Query
             } else if ($value instanceof Query) {
                 $this->{$part}->push($this->makeKey($key) . ' ' . $operator . '(' . $value->buildSQL() . ')');
                 if ($binds = $value->buildBinds()) {
-                    $this->bind($binds, $part);
+                    if (!is_array($binds)) {
+                        $binds = [$binds];
+                    }
+                    foreach ($binds as $bind) {
+                        $this->bind($bind, $part);
+                    }
                 }
             } else if ($value instanceof Entity) {
                 $this->{$part}->push(

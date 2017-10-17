@@ -168,33 +168,15 @@ class PDO extends AbstractRepository implements Repository
      */
     public function prepareSQL($sql, $binds = [])
     {
-        $prepare = measure(
-            'Prepare query: ' . $sql,
-            function() use ($sql, $binds) {
-                $prepare = $this->getConnection()->prepare($sql);
+        $prepare = $this->getConnection()->prepare($sql);
 
-                if (!$prepare) {
-                    throw new Exception('Cannot prepare statement');
-                }
+        if (!$prepare) {
+            throw new Exception('Cannot prepare statement');
+        }
 
-                $i = 1;
-                foreach ($binds as $key => $val) {
-                    if (is_array($val)) {
-                        foreach ($val as $rVal) {
-                            $prepare->bindValue($i, $rVal);
-                            $i++;
-                        }
-                    } else {
-                        $prepare->bindValue($i, $val);
-                        $i++;
-                    }
-                }
+        $this->bindBinds($prepare, $binds);
 
-                $prepare->setFetchMode(\PDO::FETCH_OBJ);
-
-                return $prepare;
-            }
-        );
+        $prepare->setFetchMode(\PDO::FETCH_OBJ);
 
         return $prepare;
     }
@@ -215,12 +197,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function executePrepared($prepare)
     {
-        $execute = measure(
-            'Execute query: ' . str_replace("\n", " ", $prepare->queryString),
-            function() use ($prepare) {
-                return $prepare->execute();
-            }
-        );
+        $execute = $prepare->execute();
 
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
@@ -256,41 +233,43 @@ class PDO extends AbstractRepository implements Repository
     {
         $this->recordClass = $recordClass;
         $sql = $query->buildSQL();
-        $prepare = measure(
-            'Prepare query: ' . $sql,
-            function() use ($query, $sql) {
-                $binds = $query->buildBinds();
-                $prepare = $this->getConnection()->prepare($sql);
+        $binds = $query->buildBinds();
+        $prepare = $this->getConnection()->prepare($sql);
 
-                if (!$prepare) {
-                    throw new Exception('Cannot prepare statement');
-                }
+        if (!$prepare) {
+            throw new Exception('Cannot prepare statement');
+        }
 
-                /**
-                 * Trigger query.prepared event.
-                 */
-                trigger(Query::class . '.prepared', ['sql' => $sql, 'binds' => $binds]);
+        /**
+         * Trigger query.prepared event.
+         */
+        trigger(Query::class . '.prepared', ['sql' => $sql, 'binds' => $binds]);
 
-                $i = 1;
-                foreach ($binds as $key => $val) {
-                    if (is_array($val)) {
-                        foreach ($val as $rVal) {
-                            $prepare->bindValue($i, $rVal);
-                            $i++;
-                        }
-                    } else {
-                        $prepare->bindValue($i, $val);
-                        $i++;
-                    }
-                }
+        $this->bindBinds($prepare, $binds);
 
-                $prepare->setFetchMode(\PDO::FETCH_ASSOC);
-
-                return $prepare;
-            }
-        );
+        $prepare->setFetchMode(\PDO::FETCH_ASSOC);
 
         return $prepare;
+    }
+
+    /**
+     * @param $prepare
+     * @param $binds
+     */
+    protected function bindBinds($prepare, $binds)
+    {
+        $i = 1;
+        foreach ($binds as $key => $val) {
+            if (is_array($val)) {
+                foreach ($val as $rVal) {
+                    $prepare->bindValue($i, $rVal);
+                    $i++;
+                }
+            } else {
+                $prepare->bindValue($i, $val);
+                $i++;
+            }
+        }
     }
 
     /**

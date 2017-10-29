@@ -2,7 +2,7 @@
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Adapter\Lang as LangAdapter;
+use Pckg\Locale\Lang as LangAdapter;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;

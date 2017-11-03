@@ -94,7 +94,15 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
-        message(static::class . '.' . $key, 'optimize');
+        $caller = db(0, 2, false)[0];
+        message(
+            static::class . '.' . $key . ' in ' .
+            ($caller['class'] ?? null) .
+            ($caller['type'] ?? null) .
+            ($caller['function'] ?? null) . ':' .
+            ($caller['line'] ?? null),
+            'optimize'
+        );
         if (method_exists($entity, $key)) {
             //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();

@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Object;
+use Throwable;
 
 /**
  * Class Transformations
@@ -108,7 +109,13 @@ trait Transformations
      */
     public function toJSON()
     {
-        return json_encode($this->jsonSerialize());
+        try {
+            $json = json_encode($this->jsonSerialize(), JSON_OBJECT_AS_ARRAY | JSON_NUMERIC_CHECK | JSON_PARTIAL_OUTPUT_ON_ERROR);
+        } catch (Throwable $e) {
+        }
+
+        return $json ?? 'null';
+
     }
 
     /**

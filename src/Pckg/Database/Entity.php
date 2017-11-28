@@ -78,7 +78,7 @@ class Entity
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null, $alias = null)
+    public function __construct(Repository $repository = null, $alias = null, $boot = true)
     {
         if (!$repository) {
             $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
@@ -88,9 +88,12 @@ class Entity
         $this->repository = $repository;
 
         $this->guessDefaults();
-        $this->initExtensions();
-        $this->preboot();
-        $this->boot();
+        
+        if ($boot) {
+            $this->initExtensions();
+            $this->preboot();
+            $this->boot();
+        }
     }
 
     /**

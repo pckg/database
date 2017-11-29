@@ -207,6 +207,25 @@ trait Magic
                 )
             );
         } else {
+            /*$relation = null;
+            $tempArgs = [];
+            if (strpos($method, 'required') === 0) {
+                $rel = lcfirst(substr($method, strlen('required')));
+                if ($this->relationExists($rel)) {
+                    $rData = $this->getRelation($rel);
+
+                    if (isset($args[0])) {
+                        $args[0]($rData);
+                    }
+
+                    return $rData;
+                } else {
+                    $method = str_replace('required', 'with', $method);
+                    $tempArgs = $args;
+                    $args = [];
+                }
+            }*/
+
             message(static::class . '.' . $method . '()', 'optimize');
 
             /**
@@ -218,7 +237,13 @@ trait Magic
                 return null;
             }
 
-            return $this->getRelation($relation->getFill());
+            $data = $this->getRelation($relation->getFill());
+
+            /*if ($tempArgs) {
+                $tempArgs[0]($data);
+            }*/
+
+            return $data;
         }
     }
 

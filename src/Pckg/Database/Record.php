@@ -173,11 +173,41 @@ class Record extends Object
             $key = is_int($i) ? $j : $i;
             $getter = $j;
 
+            $type = null;
+            if (strpos($getter, '+') === 0) {
+                $type = 'plus'; // add if existent
+                $getter = substr($getter, 1);
+            } else if (strpos($getter, '-') === 0) {
+                continue;
+            }
+
+            if (strpos($key, '+') === 0) {
+                $type = 'plus'; // add if existent
+                $key = substr($key, 1);
+            } else if (strpos($key, '-') === 0) {
+                continue;
+            }
+
             if ($this->hasKey($getter)) {
+                /**
+                 * Key exist in original or extended tables.
+                 */
+                if ($type && !$this->keyExists($getter)) {
+                    continue;
+                }
                 $values[$key] = $this->{$getter};
             } elseif ($this->hasRelation($getter)) {
+                /**
+                 * Relation exists in entity definition.
+                 */
+                if ($type && !$this->relationExists($getter)) {
+                    continue;
+                }
                 $values[$key] = $this->getRelationIfSet($getter);
             } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
+                /**
+                 * Getter exists in record definition.
+                 */
                 $values[$key] = $this->{'get' . Convention::toPascal($getter) . 'Attribute'}();
             }
         }

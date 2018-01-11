@@ -235,6 +235,18 @@ trait Actions
     }
 
     /**
+     * @return $this
+     */
+    public function saveIfDirty()
+    {
+        if ($this->isDirty()) {
+            $this->save();
+        }
+
+        return $this;
+    }
+
+    /**
      * @return mixed
      */
     public function delete(Entity $entity = null, Repository $repository = null)

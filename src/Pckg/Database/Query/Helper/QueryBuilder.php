@@ -367,8 +367,11 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function selectCount($as = 'count', $what = '*')
+    public function selectCount($as = 'count', $what = null)
     {
+        if (!$what) {
+            $what = '`' . $this->getTable() . '`.id';
+        }
         $this->getQuery()->select([$as => 'COUNT(' . $what . ')']);
 
         return $this;

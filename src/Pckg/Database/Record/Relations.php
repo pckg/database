@@ -1,10 +1,23 @@
 <?php namespace Pckg\Database\Record;
 
+/**
+ * Class Relations
+ *
+ * @package Pckg\Database\Record
+ */
 trait Relations
 {
 
+    /**
+     * @var array
+     */
     protected $relations = [];
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function hasRelation($key)
     {
         if (array_key_exists($key, $this->relations)) {
@@ -19,11 +32,21 @@ trait Relations
         return false;
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function relationExists($key)
     {
         return array_key_exists($key, $this->relations);
     }
 
+    /**
+     * @param $name
+     *
+     * @return null
+     */
     public function getRelationIfSet($name)
     {
         if (!isset($this->relations[$name])) {
@@ -33,6 +56,12 @@ trait Relations
         return $this->relations[$name];
     }
 
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
     public function setRelation($key, $value)
     {
         $this->relations[$key] = $value;
@@ -40,11 +69,19 @@ trait Relations
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return mixed
+     */
     public function getRelation($key)
     {
         return $this->relations[$key];
     }
 
+    /**
+     * @return array
+     */
     public function getRelations()
     {
         return $this->relations;

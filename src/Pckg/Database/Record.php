@@ -29,8 +29,14 @@ class Record extends Object
      */
     protected $entity = Entity::class;
 
+    /**
+     * @var array
+     */
     protected $cache = [];
 
+    /**
+     * @var bool
+     */
     protected $ready = false;
 
     /**
@@ -41,6 +47,28 @@ class Record extends Object
         'dt_added' => Carbon::class,
     ];
 
+    /**
+     * @param array $values
+     */
+    public function __construct($data = [], Entity $entity = null)
+    {
+        if (!$this->data) {
+            $this->data = is_array($data) && $data ? $data : [];
+        }
+
+        if ($entity) {
+            $this->entity = $entity;
+        }
+
+        $this->ready = true;
+    }
+
+    /**
+     * @param          $key
+     * @param callable $val
+     *
+     * @return mixed
+     */
     public function cache($key, callable $val)
     {
         if (!array_key_exists($key, $this->cache)) {
@@ -63,39 +91,8 @@ class Record extends Object
     }
 
     /**
-     * @param array $values
+     * @return array
      */
-    public function __construct($data = [], Entity $entity = null)
-    {
-        if (!$this->data) {
-            $this->data = is_array($data) && $data ? $data : [];
-        }
-
-        if ($entity) {
-            $this->entity = $entity;
-        }
-
-        $this->ready = true;
-    }
-
-    public function hasKey($key)
-    {
-        if (array_key_exists($key, $this->data)) {
-            return true;
-        }
-
-        $entity = $this->getEntity();
-        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            return true;
-        }
-
-        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable() . '_i18n', $key)) {
-            return true;
-        }
-
-        return false;
-    }
-
     public function getExtensionValues()
     {
         $values = [];
@@ -124,52 +121,24 @@ class Record extends Object
         return $values;
     }
 
-    public function getToArrayValues()
+    /**
+     * @return Entity
+     */
+    public function getEntity()
     {
-        return $this->getKeyValue($this->toArray);
+        return is_object($this->entity)
+            ? $this->entity
+            : $this->entity = Reflect::create($this->getEntityClass());
     }
 
-    public function getToJsonValues()
+    /**
+     * @param $entity
+     *
+     * @return $this
+     */
+    public function setEntity($entity)
     {
-        return $this->getKeyValue($this->toJson);
-    }
-
-    protected function getKeyValue($source)
-    {
-        $values = [];
-        foreach ($source as $i => $j) {
-            $key = is_int($i) ? $j : $i;
-            $getter = $j;
-
-            if ($this->hasKey($getter)) {
-                $values[$key] = $this->{$getter};
-            } elseif ($this->hasRelation($getter)) {
-                $values[$key] = $this->getRelationIfSet($getter);
-            } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
-                $values[$key] = $this->{'get' . Convention::toPascal($getter) . 'Attribute'}();
-            }
-        }
-
-        return $values;
-    }
-
-    private function getEntityChains(Entity $entity, $key, $overloadMethod)
-    {
-        $chains = [];
-        foreach (get_class_methods($entity) as $method) {
-            if (substr($method, 0, strlen($overloadMethod)) == $overloadMethod && substr($method, -9) == 'Extension') {
-                $chains[] = function() use ($method, $entity, $key) {
-                    return $entity->$method($this, $key);
-                };
-            }
-        }
-
-        return $chains;
-    }
-
-    public function setEntityClass($class)
-    {
-        $this->entity = $class;
+        $this->entity = $entity;
 
         return $this;
     }
@@ -185,15 +154,115 @@ class Record extends Object
     }
 
     /**
-     * @return Entity
+     * @return array
      */
-    public function getEntity()
+    public function getToArrayValues()
     {
-        return is_object($this->entity)
-            ? $this->entity
-            : $this->entity = Reflect::create($this->getEntityClass());
+        return $this->getKeyValue($this->toArray);
     }
 
+    /**
+     * @param $source
+     *
+     * @return array
+     */
+    protected function getKeyValue($source)
+    {
+        $values = [];
+        foreach ($source as $i => $j) {
+            $key = is_int($i) ? $j : $i;
+            $getter = $j;
+
+            $type = null;
+            if (strpos($getter, '+') === 0) {
+                $type = 'plus'; // add if existent
+                $getter = substr($getter, 1);
+            } else if (strpos($getter, '-') === 0) {
+                continue;
+            }
+
+            if (strpos($key, '+') === 0) {
+                $type = 'plus'; // add if existent
+                $key = substr($key, 1);
+            } else if (strpos($key, '-') === 0) {
+                continue;
+            }
+
+            if ($this->hasKey($getter)) {
+                /**
+                 * Key exist in original or extended tables.
+                 */
+                if ($type && !$this->keyExists($getter)) {
+                    continue;
+                }
+                $values[$key] = $this->{$getter};
+            } elseif ($this->hasRelation($getter)) {
+                /**
+                 * Relation exists in entity definition.
+                 */
+                if ($type && !$this->relationExists($getter)) {
+                    continue;
+                }
+                $values[$key] = $this->getRelationIfSet($getter);
+            } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
+                /**
+                 * Getter exists in record definition.
+                 */
+                $values[$key] = $this->{'get' . Convention::toPascal($getter) . 'Attribute'}();
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function hasKey($key)
+    {
+        if (array_key_exists($key, $this->data)) {
+            return true;
+        }
+
+        $entity = $this->getEntity();
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
+            return true;
+        }
+
+        if ($entity->getRepository()->getCache()->tableHasField($entity->getTable() . '_i18n', $key)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getToJsonValues()
+    {
+        return $this->getKeyValue($this->toJson);
+    }
+
+    /**
+     * @param $class
+     *
+     * @return $this
+     */
+    public function setEntityClass($class)
+    {
+        $this->entity = $class;
+
+        return $this;
+    }
+
+    /**
+     * @param $entity
+     *
+     * @return Entity
+     */
     public function getEntityIfEmpty($entity)
     {
         if ($entity) {
@@ -215,13 +284,6 @@ class Record extends Object
         }
 
         return $this->prepareEntity();
-    }
-
-    public function setEntity($entity)
-    {
-        $this->entity = $entity;
-
-        return $this;
     }
 
     /**
@@ -247,6 +309,27 @@ class Record extends Object
         }
 
         return null;
+    }
+
+    /**
+     * @param Entity $entity
+     * @param        $key
+     * @param        $overloadMethod
+     *
+     * @return array
+     */
+    private function getEntityChains(Entity $entity, $key, $overloadMethod)
+    {
+        $chains = [];
+        foreach (get_class_methods($entity) as $method) {
+            if (substr($method, 0, strlen($overloadMethod)) == $overloadMethod && substr($method, -9) == 'Extension') {
+                $chains[] = function() use ($method, $entity, $key) {
+                    return $entity->$method($this, $key);
+                };
+            }
+        }
+
+        return $chains;
     }
 
 }

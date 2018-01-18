@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query;
+<?php namespace Pckg\Database\Query;
 
 use Pckg\Database\Query;
 
@@ -65,6 +63,9 @@ class Insert extends Query
         return "(" . implode(", ", $arrValues) . ")";
     }
 
+    /**
+     * @return array
+     */
     public function buildBinds()
     {
         return $this->getBinds(['keys', 'values']);

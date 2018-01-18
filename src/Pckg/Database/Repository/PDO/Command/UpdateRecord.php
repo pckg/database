@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Repository\PDO\Command;
+<?php namespace Pckg\Database\Repository\PDO\Command;
 
 use Exception;
 use Pckg\Database\Entity;
@@ -68,9 +66,13 @@ class UpdateRecord
     public function execute()
     {
         $originalTable = $this->entity->getTable();
-        $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record, true);
 
         foreach ($data as $table => $update) {
+            if (!$update) {
+                continue;
+            }
+
             if ($this->tables && !in_array($table, $this->tables)) {
                 continue;
             }

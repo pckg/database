@@ -1,11 +1,7 @@
-<?php
-
-namespace Pckg\Database\Relation;
+<?php namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
-use Pckg\Database\Query;
 use Pckg\Database\Record;
-use Pckg\Database\Relation;
 
 /**
  * Class HasMany
@@ -15,6 +11,9 @@ use Pckg\Database\Relation;
 class HasOne extends HasMany
 {
 
+    /**
+     * @param Record $record
+     */
     public function fillRecord(Record $record)
     {
         /**
@@ -37,6 +36,9 @@ class HasOne extends HasMany
         $this->fillRecordWithRelations($record);
     }
 
+    /**
+     * @param CollectionInterface $collection
+     */
     public function fillCollection(CollectionInterface $collection)
     {
         /**

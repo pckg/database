@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Repository\PDO\Command;
+<?php namespace Pckg\Database\Repository\PDO\Command;
 
 use Exception;
 use Pckg\Database\Entity;
@@ -31,8 +29,14 @@ class DeleteRecord
      */
     protected $repository;
 
+    /**
+     * @var null
+     */
     protected $table = null;
 
+    /**
+     * @var array
+     */
     protected $data = [];
 
     /**
@@ -47,6 +51,11 @@ class DeleteRecord
         $this->repository = $repository;
     }
 
+    /**
+     * @param $table
+     *
+     * @return $this
+     */
     public function setTable($table)
     {
         $this->table = $table;
@@ -54,6 +63,11 @@ class DeleteRecord
         return $this;
     }
 
+    /**
+     * @param $data
+     *
+     * @return $this
+     */
     public function setData($data)
     {
         $this->data = $data;

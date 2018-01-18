@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query;
+<?php namespace Pckg\Database\Query;
 
 use Pckg\Database\Query;
 
@@ -69,6 +67,9 @@ class Update extends Query
 
     // builders
 
+    /**
+     * @return array
+     */
     function buildBinds()
     {
         return $this->getBinds(['set', 'where', 'limit']);

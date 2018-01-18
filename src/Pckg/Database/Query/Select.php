@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query;
+<?php namespace Pckg\Database\Query;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
@@ -18,12 +16,26 @@ class Select extends Query
      */
     protected $select = [];
 
+    /**
+     * @var bool
+     */
     protected $count = false;
 
+    /**
+     * @var bool
+     */
     protected $distinct = false;
 
+    /**
+     * @var null
+     */
     protected $countRow = null;
 
+    /**
+     * @param bool $set
+     *
+     * @return $this
+     */
     public function distinct($set = true)
     {
         $this->distinct = $set;
@@ -31,6 +43,11 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @param bool $count
+     *
+     * @return $this
+     */
     public function count($count = true)
     {
         $this->count = $count;
@@ -38,6 +55,11 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @param $row
+     *
+     * @return $this
+     */
     public function countRow($row)
     {
         $this->countRow = $row;
@@ -45,11 +67,19 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isCounted()
     {
         return $this->count;
     }
 
+    /**
+     * @param $table
+     *
+     * @return $this
+     */
     public function table($table)
     {
         $this->table = $table;
@@ -62,6 +92,11 @@ class Select extends Query
         return $this;
     }
 
+    /**
+     * @param $alias
+     *
+     * @return $this
+     */
     public function alias($alias)
     {
         $this->alias = $alias;
@@ -121,6 +156,9 @@ class Select extends Query
         return $sql;
     }
 
+    /**
+     * @return string
+     */
     public function buildSelect()
     {
         if (!$this->select) {
@@ -149,6 +187,9 @@ class Select extends Query
                ($this->countRow && !$this->groupBy ? '' : implode(', ', $keys));
     }
 
+    /**
+     * @return string
+     */
     public function buildTable()
     {
         $alias = $this->alias ?? $this->table;
@@ -156,11 +197,20 @@ class Select extends Query
         return '`' . $this->table . '` AS `' . $alias . '`';
     }
 
+    /**
+     * @return array
+     */
     public function buildBinds()
     {
         return $this->getBinds(['select', 'from', 'join', 'where', 'having', 'group', 'order', 'limit']);
     }
 
+    /**
+     * @param       $fields
+     * @param array $bind
+     *
+     * @return $this
+     */
     public function select($fields, $bind = [])
     {
         if (!is_array($fields)) {
@@ -215,24 +265,6 @@ class Select extends Query
         return $this;
     }
 
-    public function prependSelect($fields = [])
-    {
-        if (!is_array($fields)) {
-            $fields = [$fields];
-        }
-
-        foreach ($fields as $field) {
-            array_unshift($this->select, $field);
-        }
-
-        return $this;
-    }
-
-    public function getSelect()
-    {
-        return $this->select;
-    }
-
     /**
      * @return Delete
      */
@@ -277,6 +309,11 @@ class Select extends Query
         return $update;
     }
 
+    /**
+     * @param Select $query
+     *
+     * @return $this
+     */
     public function mergeToQuery(Select $query)
     {
         foreach ($this->getSelect() as $key => $select) {
@@ -297,6 +334,32 @@ class Select extends Query
 
         if ($orderBy = $this->getOrderBy()) {
             $query->orderBy($orderBy);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelect()
+    {
+        return $this->select;
+    }
+
+    /**
+     * @param array $fields
+     *
+     * @return $this
+     */
+    public function prependSelect($fields = [])
+    {
+        if (!is_array($fields)) {
+            $fields = [$fields];
+        }
+
+        foreach ($fields as $field) {
+            array_unshift($this->select, $field);
         }
 
         return $this;

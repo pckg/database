@@ -1,10 +1,8 @@
-<?php
-
-namespace Pckg\Database\Entity\Extension;
+<?php namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
-use Pckg\Database\Entity\Extension\Adapter\Lang as LangAdapter;
+use Pckg\Locale\Lang as LangAdapter;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
@@ -34,6 +32,9 @@ trait Translatable
      */
     protected $translatableLang;
 
+    /**
+     *
+     */
     public function checkTranslatableDependencies()
     {
         /**
@@ -61,14 +62,6 @@ trait Translatable
     }
 
     /**
-     * @return string
-     */
-    public function getTranslatableTableSuffix()
-    {
-        return $this->translatableTableSuffix;
-    }
-
-    /**
      * @return array
      */
     public function getTranslatableFields()
@@ -87,6 +80,16 @@ trait Translatable
             $this->primaryKey                => $record->{$this->primaryKey},
             $this->translatableLanguageField => $this->translatableLang->langId(),
         ];
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
+    public function joinTranslations(callable $callable = null)
+    {
+        return $this->join($this->translations($callable));
     }
 
     /**
@@ -129,6 +132,116 @@ trait Translatable
     }
 
     /**
+     * @param HasMany $relation
+     */
+    private function addTranslatableConditionIfNot(HasMany $relation)
+    {
+        $foundLanguageCondition = false;
+        $query = $relation->getQuery();
+        foreach ($query->getWhere() as $where) {
+            foreach ($where->getChildren() as $key => $child) {
+                if (strpos($key, $this->translatableLanguageField)) {
+                    $foundLanguageCondition = true;
+                }
+            }
+        }
+
+        if (!$foundLanguageCondition) {
+            $this->addTranslatableCondition($relation);
+        }
+    }
+
+    /**
+     * @param HasMany $relation
+     */
+    private function addTranslatableCondition(HasMany $relation)
+    {
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
+        $translaTableAlias = $this->getAlias()
+            ? $this->getAlias() . $this->getTranslatableTableSuffix()
+            : $translaTable;
+
+        $relation->where(
+            '`' . $translaTableAlias . '`.`' . $this->translatableLanguageField . '`',
+            $this->translatableLang->langId()
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getTranslatableTableSuffix()
+    {
+        return $this->translatableTableSuffix;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function withTranslation()
+    {
+        return $this->withTranslations(
+            function(Query $query) {
+                $query->where($this->translatableLanguageField, $this->translatableLang->langId());
+            }
+        );
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
+    public function withTranslations(callable $callable = null)
+    {
+        return $this->with($this->translations($callable));
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return mixed
+     */
+    public function joinTranslation(callable $callable = null)
+    {
+        return $this->join($this->translations($callable))
+                    ->prependSelect([$this->getTable() . $this->translatableTableSuffix . '.*']);
+    }
+
+    /**
+     * @param callable|null $callable
+     *
+     * @return $this
+     */
+    public function joinFallbackTranslation(callable $callable = null)
+    {
+        if ($this->translatableLang->langId() == 'en') {
+            return $this;
+        }
+
+        $selects = [];
+        $translaTable = $this->getTable() . $this->translatableTableSuffix;
+        $fields = $this->getRepository()->getCache()->getTableFields($translaTable);
+        $translatableKey = '`' . $translaTable . '`.`id`';
+        foreach ($fields as $field) {
+            if (in_array($field, ['id', $this->translatableLanguageField])) {
+                continue;
+            }
+
+            $translatableField = '`' . $translaTable . '`.`' . $field . '`';
+            $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';
+            $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' .
+                         $field . '`';
+        }
+
+        $relation = $this->join($this->translationsFallback($callable));
+
+        $relation->getQuery()->addSelect($selects);
+
+        return $relation;
+    }
+
+    /**
      * @return mixed
      */
     public function translationsFallback(callable $callable = null)
@@ -164,6 +277,9 @@ trait Translatable
         return $relation;
     }
 
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableFallbackConditionIfNot(HasMany $relation)
     {
         $foundLanguageCondition = false;
@@ -181,36 +297,9 @@ trait Translatable
         }
     }
 
-    private function addTranslatableConditionIfNot(HasMany $relation)
-    {
-        $foundLanguageCondition = false;
-        $query = $relation->getQuery();
-        foreach ($query->getWhere() as $where) {
-            foreach ($where->getChildren() as $key => $child) {
-                if (strpos($key, $this->translatableLanguageField)) {
-                    $foundLanguageCondition = true;
-                }
-            }
-        }
-
-        if (!$foundLanguageCondition) {
-            $this->addTranslatableCondition($relation);
-        }
-    }
-
-    private function addTranslatableCondition(HasMany $relation)
-    {
-        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
-        $translaTableAlias = $this->getAlias()
-            ? $this->getAlias() . $this->getTranslatableTableSuffix()
-            : $translaTable;
-
-        $relation->where(
-            '`' . $translaTableAlias . '`.`' . $this->translatableLanguageField . '`',
-            $this->translatableLang->langId()
-        );
-    }
-
+    /**
+     * @param HasMany $relation
+     */
     private function addTranslatableFallbackCondition(HasMany $relation)
     {
         $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
@@ -224,57 +313,12 @@ trait Translatable
         );
     }
 
-    public function withTranslations(callable $callable = null)
+    /**
+     * @return LangInterface
+     */
+    public function getTranslatableLang()
     {
-        return $this->with($this->translations($callable));
-    }
-
-    public function joinTranslations(callable $callable = null)
-    {
-        return $this->join($this->translations($callable));
-    }
-
-    public function withTranslation()
-    {
-        return $this->withTranslations(
-            function(Query $query) {
-                $query->where($this->translatableLanguageField, $this->translatableLang->langId());
-            }
-        );
-    }
-
-    public function joinTranslation(callable $callable = null)
-    {
-        return $this->join($this->translations($callable))
-                    ->prependSelect([$this->getTable() . $this->translatableTableSuffix . '.*']);
-    }
-
-    public function joinFallbackTranslation(callable $callable = null)
-    {
-        if ($this->translatableLang->langId() == 'en') {
-            return $this;
-        }
-
-        $selects = [];
-        $translaTable = $this->getTable() . $this->translatableTableSuffix;
-        $fields = $this->getRepository()->getCache()->getTableFields($translaTable);
-        $translatableKey = '`' . $translaTable . '`.`id`';
-        foreach ($fields as $field) {
-            if (in_array($field, ['id', $this->translatableLanguageField])) {
-                continue;
-            }
-
-            $translatableField = '`' . $translaTable . '`.`' . $field . '`';
-            $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';
-            $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' .
-                         $field . '`';
-        }
-
-        $relation = $this->join($this->translationsFallback($callable));
-
-        $relation->getQuery()->addSelect($selects);
-
-        return $relation;
+        return $this->translatableLang;
     }
 
     /**
@@ -293,11 +337,12 @@ trait Translatable
         return $this;
     }
 
-    public function getTranslatableLang()
-    {
-        return $this->translatableLang;
-    }
-
+    /**
+     * @param Record $record
+     * @param        $key
+     *
+     * @return null
+     */
     public function __getTranslatableExtension(Record $record, $key)
     {
         /**
@@ -328,6 +373,11 @@ trait Translatable
         }
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function __issetTranslatableExtension($key)
     {
         $table = $this->getTable() . $this->translatableTableSuffix;
@@ -339,11 +389,17 @@ trait Translatable
         return false;
     }
 
+    /**
+     * @return mixed
+     */
     public function isTranslatable()
     {
         return $this->getRepository()->getCache()->hasTable($this->table . $this->translatableTableSuffix);
     }
 
+    /**
+     * @return bool
+     */
     public function isTranslated()
     {
         foreach ($this->getQuery()->getJoin() as $join) {

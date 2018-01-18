@@ -7,6 +7,11 @@ use Pckg\Concept\Reflect;
 use Pckg\Database\Record;
 use Pckg\Database\Relation;
 
+/**
+ * Class With
+ *
+ * @package Pckg\Database\Query\Helper
+ */
 trait With
 {
 
@@ -21,6 +26,9 @@ trait With
         'where',
     ];
 
+    /**
+     * @var array
+     */
     protected $with = [];
 
     /**
@@ -76,7 +84,7 @@ trait With
                     }
                 }
                 /**
-                 * We'll call $entity->with($relation) or $entity->join($relation), and return Relation;
+                 * We'll call $entity->with($relation), $entity->join($relation) or $entity->required($relation), and return Relation;
                  */
                 $return = $object->{$prefix == 'leftJoin' ? 'join' : $prefix}($relation);
 
@@ -117,9 +125,14 @@ trait With
         return $relation;
     }
 
-    public function getWith()
+    /**
+     *
+     */
+    public function withRequired(Relation $relation)
     {
-        return $this->with;
+        $this->with($relation);
+
+        return $this;
     }
 
     /**
@@ -148,16 +161,6 @@ trait With
     }
 
     /**
-     *
-     */
-    public function withRequired(Relation $relation)
-    {
-        $this->with($relation);
-
-        return $this;
-    }
-
-    /**
      * Fill record with all it's relations.
      *
      * @param Record $record
@@ -171,6 +174,14 @@ trait With
         }
 
         return $record;
+    }
+
+    /**
+     * @return array
+     */
+    public function getWith()
+    {
+        return $this->with;
     }
 
     /**

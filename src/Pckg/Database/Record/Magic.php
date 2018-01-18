@@ -3,42 +3,21 @@
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
+/**
+ * Class Magic
+ *
+ * @package Pckg\Database\Record
+ */
 trait Magic
 {
 
     use CallWithRelation;
 
-    public function __set($key, $val)
-    {
-        if (!$this->ready) {
-            $this->data[$key] = $val;
-        } else if (array_key_exists($key, $this->data)) {
-            /**
-             * Fill value to existing data.
-             */
-            $this->data[$key] = $val;
-        } else if (array_key_exists($key, $this->relations)) {
-            /**
-             * Fill value to existing relation.
-             */
-            $this->relations[$key] = $val;
-        } else if ($this->hasKey($key)) {
-            /**
-             * Fill value to new data.
-             */
-            $this->data[$key] = $val;
-        } else if ($this->hasRelation($key)) {
-            /**
-             * Fill value to existing relation.
-             */
-            $this->relations[$key] = $val;
-        } else {
-            $this->data[$key] = $val;
-        }
-
-        return $this;
-    }
-
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function __isset($key)
     {
         if (method_exists($this, 'get' . Convention::toPascal($key) . 'Attribute')) {
@@ -115,7 +94,15 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
-        message(static::class . '.' . $key, 'optimize');
+        $caller = db(0, 2, false)[0];
+        message(
+            static::class . '.' . $key . ' in ' .
+            ($caller['class'] ?? null) .
+            ($caller['type'] ?? null) .
+            ($caller['function'] ?? null) . ':' .
+            ($caller['line'] ?? null),
+            'optimize'
+        );
         if (method_exists($entity, $key)) {
             //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();
@@ -156,6 +143,43 @@ trait Magic
     }
 
     /**
+     * @param $key
+     * @param $val
+     *
+     * @return $this
+     */
+    public function __set($key, $val)
+    {
+        if (!$this->ready) {
+            $this->data[$key] = $val;
+        } else if (array_key_exists($key, $this->data)) {
+            /**
+             * Fill value to existing data.
+             */
+            $this->data[$key] = $val;
+        } else if (array_key_exists($key, $this->relations)) {
+            /**
+             * Fill value to existing relation.
+             */
+            $this->relations[$key] = $val;
+        } else if ($this->hasKey($key)) {
+            /**
+             * Fill value to new data.
+             */
+            $this->data[$key] = $val;
+        } else if ($this->hasRelation($key)) {
+            /**
+             * Fill value to existing relation.
+             */
+            $this->relations[$key] = $val;
+        } else {
+            $this->data[$key] = $val;
+        }
+
+        return $this;
+    }
+
+    /**
      *
      *
      * @param $method
@@ -183,6 +207,25 @@ trait Magic
                 )
             );
         } else {
+            /*$relation = null;
+            $tempArgs = [];
+            if (strpos($method, 'required') === 0) {
+                $rel = lcfirst(substr($method, strlen('required')));
+                if ($this->relationExists($rel)) {
+                    $rData = $this->getRelation($rel);
+
+                    if (isset($args[0])) {
+                        $args[0]($rData);
+                    }
+
+                    return $rData;
+                } else {
+                    $method = str_replace('required', 'with', $method);
+                    $tempArgs = $args;
+                    $args = [];
+                }
+            }*/
+
             message(static::class . '.' . $method . '()', 'optimize');
 
             /**
@@ -194,7 +237,13 @@ trait Magic
                 return null;
             }
 
-            return $this->getRelation($relation->getFill());
+            $data = $this->getRelation($relation->getFill());
+
+            /*if ($tempArgs) {
+                $tempArgs[0]($data);
+            }*/
+
+            return $data;
         }
     }
 

@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Entity\Extension;
+<?php namespace Pckg\Database\Entity\Extension;
 
 use Locale;
 use Pckg\Database\Record;

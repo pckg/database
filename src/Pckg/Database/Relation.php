@@ -46,18 +46,39 @@ abstract class Relation implements RelationInterface
      */
     protected $on;
 
+    /**
+     * @var
+     */
     protected $onAdditional;
 
+    /**
+     * @var
+     */
     protected $record;
 
+    /**
+     * @var
+     */
     protected $fill;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var
+     */
     protected $primaryCollectionKey;
 
+    /**
+     * @var
+     */
     protected $foreignKey;
 
+    /**
+     * @var array
+     */
     protected $select = [];
 
     /**
@@ -65,55 +86,10 @@ abstract class Relation implements RelationInterface
      */
     protected $query;
 
-    protected $after;
-
     /**
-     * @param $method
-     * @param $args
-     *
-     * @return $this
+     * @var
      */
-    public function __call($method, $args)
-    {
-        if (method_exists($this->getQuery(), $method)) {
-            /**
-             * First overload Query.
-             * @T00D00 - why is this needed?
-             */
-            Reflect::method($this->getQuery(), $method, $args);
-
-        } elseif (method_exists($this->getRightEntity(), $method)) {
-            /**
-             * Then right entity.
-             */
-            Reflect::method($this->getRightEntity(), $method, $args);
-
-        } else {
-            $this->callWith($method, $args, $this->getRightEntity());
-
-        }
-
-        return $this;
-    }
-
-    public function primaryKey($primaryKey)
-    {
-        $this->primaryKey = $primaryKey;
-
-        return $this;
-    }
-
-    public function foreignKey($foreignKey)
-    {
-        $this->foreignKey = $foreignKey;
-
-        return $this;
-    }
-
-    public function getForeignKey()
-    {
-        return $this->foreignKey;
-    }
+    protected $after;
 
     /**
      * @param $left
@@ -126,6 +102,11 @@ abstract class Relation implements RelationInterface
         $this->fill = $this->getCalee();
     }
 
+    /**
+     * @param int $depth
+     *
+     * @return mixed
+     */
     protected function getCalee($depth = 4)
     {
         if (debug_backtrace()[$depth]['function'] == 'hasMany') {
@@ -133,6 +114,65 @@ abstract class Relation implements RelationInterface
         }
 
         return debug_backtrace()[$depth]['function'];
+    }
+
+    /**
+     * @param $method
+     * @param $args
+     *
+     * @return $this
+     */
+    public function __call($method, $args)
+    {
+        if (method_exists($this->getQuery(), $method)) {
+            /**
+             * First overload Query.
+             *
+             * @T00D00 - why is this needed?
+             */
+            Reflect::method($this->getQuery(), $method, $args);
+        } elseif (method_exists($this->getRightEntity(), $method)) {
+            /**
+             * Then right entity.
+             */
+            Reflect::method($this->getRightEntity(), $method, $args);
+        } else {
+            $this->callWith($method, $args, $this->getRightEntity());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $primaryKey
+     *
+     * @return $this
+     */
+    public function primaryKey($primaryKey)
+    {
+        $this->primaryKey = $primaryKey;
+
+        return $this;
+    }
+
+    /**
+     * @param $foreignKey
+     *
+     * @return $this
+     */
+    public function foreignKey($foreignKey)
+    {
+        $this->foreignKey = $foreignKey;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
     }
 
     /**
@@ -155,6 +195,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $fill
+     *
+     * @return $this
+     */
     public function fill($fill)
     {
         $this->fill = $fill;
@@ -162,6 +207,11 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @param $after
+     *
+     * @return $this
+     */
     public function after($after)
     {
         $this->after = $after;
@@ -169,9 +219,21 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getFill()
     {
         return $this->fill;
+    }
+
+    /**
+     * @return Repository
+     * @throws \Exception
+     */
+    public function getLeftRepository()
+    {
+        return $this->getLeftEntity()->getRepository();
     }
 
     /**
@@ -184,14 +246,10 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @return Repository
-     * @throws \Exception
+     * @param Record $record
+     *
+     * @return $this
      */
-    public function getLeftRepository()
-    {
-        return $this->getLeftEntity()->getRepository();
-    }
-
     public function onRecord(Record $record)
     {
         $this->record = $record;
@@ -202,22 +260,6 @@ abstract class Relation implements RelationInterface
     /**
      * @return string
      */
-    public function getKeyCondition()
-    {
-        $rightEntity = $this->getRightEntity();
-        $leftEntity = $this->getLeftEntity();
-        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
-        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
-
-        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
-                     ($this->primaryKey && $this->foreignKey
-                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
-                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
-                         : '');
-
-        return $condition;
-    }
-
     public function getAdditionalCondition()
     {
         return $this->onAdditional
@@ -225,6 +267,11 @@ abstract class Relation implements RelationInterface
             : '';
     }
 
+    /**
+     * @param Select $query
+     *
+     * @return $this
+     */
     public function mergeToQuery(Select $query)
     {
         $query->join(
@@ -261,6 +308,30 @@ abstract class Relation implements RelationInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getKeyCondition()
+    {
+        $rightEntity = $this->getRightEntity();
+        $leftEntity = $this->getLeftEntity();
+        $rightAlias = $rightEntity->getAlias() ?? $rightEntity->getTable();
+        $leftAlias = $leftEntity->getAlias() ?? $leftEntity->getTable();
+
+        $condition = $this->join . ' `' . $rightEntity->getTable() . '` AS `' . $rightAlias . '`' .
+                     ($this->primaryKey && $this->foreignKey
+                         ? ' ON `' . $leftAlias . '`.`' . $this->primaryKey . '`' .
+                           ' = `' . $rightAlias . '`.`' . $this->foreignKey . '`'
+                         : '');
+
+        return $condition;
+    }
+
+    /**
+     * @param callable $callable
+     * @param          $entity
+     * @param null     $query
+     */
     public function reflect(callable $callable, $entity, $query = null)
     {
         Reflect::call(

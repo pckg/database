@@ -1,13 +1,27 @@
 <?php namespace Pckg\Database\Record;
 
+/**
+ * Class Events
+ *
+ * @package Pckg\Database\Record
+ */
 trait Events
 {
 
+    /**
+     * @return array
+     */
     public function events()
     {
         return [];
     }
 
+    /**
+     * @param       $events
+     * @param array $args
+     *
+     * @return $this
+     */
     public function trigger($events, $args = [])
     {
         $args[] = $this;

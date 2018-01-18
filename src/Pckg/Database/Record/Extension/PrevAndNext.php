@@ -1,8 +1,16 @@
 <?php namespace Pckg\Database\Record\Extension;
 
+/**
+ * Class PrevAndNext
+ *
+ * @package Pckg\Database\Record\Extension
+ */
 trait PrevAndNext
 {
 
+    /**
+     * @return mixed
+     */
     public function getPrevAttribute()
     {
         $entity = $this->getEntity();
@@ -20,6 +28,9 @@ trait PrevAndNext
         });
     }
 
+    /**
+     * @return mixed
+     */
     public function getNextAttribute()
     {
         $entity = $this->getEntity();

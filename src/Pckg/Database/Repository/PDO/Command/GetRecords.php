@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Repository\PDO\Command;
+<?php namespace Pckg\Database\Repository\PDO\Command;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -22,6 +20,9 @@ class GetRecords
      */
     protected $entity;
 
+    /**
+     * @var Repository|Repository\PDO
+     */
     protected $repository;
 
     /**
@@ -47,6 +48,8 @@ class GetRecords
 
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
+        $measure = str_replace("\n", " ", $prepare->queryString);
+        startMeasure('Executing ' . $measure);
         if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
             $collection = new Collection($results);
             if ($entity->getQuery()->isCounted()) {
@@ -57,8 +60,10 @@ class GetRecords
             }
             $collection->setEntity($entity)->setSaved()->setOriginalFromData();
 
+            stopMeasure('Executing ' . $measure);
             return $entity->fillCollectionWithRelations($collection);
         }
+        stopMeasure('Executing ' . $measure);
 
         return new Collection();
     }
@@ -75,11 +80,15 @@ class GetRecords
 
         $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
 
+        $measure = str_replace("\n", " ", $prepare->queryString);
+        startMeasure('Executing ' . $measure);
         if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
             $record->setEntity($entity)->setSaved()->setOriginalFromData();
 
+            stopMeasure('Executing ' . $measure);
             return $entity->fillRecordWithRelations($record);
         }
+        stopMeasure('Executing ' . $measure);
 
         return null;
     }

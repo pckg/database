@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query;
+<?php namespace Pckg\Database\Query;
 
 use Pckg\Database\Query;
 
@@ -30,6 +28,9 @@ class Delete extends Query
         return $sql;
     }
 
+    /**
+     * @return array
+     */
     function buildBinds()
     {
         return $this->getBinds(['where', 'limit']);

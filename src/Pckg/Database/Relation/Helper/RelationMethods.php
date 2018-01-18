@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Relation\Helper;
+<?php namespace Pckg\Database\Relation\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
@@ -20,12 +18,30 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
 
+    /**
+     * @param $hasMany
+     *
+     * @return HasMany
+     */
+    public function hasMany($hasMany, callable $callback = null, $alias = null)
+    {
+        return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
+    }
+
+    /**
+     * @param               $relation
+     * @param               $entity
+     * @param callable|null $callback
+     * @param null          $alias
+     *
+     * @return mixed
+     */
     protected function returnRelation($relation, $entity, callable $callback = null, $alias = null)
     {
         if (is_string($entity)) {
             $entity = Reflect::create($entity, ['alias' => $alias]);
         }
-        
+
         $relation = new $relation($this, $entity);
 
         if ($alias) {
@@ -37,16 +53,6 @@ trait RelationMethods
         }
 
         return $relation;
-    }
-
-    /**
-     * @param $hasMany
-     *
-     * @return HasMany
-     */
-    public function hasMany($hasMany, callable $callback = null, $alias = null)
-    {
-        return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
     }
 
     /**

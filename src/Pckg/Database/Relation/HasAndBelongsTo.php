@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Relation;
+<?php namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -18,19 +16,9 @@ class HasAndBelongsTo extends HasMany
 
     use MiddleEntity;
 
-    public function getMiddleKeyCondition()
-    {
-        $middleQuery = $this->getMiddleEntity()->getQuery();
-
-        return '`' . $this->getLeftEntity()->getTable() . '`.`id` = ' .
-               '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
-    }
-
-    public function getMiddleKeyBinds()
-    {
-        return [];
-    }
-
+    /**
+     * @param Select $query
+     */
     public function mergeToQuery(Select $query)
     {
         /**
@@ -76,6 +64,28 @@ class HasAndBelongsTo extends HasMany
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getMiddleKeyCondition()
+    {
+        $middleQuery = $this->getMiddleEntity()->getQuery();
+
+        return '`' . $this->getLeftEntity()->getTable() . '`.`id` = ' .
+               '`' . $middleQuery->getTable() . '`.`' . $this->getLeftForeignKey() . '`';
+    }
+
+    /**
+     * @return array
+     */
+    public function getMiddleKeyBinds()
+    {
+        return [];
+    }
+
+    /**
+     * @param Record $record
+     */
     public function fillRecord(Record $record)
     {
         /**
@@ -135,6 +145,9 @@ class HasAndBelongsTo extends HasMany
         $this->fillRecordWithRelations($record);
     }
 
+    /**
+     * @param CollectionInterface $collection
+     */
     public function fillCollection(CollectionInterface $collection)
     {
         /**
@@ -195,7 +208,9 @@ class HasAndBelongsTo extends HasMany
             }
         );*/
         $groupedMiddleCollection = $middleCollection->groupBy($this->rightForeignKey);
-        $keyedRightCollection->each(function($rightRecord) use ($keyedLeftCollection, $groupedMiddleCollection, $rightCollection) {
+        $keyedRightCollection->each(function($rightRecord) use (
+            $keyedLeftCollection, $groupedMiddleCollection, $rightCollection
+        ) {
             (new Collection($groupedMiddleCollection[$rightRecord->{$this->rightPrimaryKey}] ?? []))
                 ->each(function($middleRecord) use ($rightRecord, $keyedLeftCollection) {
                     $rightRecord = clone $rightRecord;

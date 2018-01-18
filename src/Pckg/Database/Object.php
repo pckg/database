@@ -31,26 +31,99 @@ class Object implements ArrayAccess, JsonSerializable
         $this->data = $data ?? [];
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     *
+     * @return Object
+     */
     public function offsetSet($offset, $value)
     {
         return $this->__set($offset, $value);
     }
 
+    /**
+     * @param mixed $offset
+     *
+     * @return bool
+     */
     public function offsetExists($offset)
     {
         return $this->__isset($offset);
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        return array_key_exists($key, $this->data) && $this->data[$key];
+    }
+
+    /**
+     * @param mixed $offset
+     *
+     * @return Object
+     */
     public function offsetUnset($offset)
     {
         return $this->__unset($offset);
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
+    public function __unset($key)
+    {
+        unset($this->data[$key]);
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $offset
+     *
+     * @return null
+     */
     public function offsetGet($offset)
     {
         return $this->__get($offset);
     }
 
+    /**
+     * @param $key
+     *
+     * @return null
+     */
+    public function __get($key)
+    {
+        return array_key_exists($key, $this->data)
+            ? $this->data[$key]
+            : null;
+    }
+
+    /**
+     * @param $key
+     * @param $val
+     *
+     * @return $this
+     */
+    public function __set($key, $val)
+    {
+        $this->data[$key] = $val;
+
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
     public function setData(array $data = [])
     {
         $this->data = $data;
@@ -58,6 +131,33 @@ class Object implements ArrayAccess, JsonSerializable
         return $this;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return $this
+     */
+    public function setOriginal(array $data = [])
+    {
+        $this->original = $data;
+
+        return $this;
+    }
+
+    /**
+     * @param null $key
+     *
+     * @return bool
+     */
+    public function isOriginal($key = null)
+    {
+        return $this->data($key) == $this->original($key);
+    }
+
+    /**
+     * @param null $key
+     *
+     * @return array|mixed|null
+     */
     public function data($key = null)
     {
         return $key
@@ -67,13 +167,11 @@ class Object implements ArrayAccess, JsonSerializable
             : $this->data;
     }
 
-    public function setOriginal(array $data = [])
-    {
-        $this->original = $data;
-
-        return $this;
-    }
-
+    /**
+     * @param null $key
+     *
+     * @return array|mixed|null
+     */
     public function original($key = null)
     {
         return $key
@@ -83,16 +181,19 @@ class Object implements ArrayAccess, JsonSerializable
             : $this->original;
     }
 
-    public function isOriginal($key = null)
-    {
-        return $this->data($key) == $this->original($key);
-    }
-
+    /**
+     * @param null $key
+     *
+     * @return bool
+     */
     public function isDirty($key = null)
     {
         return $this->data($key) != $this->original($key);
     }
 
+    /**
+     * @return $this
+     */
     public function setOriginalFromData()
     {
         $this->original = $this->data;
@@ -100,23 +201,26 @@ class Object implements ArrayAccess, JsonSerializable
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
     public function keyExists($key)
     {
         return array_key_exists($key, $this->data);
     }
 
+    /**
+     * @param $key
+     *
+     * @return mixed|null
+     */
     public function getValue($key)
     {
         return array_key_exists($key, $this->data)
             ? $this->data[$key]
             : null;
-    }
-
-    public function __unset($key)
-    {
-        unset($this->data[$key]);
-
-        return $this;
     }
 
     /**
@@ -149,38 +253,11 @@ class Object implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
-     * @return null
+     * @return array
      */
-    public function __get($key)
+    function jsonSerialize()
     {
-        return array_key_exists($key, $this->data)
-            ? $this->data[$key]
-            : null;
-    }
-
-    /**
-     * @param $key
-     * @param $val
-     *
-     * @return $this
-     */
-    public function __set($key, $val)
-    {
-        $this->data[$key] = $val;
-
-        return $this;
-    }
-
-    /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        return array_key_exists($key, $this->data) && $this->data[$key];
+        return $this->__toArray();
     }
 
     /**
@@ -191,11 +268,9 @@ class Object implements ArrayAccess, JsonSerializable
         return $this->data;
     }
 
-    function jsonSerialize()
-    {
-        return $this->__toArray();
-    }
-
+    /**
+     * @return $this
+     */
     public function dd()
     {
         dd($this->data());

@@ -1,14 +1,31 @@
 <?php namespace Pckg\Database\Record;
 
 use Pckg\Database\Object;
+use Throwable;
 
+/**
+ * Class Transformations
+ *
+ * @package Pckg\Database\Record
+ */
 trait Transformations
 {
 
+    /**
+     * @var array
+     */
     protected $toArray = [];
 
+    /**
+     * @var array
+     */
     protected $toJson = [];
 
+    /**
+     * @param array $items
+     *
+     * @return $this
+     */
     public function addToArray($items = [])
     {
         if (!is_array($items)) {
@@ -23,13 +40,12 @@ trait Transformations
     }
 
     /**
-     * @return array
+     * @param null $values
+     * @param int  $depth
+     * @param bool $withToArray
+     *
+     * @return Object
      */
-    public function toArray($values = null, $depth = 6, $withToArray = true)
-    {
-        return $this->__toArray($values, $depth, $withToArray);
-    }
-
     public function toObject($values = null, $depth = 6, $withToArray = true)
     {
         $array = $this->toArray($values, $depth, $withToArray);
@@ -38,6 +54,14 @@ trait Transformations
         }
 
         return new Object($array);
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray($values = null, $depth = 6, $withToArray = true)
+    {
+        return $this->__toArray($values, $depth, $withToArray);
     }
 
     /**
@@ -80,16 +104,33 @@ trait Transformations
         return $return;
     }
 
+    /**
+     * @return string
+     */
     public function toJSON()
     {
-        return json_encode($this->jsonSerialize());
+        try {
+            $json = json_encode($this->jsonSerialize(), JSON_OBJECT_AS_ARRAY | JSON_NUMERIC_CHECK | JSON_PARTIAL_OUTPUT_ON_ERROR);
+        } catch (Throwable $e) {
+        }
+
+        return $json ?? 'null';
+
     }
 
+    /**
+     * @return array
+     */
     function jsonSerialize()
     {
         return $this->__toArray();
     }
 
+    /**
+     * @param $map
+     *
+     * @return array
+     */
     public function transform($map)
     {
         if (is_callable($map)) {

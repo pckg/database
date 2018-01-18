@@ -1,8 +1,5 @@
-<?php
+<?php namespace Pckg\Database\Repository;
 
-namespace Pckg\Database\Repository;
-
-use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
@@ -87,31 +84,52 @@ class Custom implements Repository
         // TODO: Implement getConnection() method.
     }
 
+    /**
+     * @param Query $query
+     * @param null  $recordClass
+     */
     public function prepareQuery(Query $query, $recordClass = null)
     {
         // TODO: Implement prepareQuery() method.
     }
 
+    /**
+     * @param $prepare
+     */
     public function executePrepared($prepare)
     {
         // TODO: Implement executePrepared() method.
     }
 
+    /**
+     * @param $prepare
+     */
     public function fetchAllPrepared($prepare)
     {
         // TODO: Implement fetchAllPrepared() method.
     }
 
+    /**
+     * @param $prepare
+     */
     public function fetchPrepared($prepare)
     {
         // TODO: Implement fetchPrepared() method.
     }
 
+    /**
+     *
+     */
     public function getCache()
     {
         // TODO: Implement getCache() method.
     }
 
+    /**
+     * @param Record $record
+     * @param Entity $entity
+     * @param        $language
+     */
     public function deleteTranslation(Record $record, Entity $entity, $language)
     {
         // TODO: Implement deleteTranslation() method.

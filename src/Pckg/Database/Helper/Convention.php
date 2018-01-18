@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Helper;
+<?php namespace Pckg\Database\Helper;
 
 /**
  * Class Convention
@@ -84,7 +82,16 @@ class Convention
         }
 
         return $multiple . ($i18n ? "_i18n" : "");
+    }
 
+    /**
+     * @param $text
+     *
+     * @return string
+     */
+    public static function toPascal($text)
+    {
+        return ucfirst(static::toCamel($text));
     }
 
     /**
@@ -105,11 +112,6 @@ class Convention
         }
 
         return str_replace("_", "", implode($text));
-    }
-
-    public static function toPascal($text)
-    {
-        return ucfirst(static::toCamel($text));
     }
 
     /**
@@ -136,6 +138,11 @@ class Convention
         return strtolower($return);
     }
 
+    /**
+     * @param $url
+     *
+     * @return mixed|string
+     */
     public static function url($url)
     {
         $url = preg_replace('~[^\\pL0-9_]+~u', '-', $url);

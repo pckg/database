@@ -1,6 +1,4 @@
-<?php
-
-namespace Pckg\Database\Query\Helper;
+<?php namespace Pckg\Database\Query\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -21,32 +19,19 @@ trait QueryBuilder
      */
     protected $query;
 
+    /**
+     * @var
+     */
     protected $prevQuery;
 
+    /**
+     * @param bool $debug
+     *
+     * @return $this
+     */
     public function debug($debug = true)
     {
         $this->getQuery()->debug($debug);
-
-        return $this;
-    }
-
-    public function diebug($debug = true)
-    {
-        $this->getQuery()->diebug($debug);
-
-        foreach ($this->getWith() as $relation) {
-            $relation->getRightEntity()->debug($debug);
-            if (method_exists($relation, 'getMiddleEntity')) {
-                $relation->getMiddleEntity()->debug($debug);
-            }
-        }
-
-        return $this;
-    }
-
-    public function distinct()
-    {
-        $this->getQuery()->distinct();
 
         return $this;
     }
@@ -61,11 +46,21 @@ trait QueryBuilder
             : $this->resetQuery()->getQuery();
     }
 
-    public function getPrevQuery()
+    /**
+     * @param $query
+     *
+     * @return $this
+     */
+    public function setQuery($query)
     {
-        return $this->prevQuery;
+        $this->query = $query;
+
+        return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function resetQuery()
     {
         $this->prevQuery = $this->query;
@@ -83,21 +78,57 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param bool $debug
+     *
+     * @return $this
+     */
+    public function diebug($debug = true)
+    {
+        $this->getQuery()->diebug($debug);
+
+        foreach ($this->getWith() as $relation) {
+            $relation->getRightEntity()->debug($debug);
+            if (method_exists($relation, 'getMiddleEntity')) {
+                $relation->getMiddleEntity()->debug($debug);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function distinct()
+    {
+        $this->getQuery()->distinct();
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrevQuery()
+    {
+        return $this->prevQuery;
+    }
+
+    /**
+     *
+     */
     public function resetRelations()
     {
         $this->with = [];
     }
 
+    /**
+     * @return mixed
+     */
     public function toRaw()
     {
         return $this->query->toRaw();
-    }
-
-    public function setQuery($query)
-    {
-        $this->query = $query;
-
-        return $this;
     }
 
     /**
@@ -107,7 +138,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function join($table, $on = null, $where = null)
+    public function join($table, $on = null, $where = null, $binds = [])
     {
         if ($table instanceof Relation) {
             if (is_only_callable($on)) {
@@ -129,7 +160,35 @@ trait QueryBuilder
                 $query->buildBinds()
             );
         } else {
-            $this->getQuery()->join($table, $on, $where);
+            $this->getQuery()->join($table, $on, $where, $binds);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param       $raw
+     * @param array $bind
+     *
+     * @return $this
+     */
+    public function whereRaw($raw, $bind = [])
+    {
+        $this->getQuery()->where(Query\Raw::raw($raw, $bind));
+
+        return $this;
+    }
+
+    /**
+     * @param        $data
+     * @param string $operator
+     *
+     * @return $this
+     */
+    public function whereArr($data, $operator = '=')
+    {
+        foreach ($data as $key => $value) {
+            $this->where($key, $value, $operator);
         }
 
         return $this;
@@ -160,22 +219,13 @@ trait QueryBuilder
         return $this;
     }
 
-    public function whereRaw($raw, $bind = [])
-    {
-        $this->getQuery()->where(Query\Raw::raw($raw, $bind));
-
-        return $this;
-    }
-
-    public function whereArr($data, $operator = '=')
-    {
-        foreach ($data as $key => $value) {
-            $this->where($key, $value, $operator);
-        }
-
-        return $this;
-    }
-
+    /**
+     * @param        $key
+     * @param bool   $value
+     * @param string $operator
+     *
+     * @return $this
+     */
     public function orWhere($key, $value = true, $operator = '=')
     {
         $this->getQuery()->getWhere()->setGlue('OR');
@@ -199,6 +249,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
     public function groupBy($key)
     {
         $this->getQuery()->groupBy($key);
@@ -206,6 +261,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
     public function addGroupBy($key)
     {
         $this->getQuery()->addGroupBy($key);
@@ -213,6 +273,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param $key
+     *
+     * @return $this
+     */
     public function orderBy($key)
     {
         if ($this instanceof Entity) {
@@ -224,6 +289,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param $limit
+     *
+     * @return $this
+     */
     public function limit($limit)
     {
         $this->getQuery()->limit($limit);
@@ -231,6 +301,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param bool $count
+     *
+     * @return $this
+     */
     public function count($count = true)
     {
         $this->getQuery()->count($count);
@@ -238,6 +313,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param string $row
+     *
+     * @return $this
+     */
     public function countRow($row = '*')
     {
         $this->getQuery()->countRow($row);
@@ -245,6 +325,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param array $fields
+     *
+     * @return $this
+     */
     public function addSelect($fields = [])
     {
         $this->getQuery()->addSelect($fields);
@@ -252,6 +337,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param array $fields
+     *
+     * @return $this
+     */
     public function prependSelect($fields = [])
     {
         $this->getQuery()->prependSelect($fields);
@@ -259,6 +349,11 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @param array $fields
+     *
+     * @return $this
+     */
     public function select($fields = [])
     {
         $this->getQuery()->select($fields);
@@ -266,13 +361,28 @@ trait QueryBuilder
         return $this;
     }
 
-    public function selectCount($as = 'count', $what = '*')
+    /**
+     * @param string $as
+     * @param string $what
+     *
+     * @return $this
+     */
+    public function selectCount($as = 'count', $what = null)
     {
+        if (!$what) {
+            $what = '`' . $this->getTable() . '`.id';
+        }
         $this->getQuery()->select([$as => 'COUNT(' . $what . ')']);
 
         return $this;
     }
 
+    /**
+     * @param string $as
+     * @param string $what
+     *
+     * @return $this
+     */
     public function addCount($as = 'count', $what = '*')
     {
         $this->getQuery()->addSelect([$as => 'COUNT(' . $what . ')']);
@@ -280,6 +390,9 @@ trait QueryBuilder
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getSelect()
     {
         return $this->getQuery()->getSelect();

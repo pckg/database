@@ -122,7 +122,7 @@ class RepositoryFactory
                 $debugBar->addCollector($pdoCollector = new PDOCollector());
             }
 
-            $pdoCollector->addConnection($tracablePdo, $name);
+            $pdoCollector->addConnection($tracablePdo, str_replace(':', '-', $name));
         }
     }
 
@@ -177,6 +177,7 @@ class RepositoryFactory
             $originalRepository = context()->get($originalAlias);
             $alias = substr($name, $pos + 1);
             $originalRepository->addAlias($alias, $repository);
+            $repository->addAlias($alias == 'write' ? 'read' : 'write', $originalRepository);
         } else {
             context()->bindIfNot(Repository::class, $repository);
         }

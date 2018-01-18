@@ -32,8 +32,8 @@ class GetRecords
     public function __construct(Entity $entity, Repository $repository = null)
     {
         $this->entity = $entity;
-        $this->repository = $repository
-            ?: $this->entity->getRepository();
+        $this->repository = ($repository
+                             ?? $this->entity->getRepository())->aliased('read');
     }
 
     /**
@@ -61,6 +61,7 @@ class GetRecords
             $collection->setEntity($entity)->setSaved()->setOriginalFromData();
 
             stopMeasure('Executing ' . $measure);
+
             return $entity->fillCollectionWithRelations($collection);
         }
         stopMeasure('Executing ' . $measure);
@@ -86,6 +87,7 @@ class GetRecords
             $record->setEntity($entity)->setSaved()->setOriginalFromData();
 
             stopMeasure('Executing ' . $measure);
+
             return $entity->fillRecordWithRelations($record);
         }
         stopMeasure('Executing ' . $measure);

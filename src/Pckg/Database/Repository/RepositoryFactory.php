@@ -44,6 +44,7 @@ class RepositoryFactory
         if (array_key_exists($name, static::$repositories)) {
             $repository = static::$repositories[$name];
         } else {
+            $name = Repository::class . '.' . $name;
             if (!context()->exists($name)) {
                 /**
                  * Lazy load.
@@ -168,7 +169,18 @@ class RepositoryFactory
         /**
          * Bind repository to context so we can reuse it later.
          */
-        context()->bindIfNot(Repository::class, $repository);
+        if ($pos = strpos($name, ':')) {
+            /**
+             * We're probably initializing write connection.
+             */
+            $originalAlias = Repository::class . '.' . substr($name, 0, $pos);
+            $originalRepository = context()->get($originalAlias);
+            $alias = substr($name, $pos + 1);
+            $originalRepository->addAlias($alias, $repository);
+        } else {
+            context()->bindIfNot(Repository::class, $repository);
+        }
+
         context()->bind(Repository::class . '.' . $name, $repository);
 
         return $repository;

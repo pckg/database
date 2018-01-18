@@ -199,16 +199,6 @@ class PDO extends AbstractRepository implements Repository
     {
         $execute = $prepare->execute();
 
-        /*$caller = db(0, 6, false)[0];
-        message(
-            'query in ' .
-            ($caller['class'] ?? null) .
-            ($caller['type'] ?? null) .
-            ($caller['function'] ?? null) . ':' .
-            ($caller['line'] ?? null),
-            'optimize'
-        );*/
-
         if (!$execute) {
             $errorInfo = $prepare->errorInfo();
 

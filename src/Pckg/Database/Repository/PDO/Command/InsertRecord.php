@@ -44,7 +44,7 @@ class InsertRecord
     {
         $this->record = $record;
         $this->entity = $entity;
-        $this->repository = $repository;
+        $this->repository = $repository->aliased('write');
     }
 
     /**

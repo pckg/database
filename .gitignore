@@ -1,3 +1,6 @@
+# D3V
+.idea/
+
 # TESTS ;-)
 tests/_output/*
 tests/acceptance.suite.yml

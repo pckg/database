@@ -44,7 +44,8 @@ class RepositoryFactory
         if (array_key_exists($name, static::$repositories)) {
             $repository = static::$repositories[$name];
         } else {
-            if (!context()->exists($name)) {
+            $fullName = Repository::class . '.' . $name;
+            if (!context()->exists($fullName)) {
                 /**
                  * Lazy load.
                  */
@@ -53,10 +54,10 @@ class RepositoryFactory
                     throw new Exception("No config found for database connection " . $name);
                 }
                 $repository = RepositoryFactory::initPdoDatabase($config, $name);
-                context()->bind($name, $repository);
+                context()->bind($fullName, $repository);
             }
 
-            $repository = context()->get($name);
+            $repository = context()->get($fullName);
         }
 
         if (!$repository) {
@@ -169,7 +170,7 @@ class RepositoryFactory
          * Bind repository to context so we can reuse it later.
          */
         context()->bindIfNot(Repository::class, $repository);
-        context()->bind(Repository::class . '.' . $name, $repository);
+        context()->bindIfNot(Repository::class . '.' . $name, $repository);
 
         return $repository;
     }

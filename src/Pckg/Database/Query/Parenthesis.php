@@ -107,7 +107,7 @@ class Parenthesis
     public function build()
     {
         return $this->children
-            ? '((' . implode(') ' . $this->glue . ' (', $this->children) . '))'
+            ? '(' . implode(') ' . $this->glue . ' (', $this->children) . ')'
             : '';
     }
 

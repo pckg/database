@@ -254,6 +254,7 @@ class PDO extends AbstractRepository implements Repository
          * Trigger query.prepared event.
          */
         trigger(Query::class . '.prepared', ['sql' => $sql, 'binds' => $binds]);
+        trigger(Query::class . '.preparedRepo', ['sql' => $sql, 'binds' => $binds, 'repo' => $this->getName()]);
 
         $this->bindBinds($prepare, $binds);
 

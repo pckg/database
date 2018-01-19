@@ -22,6 +22,15 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
         $username = sha1(microtime());
         User::getOrNew(['username' => $username])->setAndSave(['user_group_id' => 2, 'language_id' => 'si']);
         (new Users())->where('username', $username)->delete();
+        
+        /*User::gets(['id' => 1])->setAndSave(['password' => sha1(microtime())]);
+        (new Users())->where('id', 1)->one()->setAndSave(['password' => sha1(microtime())]);
+        (new Users())->where('id', 1)->all()->first()->setAndSave(['password' => sha1(microtime())]);
+        (new Users())->where('id', 1)->set(['password' => sha1(microtime())])->update();
+        User::create(['email' => sha1(microtime())])->delete();
+        User::create(['email' => sha1(microtime())]);
+        (new Users())->set(['password' => sha1(microtime())])->where('id', 1, '>')->update();
+        (new Users())->where('id', 1, '>')->delete();*/
 
         $this->assertEquals(
             [

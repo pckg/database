@@ -415,7 +415,7 @@ class Entity
                     // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
                 } elseif (strrpos($this->table, $suffix) == strlen($this->table) - strlen($suffix)
-                          && $this->repository->getCache()->hasTable($this->table)
+                          && $this->repository->getCache()->hasTable($this->table . $suffix)
                 ) {
                     // extendee table
                     $extensionArray[$this->table] = $this->{$method}($record);

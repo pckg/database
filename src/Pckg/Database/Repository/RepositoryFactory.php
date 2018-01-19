@@ -168,11 +168,6 @@ class RepositoryFactory
         /**
          * Bind repository to context so we can reuse it later.
          */
-        <<<<
-        <<< HEAD
-                context()->bindIfNot(Repository::class, $repository);
-        context()->bindIfNot(Repository::class . '.' . $name, $repository);
-=======
         if ($pos = strpos($name, ':')) {
             /**
              * We're probably initializing write connection.
@@ -186,7 +181,6 @@ class RepositoryFactory
         }
 
         context()->bind(Repository::class . '.' . $name, $repository);
->>>>>>> origin/BR-loadbalance
 
         return $repository;
     }

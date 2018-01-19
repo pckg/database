@@ -664,7 +664,7 @@ trait UnitTesterActions
      *
      * @see \Pckg\Framework\Test\Helper::listenToQueries()
      */
-    public function listenToQueries($type = null) {
+    public function listenToQueries($type = null, $sort = null) {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('listenToQueries', func_get_args()));
     }
 
@@ -675,7 +675,7 @@ trait UnitTesterActions
      *
      * @see \Pckg\Framework\Test\Helper::getListenedQueries()
      */
-    public function getListenedQueries() {
+    public function getListenedQueries($type = null) {
         return $this->getScenario()->runStep(new \Codeception\Step\Action('getListenedQueries', func_get_args()));
     }
 

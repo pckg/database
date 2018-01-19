@@ -197,6 +197,8 @@ trait Actions
 
         $this->trigger(['updated', 'saved']);
 
+        $this->setOriginalFromData();
+
         return $update;
     }
 
@@ -216,6 +218,8 @@ trait Actions
         $insert = $repository->insert($this, $entity);
 
         $this->trigger(['inserted', 'saved']);
+
+        $this->setOriginalFromData();
 
         return $insert;
     }

@@ -1,5 +1,6 @@
 <?php
 
+use Test\Entity\Users;
 use Test\Record\User;
 
 class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
@@ -14,11 +15,9 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
     {
         $this->tester->listenToQueries('Repo', false);
 
-        $user = User::gets(['id' => 2]);
+        User::gets(['id' => 2])->setAndSave(['language_id' => 'si']);
 
-        $user->setAndSave(['language_id' => 'si']);
-
-        $user->setAndSave(['language_id' => 'en']);
+        (new Users())->set(['language_id' => 'en'])->where('id', 2)->update();
 
         $this->assertEquals(
             [
@@ -33,8 +32,8 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
                     'repo'  => 'default:write',
                 ],
                 [
-                    'sql'   => 'UPDATE `users` SET `id` = ?, `language_id` = ? WHERE (`id` = ?)',
-                    'binds' => [2, 'en', 2],
+                    'sql'   => 'UPDATE `users` SET `language_id` = ? WHERE (`users`.`id` = ?)',
+                    'binds' => ['en', 2],
                     'repo'  => 'default:write',
                 ],
             ],

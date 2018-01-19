@@ -28,6 +28,8 @@ trait Translatable
             $repository = $entity->getRepository();
         }
 
+        $repository = $repository->aliased('write');
+
         $deleted = $repository->deleteTranslation($this, $entity, $language);
 
         return $deleted;

@@ -88,7 +88,7 @@ class Entity
         $this->repository = $repository;
 
         $this->guessDefaults();
-        
+
         if ($boot) {
             $this->initExtensions();
             $this->preboot();
@@ -539,7 +539,9 @@ class Entity
     {
         $this->applyExtensions();
 
-        $one = $this->repository->one($this);
+        $repository = $this->getRepository()->aliased('read');
+
+        $one = $repository->one($this);
 
         $this->resetQuery();
 
@@ -577,7 +579,9 @@ class Entity
     {
         $this->applyExtensions();
 
-        $all = $this->repository->all($this);
+        $repository = $this->getRepository()->aliased('read');
+
+        $all = $repository->all($this);
 
         $this->resetQuery();
 
@@ -663,6 +667,8 @@ class Entity
             $repository = $this->getRepository();
         }
 
+        $repository = $repository->aliased('write');
+
         $delete = $this->getQuery()->transformToDelete();
 
         $prepare = $repository->prepareQuery($delete);
@@ -680,6 +686,8 @@ class Entity
         if (!$repository) {
             $repository = $this->getRepository();
         }
+
+        $repository = $repository->aliased('write');
 
         $insert = $this->getQuery()->transformToInsert();
 
@@ -710,6 +718,8 @@ class Entity
         if (!$repository) {
             $repository = $this->getRepository();
         }
+
+        $repository = $repository->aliased('write');
 
         $update = $this->getQuery()->transformToUpdate();
 

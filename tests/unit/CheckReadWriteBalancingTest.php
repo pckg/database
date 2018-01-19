@@ -19,6 +19,10 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
 
         (new Users())->set(['language_id' => 'en'])->where('id', 2)->update();
 
+        $username = sha1(microtime());
+        User::getOrNew(['username' => $username])->setAndSave(['user_group_id' => 2, 'language_id' => 'si']);
+        (new Users())->where('username', $username)->delete();
+
         $this->assertEquals(
             [
                 [
@@ -34,6 +38,21 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
                 [
                     'sql'   => 'UPDATE `users` SET `language_id` = ? WHERE (`users`.`id` = ?)',
                     'binds' => ['en', 2],
+                    'repo'  => 'default:write',
+                ],
+                [
+                    'sql'   => 'SELECT `users`.* FROM `users` AS `users` WHERE (`users`.`username` = ?) LIMIT 1',
+                    'binds' => [$username],
+                    'repo'  => 'default',
+                ],
+                [
+                    'sql'   => 'INSERT INTO `users` (`username`, `user_group_id`, `language_id`) VALUES (?, ?, ?)',
+                    'binds' => [$username, 2, 'si'],
+                    'repo'  => 'default:write',
+                ],
+                [
+                    'sql'   => 'DELETE FROM `users` WHERE (`users`.`username` = ?)',
+                    'binds' => [$username],
                     'repo'  => 'default:write',
                 ],
             ],

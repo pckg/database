@@ -4,7 +4,6 @@ use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DebugBar;
 use Exception;
-use Faker\Factory;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;
@@ -169,8 +168,25 @@ class RepositoryFactory
         /**
          * Bind repository to context so we can reuse it later.
          */
-        context()->bindIfNot(Repository::class, $repository);
+        <<<<
+        <<< HEAD
+                context()->bindIfNot(Repository::class, $repository);
         context()->bindIfNot(Repository::class . '.' . $name, $repository);
+=======
+        if ($pos = strpos($name, ':')) {
+            /**
+             * We're probably initializing write connection.
+             */
+            $originalAlias = Repository::class . '.' . substr($name, 0, $pos);
+            $originalRepository = context()->get($originalAlias);
+            $alias = substr($name, $pos + 1);
+            $originalRepository->addAlias($alias, $repository);
+        } else {
+            context()->bindIfNot(Repository::class, $repository);
+        }
+
+        context()->bind(Repository::class . '.' . $name, $repository);
+>>>>>>> origin/BR-loadbalance
 
         return $repository;
     }

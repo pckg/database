@@ -15,7 +15,7 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
         $this->tester->listenToQueries('Repo');
 
         $user = User::gets(['id' => 1])->setAndSave(['language' => 'si']);
-        
+
         $this->assertEquals(
             [
                 [

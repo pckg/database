@@ -23,11 +23,39 @@ abstract class AbstractRepository implements Repository
     protected $cache;
 
     /**
+     * @var array
+     */
+    protected $aliases = [];
+
+    /**
      * @return PDO
      */
     public function getConnection()
     {
         return $this->connection;
+    }
+
+    /**
+     * @param            $alias
+     * @param Repository $repository
+     *
+     * @return $this
+     */
+    public function addAlias($alias, Repository $repository)
+    {
+        $this->aliases[$alias] = $repository;
+
+        return $this;
+    }
+
+    /**
+     * @param $alias
+     *
+     * @return mixed|AbstractRepository
+     */
+    public function aliased($alias)
+    {
+        return $this->aliases[$alias] ?? $this;
     }
 
     /**

@@ -4,7 +4,6 @@ use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DebugBar;
 use Exception;
-use Faker\Factory;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;
@@ -44,7 +43,8 @@ class RepositoryFactory
         if (array_key_exists($name, static::$repositories)) {
             $repository = static::$repositories[$name];
         } else {
-            if (!context()->exists($name)) {
+            $fullName = Repository::class . '.' . $name;
+            if (!context()->exists($fullName)) {
                 /**
                  * Lazy load.
                  */
@@ -53,10 +53,10 @@ class RepositoryFactory
                     throw new Exception("No config found for database connection " . $name);
                 }
                 $repository = RepositoryFactory::initPdoDatabase($config, $name);
-                context()->bind($name, $repository);
+                context()->bind($fullName, $repository);
             }
 
-            $repository = context()->get($name);
+            $repository = context()->get($fullName);
         }
 
         if (!$repository) {
@@ -121,7 +121,7 @@ class RepositoryFactory
                 $debugBar->addCollector($pdoCollector = new PDOCollector());
             }
 
-            $pdoCollector->addConnection($tracablePdo, $name);
+            $pdoCollector->addConnection($tracablePdo, str_replace(':', '-', $name));
         }
     }
 
@@ -168,7 +168,19 @@ class RepositoryFactory
         /**
          * Bind repository to context so we can reuse it later.
          */
-        context()->bindIfNot(Repository::class, $repository);
+        if ($pos = strpos($name, ':')) {
+            /**
+             * We're probably initializing write connection.
+             */
+            $originalAlias = Repository::class . '.' . substr($name, 0, $pos);
+            $originalRepository = context()->get($originalAlias);
+            $alias = substr($name, $pos + 1);
+            $originalRepository->addAlias($alias, $repository);
+            $repository->addAlias($alias == 'write' ? 'read' : 'write', $originalRepository);
+        } else {
+            context()->bindIfNot(Repository::class, $repository);
+        }
+
         context()->bind(Repository::class . '.' . $name, $repository);
 
         return $repository;

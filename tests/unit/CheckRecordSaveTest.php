@@ -43,7 +43,11 @@ class CheckRecordSaveTest extends \Codeception\Test\Unit
     // executed before each test
     protected function _before()
     {
-        $this->tester->initPckg(__DIR__);
+        try {
+            $this->tester->initPckg(__DIR__);
+        } catch (Throwable $e) {
+            die($e->getMessage());
+        }
     }
 
     // executed after each test

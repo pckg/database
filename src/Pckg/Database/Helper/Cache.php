@@ -268,6 +268,20 @@ class Cache extends PckgCache
         return isset($this->cache['fields'][$table]) && array_key_exists($field, $this->cache['fields'][$table]);
     }
 
+    public function getExtendeeTableForField($table, $field)
+    {
+
+        foreach ($this->cache['fields'] as $tbl => $fields) {
+            if (strpos($tbl, $table) === 0 && strlen($table) + 5 == strlen($tbl)) {
+                if ($this->tableHasField($tbl, $field)) {
+                    return $tbl;
+                }
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param $table
      * @param $field
@@ -317,11 +331,13 @@ class Cache extends PckgCache
      */
     public static function getCachePathByRepository(Repository $repository)
     {
-        return path('cache') . 'framework/pckg_database_repository_' . str_replace(
+        $path = path('cache') . 'framework/pckg_database_repository_' . str_replace(
                 ['\\', '/'],
                 '_',
                 (get_class(app()) . '_' . get_class(env()))
             ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
+
+        return $path;
     }
 
 }

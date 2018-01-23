@@ -333,6 +333,9 @@ abstract class Query
                 return $this;
             } elseif ($key instanceof Parenthesis) {
                 $sql = $key->build();
+                if ($sql) {
+                    $sql = '(' . $sql . ')';
+                }
                 $this->{$part}->push($sql);
 
                 if ($binds = $key->getBinds()) {

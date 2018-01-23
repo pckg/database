@@ -207,10 +207,17 @@ trait QueryBuilder
             && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false &&
             strpos($key, ',') === false && strpos($key, '(') === false
         ) {
-            if ($this->alias) {
-                $key = '`' . $this->alias . '`.`' . $key . '`';
-            } else {
-                $key = '`' . $this->table . '`.`' . $key . '`';
+            /**
+             * Check if repository or extension holds key. :)
+             */
+            $aliasedTable = $this->alias ? $this->alias : $this->table;
+            $hasField = $this->getRepository()->getCache()->tableHasField($this->table, $key);
+            if (!$hasField) {
+                $aliasedTable = $this->getRepository()->getCache()->getExtendeeTableForField($this->table, $key);
+            }
+
+            if ($aliasedTable) {
+                $key = '`' . $aliasedTable . '`.`' . $key . '`';
             }
         }
 

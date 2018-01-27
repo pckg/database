@@ -17,7 +17,7 @@ use Pckg\Database\Record\Transformations;
  *
  * @package Pckg\Database
  */
-class Record extends Object
+class Record extends Obj
 {
 
     use Magic, Actions, Relations, Transformations, Events;

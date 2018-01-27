@@ -1,6 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
-use Pckg\Database\Object;
+use Pckg\Database\Obj;
 use Throwable;
 
 /**
@@ -50,10 +50,10 @@ trait Transformations
     {
         $array = $this->toArray($values, $depth, $withToArray);
         foreach ($array as $key => $val) {
-            $array[$key] = new Object($val);
+            $array[$key] = new Obj($val);
         }
 
-        return new Object($array);
+        return new Obj($array);
     }
 
     /**

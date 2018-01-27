@@ -8,7 +8,7 @@ use JsonSerializable;
  *
  * @package Pckg\Database
  */
-class Object implements ArrayAccess, JsonSerializable
+class Obj implements ArrayAccess, JsonSerializable
 {
 
     /**

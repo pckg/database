@@ -358,6 +358,10 @@ abstract class Query
                 $value = end($value);
             }
         }
+        
+        if (in_array($operator, ['IS NULL', 'IS NOT NULL'])) {
+            $value = null;
+        }
 
         $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
 

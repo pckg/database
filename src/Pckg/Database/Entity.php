@@ -533,7 +533,7 @@ class Entity
     }
 
     /**
-     * @return Record|mixed
+     * @return Record|mixed|null
      */
     public function one()
     {

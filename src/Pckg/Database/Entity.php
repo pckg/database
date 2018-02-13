@@ -13,6 +13,7 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
 use Pckg\Database\Repository\RepositoryFactory;
+use Pckg\Framework\Exception\NotFound;
 
 /**
  * Class Entity
@@ -608,7 +609,7 @@ class Entity
     {
         if (!$callback) {
             $callback = function() {
-                throw new Exception('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+                throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
             };
         }
 

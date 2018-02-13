@@ -446,10 +446,6 @@ class Entity
         return $values;
     }
 
-    /*
-     * Find out which methods are extensions and init them.
-     * */
-
     /**
      * @return Record
      */

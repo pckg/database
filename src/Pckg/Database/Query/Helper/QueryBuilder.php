@@ -152,8 +152,10 @@ trait QueryBuilder
         } elseif ($table instanceof Entity) {
             $query = $table->getQuery();
 
+            $sql = $query->buildSQL();
+
             $this->getQuery()->join(
-                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON (' .
+                'LEFT JOIN (' . $sql . ') AS `' . $where . '` ON (' .
                 (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
                 null,
                 null,

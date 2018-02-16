@@ -66,22 +66,21 @@ trait With
                      *
                      * @T00D00
                      */
-                    if ($prefix == 'join' || $prefix == 'leftJoin') {
-                        $rightEntity = $relation->getRightEntity();
-                        $oldEntityQuery = $rightEntity->getQuery();
-                        $rightEntity->setQuery($relation->getQuery());
+                    //if ($prefix == 'join' || $prefix == 'leftJoin')) {
+                    //d('joining', $method);
+                    $rightEntity = $relation->getRightEntity();
+                    $oldEntityQuery = $rightEntity->getQuery();
+                    $rightEntity->setQuery($relation->getQuery());
+                    Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                    $rightEntity->setQuery($oldEntityQuery);
+                    /*} else {
+                        //d('not join');
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
-                        if ($prefix == 'leftJoin') {
-                            $relation->leftJoin();
-                        }
-                        $rightEntity->setQuery($oldEntityQuery);
-                    } else {
-                        Reflect::call($args[0], [$relation, $relation->getQuery()]);
-                    }
-                } else {
-                    if ($prefix == 'leftJoin') {
-                        $relation->leftJoin();
-                    }
+                    }*/
+                }
+
+                if ($prefix == 'leftJoin') {
+                    $relation->leftJoin();
                 }
                 /**
                  * We'll call $entity->with($relation), $entity->join($relation) or $entity->required($relation), and return Relation;

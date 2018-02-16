@@ -173,10 +173,10 @@ class Select extends Query
                     $this->bind($bind, 'select');
                 }
             }
-            if (is_numeric($key)) {
-                $keys[] = $select;
-            } else {
+            if ($key && is_string($key)) {
                 $keys[] = $select . ' AS `' . $key . '`';
+            } else {
+                $keys[] = $select;
             }
         }
 
@@ -358,9 +358,12 @@ class Select extends Query
             $fields = [$fields];
         }
 
-        foreach ($fields as $field) {
-            array_unshift($this->select, $field);
+        $collection = collect($this->select);
+        foreach ($fields as $key => $field) {
+            $collection->prepend($field, is_string($key) ? $key : null);
         }
+
+        $this->select = $collection->all();
 
         return $this;
     }

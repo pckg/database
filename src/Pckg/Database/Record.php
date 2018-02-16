@@ -204,7 +204,7 @@ class Record extends Obj
                     continue;
                 }
                 $values[$key] = $this->getRelationIfSet($getter);
-            } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
+            } elseif (!$type && method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
                 /**
                  * Getter exists in record definition.
                  */

@@ -290,10 +290,13 @@ class Cache extends PckgCache
      */
     public function tableHasConstraint($table, $constraint)
     {
-        return isset($this->cache['constraints'][$table]) && array_key_exists(
-                $constraint,
-                $this->cache['constraints'][$table]
-            );
+        return isset($this->cache['constraints'][$table]) &&
+               array_key_exists($constraint, $this->cache['constraints'][$table]);
+    }
+
+    public function getTableConstraints($table)
+    {
+        return $this->cache['constraints'][$table] ?? [];
     }
 
     /**

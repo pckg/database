@@ -23,6 +23,30 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     protected $original = [];
 
+    public function getToArrayValues()
+    {
+        return [];
+    }
+
+    public function getToJsonValues()
+    {
+        return [];
+    }
+
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function hasKey($key)
+    {
+        if (array_key_exists($key, $this->data)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param array $values
      */

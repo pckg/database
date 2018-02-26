@@ -91,7 +91,7 @@ trait Actions
      * @param Entity|null   $entity
      * @param callable|null $callable
      *
-     * @return mixed|Record
+     * @return mixed|Record|$this
      */
     public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
     {

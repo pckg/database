@@ -85,12 +85,12 @@ abstract class Query
     protected $bind = [];
 
     /**
-     * @var bool
+     * @var bool|callable
      */
     protected $debug = false;
 
     /**
-     * @var bool
+     * @var bool|callable
      */
     protected $diebug = false;
 

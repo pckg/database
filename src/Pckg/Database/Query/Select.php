@@ -148,9 +148,19 @@ class Select extends Query
         $sql = implode(' ', $parts);
 
         if ($this->diebug) {
-            dd($sql, $this->bind);
+            $d = $this->diebug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                dd($sql, $this->bind);
+            }
         } elseif ($this->debug) {
-            d($sql, $this->bind);
+            $d = $this->debug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                d($sql, $this->bind);
+            }
         }
 
         return $sql;

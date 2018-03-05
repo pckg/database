@@ -66,17 +66,15 @@ trait With
                      *
                      * @T00D00
                      */
-                    //if ($prefix == 'join' || $prefix == 'leftJoin')) {
-                    //d('joining', $method);
-                    $rightEntity = $relation->getRightEntity();
-                    $oldEntityQuery = $rightEntity->getQuery();
-                    $rightEntity->setQuery($relation->getQuery());
-                    Reflect::call($args[0], [$relation, $relation->getQuery()]);
-                    $rightEntity->setQuery($oldEntityQuery);
-                    /*} else {
-                        //d('not join');
+                    if (in_array($prefix, ['join', 'leftJoin', 'innerJoin'])) {
+                        $rightEntity = $relation->getRightEntity();
+                        $oldEntityQuery = $rightEntity->getQuery();
+                        $rightEntity->setQuery($relation->getQuery());
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
-                    }*/
+                        $rightEntity->setQuery($oldEntityQuery);
+                    } else {
+                        Reflect::call($args[0], [$relation, $relation->getQuery()]);
+                    }
                 }
 
                 if ($prefix == 'leftJoin') {
@@ -95,18 +93,6 @@ trait With
                     : $return;
             }
         }
-
-        /*if (method_exists($object, 'get' . ucfirst($method) . 'Subquery')) {
-            $subqueryEntity = $object->{'get' . ucfirst($method) . 'Subquery'}();
-            $groupBy = $subqueryEntity->getQuery()->getGroupBy();
-            if ($field = end(explode('.', $groupBy))) {
-                $subqueryEntity->where($field, $this->id);
-            }
-            $result = $subqueryEntity->one()->data();
-            $field = end($result);
-
-            return $field;
-        }*/
 
         if (!method_exists($object, $method)) {
             throw new Exception('Method ' . $method . ' does not exist in ' . get_class($object));

@@ -42,7 +42,8 @@ trait Translatable
          *         If not, use default.
          */
         if (!Reflect::canResolve(LangInterface::class)) {
-            message('Cannot resolve LangInterface in Translatable (resolvers: ' . implode(', ', array_map(function($object) {
+            message('Cannot resolve LangInterface in Translatable (resolvers: ' .
+                    implode(', ', array_map(function($object) {
                         return get_class($object);
                     }, Reflect::getResolvers())) . '), creating default LangAdapter');
             context()->bind(LangInterface::class, new LangAdapter());
@@ -54,6 +55,7 @@ trait Translatable
      */
     public function injectTranslatableDependencies(LangInterface $lang)
     {
+        message('injected ' . $lang->langId());
         $this->translatableLang = $lang;
     }
 
@@ -174,6 +176,8 @@ trait Translatable
             ? $this->getAlias() . $this->getTranslatableTableSuffix()
             : $translaTable;
 
+        message("Translatable language " . $this->translatableLang->langId() . ' ' .
+                get_class($this->translatableLang) . ' ' . sha1(spl_object_hash($this->translatableLang)));
         $relation->where(
             '`' . $translaTableAlias . '`.`' . $this->translatableLanguageField . '`',
             $this->translatableLang->langId()

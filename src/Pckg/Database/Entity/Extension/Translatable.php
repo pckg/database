@@ -42,6 +42,9 @@ trait Translatable
          *         If not, use default.
          */
         if (!Reflect::canResolve(LangInterface::class)) {
+            message('Cannot resolve LangInterface in Translatable (resolvers: ' . implode(', ', array_map(function($object) {
+                        return get_class($object);
+                    }, Reflect::getResolvers())) . '), creating default LangAdapter');
             context()->bind(LangInterface::class, new LangAdapter());
         }
     }

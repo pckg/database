@@ -45,7 +45,7 @@ trait Actions
      *
      * @return mixed|Record
      */
-    public static function gets(array $data, Entity $entity = null)
+    public static function gets(array $data = [], Entity $entity = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();

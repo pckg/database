@@ -356,6 +356,7 @@ trait Translatable
     public function setTranslatableLang($lang)
     {
         if (is_string($lang)) {
+            message('Using translatable lang ' . $lang);
             $lang = new Lang($lang);
         }
 

@@ -52,9 +52,7 @@ class Record extends Obj
      */
     public function __construct($data = [], Entity $entity = null)
     {
-        if (!$this->data) {
-            $this->data = is_array($data) && $data ? $data : [];
-        }
+        $this->data = $data && is_array($data) ? $data : [];
 
         if ($entity) {
             $this->entity = $entity;

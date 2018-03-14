@@ -140,6 +140,13 @@ class HasAndBelongsTo extends HasMany
         );
 
         /**
+         * This is needed for special case in Records.php:129
+         */
+        if ($after = $this->after) {
+            $after($record);
+        }
+
+        /**
          * Fill relations.
          */
         $this->fillRecordWithRelations($record);
@@ -220,6 +227,13 @@ class HasAndBelongsTo extends HasMany
                     );
                 });
         });
+
+        /**
+         * This is needed for special case in Records.php:129
+         */
+        if ($this->after) {
+            $collection->each($this->after);
+        }
 
         /**
          * Fill relations.

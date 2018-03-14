@@ -33,6 +33,16 @@ trait Translatable
     protected $translatableLang;
 
     /**
+     * @return Entity
+     */
+    public function getTranslatableEntity()
+    {
+        return (new static($this->getRepository()))
+            ->setTable($this->table . $this->getTranslatableTableSuffix())
+            ->setAlias($this->table . $this->getTranslatableTableSuffix());
+    }
+
+    /**
      *
      */
     public function checkTranslatableDependencies()

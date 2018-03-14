@@ -138,7 +138,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function join($table, $on = null, $where = null, $binds = [])
+    public function join($table, $on = null, $where = null, $binds = [], $type = 'LEFT')
     {
         if ($table instanceof Relation) {
             if (is_only_callable($on)) {
@@ -155,7 +155,7 @@ trait QueryBuilder
             $sql = $query->buildSQL();
 
             $this->getQuery()->join(
-                'LEFT JOIN (' . $sql . ') AS `' . $where . '` ON (' .
+                $type . ' JOIN (' . $sql . ') AS `' . $where . '` ON (' .
                 (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
                 null,
                 null,

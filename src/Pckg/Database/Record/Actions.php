@@ -71,6 +71,19 @@ trait Actions
 
     /**
      * @param array       $data
+     * @param array       $update
+     * @param Entity|null $entity
+     */
+    public static function getAndUpdateOrCreate(array $data, array $update, Entity $entity = null)
+    {
+        $record = static::getOrNew($data);
+        $record->setAndSave($update);
+
+        return $record;
+    }
+
+    /**
+     * @param array       $data
      * @param Entity|null $entity
      *
      * @return mixed|Record

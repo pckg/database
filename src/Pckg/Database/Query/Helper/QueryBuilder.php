@@ -285,7 +285,7 @@ trait QueryBuilder
     /**
      * @param $key
      *
-     * @return $this
+     * @return $this|Entity
      */
     public function orderBy($key)
     {

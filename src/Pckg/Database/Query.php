@@ -657,10 +657,6 @@ abstract class Query
     {
         $primaryKeys = $entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 
-        if (!$primaryKeys) {
-            throw new Exception('Primary key must be set on deletion!');
-        }
-
         if (strpos($table, '_i18n')) {
             $primaryKeys = ['id', 'language_id'];
         } elseif (strpos($table, '_p17n')) {

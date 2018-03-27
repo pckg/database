@@ -48,9 +48,14 @@ class Cache extends PckgCache
         $this->readFromCache();
 
         if (!$this->built) {
-            $this->buildCache();
-            $this->writeToCache();
+            $this->rebuild();
         }
+    }
+
+    public function rebuild()
+    {
+        $this->buildCache();
+        $this->writeToCache();
     }
 
     /**

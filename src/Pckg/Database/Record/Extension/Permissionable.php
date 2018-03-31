@@ -28,15 +28,29 @@ trait Permissionable
      * @param      $action
      * @param null $userGroupId
      */
-    public function grantPermissionTo($action, $userGroupId = null)
+    public function grantPermissionTo($actions, $userGroupIds = [])
     {
-        $entity = $this->getEntity()->usePermissionableTable();
+        if (!is_array($userGroupIds)) {
+            $userGroupIds = [$userGroupIds];
+        }
 
-        Record::create([
-                           'id'            => $this->id,
-                           'user_group_id' => $userGroupId,
-                           'action'        => $action,
-                       ], $entity);
+        if (!is_array($actions)) {
+            $actions = [$actions];
+        }
+
+        $entity = $this->getEntity()
+                       ->usePermissionableTable()
+                       ->resetQuery();
+
+        foreach ($userGroupIds as $userGroupId) {
+            foreach ($actions as $action) {
+                Record::getOrCreate([
+                                        'id'            => $this->id,
+                                        'user_group_id' => $userGroupId,
+                                        'action'        => $action,
+                                    ], $entity);
+            }
+        }
     }
 
 }

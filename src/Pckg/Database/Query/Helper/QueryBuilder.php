@@ -59,7 +59,7 @@ trait QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return $this|Entity
      */
     public function resetQuery()
     {

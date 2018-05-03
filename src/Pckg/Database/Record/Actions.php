@@ -45,13 +45,17 @@ trait Actions
      *
      * @return mixed|Record|$this
      */
-    public static function gets(array $data = [], Entity $entity = null)
+    public static function gets($data = [], Entity $entity = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();
         }
 
-        return $entity->whereArr($data)->one();
+        if (is_scalar($data)) {
+            return $entity->where('id', $data)->one();
+        } else {
+            return $entity->whereArr($data)->one();
+        }
     }
 
     /**
@@ -106,15 +110,17 @@ trait Actions
      *
      * @return mixed|Record|$this
      */
-    public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
+    public static function getOrFail($data = [], Entity $entity = null, callable $callable = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();
         }
 
-        $record = $entity->whereArr($data)->oneOrFail($callable);
-
-        return $record;
+        if (is_scalar($data)) {
+            return $entity->where('id', $data)->oneOrFail($callable);
+        } else {
+            return $entity->whereArr($data)->oneOrFail($callable);
+        }
     }
 
     /**

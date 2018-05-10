@@ -261,7 +261,7 @@ trait Translatable
             $translatableField = '`' . $translaTable . '`.`' . $field . '`';
             $fallbackField = '`' . $translaTable . '_f`.`' . $field . '`';
             $selects[] = 'IF(' . $translatableKey . ', ' . $translatableField . ', ' . $fallbackField . ') AS `' .
-                         $field . '`';
+                $field . '`';
         }
 
         $relation = $this->join($this->translationsFallback($callable));
@@ -445,6 +445,26 @@ trait Translatable
         }
 
         return false;
+    }
+
+    /**
+     * @return $this
+     */
+    public function useTranslatableTable()
+    {
+        if (strpos($this->table, $this->getTranslatableTableSuffix()) === false) {
+            $this->table = $this->getTranslatableTable();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTranslatableTable()
+    {
+        return $this->getTable() . $this->getTranslatableTableSuffix();
     }
 
 }

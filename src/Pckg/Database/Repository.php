@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database;
 
 use Exception;
+use Pckg\Cache\Cache;
 use PDO;
 
 /**
@@ -93,7 +94,7 @@ interface Repository
     public function fetchPrepared($prepare);
 
     /**
-     * @return mixed
+     * @return Cache|\Pckg\Database\Helper\Cache
      */
     public function getCache();
 

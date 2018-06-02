@@ -49,10 +49,7 @@ class RepositoryFactory
                  * Lazy load.
                  */
                 $config = config('database.' . $name);
-                if (!$config) {
-                    throw new Exception("No config found for database connection " . $name);
-                }
-                $repository = RepositoryFactory::initPdoDatabase($config, $name);
+                $repository = RepositoryFactory::getRepositoryByConfig($name, $name);
                 context()->bind($fullName, $repository);
             }
 
@@ -197,12 +194,17 @@ class RepositoryFactory
      */
     protected static function getRepositoryByConfig($config, $name)
     {
-        if ($config['driver'] == 'faker') {
+        if (!is_array($config)) {
+            if (class_exists($config)) {
+                return new $config;
+            }
+
+            throw new Exception('Cannot create repository from string');
+        } elseif ($config['driver'] == 'faker') {
             return new Faker(Factory::create());
         } elseif ($config['driver'] == 'middleware') {
-            return resolve($config['middleware'])->execute(
-                function() {
-                }
+            return resolve($config['middleware'])->execute(function() {
+            }
             );
         }
 

@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Repository\PDO\Command;
 
+use Derive\Basket\Service\VAT\Entity\VatLevels;
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;
@@ -44,6 +45,7 @@ class GetRecords
     public function executeAll()
     {
         $repository = $this->repository;
+
         $entity = $this->entity;
 
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
@@ -93,23 +95,7 @@ class GetRecords
      */
     public function executeOne()
     {
-        $repository = $this->repository;
-        $entity = $this->entity;
-
-        $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
-
-        $measure = str_replace("\n", " ", $prepare->queryString);
-        startMeasure('Executing ' . $measure);
-        if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
-            $record->setEntity($entity)->setSaved()->setOriginalFromData();
-
-            stopMeasure('Executing ' . $measure);
-
-            return $entity->fillRecordWithRelations($record);
-        }
-        stopMeasure('Executing ' . $measure);
-
-        return null;
+        return $this->repository->executeOne($this->entity);
     }
 
 }

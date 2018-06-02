@@ -328,5 +328,20 @@ class PDO extends AbstractRepository implements Repository
             }
         );
     }
+    
+    public function executeOne(Entity $entity) {
+        $prepare = $this->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
+
+        $measure = str_replace("\n", " ", $prepare->queryString);
+        startMeasure('Executing ' . $measure);
+        if ($execute = $this->executePrepared($prepare) && $record = $this->fetchPrepared($prepare)) {
+            $record->setEntity($entity)->setSaved()->setOriginalFromData();
+
+            stopMeasure('Executing ' . $measure);
+
+            return $entity->fillRecordWithRelations($record);
+        }
+        stopMeasure('Executing ' . $measure);
+    }
 
 }

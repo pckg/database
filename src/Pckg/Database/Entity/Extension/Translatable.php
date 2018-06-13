@@ -5,6 +5,7 @@ use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Locale\Entity\Languages;
 use Pckg\Locale\Lang;
 use Pckg\Locale\Lang as LangAdapter;
 use Pckg\Locale\LangInterface;
@@ -141,7 +142,8 @@ trait Translatable
         $repository = $this->getRepository();
 
         $relation = $this->hasMany(
-            (new Entity($repository, $translaTableAlias))->setTable($translaTable)->setAlias($translaTableAlias)
+            (new Entity($repository, $translaTableAlias))->setTable($translaTable)->setAlias($translaTableAlias),
+            $callable
         )
                          ->foreignKey('id')
                          ->fill('_translations')
@@ -465,6 +467,11 @@ trait Translatable
     public function getTranslatableTable()
     {
         return $this->getTable() . $this->getTranslatableTableSuffix();
+    }
+
+    public function language()
+    {
+        return $this->belongsTo(Languages::class)->foreignKey('language_id')->primaryKey('slug');
     }
 
 }

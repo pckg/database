@@ -407,4 +407,24 @@ trait QueryBuilder
         return $this->getQuery()->getSelect();
     }
 
+    public function transaction(callable $callable)
+    {
+        return $this->getRepository()->transaction($callable);
+    }
+
+    public function beginTransaction()
+    {
+        return $this->getRepository()->beginTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        return $this->getRepository()->rollbackTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        return $this->getRepository()->commitTransaction();
+    }
+
 }

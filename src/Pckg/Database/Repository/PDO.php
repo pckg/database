@@ -21,7 +21,7 @@ class PDO extends AbstractRepository implements Repository
     use Failable;
 
     /**
-     * @var
+     * @var \PDO
      */
     protected $connection;
 
@@ -342,6 +342,47 @@ class PDO extends AbstractRepository implements Repository
             return $entity->fillRecordWithRelations($record);
         }
         stopMeasure('Executing ' . $measure);
+    }
+
+    public function transaction(callable $callable){
+        /**
+         * Start DB transaction.
+         */
+        $this->startTransaction();
+        $return = null;
+
+        try {
+            /**
+             * Run code that should be executed entirely.
+             */
+            $return = $callable();
+        } catch (\Throwable $e) {
+            /**
+             * Cancel everything on error.
+             */
+            $this->rollbackTransaction();
+        } finally {
+            /**
+             * Commit everything on success.
+             */
+            $this->commitTransaction();
+            return $return;
+        }
+    }
+
+    public function beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        return $this->connection->rollBack();
+    }
+
+    public function commitTransaction()
+    {
+        return $this->connection->commit();
     }
 
 }

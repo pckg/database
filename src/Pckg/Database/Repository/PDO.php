@@ -348,7 +348,7 @@ class PDO extends AbstractRepository implements Repository
         /**
          * Start DB transaction.
          */
-        $this->startTransaction();
+        $this->beginTransaction();
         $return = null;
 
         try {

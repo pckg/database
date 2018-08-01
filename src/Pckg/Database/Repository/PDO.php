@@ -361,6 +361,7 @@ class PDO extends AbstractRepository implements Repository
              * Cancel everything on error.
              */
             $this->rollbackTransaction();
+            return false;
         } finally {
             /**
              * Commit everything on success.

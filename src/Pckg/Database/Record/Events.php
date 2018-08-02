@@ -1,5 +1,7 @@
 <?php namespace Pckg\Database\Record;
 
+use Pckg\Database\Record;
+
 /**
  * Class Events
  *
@@ -31,6 +33,7 @@ trait Events
 
         foreach ($events as $event) {
             dispatcher()->trigger(static::class . '.' . $event, $args);
+            dispatcher()->trigger(Record::class . '.' . $event, $args);
         }
 
         return $this;

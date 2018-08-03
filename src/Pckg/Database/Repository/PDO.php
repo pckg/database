@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Repository;
 
+use Throwable;
 use Exception;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
@@ -356,12 +357,12 @@ class PDO extends AbstractRepository implements Repository
              * Run code that should be executed entirely.
              */
             $return = $callable();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             /**
              * Cancel everything on error.
              */
             $this->rollbackTransaction();
-            return false;
+            throw $e;
         } finally {
             /**
              * Commit everything on success.

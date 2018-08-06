@@ -1,6 +1,5 @@
 <?php namespace Pckg\Database\Repository;
 
-use Throwable;
 use Exception;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
@@ -10,6 +9,7 @@ use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\DeleteRecord;
 use Pckg\Database\Repository\PDO\Command\InsertRecord;
 use Pckg\Database\Repository\PDO\Command\UpdateRecord;
+use Throwable;
 
 /**
  * Class PDO
@@ -275,7 +275,7 @@ class PDO extends AbstractRepository implements Repository
     }
 
     /**
-     * @param $prepare
+     * @param $prepare \PDOStatement
      *
      * @return mixed
      */
@@ -284,9 +284,8 @@ class PDO extends AbstractRepository implements Repository
         return measure(
             'Fetching prepared',
             function() use ($prepare) {
-                $records = $this->transformRecordsToObjects($prepare->fetchAll());
-                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                //$records = $prepare->fetchAll();
+                $allFetched = $prepare->fetchAll();
+                $records = $this->transformRecordsToObjects($allFetched);
 
                 return $records;
             }
@@ -303,8 +302,7 @@ class PDO extends AbstractRepository implements Repository
         if ($this->recordClass) {
             $recordClass = $this->recordClass;
             foreach ($records as &$record) {
-                $record = (new $recordClass($record))/*->setData($record)*/
-                ;
+                $record = (new $recordClass($record));
             }
         }
 
@@ -322,8 +320,6 @@ class PDO extends AbstractRepository implements Repository
             'Fetching prepared',
             function() use ($prepare) {
                 $records = $this->transformRecordsToObjects($prepare->fetchAll());
-                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                //$records = $prepare->fetchAll();
 
                 return $records ? $records[0] : null;
             }

@@ -1,6 +1,5 @@
 <?php namespace Pckg\Database\Repository\PDO\Command;
 
-use Derive\Basket\Service\VAT\Entity\VatLevels;
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
 use Pckg\Database\Entity;

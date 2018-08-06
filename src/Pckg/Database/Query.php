@@ -685,4 +685,9 @@ abstract class Query
         }
     }
 
+    public function getCacheKey()
+    {
+        return sha1($this->buildSQL() . json_encode($this->getBinds()));
+    }
+
 }

@@ -137,7 +137,7 @@ class Entity
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
                 Reflect::method($this, $method);
-            } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
+            } elseif (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
                 $extension = substr($method, 6, -12);
                 if (method_exists($this, 'check' . $extension . 'Dependencies')) {
                     Reflect::method($this, 'check' . $extension . 'Dependencies');
@@ -394,9 +394,9 @@ class Entity
              */
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
-                    && $this->repository->getCache()->hasTable($this->table . $suffix)
-                ) {
+                if (substr($this->table,
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)) {
                     $keys[$this->table . $suffix] = $this->{$method}();
                 }
             }
@@ -404,20 +404,17 @@ class Entity
             /**
              * Get extension's foreign key values.
              */
-            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
-                                                                                     $method,
-                                                                                     -11
-                                                                                 ) == 'ForeignKeys'
-            ) {
+            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr($method,
+                                                                                        -11) == 'ForeignKeys') {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
-                    && $this->repository->getCache()->hasTable($this->table . $suffix)
-                ) {
+                if (substr($this->table,
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)) {
                     // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
-                } elseif (strrpos($this->table, $suffix) == strlen($this->table) - strlen($suffix)
-                          && $this->repository->getCache()->hasTable($this->table . $suffix)
-                ) {
+                } elseif (strrpos($this->table,
+                                  $suffix) == strlen($this->table) - strlen($suffix) && $this->repository->getCache()
+                                                                                                         ->hasTable($this->table . $suffix)) {
                     // extendee table
                     $extensionArray[$this->table] = $this->{$method}($record);
                 }
@@ -432,8 +429,7 @@ class Entity
                 /**
                  * Add value if field exists in data array and repository has that field.
                  */
-                if ($this->repository->getCache()->tableHasField($table, $field)
-                ) {
+                if ($this->repository->getCache()->tableHasField($table, $field)) {
                     if (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
                         $values[$table][$field] = $extensionArray[$table][$field];
                     } elseif (array_key_exists($field, $dataArray)) {
@@ -520,6 +516,19 @@ class Entity
     }
 
     /**
+     * Wraps entity into proxy instance which takes care of handling cached requests.
+     *
+     * @param        $time
+     * @param string $type
+     *
+     * @return Cached|Entity
+     */
+    public function cache($time, $type = 'app')
+    {
+        return new Cached($this, $time, $type);
+    }
+
+    /**
      * @return Record|mixed
      */
     public function oneAnd($callback)
@@ -554,9 +563,7 @@ class Entity
     {
         $one = $this->one();
 
-        return $one
-            ? $callback($one)
-            : $one;
+        return $one ? $callback($one) : $one;
     }
 
     /**
@@ -647,10 +654,7 @@ class Entity
      */
     public function total()
     {
-        return $this->count()
-                    ->limit(1)
-                    ->all()
-                    ->total();
+        return $this->count()->limit(1)->all()->total();
     }
 
     /**

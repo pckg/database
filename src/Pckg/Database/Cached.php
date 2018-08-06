@@ -45,11 +45,7 @@ class Cached
     {
         $this->entity = $entity;
         $this->type = $type;
-
-        /**
-         * Transform stringed time to numeric.
-         */
-        $this->time = is_numeric($time) ? $time : (strtotime('+' . $time) - time());
+        $this->time = $time;
     }
 
     /**

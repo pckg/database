@@ -37,15 +37,21 @@ class Cached
     protected $type;
 
     /**
+     * @var null|string
+     */
+    protected $key;
+
+    /**
      * Cached constructor.
      *
      * @param Entity $entity
      */
-    public function __construct(Entity $entity, $time, $type)
+    public function __construct(Entity $entity, $time, $type, $key = null)
     {
         $this->entity = $entity;
         $this->type = $type;
         $this->time = $time;
+        $this->key = $key;
     }
 
     /**
@@ -77,7 +83,7 @@ class Cached
         /**
          * Build and receive cache key.
          */
-        $key = $this->entity->getQuery()->getCacheKey();
+        $key = $this->key ?? $this->entity->getQuery()->getCacheKey();
 
         /**
          * Get cache or make real request and cache result.

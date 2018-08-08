@@ -523,9 +523,9 @@ class Entity
      *
      * @return Cached|Entity
      */
-    public function cache($time, $type = 'app')
+    public function cache($time, $type = 'app', $key = null)
     {
-        return new Cached($this, $time, $type);
+        return new Cached($this, $time, $type, $key);
     }
 
     /**

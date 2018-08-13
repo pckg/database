@@ -237,7 +237,7 @@ trait Translatable
     public function joinTranslation(callable $callable = null)
     {
         return $this->join($this->translations($callable))
-                    ->prependSelect([$this->getTable() . $this->translatableTableSuffix . '.*']);
+                    /*->prependSelect([$this->getTable() . $this->translatableTableSuffix . '.*'])*/;
     }
 
     /**

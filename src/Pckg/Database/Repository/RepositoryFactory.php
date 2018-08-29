@@ -52,8 +52,9 @@ class RepositoryFactory
                 /**
                  * @T00D00 - this means that we're overloading every non-default repository to default one?
                  *         - this is needed when mixing different and using multiple repositories
+                 *         - maybe the best thing would be to change repositories when needed (leave defaults?)
                  */
-                if (false && !$config && $name != 'default') {
+                if (!$config && $name != 'default') {
                     $config = config('database.default');
                 }
                 $repository = RepositoryFactory::getRepositoryByConfig($config, $name);

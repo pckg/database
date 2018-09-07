@@ -27,7 +27,7 @@ class Update extends Query
                ($this->limit ? ' LIMIT ' . $this->limit : '');
 
         if ($this->diebug) {
-            dd($sql, $this->bind);
+            ddd($sql, $this->bind);
         } elseif ($this->debug) {
             d($sql, $this->bind);
         }

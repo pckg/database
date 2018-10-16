@@ -89,7 +89,7 @@ trait RightEntity
             $entity->getQuery()->bind($bind, 'where');
         }
 
-        return (new GetRecords($entity))->executeAll();
+        return (new GetRecords($rightEntity))->executeAll();
     }
 
     /**
@@ -124,8 +124,8 @@ trait RightEntity
         foreach ($this->getQuery()->getBinds('where') as $bind) {
             $entity->getQuery()->bind($bind, 'where');
         }
-
-        return (new GetRecords($entity))->executeOne();
+        
+        return (new GetRecords($rightEntity))->executeOne();
     }
 
     /**

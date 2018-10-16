@@ -9,6 +9,7 @@ use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO\Command\DeleteRecord;
 use Pckg\Database\Repository\PDO\Command\InsertRecord;
 use Pckg\Database\Repository\PDO\Command\UpdateRecord;
+use Throwable;
 
 /**
  * Class PDO
@@ -21,7 +22,7 @@ class PDO extends AbstractRepository implements Repository
     use Failable;
 
     /**
-     * @var
+     * @var \PDO
      */
     protected $connection;
 
@@ -274,7 +275,7 @@ class PDO extends AbstractRepository implements Repository
     }
 
     /**
-     * @param $prepare
+     * @param $prepare \PDOStatement
      *
      * @return mixed
      */
@@ -283,9 +284,8 @@ class PDO extends AbstractRepository implements Repository
         return measure(
             'Fetching prepared',
             function() use ($prepare) {
-                $records = $this->transformRecordsToObjects($prepare->fetchAll());
-                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                //$records = $prepare->fetchAll();
+                $allFetched = $prepare->fetchAll();
+                $records = $this->transformRecordsToObjects($allFetched);
 
                 return $records;
             }
@@ -302,8 +302,7 @@ class PDO extends AbstractRepository implements Repository
         if ($this->recordClass) {
             $recordClass = $this->recordClass;
             foreach ($records as &$record) {
-                $record = (new $recordClass($record))/*->setData($record)*/
-                ;
+                $record = (new $recordClass($record));
             }
         }
 
@@ -321,12 +320,67 @@ class PDO extends AbstractRepository implements Repository
             'Fetching prepared',
             function() use ($prepare) {
                 $records = $this->transformRecordsToObjects($prepare->fetchAll());
-                //$prepare->setFetchMode(\PDO::FETCH_CLASS, $this->recordClass);
-                //$records = $prepare->fetchAll();
 
                 return $records ? $records[0] : null;
             }
         );
+    }
+    
+    public function executeOne(Entity $entity) {
+        $prepare = $this->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
+
+        $measure = str_replace("\n", " ", $prepare->queryString);
+        startMeasure('Executing ' . $measure);
+        if ($execute = $this->executePrepared($prepare) && $record = $this->fetchPrepared($prepare)) {
+            $record->setEntity($entity)->setSaved()->setOriginalFromData();
+
+            stopMeasure('Executing ' . $measure);
+
+            return $entity->fillRecordWithRelations($record);
+        }
+        stopMeasure('Executing ' . $measure);
+    }
+
+    public function transaction(callable $callable){
+        /**
+         * Start DB transaction.
+         */
+        $this->beginTransaction();
+        $return = null;
+
+        try {
+            /**
+             * Run code that should be executed entirely.
+             */
+            $return = $callable();
+        } catch (Throwable $e) {
+            /**
+             * Cancel everything on error.
+             */
+            $this->rollbackTransaction();
+            throw $e;
+        } finally {
+            /**
+             * Commit everything on success.
+             */
+            $this->commitTransaction();
+            return $return;
+        }
+    }
+
+    public function beginTransaction()
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        return $this->connection->rollBack();
+    }
+
+    public function commitTransaction()
+    {
+        return $this->connection->commit();
     }
 
 }

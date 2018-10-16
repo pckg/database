@@ -678,11 +678,16 @@ abstract class Query
             return (string)$this->buildSQL();
         } catch (Throwable $e) {
             if (dev()) {
-                dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
+                ddd('query', $e->getMessage(), $e->getFile(), $e->getLine());
             }
 
             throw $e;
         }
+    }
+
+    public function getCacheKey()
+    {
+        return sha1($this->buildSQL() . json_encode($this->getBinds()));
     }
 
 }

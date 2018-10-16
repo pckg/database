@@ -292,14 +292,4 @@ class Obj implements ArrayAccess, JsonSerializable
         return $this->data;
     }
 
-    /**
-     * @return $this
-     */
-    public function dd()
-    {
-        dd($this->data());
-
-        return $this;
-    }
-
 }

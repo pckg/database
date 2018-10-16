@@ -152,7 +152,7 @@ class Select extends Query
             if (is_only_callable($d)) {
                 $d($sql, $this->bind);
             } else {
-                dd($sql, $this->bind);
+                ddd($sql, $this->bind);
             }
         } elseif ($this->debug) {
             $d = $this->debug;

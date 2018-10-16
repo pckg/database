@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database\Repository;
 
 use Pckg\Database\Entity;
+use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
@@ -15,6 +16,31 @@ class Custom implements Repository
 
     use Failable;
 
+    public function aliased()
+    {
+        return $this;
+    }
+
+    public function getName()
+    {
+        return static::class;
+    }
+
+    /**
+     * @return Cache
+     */
+    public function getCache()
+    {
+        $key = 'pckg.database.repository.cache.' . sha1(Cache::getCachePathByRepository($this));
+        $context = context();
+
+        if (!$context->exists($key)) {
+            $context->bind($key, $cache = new Cache($this));
+        }
+
+        return $context->get($key);
+    }
+
     /**
      * @param Entity $entity
      *
@@ -22,7 +48,35 @@ class Custom implements Repository
      */
     public function one(Entity $entity)
     {
-        return null;
+        $data = $entity->getCustomRepositoryCollection();
+        $query = $entity->getQuery();
+
+        return $data->first(function(Record $record) use ($query) {
+            $where = $query->getWhere();
+            if (!$where) {
+                return true;
+            }
+
+            $children = $where->getChildren();
+            $binds = $query->getBinds('where');
+
+            foreach ($children as $i => $child) {
+                if (!is_string($child)) {
+                    continue;
+                }
+
+                if (preg_match('/^`[a-z]*` = \?$/', $child, $matches)) {
+                    $field = substr($child, 1, strpos($child, '`', 1) - 1);
+                    $value = $binds[$i];
+                    
+                    return $record->{$field} == $value;
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+        });
     }
 
     /**
@@ -32,7 +86,7 @@ class Custom implements Repository
      */
     public function all(Entity $entity)
     {
-        return [];
+        return $entity->getCustomRepositoryCollection();
     }
 
     /**
@@ -118,14 +172,6 @@ class Custom implements Repository
     }
 
     /**
-     *
-     */
-    public function getCache()
-    {
-        // TODO: Implement getCache() method.
-    }
-
-    /**
      * @param Record $record
      * @param Entity $entity
      * @param        $language
@@ -133,6 +179,16 @@ class Custom implements Repository
     public function deleteTranslation(Record $record, Entity $entity, $language)
     {
         // TODO: Implement deleteTranslation() method.
+    }
+
+    public function executeOne(Entity $entity)
+    {
+        return $this->one($entity);
+    }
+
+    public function executeAll(Entity $entity)
+    {
+        return $this->all($entity);
     }
 
 }

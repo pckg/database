@@ -24,7 +24,7 @@ trait Orderable
     public function initOrderableExtension()
     {
         if ($this->orderableField == 'order') {
-            $this->orderableField = '`' . $this->table . '`.`order`';
+            $this->orderableField = '`' . $this->alias . '`.`order`';
         }
 
         $this->orderBy($this->orderableField . ' ' . $this->orderableDirection);

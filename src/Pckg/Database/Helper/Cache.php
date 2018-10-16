@@ -76,6 +76,9 @@ class Cache extends PckgCache
     {
         $sql = 'SHOW TABLES';
         $connection = $this->repository->getConnection();
+        if (!$connection) {
+            return;
+        }
         $prepare = $connection->prepare($sql);
         $prepare->execute();
 
@@ -190,9 +193,13 @@ class Cache extends PckgCache
      */
     protected function buildRelations()
     {
+        $connection = $this->repository->getConnection();
+        if (!$connection) {
+            return;
+        }
         $sql = 'SELECT `TABLE_SCHEMA`, `TABLE_NAME`, `COLUMN_NAME`, `REFERENCED_TABLE_SCHEMA`, `REFERENCED_TABLE_NAME`, `REFERENCED_COLUMN_NAME`
   FROM `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE` WHERE `TABLE_SCHEMA` = SCHEMA() AND `REFERENCED_TABLE_NAME` IS NOT NULL;';
-        $prepare = $this->repository->getConnection()->prepare($sql);
+        $prepare = $connection->prepare($sql);
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $result) {
             $table = $result['TABLE_NAME'];
@@ -245,8 +252,8 @@ class Cache extends PckgCache
         return array_merge(
             $this->cache['tables'][$table],
             [
-                'fields'      => $this->cache['fields'][$table],
-                'constraints' => $this->cache['constraints'][$table],
+                'fields'      => $this->cache['fields'][$table] ?? [],
+                'constraints' => $this->cache['constraints'][$table] ?? [],
             ]
         );
     }
@@ -259,7 +266,7 @@ class Cache extends PckgCache
      */
     public function getConstraint($constraint, $table)
     {
-        return $this->getTable($table)['constraints'][$constraint];
+        return $this->getTable($table)['constraints'][$constraint] ?? [];
     }
 
     /**
@@ -276,7 +283,7 @@ class Cache extends PckgCache
     public function getExtendeeTableForField($table, $field)
     {
 
-        foreach ($this->cache['fields'] as $tbl => $fields) {
+        foreach ($this->cache['fields'] ?? [] as $tbl => $fields) {
             if (strpos($tbl, $table) === 0 && strlen($table) + 5 == strlen($tbl)) {
                 if ($this->tableHasField($tbl, $field)) {
                     return $tbl;

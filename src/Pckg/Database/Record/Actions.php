@@ -254,7 +254,7 @@ trait Actions
         $data['id'] = null;
         $data = array_merge($data, $overwrite);
 
-        return (new static($data))->save();
+        return $this->create($data, $this->getEntity());
     }
 
     /**

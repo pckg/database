@@ -95,13 +95,20 @@ class RepositoryFactory
      */
     public static function createPdoConnectionByConfig($config)
     {
+        $timezone = config('pckg.locale.timezone', 'Europe/Ljubljana');
+        $charset = $config['charset'] ?? 'utf8';
+        $partDb = isset($config['db'])
+            ? ";dbname=" . $config['db']
+            : '';
+        $options = [
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = \'' . $timezone . '\';',
+        ];
+
         return new PDO(
-            "mysql:host=" . $config['host'] . ";charset=" . ($config['charset'] ?? 'utf8') .
-            (isset($config['db'])
-                ? ";dbname=" . $config['db']
-                : ''),
+            "mysql:host=" . $config['host'] . ";charset=" . $charset . $partDb,
             $config['user'],
-            $config['pass']
+            $config['pass'],
+            $options
         );
     }
 

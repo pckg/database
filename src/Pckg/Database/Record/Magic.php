@@ -141,6 +141,13 @@ trait Magic
      */
     public function __set($key, $val)
     {
+        /**
+         * Set value via setter
+         */
+        if (method_exists($this, 'set' . Convention::toPascal($key) . 'Attribute')) {
+            return $this->{'set' . Convention::toPascal($key) . 'Attribute'}($val);
+        }
+
         if (!$this->ready) {
             $this->data[$key] = $val;
         } else if (array_key_exists($key, $this->data)) {

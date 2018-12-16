@@ -18,7 +18,7 @@ trait Paginatable
         $perPage = (int)$this->getQuery()->getLimit();
 
         if ($perPage < 1) {
-            $perPage = 25;
+            $perPage = 50;
         }
 
         if ($num > 1) {

@@ -261,9 +261,9 @@ class Obj implements ArrayAccess, JsonSerializable
             }
 
             return $this;
-        } else {
-            return $this->__set($key, $val);
         }
+
+        return $this->__set($key, $val);
     }
 
     /**

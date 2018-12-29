@@ -24,6 +24,11 @@ trait Permissionable
         );
     }
 
+    public function removePermissions()
+    {
+        return $this->getEntity()->usePermissionableTable()->resetQuery()->where('id', $this->id)->delete();
+    }
+
     /**
      * @param      $action
      * @param null $userGroupId

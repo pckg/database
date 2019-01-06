@@ -105,7 +105,9 @@ class InsertRecord
         foreach ($data as $key => &$val) {
             if (is_array($val)) {
                 if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
-                    $val = new Raw('GeomFromText(\'POINT(' . (float)$val[0] . ' ' . (float)$val[1] . ')\')');
+                    $x = ($val['x'] ?? $val[0]) ?? 0;
+                    $y = ($val['y'] ?? $val[1]) ?? 0;
+                    $val = new Raw('GeomFromText(\'POINT(' . $x . ' ' . $y . ')\')');
                 }
             }
         }

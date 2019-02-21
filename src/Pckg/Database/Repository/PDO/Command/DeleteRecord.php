@@ -86,7 +86,7 @@ class DeleteRecord
          * We need to get entity table extensions.
          * Lets hardcode them for now.
          */
-        $extensions = ['i18n', 'p17n', ''];
+        $extensions = ['i18n', 'p17n', 'l11e', ''];
         $table = $this->table ?? $this->entity->getTable();
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 

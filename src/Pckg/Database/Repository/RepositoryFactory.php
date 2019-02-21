@@ -107,6 +107,8 @@ class RepositoryFactory
             : '';
         $options = [
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = \'' . $timezone . '\';',
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
         return new PDO(

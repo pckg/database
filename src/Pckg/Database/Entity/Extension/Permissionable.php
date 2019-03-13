@@ -274,6 +274,10 @@ trait Permissionable
      */
     public function isPermissionable()
     {
+        if (!$this->permissionableTableSuffix) {
+            return false;
+        }
+        
         return $this->getRepository()->getCache()->hasTable($this->table . $this->permissionableTableSuffix);
     }
 

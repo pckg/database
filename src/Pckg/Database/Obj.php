@@ -215,6 +215,23 @@ class Obj implements ArrayAccess, JsonSerializable
         return $this->data($key) != $this->original($key);
     }
 
+    public function getDirtyData()
+    {
+        $data = $this->data();
+        $original = $this->original();
+        $diff = [];
+
+        foreach ($data as $key => $val) {
+            if (isset($original[$key]) && $original[$key] == $val) {
+                continue;
+            }
+
+            $diff[$key] = $val;
+        }
+
+        return $diff;
+    }
+
     /**
      * @return $this
      */

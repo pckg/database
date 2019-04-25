@@ -119,7 +119,7 @@ class Convention
      *
      * @return string
      */
-    public static function fromCamel($text)
+    public static function fromCamel($text, $separator = '_')
     {
         $return = null;
         $text = str_split($text, 1);
@@ -129,7 +129,7 @@ class Convention
                     $char
                 ) && $index != 0 && (isset($text[$index - 1]) && $text[$index - 1] != "/" && $text[$index - 1] != "\\")
             ) {
-                $return .= "_";
+                $return .= $separator;
             }
 
             $return .= $char;

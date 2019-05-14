@@ -239,7 +239,7 @@ class PDO extends AbstractRepository implements Repository
 
         if (!$prepare) {
             if (dev()) {
-                throw new Exception('Cannot prepare statement: ' . $this->getConnection()->errorInfo() . ' : ' . $sql);
+                throw new Exception('Cannot prepare statement: ' . implode(", ", $this->getConnection()->errorInfo()) . ' : ' . $sql);
             }
 
             throw new Exception('Cannot prepare statement');

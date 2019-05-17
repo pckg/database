@@ -105,6 +105,7 @@ class Convention
 
         foreach ($text AS $index => $char) {
             if (($char == "_" && isset($text[$index + 1]))
+                ||($char == " " && isset($text[$index + 1]))
                 || ($char == "\\" && isset($text[$index + 1]))
             ) {
                 $text[$index + 1] = mb_strtoupper($text[$index + 1]);

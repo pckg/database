@@ -56,7 +56,7 @@ class Insert extends Query
                 }
             } else {
                 $arrValues[] = '?';
-                $this->bind($val == '' ? null : $val, 'values');
+                $this->bind($val === '' ? null : $val, 'values');
             }
         }
 

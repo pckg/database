@@ -28,12 +28,13 @@ trait Actions
      *
      * @return $this|mixed|Record
      */
-    public static function getOrCreate(array $data, Entity $entity = null)
+    public static function getOrCreate(array $check, Entity $entity = null, array $data = [])
     {
-        $record = static::gets($data, $entity);
+        $record = static::gets($check, $entity);
 
         if (!$record) {
-            $record = static::create($data, $entity);
+            $a = array_merge($data, $check);
+            $record = static::create($a, $entity);
         }
 
         return $record;

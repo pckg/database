@@ -171,7 +171,11 @@ class PDO extends AbstractRepository implements Repository
     {
         $prepare = $this->getConnection()->prepare($sql);
 
-        if (!$prepare) {
+        if ($prepare === false) {
+            if (dev() || isConsole()) {
+                throw new Exception('Cannot prepare statement: ' . implode(", ", $this->getConnection()->errorInfo()) . ' : ' . $sql);
+            }
+
             throw new Exception('Cannot prepare statement');
         }
 
@@ -200,12 +204,14 @@ class PDO extends AbstractRepository implements Repository
     {
         $execute = $prepare->execute();
 
-        if (!$execute) {
+        if ($execute === false) {
             $errorInfo = $prepare->errorInfo();
 
-            throw new Exception(
-                'Cannot execute prepared statement: ' . end($errorInfo) . ' : ' . $prepare->queryString
-            );
+            if (dev() || isConsole()) {
+                throw new Exception('Cannot prepare statement: ' . implode(", ", $this->getConnection()->errorInfo()) . ' : ' . $prepare->queryString);
+            }
+
+            throw new Exception('Cannot execute prepared statement.');
         }
 
         return $execute;
@@ -238,7 +244,7 @@ class PDO extends AbstractRepository implements Repository
         $prepare = $this->getConnection()->prepare($sql);
 
         if (!$prepare) {
-            if (dev()) {
+            if (dev() || isConsole()) {
                 throw new Exception('Cannot prepare statement: ' . implode(", ", $this->getConnection()->errorInfo()) . ' : ' . $sql);
             }
 
@@ -356,20 +362,34 @@ class PDO extends AbstractRepository implements Repository
             /**
              * Run code that should be executed entirely.
              */
-            $return = $callable();
+            $return = $callable($this);
         } catch (Throwable $e) {
             /**
              * Cancel everything on error.
              */
+            message('Rollback transaction');
             $this->rollbackTransaction();
             throw $e;
-        } finally {
-            /**
-             * Commit everything on success.
-             */
-            $this->commitTransaction();
-            return $return;
+            return;
         }
+
+        /**
+         * Commit everything on success.
+         */
+        $this->commitTransaction();
+        return $return;
+    }
+
+    public function tryTransaction(callable $callable, &$e = null)
+    {
+        $result = null;
+        try {
+            $result = $this->transaction($callable);
+        } catch (Throwable $e) {
+            return false;
+        }
+
+        return $result;
     }
 
     public function beginTransaction()

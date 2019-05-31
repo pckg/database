@@ -298,7 +298,9 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     function jsonSerialize()
     {
-        return $this->__toArray();
+        $array = $this->__toArray();
+
+        return $array ? $array : new \stdClass();
     }
 
     /**

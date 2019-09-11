@@ -66,7 +66,7 @@ class UpdateRecord
     public function execute()
     {
         $originalTable = $this->entity->getTable();
-        $data = $this->entity->tabelizeRecord($this->record, true);
+        $data = $this->entity->tabelizeRecord($this->record, true, false);
 
         foreach ($data as $table => $update) {
             if (!$update) {

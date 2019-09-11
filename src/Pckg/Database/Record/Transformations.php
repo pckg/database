@@ -72,7 +72,7 @@ trait Transformations
     /**
      * @return array
      */
-    public function __toArray($values = null, $depth = 6, $withToArray = true)
+    public function __toArray($values = null, $depth = 6, $withToArray = true, $removeProtected = true)
     {
         $return = [];
 
@@ -96,7 +96,7 @@ trait Transformations
             /**
              * Skip protected keys.
              */
-            if (in_array($key, $this->protect)) {
+            if ($removeProtected && in_array($key, $this->protect)) {
                 continue;
             }
 

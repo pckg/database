@@ -361,9 +361,9 @@ class Entity
      *
      * @return array
      */
-    public function tabelizeRecord(DatabaseRecord $record, $onlyDirty = false)
+    public function tabelizeRecord(DatabaseRecord $record, $onlyDirty = false, $removeProtected = true)
     {
-        $dataArray = $record->__toArray(null, 2, false);
+        $dataArray = $record->__toArray(null, 2, false, $removeProtected);
         $extensionArray = [];
 
         if ($onlyDirty) {

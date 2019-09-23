@@ -81,10 +81,6 @@ class Entity
      */
     public function __construct(Repository $repository = null, $alias = null, $boot = true)
     {
-        if (!$repository) {
-            $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
-        }
-
         $this->alias = $alias;
         $this->repository = $repository;
 
@@ -309,6 +305,10 @@ class Entity
      */
     public function getRepository()
     {
+        if (!$this->repository && RepositoryFactory::canCreateRepository($this->repositoryName)) {
+            $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
+        }
+
         return $this->repository;
     }
 

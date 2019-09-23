@@ -71,6 +71,28 @@ class RepositoryFactory
         return $repository;
     }
 
+    public static function canCreateRepository($name) {
+        $name = $name == Repository::class
+            ? 'default'
+            : str_replace(Repository::class . '.', '', $name);
+
+        if (array_key_exists($name, static::$repositories)) {
+            return true;
+        }
+
+        $fullName = Repository::class . '.' . $name;
+        if (context()->exists($fullName)) {
+            return true;
+        }
+
+        $config = config('database.' . $name);
+        if ($config) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param $config
      * @param $name

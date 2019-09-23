@@ -22,6 +22,11 @@ trait Transformations
     protected $toJson = [];
 
     /**
+     * @var array
+     */
+    protected $protect = [];
+
+    /**
      * @param array $items
      *
      * @return $this
@@ -67,7 +72,7 @@ trait Transformations
     /**
      * @return array
      */
-    public function __toArray($values = null, $depth = 6, $withToArray = true)
+    public function __toArray($values = null, $depth = 6, $withToArray = true, $removeProtected = true)
     {
         $return = [];
 
@@ -88,6 +93,13 @@ trait Transformations
         }
 
         foreach ($values as $key => $value) {
+            /**
+             * Skip protected keys.
+             */
+            if ($removeProtected && in_array($key, $this->protect)) {
+                continue;
+            }
+
             if (is_object($value)) {
                 if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);

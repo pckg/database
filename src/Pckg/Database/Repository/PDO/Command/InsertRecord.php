@@ -65,7 +65,7 @@ class InsertRecord
      */
     public function execute()
     {
-        $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record, false, false);
         foreach ($data as $table => $insert) {
             if ($this->tables && !in_array($table, $this->tables)) {
                 continue;

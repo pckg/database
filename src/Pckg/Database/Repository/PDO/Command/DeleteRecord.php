@@ -80,7 +80,7 @@ class DeleteRecord
      */
     public function execute()
     {
-        $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record, false, false);
 
         /**
          * We need to get entity table extensions.

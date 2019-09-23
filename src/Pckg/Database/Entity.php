@@ -190,7 +190,7 @@ class Entity
      */
     public function extendedKey($key)
     {
-        $cache = $this->repository->getCache();
+        $cache = $this->getRepository()->getCache();
         if (!$cache->tableHasField($this->table, $key)) {
             if ($cache->tableHasField($this->table . '_i18n', $key)) {
                 return '`' . $this->table . '_i18n`.`' . $key . '`';
@@ -385,7 +385,7 @@ class Entity
          * Holds all available fields in database table cache.
          */
         $keys = [
-            $this->table => $this->repository->getCache()->getTableFields($this->table),
+            $this->table => $this->getRepository()->getCache()->getTableFields($this->table),
         ];
 
         foreach (get_class_methods($this) as $method) {
@@ -395,7 +395,7 @@ class Entity
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
                 if (substr($this->table,
-                           strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
                                                                                                   ->hasTable($this->table . $suffix)) {
                     $keys[$this->table . $suffix] = $this->{$method}();
                 }
@@ -408,12 +408,12 @@ class Entity
                                                                                         -11) == 'ForeignKeys') {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
                 if (substr($this->table,
-                           strlen($this->table) - strlen($suffix)) != $suffix && $this->repository->getCache()
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
                                                                                                   ->hasTable($this->table . $suffix)) {
                     // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
                 } elseif (strrpos($this->table,
-                                  $suffix) == strlen($this->table) - strlen($suffix) && $this->repository->getCache()
+                                  $suffix) == strlen($this->table) - strlen($suffix) && $this->getRepository()->getCache()
                                                                                                          ->hasTable($this->table . $suffix)) {
                     // extendee table
                     $extensionArray[$this->table] = $this->{$method}($record);
@@ -429,7 +429,7 @@ class Entity
                 /**
                  * Add value if field exists in data array and repository has that field.
                  */
-                if ($this->repository->getCache()->tableHasField($table, $field)) {
+                if ($this->getRepository()->getCache()->tableHasField($table, $field)) {
                     if (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
                         $values[$table][$field] = $extensionArray[$table][$field];
                     } elseif (array_key_exists($field, $dataArray)) {
@@ -451,7 +451,7 @@ class Entity
 
         $binds = $this->query->getBinds();
 
-        $record = $this->repository->one($this);
+        $record = $this->getRepository()->one($this);
 
         if (!$record) {
             $data = [];

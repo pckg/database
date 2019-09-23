@@ -306,7 +306,7 @@ class Entity
     public function getRepository()
     {
         if (!$this->repository && RepositoryFactory::canCreateRepository($this->repositoryName)) {
-            $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
+            $this->repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
         }
 
         return $this->repository;

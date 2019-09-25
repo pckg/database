@@ -135,7 +135,7 @@ trait Languagable
         /**
          * Check for multilanguage platforms.
          */
-        if (localeManager()->isMultilingual()) {
+        if (config('pckg.database.extension.languagable.active', false) && localeManager()->isMultilingual()) {
             $this->forCurrentLanguage();
         }
 

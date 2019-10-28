@@ -91,7 +91,7 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return mixed|Record
+     * @return self
      */
     public static function getOrNew(array $data, Entity $entity = null)
     {

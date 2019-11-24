@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Query;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
 
 /**
@@ -49,10 +50,14 @@ class Insert extends Query
     {
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
-            if (is_object($val) && $val instanceof Raw) {
-                $arrValues[] = $val->buildSQL();
-                foreach ($val->getBind() as $bind) {
-                    $this->bind($bind, 'values');
+            if (is_object($val)) {
+                if ($val instanceof Stringifiable) {
+                    $arrValues[] = '(' . $val->__toString() . ')';
+                } elseif ($val instanceof Raw) {
+                    $arrValues[] = $val->buildSQL();
+                    foreach ($val->getBind() as $bind) {
+                        $this->bind($bind, 'values');
+                    }
                 }
             } else {
                 $arrValues[] = '?';

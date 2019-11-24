@@ -106,8 +106,8 @@ trait Transformations
                  * @T00D00 - Should we force  Strigifiable interface to be used?
                  * What are the use cases for other options?
                  */
-                if ($value instanceof Stringifiable) {
-                    $return[$key] = $value->__toString();
+                if ($value instanceof Stringifiable) { // will be processed later
+                    $return[$key] = $value;
                 } else if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
                 } else {

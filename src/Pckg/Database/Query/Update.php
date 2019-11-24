@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Query;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
 
 /**
@@ -51,11 +52,24 @@ class Update extends Query
                 $val = null;
             }
 
-            if (is_object($val) && $val instanceof Raw) {
-                $arrValues[] = $keyPart . $val->buildSQL();
-                foreach ($val->getBind() as $bind) {
-                    $this->bind($bind, 'set');
+            if (is_object($val)) {
+                if ($val instanceof Stringifiable) {
+                    /**
+                     * Fields are passed this way.
+                     */
+                    $arrValues[] = $keyPart . $val->__toString();
+                    continue;
                 }
+
+                if ($val instanceof Raw) {
+                    $arrValues[] = $keyPart . $val->buildSQL();
+                    foreach ($val->getBind() as $bind) {
+                        $this->bind($bind, 'set');
+                    }
+                    continue;
+                }
+
+                throw new \Exception('Cannot use object as a SQL value in key ' . $key);
             } else {
                 $arrValues[] = $keyPart . '?';
                 $this->bind($val, 'set');

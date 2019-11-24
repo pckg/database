@@ -315,23 +315,41 @@ trait Actions
     }
 
     /**
+     * What about relations? Should we refetch them also?
+     *
      * @return $this
      */
-    public function refetch()
+    public function refetch($fields = [])
     {
+        /**
+         * @var $entity Entity
+         */
         $entity = $this->getEntity();
-        if (!$this->id) {
+        if ($this->id) {
             $entity->where('id', $this->id);
         } else {
             foreach ($this->data as $key => $val) {
                 $entity->where($key, $val);
             }
         }
-        $record = $entity->one();
 
-        if ($record) {
-            $this->data = $record->data();
+        /**
+         * Refetch only selected fields.
+         */
+        if ($fields) {
+            $entity->select($fields);
         }
+
+        /**
+         * Fail if record cannot be refetched.
+         */
+        $record = $entity->oneOrFail();
+
+        /**
+         * Fetch and merge data.
+         */
+        $data = $record->data();
+        $this->data = $fields ? array_merge($this->data, $data) : $data;
 
         return $this;
     }

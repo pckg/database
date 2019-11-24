@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Obj;
 use Throwable;
 
@@ -101,7 +102,13 @@ trait Transformations
             }
 
             if (is_object($value)) {
-                if (method_exists($value, '__toArray')) {
+                /**
+                 * @T00D00 - Should we force  Strigifiable interface to be used?
+                 * What are the use cases for other options?
+                 */
+                if ($value instanceof Stringifiable) {
+                    $return[$key] = $value->__toString();
+                } else if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
                 } else {
                     $return[$key] = (string)$value;

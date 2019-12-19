@@ -42,6 +42,14 @@ class Raw implements Stringifiable
     }
 
     /**
+     * @return array
+     */
+    public function getBind()
+    {
+        return $this->binds;
+    }
+
+    /**
      * @return string|null
      */
     public function __toString()

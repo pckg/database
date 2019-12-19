@@ -58,6 +58,9 @@ class Update extends Query
                      * Fields are passed this way.
                      */
                     $arrValues[] = $keyPart . $val->__toString();
+                    foreach ($val->getBind() as $bind) {
+                        $this->bind($bind, 'set');
+                    }
                     continue;
                 }
 

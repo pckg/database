@@ -247,7 +247,7 @@ trait Actions
     /**
      * @param array $overwrite
      *
-     * @return mixed
+     * @return mixed|Record|$this
      */
     public function saveAs($overwrite = [])
     {

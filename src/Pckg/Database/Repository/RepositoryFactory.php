@@ -133,6 +133,15 @@ class RepositoryFactory
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
 
+        if (isset($config['socket'])) {
+            return new PDO(
+                "mysql:unix_socket=" . $config['socket'] . ";charset=" . $charset . $partDb,
+                $config['user'],
+                $config['pass'],
+                $options
+            );
+        }
+
         return new PDO(
             "mysql:host=" . $config['host'] . ";charset=" . $charset . $partDb,
             $config['user'],

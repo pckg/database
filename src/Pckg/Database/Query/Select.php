@@ -288,6 +288,10 @@ class Select extends Query
         foreach ($this->join as $join) {
             $delete->join($join);
         }
+        $order = $this->getOrderBy();
+        if ($order) {
+            $delete->orderBy($order);
+        }
 
         return $delete;
     }

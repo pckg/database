@@ -22,10 +22,19 @@ class Delete extends Query
     function buildSQL()
     {
         $sql = "DELETE FROM `" . $this->table . "` " .
-               ($this->where ? $this->buildWhere() : '') .
-               ($this->limit ? 'LIMIT ' . $this->limit : '');
+            ($this->where ? $this->buildWhere() : '');
 
-        return $sql;
+        $parts = [$sql];
+        if ($this->orderBy) {
+            $parts[] = 'ORDER BY ' . ($this->orderBy == 'id' ? '`' . $this->table . "`.`" . $this->orderBy .
+                    '` ASC' : $this->orderBy);
+        }
+
+        if ($this->limit) {
+            $parts[] = 'LIMIT ' . $this->limit;
+        }
+
+        return implode(' ', $parts);
     }
 
     /**

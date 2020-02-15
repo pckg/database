@@ -138,8 +138,48 @@ trait With
 
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
+        } elseif (is_array($relation)) {
+            $this->processArrayOfRelations($relation);
         } else {
             $this->with[] = $this->{$relation}();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $relations
+     *
+     * @return $this
+     */
+    protected function processArrayOfRelations(array $relations)
+    {
+        foreach ($relations as $key => $value) {
+            /**
+             * Call ->withString();
+             */
+            if (is_string($value)) {
+                $this->{'with' . ucfirst($value)}();
+                continue;
+            }
+
+            /**
+             * Call ->withString(callable);
+             */
+            if (is_only_callable($value)) {
+                $this->{'with' . ucfirst($key)}($value);
+                continue;
+            }
+
+            /**
+             * Call ->withString(callable)
+             */
+            if (is_array($value)) {
+                $this->{'with' . ucfirst($key)}(function(Relation $relation) use ($value) {
+                    $relation->with($value);
+                });
+                continue;
+            }
         }
 
         return $this;

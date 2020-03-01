@@ -152,7 +152,7 @@ trait With
      *
      * @return $this
      */
-    protected function processArrayOfRelations(array $relations)
+    public function processArrayOfRelations(array $relations)
     {
         foreach ($relations as $key => $value) {
             /**
@@ -176,7 +176,7 @@ trait With
              */
             if (is_array($value)) {
                 $this->{'with' . ucfirst($key)}(function(Relation $relation) use ($value) {
-                    $relation->with($value);
+                    $relation->processArrayOfRelations($value);
                 });
                 continue;
             }

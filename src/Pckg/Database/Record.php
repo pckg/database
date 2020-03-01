@@ -77,6 +77,19 @@ class Record extends Obj
     }
 
     /**
+     * @param $dataKey
+     * @return mixed
+     */
+    public function cacheDecodedField($dataKey)
+    {
+        $decodedKey = 'decoded' . ucfirst($dataKey);
+
+        return $this->cache($decodedKey, function() use ($dataKey) {
+            return json_decode($this->data($dataKey), true);
+        });
+    }
+
+    /**
      * @return array
      * @T00D00
      */

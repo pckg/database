@@ -14,6 +14,26 @@ trait Magic
     use CallWithRelation;
 
     /**
+     * @var array
+     */
+    protected $encapsulate = [];
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function getEncapsulated($key, $value)
+    {
+        $encapsulator = $this->encapsulate[$key] ?? null;
+        if (!$encapsulator) {
+            return $value;
+        }
+
+        return (new $encapsulator($value));
+    }
+
+    /**
      * @param $key
      *
      * @return bool
@@ -70,7 +90,7 @@ trait Magic
          * Return value, even if it's null or not set.
          */
         if ($this->keyExists($key)) {
-            return $this->getValue($key);
+            return $this->getEncapsulated($key, $this->getValue($key));
         }
 
         /**

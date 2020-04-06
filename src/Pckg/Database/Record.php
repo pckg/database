@@ -40,19 +40,21 @@ class Record extends Obj
     protected $ready = false;
 
     /**
-     * @var array
-     * @T00D00
-     */
-    protected $bind = [
-        'dt_added' => Carbon::class,
-    ];
-
-    /**
      * @param array $values
      */
     public function __construct($data = [], Entity $entity = null)
     {
         $this->data = $data && is_array($data) ? $data : [];
+
+        /**
+         * Encapsulate into object.
+         */
+        foreach ($this->encapsulate as $key => $encapsulator) {
+            if (!array_key_exists($key, $this->data)) {
+                continue;
+            }
+            $this->data[$key] = new $encapsulator($this->data[$key]);
+        }
 
         if ($entity) {
             $this->entity = $entity;

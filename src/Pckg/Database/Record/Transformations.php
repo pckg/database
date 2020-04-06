@@ -82,7 +82,7 @@ trait Transformations
         }
 
         if (is_null($values)) {
-            $values = $this->data;
+            $values = $this->data; // should we call getters here?
             if ($withToArray && $this->toArray) {
                 foreach ($this->getToArrayValues() as $key => $value) {
                     $values[$key] = $value;
@@ -92,7 +92,7 @@ trait Transformations
                 }
             }
         }
-
+        
         foreach ($values as $key => $value) {
             /**
              * Skip protected keys.

@@ -90,6 +90,10 @@ class RepositoryFactory
             return true;
         }
 
+        if (class_exists($name) && object_implements($name, Repository::class)) {
+            return true;
+        }
+
         return false;
     }
 

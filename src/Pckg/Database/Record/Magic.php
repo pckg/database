@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
@@ -29,8 +30,11 @@ trait Magic
         if (!$encapsulator) {
             return $value;
         }
+        if (is_object($value) && $value instanceof Stringifiable) {
+            return $value->decapsulate();
+        }
 
-        return (new $encapsulator($value));
+        return (new $encapsulator($value))->decapsulate();
     }
 
     /**

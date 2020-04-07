@@ -1,33 +1,42 @@
 <?php namespace Pckg\Database\Field;
 
-class JsonArray implements Stringifiable, \JsonSerializable
+use Pckg\Collection\CollectionHelper;
+
+class JsonArray implements Stringifiable, \JsonSerializable, \Iterator, \ArrayAccess
 {
 
-    protected $value;
+    use CollectionHelper;
+
+    protected $collection;
 
     public function __construct($value)
     {
-        $this->value = $value;
+        $this->collection = $value;
     }
 
     public function set($decoded)
     {
-        $this->value = json_encode($decoded);
+        $this->collection = json_encode($decoded);
 
         return $this;
     }
 
     public function __toString()
     {
-        return json_encode($this->value ?? []);
+        return json_encode($this->collection ?? []);
     }
 
     public function __toArray()
     {
-        return json_decode($this->value) ?? [];
+        return json_decode($this->collection, true) ?? [];
     }
 
     public function jsonSerialize()
+    {
+        return $this->__toArray();
+    }
+
+    public function decapsulate()
     {
         return $this->__toArray();
     }

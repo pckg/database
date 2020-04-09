@@ -182,6 +182,18 @@ trait QueryBuilder
     }
 
     /**
+     * @param $raw
+     * @param $bind
+     * @return $this
+     */
+    public function whereHas($raw, $bind = [])
+    {
+        $this->getQuery()->where(Query\Raw::raw('LENGTH(' . $raw . ') > 0'));
+
+        return $this;
+    }
+
+    /**
      * @param        $data
      * @param string $operator
      *

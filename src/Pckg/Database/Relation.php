@@ -24,6 +24,11 @@ abstract class Relation implements RelationInterface
     /**
      *
      */
+    const LEFT_OUTER_JOIN = 'LEFT OUTER JOIN';
+
+    /**
+     *
+     */
     const RIGHT_JOIN = 'RIGHT JOIN';
 
     /**
@@ -181,6 +186,16 @@ abstract class Relation implements RelationInterface
     public function leftJoin()
     {
         $this->join = static::LEFT_JOIN;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function leftOuterJoin()
+    {
+        $this->join = static::LEFT_OUTER_JOIN;
 
         return $this;
     }

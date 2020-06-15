@@ -72,6 +72,19 @@ trait Relations
 
     /**
      * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
+    public function unsetRelation($key)
+    {
+        unset($this->relations[$key]);
+
+        return $this;
+    }
+
+    /**
+     * @param $key
      *
      * @return mixed
      */

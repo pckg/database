@@ -605,6 +605,29 @@ class Entity
     }
 
     /**
+     * @param callable $callback
+     * @param int $by
+     * @return mixed|\Pckg\Collection
+     */
+    public function iterate(callable $callback, int $by = 100, $max = 1000)
+    {
+        $i = -1;
+        $collection = collect();
+        do {
+            $i++;
+            $clone = clone $this;
+            $limit = ($i > 0 ? ($i * $by) . ', ' : '') . $by;
+            $records = $clone->limit($limit)->all();
+            if (!$records->count()) {
+                break;
+            }
+            $collection->push($callback($records));
+        } while ($records->count() === $by && (!$max || (($i + 1) * $by < $max)));
+
+        return $collection;
+    }
+
+    /**
      * @return Record|mixed
      * @throws Exception
      */

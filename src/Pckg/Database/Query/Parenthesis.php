@@ -101,6 +101,20 @@ class Parenthesis
         return (string)$this->build();
     }
 
+    public function __clone()
+    {
+        $newChildren = [];
+        foreach ($this->children as $child) {
+            if (!is_object($child)) {
+                $newChildren[] = $child;
+                continue;
+            }
+
+            $newChildren[] = clone $child;
+        }
+        $this->children = $newChildren;
+    }
+
     /**
      * @return string
      */

@@ -180,7 +180,14 @@ class Entity
      */
     public function __clone()
     {
-        $this->query = clone $this->query;
+        if (is_object($this->query)) {
+            $this->query = clone $this->query;
+        }
+        $newWith = [];
+        foreach ($this->with as $with) {
+            $newWith[] = clone $with;
+        }
+        $this->with = $newWith;
     }
 
     /**
@@ -615,7 +622,9 @@ class Entity
         $collection = collect();
         do {
             $i++;
+
             $clone = clone $this;
+
             $limit = ($i > 0 ? ($i * $by) . ', ' : '') . $by;
             $records = $clone->limit($limit)->all();
             if (!$records->count()) {

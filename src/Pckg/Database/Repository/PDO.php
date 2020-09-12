@@ -349,7 +349,13 @@ class PDO extends AbstractRepository implements Repository
         }
     }
 
-    public function transaction(callable $callable){
+    /**
+     * @param callable $callable
+     * @param callable|null $onError
+     * @param callable|null $onSuccess
+     * @throws Throwable
+     */
+    public function transaction(callable $callable) {
         /**
          * Start DB transaction.
          */

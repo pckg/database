@@ -107,6 +107,16 @@ abstract class Relation implements RelationInterface
         $this->fill = $this->getCalee();
     }
 
+    public function __clone()
+    {
+        /**
+         * Clone only right entity.
+         */
+        if (is_object($this->right)) {
+            $this->right = clone $this->right;
+        }
+    }
+
     /**
      * @param int $depth
      *

@@ -180,7 +180,14 @@ class Entity
      */
     public function __clone()
     {
-        $this->query = clone $this->query;
+        if (is_object($this->query)) {
+            $this->query = clone $this->query;
+        }
+        $newWith = [];
+        foreach ($this->with as $with) {
+            $newWith[] = clone $with;
+        }
+        $this->with = $newWith;
     }
 
     /**
@@ -602,6 +609,31 @@ class Entity
     public function allAndEach(callable $callback)
     {
         return $this->all()->each($callback);
+    }
+
+    /**
+     * @param callable $callback
+     * @param int $by
+     * @return mixed|\Pckg\Collection
+     */
+    public function iterate(callable $callback, int $by = 100, $max = 1000)
+    {
+        $i = -1;
+        $collection = collect();
+        do {
+            $i++;
+
+            $clone = clone $this;
+
+            $limit = ($i > 0 ? ($i * $by) . ', ' : '') . $by;
+            $records = $clone->limit($limit)->all();
+            if (!$records->count()) {
+                break;
+            }
+            $collection->push($callback($records));
+        } while ($records->count() === $by && (!$max || (($i + 1) * $by < $max)));
+
+        return $collection;
     }
 
     /**

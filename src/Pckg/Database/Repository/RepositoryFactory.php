@@ -132,10 +132,13 @@ class RepositoryFactory
             ? ";dbname=" . $config['db']
             : '';
         $options = [
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET time_zone = \'' . $timezone . '\';',
             PDO::ATTR_STRINGIFY_FETCHES => false,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
+
+        if (isset($config['timezone'])) {
+            $options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET time_zone = \'' . $config['timezone'] . '\';';
+        }
 
         if (isset($config['socket'])) {
             return new PDO(

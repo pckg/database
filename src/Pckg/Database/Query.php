@@ -612,6 +612,9 @@ abstract class Query
         if (!$on) {
             $this->join[] = $table;
         } else {
+            /**
+             * This is probably incorrect implementation.
+             */
             $this->join[] = $table . (strpos($table, ' ON ') ? ' AND ' : ' ON ') . $on;
         }
 

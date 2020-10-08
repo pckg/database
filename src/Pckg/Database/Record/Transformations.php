@@ -106,7 +106,7 @@ trait Transformations
                  * @T00D00 - Should we force  Strigifiable interface to be used?
                  * What are the use cases for other options?
                  */
-                if ($value instanceof Stringifiable) { // will be processed later
+                if ($value instanceof Stringifiable) { // will be processed later because it's a literal
                     $return[$key] = $value;
                 } else if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
@@ -143,6 +143,14 @@ trait Transformations
     function jsonSerialize()
     {
         return $this->__toArray();
+    }
+
+    /**
+     *
+     */
+    public function __toString()
+    {
+        return json_encode($this->jsonSerialize());
     }
 
     /**

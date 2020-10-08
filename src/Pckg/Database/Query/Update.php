@@ -50,21 +50,22 @@ class Update extends Query
                 $val = $val ? 1 : null;
             } else if (empty($val)) {
                 $val = null;
-            }
-
-            if (is_object($val)) {
+            } else if (is_object($val)) {
+                /**
+                 * @T00D00 - invalidate raws?
+                 */
                 if ($val instanceof Stringifiable) {
                     /**
-                     * Fields are passed this way.
+                     * Collect "?", "?,?" or "POINT(?, ?)
                      */
-                    $arrValues[] = $keyPart . $val->__toString();
-                    foreach ($val->getBind() as $bind) {
-                        $this->bind($bind, 'set');
-                    }
-                    continue;
-                }
+                    $arrValues[] = $keyPart . $val->getPlaceholder();
 
-                if ($val instanceof Raw) {
+                    /**
+                     * Bind zero or more values.
+                     */
+                    $this->bind($val->getBind(), 'set');
+                    continue;
+                } else if ($val instanceof Raw) {
                     $arrValues[] = $keyPart . $val->buildSQL();
                     foreach ($val->getBind() as $bind) {
                         $this->bind($bind, 'set');

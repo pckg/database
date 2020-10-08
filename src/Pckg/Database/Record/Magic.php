@@ -30,11 +30,32 @@ trait Magic
         if (!$encapsulator) {
             return $value;
         }
-        if (is_object($value) && $value instanceof Stringifiable) {
-            return $value->decapsulate();
+
+        if ($value instanceof Stringifiable) {
+            return $value;
         }
 
-        return (new $encapsulator($value))->decapsulate();
+        return (new $encapsulator($value, $key, $this));
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function setEncapsulated($key, $value)
+    {
+        $encapsulator = $this->encapsulate[$key] ?? null;
+        if (!$encapsulator) {
+            return $value;
+        }
+
+        $this->markDirty($key);
+        if ($value instanceof Stringifiable) {
+            return $value;
+        }
+
+        return (new $encapsulator($value, $key, $this));
     }
 
     /**
@@ -110,7 +131,7 @@ trait Magic
          */
         $entity = $this->getEntity();
         if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            return $this->getValue($key);
+            return $this->getEncapsulated($key, $this->getValue($key));
         }
 
         /**
@@ -154,7 +175,7 @@ trait Magic
             return $field;
         }
 
-        return null;
+        return $this->getEncapsulated($key, null);
     }
 
     /**
@@ -171,6 +192,11 @@ trait Magic
         if (method_exists($this, 'set' . Convention::toPascal($key) . 'Attribute')) {
             return $this->{'set' . Convention::toPascal($key) . 'Attribute'}($val);
         }
+
+        /**
+         * Encapsulate into object.
+         */
+        $val = $this->setEncapsulated($key, $val);
 
         if (!$this->ready) {
             $this->data[$key] = $val;

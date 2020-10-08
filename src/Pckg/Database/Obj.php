@@ -23,6 +23,15 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     protected $original = [];
 
+    /**
+     * @var array
+     */
+    protected $dirty = [];
+
+    public function markDirty($key) {
+        $this->dirty[] = $key;
+    }
+
     public function getToArrayValues()
     {
         return [];
@@ -212,7 +221,7 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     public function isDirty($key = null)
     {
-        return $this->data($key) != $this->original($key);
+        return in_array($key, $this->dirty) || $this->data($key) !== $this->original($key);
     }
 
     public function getDirtyData()
@@ -222,7 +231,7 @@ class Obj implements ArrayAccess, JsonSerializable
         $diff = [];
 
         foreach ($data as $key => $val) {
-            if (isset($original[$key]) && $original[$key] == $val) {
+            if (in_array($key, $this->dirty) || !isset($original[$key]) || $original[$key] !== $val) {
                 continue;
             }
 

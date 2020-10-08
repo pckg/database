@@ -1,44 +1,96 @@
 <?php namespace Pckg\Database\Field;
 
+use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
+use Pckg\Database\Record;
 
-class JsonArray implements Stringifiable, \JsonSerializable, \Iterator, \ArrayAccess
+/**
+ * Class JsonArray
+ * @package Pckg\Database\Field
+ * @see Collection
+ * @method $this push($item)
+ * @see Collection::push()
+ * @method $this unique()
+ * @see Collection::unique()
+ * @method $this removeEmpty()
+ * @see Collection::removeEmpty()
+ * @method $this has()
+ * @see Collection::has()
+ */
+class JsonArray extends JsonObject implements \Countable
 {
 
-    use CollectionHelper;
-
-    protected $collection;
-
-    public function __construct($value)
+    public function empty()
     {
-        $this->collection = $value;
-    }
-
-    public function set($decoded)
-    {
-        $this->collection = json_encode($decoded);
+        $this->set([]);
 
         return $this;
     }
 
-    public function __toString()
+    /**
+     * @param mixed|mixed $value
+     * @return mixed|void
+     * @throws \Exception
+     */
+    public function validateValue($value)
     {
-        return json_encode($this->collection ?? []);
+        /**
+         * When set as $foo->bar = [];
+         */
+        if (is_array($value)) {
+            $this->data = array_values($value);
+            return;
+        }
+
+        /**
+         * When set as $foo->bar = '["something"]';
+         */
+        if (is_string($value) && substr($value, 0, 1) === '[') {
+            $this->data = array_values(json_decode($value, true) ?? []);
+            return;
+        }
+
+        /**
+         * When set as $foo->bar = '{"something":"something"}';
+         */
+        if (is_string($value) && substr($value, 0, 1) === '{') {
+            $this->data = array_values(json_decode($value, true) ?? []);
+            return;
+        }
+
+        /**
+         * $foo->bar = null;
+         */
+        if (is_null($value)) {
+            $this->data = [];
+            return;
+        }
+
+        throw new \Exception('Invalid JsonArray data');
     }
 
+    /**
+     * @return array
+     */
     public function __toArray()
     {
-        return json_decode($this->collection, true) ?? [];
+        return $this->data ?? [];
     }
 
+    /**
+     * @return array
+     */
     public function jsonSerialize()
     {
-        return $this->__toArray();
+        return $this->__toArray() ?? [];
     }
 
-    public function decapsulate()
+    /**
+     * @return string
+     */
+    public function __toString()
     {
-        return $this->__toArray();
+        return json_encode($this->jsonSerialize()) ?? '[]';
     }
 
 }

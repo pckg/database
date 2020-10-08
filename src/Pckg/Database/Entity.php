@@ -94,6 +94,17 @@ class Entity
     }
 
     /**
+     * @param Repository|null $repository
+     * @param null $alias
+     * @param bool $boot
+     * @return static
+     */
+    public static function create(Repository $repository = null, $alias = null, $boot = true)
+    {
+        return new static($repository, $alias, $boot);
+    }
+
+    /**
      *
      */
     protected function guessDefaults()

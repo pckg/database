@@ -65,9 +65,22 @@ trait Actions
      *
      * @return $this|Record
      */
-    public static function create($data = [], Entity $entity = null)
+    public static function createNew($data = [], Entity $entity = null)
     {
         $record = new static($data, $entity);
+
+        return $record;
+    }
+
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this|Record
+     */
+    public static function create($data = [], Entity $entity = null)
+    {
+        $record = static::createNew($data, $entity);
 
         $record->save();
 

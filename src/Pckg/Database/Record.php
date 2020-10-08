@@ -53,7 +53,7 @@ class Record extends Obj
             if (!array_key_exists($key, $this->data)) {
                 continue;
             }
-            $this->data[$key] = new $encapsulator($this->data[$key] ?? null);
+            $this->data[$key] = new $encapsulator($this->data[$key], $key, $this);
         }
 
         if ($entity) {

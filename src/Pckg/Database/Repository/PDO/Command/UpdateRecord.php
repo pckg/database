@@ -2,6 +2,7 @@
 
 use Exception;
 use Pckg\Database\Entity;
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Query\Update;
 use Pckg\Database\Record;
@@ -102,10 +103,10 @@ class UpdateRecord
          * Flatten data for possible multivalued values like geometric POINT or so.
          */
         $cache = $this->repository->getCache();
-        foreach ($data as $key => &$val) {
+        foreach ($data as $key => $val) {
             if (is_array($val)) {
                 if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
-                    $val = new Raw('GeomFromText(\'POINT(' . (float)$val[0] . ' ' . (float)$val[1] . ')\')');
+                    $data[$key] = new Raw('GeomFromText(\'POINT(' . (float)$val[0] . ' ' . (float)$val[1] . ')\')');
                 }
             }
         }

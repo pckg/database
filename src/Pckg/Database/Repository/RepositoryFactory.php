@@ -55,6 +55,9 @@ class RepositoryFactory
                  *         - maybe the best thing would be to change repositories when needed (leave defaults?)
                  */
                 if (!$config && $name != 'default') {
+                    if (class_exists($name) && object_implements($name, Repository::class)) {
+                        return new $name;
+                    }
                     $config = config('database.default');
                 }
                 $repository = RepositoryFactory::getRepositoryByConfig($config, $name);

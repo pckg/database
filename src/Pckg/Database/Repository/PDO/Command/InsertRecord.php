@@ -2,6 +2,7 @@
 
 use Exception;
 use Pckg\Database\Entity;
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query\Insert;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
@@ -102,15 +103,6 @@ class InsertRecord
          * Flatten data for possible multivalued values like geometric POINT or so.
          */
         $cache = $this->repository->getCache();
-        foreach ($data as $key => &$val) {
-            if (is_array($val)) {
-                if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
-                    $x = ($val['x'] ?? $val[0]) ?? 0;
-                    $y = ($val['y'] ?? $val[1]) ?? 0;
-                    $val = new Raw('GeomFromText(\'POINT(' . $x . ' ' . $y . ')\')');
-                }
-            }
-        }
 
         /**
          * We will insert $data into $table ...

@@ -51,14 +51,26 @@ class Insert extends Query
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
             if (is_object($val)) {
+                /**
+                 * @T00D00 - invalidate raws?
+                 */
                 if ($val instanceof Stringifiable) {
-                    $arrValues[] = '(' . $val->__toString() . ')';
+                    /**
+                     * Collect "?", "?,?" or "POINT(?, ?)
+                     */
+                    $arrValues[] = $val->getPlaceholder();
+
+                    /**
+                     * Bind zero or more values.
+                     */
+                    $this->bind($val->getBind(), 'values');
                 } elseif ($val instanceof Raw) {
                     $arrValues[] = $val->buildSQL();
                     foreach ($val->getBind() as $bind) {
                         $this->bind($bind, 'values');
                     }
                 }
+                throw new \Exception('Invalid non-stringifiable object');
             } else {
                 $arrValues[] = '?';
                 $this->bind($val === '' ? null : $val, 'values');

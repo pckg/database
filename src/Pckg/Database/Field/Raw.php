@@ -57,4 +57,35 @@ class Raw implements Stringifiable
         return $this->sql;
     }
 
+    public function validateValue($value)
+    {
+        throw new \Exception('Raw cannot be used as a encapsulator!');
+    }
+
+    public function jsonSerialize()
+    {
+        throw new \Exception('No json serializer');
+    }
+
+    public function encapsulated()
+    {
+        throw new \Exception('No encapsul');
+    }
+
+    public function decapsulate()
+    {
+        throw new \Exception('Raw cannot be decapsulated');
+    }
+
+    /**
+     * This should be safe string!
+     *
+     * @return string|null
+     */
+    public function getPlaceholder()
+    {
+        return $this->sql;
+    }
+
+
 }

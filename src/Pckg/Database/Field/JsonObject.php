@@ -107,6 +107,8 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
         if ($field === 'collection') {
             return $this->data;
         }
+
+        return $this->data[$field] ?? null;
     }
 
     /**
@@ -136,6 +138,14 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
         if ($newCollection !== $this->data) {
             $this->data = $newCollection;
         }
+
+        return $this;
+    }
+
+    public function __set($key, $value)
+    {
+        $this->markDirty();
+        $this->data[$key] = $value;
 
         return $this;
     }

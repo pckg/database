@@ -134,12 +134,11 @@ class RepositoryFactory
         /**
          * Merge configs.
          */
-        $options = array_merge($config['options'] ?? [], [
-            PDO::ATTR_STRINGIFY_FETCHES => false,
-            PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            //PDO::ERRMODE_EXCEPTION
-        ]);
+        $options = ($config['options'] ?? []) + [
+                PDO::ATTR_STRINGIFY_FETCHES => false,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            ];
 
         /**
          * Backwards compatible timezone set.

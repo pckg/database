@@ -100,11 +100,6 @@ class InsertRecord
     public function insert($table, array $data = [])
     {
         /**
-         * Flatten data for possible multivalued values like geometric POINT or so.
-         */
-        $cache = $this->repository->getCache();
-
-        /**
          * We will insert $data into $table ...
          */
         $query = (new Insert())->table($table)->setInsert($data);

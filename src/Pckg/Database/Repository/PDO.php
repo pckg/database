@@ -64,6 +64,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnect()
     {
+        return;
         $this->connection = null;
         if (!$this->reconnect) {
             throw new Exception('No reconnect method');
@@ -80,7 +81,7 @@ class PDO extends AbstractRepository implements Repository
         return [
             'name',
             'recordClass',
-            'reconnect',
+            //'reconnect',
         ];
     }
 
@@ -199,7 +200,7 @@ class PDO extends AbstractRepository implements Repository
         }, 'Preparing SQL : ' . $sql);
 
         if (!$prepare) {
-            $this->throwError('Cannot prepare statement', $sql);
+            return $this->throwError('Cannot prepare statement', $sql);
         }
 
         /**
@@ -229,7 +230,7 @@ class PDO extends AbstractRepository implements Repository
         }, 'Executing ' . $prepare->queryString);
 
         if (!$execute) {
-            $this->throwError('Cannot execute prepared statement', implode($prepare->errorInfo()) . ' : ' . $prepare->queryString);
+            return $this->throwError('Cannot execute prepared statement', implode($prepare->errorInfo()) . ' : ' . $prepare->queryString);
         }
 
         return $execute;
@@ -402,12 +403,25 @@ class PDO extends AbstractRepository implements Repository
     public function executeOne(Entity $entity)
     {
         $prepare = $this->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
-
-        if (($execute = $this->executePrepared($prepare)) && ($record = $this->fetchPrepared($prepare))) {
-            $record->setEntity($entity)->setSaved()->setOriginalFromData();
-
-            return $entity->fillRecordWithRelations($record);
+        if (!$prepare) {
+            return $this->throwError('Cannot prepare one query');
         }
+
+        $execute = $this->executePrepared($prepare);
+
+        if (!$execute) {
+            return $this->throwError('Cannot execute one query');
+        }
+
+        $record = $this->fetchPrepared($prepare);
+
+        if (!$record) {
+            return null;
+        }
+
+        $record->setEntity($entity)->setSaved()->setOriginalFromData();
+
+        return $entity->fillRecordWithRelations($record);
     }
 
     /**
@@ -528,6 +542,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function checkThenExecute(callable $task)
     {
+        return $task();
         try {
             $serverInfo = $this->getConnection()->getAttribute(\PDO::ATTR_SERVER_INFO);
             $this->getReconnectChecker($serverInfo ? $serverInfo : 'Empty server info')();
@@ -547,6 +562,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnectOnFailure(callable $task)
     {
+        return $task();
         try {
             return $task();
         } catch (Throwable $e) {

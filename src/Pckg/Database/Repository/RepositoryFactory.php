@@ -109,7 +109,7 @@ class RepositoryFactory
      */
     public static function initPdoDatabase($config, $name)
     {
-        return new RepositoryPDO(function () use ($config, $name) {
+        return new RepositoryPDO((function () use ($config, $name) {
             try {
                 $pdo = static::createPdoConnectionByConfig($config);
             } catch (PDOException $e) {
@@ -121,7 +121,7 @@ class RepositoryFactory
             static::checkDebugBar($pdo, $name);
 
             return $pdo;
-        }, $name);
+        })(), $name);
     }
 
     /**

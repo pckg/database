@@ -256,7 +256,7 @@ class PDO extends AbstractRepository implements Repository
         /**
          * Add a message for dev.
          */
-        if (true || dev() || isConsole()) {
+        if (dev() || isConsole()) {
             $message .= ' : ' . $help;
         }
 

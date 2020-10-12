@@ -109,17 +109,19 @@ class RepositoryFactory
      */
     public static function initPdoDatabase($config, $name)
     {
-        try {
-            $pdo = static::createPdoConnectionByConfig($config);
-        } catch (PDOException $e) {
-            throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
-        }
+        return new RepositoryPDO(function () use ($config, $name) {
+            try {
+                $pdo = static::createPdoConnectionByConfig($config);
+            } catch (PDOException $e) {
+                throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
+            }
 
-        $pdo->uniqueName = $config['host'] . "-" . $config['db'];
+            $pdo->uniqueName = $config['host'] . "-" . $config['db'];
 
-        static::checkDebugBar($pdo, $name);
+            static::checkDebugBar($pdo, $name);
 
-        return new RepositoryPDO($pdo, $name);
+            return $pdo;
+        }, $name);
     }
 
     /**
@@ -129,31 +131,44 @@ class RepositoryFactory
      */
     public static function createPdoConnectionByConfig($config)
     {
+        /**
+         * Merge configs.
+         */
+        $options = array_merge($config['options'] ?? [], [
+            PDO::ATTR_STRINGIFY_FETCHES => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            //PDO::ERRMODE_EXCEPTION
+        ]);
+
+        /**
+         * Backwards compatible timezone set.
+         */
+        if (isset($config['timezone'])) {
+            $options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET time_zone = \'' . $config['timezone'] . '\';';
+        }
+
+        /**
+         * Charser, timezone and database selection.
+         */
         $timezone = config('pckg.locale.timezone', 'Europe/Ljubljana');
         $charset = $config['charset'] ?? 'utf8';
         $partDb = isset($config['db'])
             ? ";dbname=" . $config['db']
             : '';
-        $options = [
-            PDO::ATTR_STRINGIFY_FETCHES => false,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ];
 
-        if (isset($config['timezone'])) {
-            $options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET time_zone = \'' . $config['timezone'] . '\';';
-        }
-
+        /**
+         * Connect by socket or host.
+         */
+        $to = 'host';
+        $key = 'host';
         if (isset($config['socket'])) {
-            return new PDO(
-                "mysql:unix_socket=" . $config['socket'] . ";charset=" . $charset . $partDb,
-                $config['user'],
-                $config['pass'],
-                $options
-            );
+            $to = 'unix_socket';
+            $key = 'socket';
         }
-
+        
         return new PDO(
-            "mysql:host=" . $config['host'] . ";charset=" . $charset . $partDb,
+            "mysql:" . $to . "=" . $config[$key] . ";charset=" . $charset . $partDb,
             $config['user'],
             $config['pass'],
             $options
@@ -166,45 +181,20 @@ class RepositoryFactory
      */
     protected static function checkDebugBar($pdo, $name)
     {
-        if (context()->exists(DebugBar::class)) {
-            $debugBar = context()->find(DebugBar::class);
-            $tracablePdo = new TraceablePDO($pdo);
-
-            if ($debugBar->hasCollector('pdo')) {
-                $pdoCollector = $debugBar->getCollector('pdo');
-            } else {
-                $debugBar->addCollector($pdoCollector = new PDOCollector());
-            }
-
-            $pdoCollector->addConnection($tracablePdo, str_replace(':', '-', $name));
+        if (!context()->exists(DebugBar::class)) {
+            return;
         }
-    }
 
-    /**
-     * @param        $dsn
-     * @param        $username
-     * @param null   $passwd
-     * @param null   $options
-     * @param string $name
-     *
-     * @return PDO
-     */
-    public static function createPdoRepository(
-        $dsn, $username, $passwd = null, $options = null, $name = self::DEFAULT_NAME
-    ) {
-        /**
-         * Create pure PDO connection.
-         */
-        $pdoConnection = new \PDO($dsn, $username, $passwd, $options);
+        $debugBar = context()->find(DebugBar::class);
+        $tracablePdo = new TraceablePDO($pdo);
 
-        /**
-         * Create PDO database repository.
-         */
-        $connection = new PDO($pdoConnection);
+        if ($debugBar->hasCollector('pdo')) {
+            $pdoCollector = $debugBar->getCollector('pdo');
+        } else {
+            $debugBar->addCollector($pdoCollector = new PDOCollector());
+        }
 
-        static::$repositories[$name] = $connection;
-
-        return $connection;
+        $pdoCollector->addConnection($tracablePdo, str_replace(':', '-', $name));
     }
 
     /**

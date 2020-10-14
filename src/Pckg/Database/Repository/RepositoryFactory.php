@@ -266,4 +266,12 @@ class RepositoryFactory
         return static::$repositories[static::DEFAULT_NAME] ?? null;
     }
 
+    /**
+     * @return array
+     */
+    public static function getRepositories()
+    {
+        return static::$repositories;
+    }
+
 }

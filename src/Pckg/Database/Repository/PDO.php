@@ -542,7 +542,6 @@ class PDO extends AbstractRepository implements Repository
      */
     public function checkThenExecute(callable $task)
     {
-        return $task();
         try {
             $serverInfo = $this->getConnection()->getAttribute(\PDO::ATTR_SERVER_INFO);
             $this->getReconnectChecker($serverInfo ? $serverInfo : 'Empty server info')();
@@ -562,7 +561,6 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnectOnFailure(callable $task)
     {
-        return $task();
         try {
             return $task();
         } catch (Throwable $e) {

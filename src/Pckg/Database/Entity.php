@@ -767,6 +767,13 @@ class Entity
 
         $update = $this->getQuery()->transformToUpdate();
 
+        /**
+         * Throw an exception? Or return null?
+         */
+        if (!$this->setData) {
+            throw new Exception('Empty update set');
+        }
+
         $update->setSet($this->setData);
 
         $prepare = $repository->prepareQuery($update);

@@ -81,6 +81,22 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
     }
 
     /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->__toArray();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __toArray()
+    {
+        return $this->data;
+    }
+
+    /**
      * @return $this
      */
     public function empty()

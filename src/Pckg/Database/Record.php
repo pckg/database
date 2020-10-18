@@ -44,7 +44,11 @@ class Record extends Obj
      */
     public function __construct($data = [], Entity $entity = null)
     {
+        $defaults = $this->data ?? [];
         $this->data = $data && is_array($data) ? $data : [];
+        if ($defaults) {
+            $this->data = array_merge($defaults, $this->data);
+        }
 
         /**
          * Encapsulate into object.

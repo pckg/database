@@ -69,8 +69,9 @@ class Insert extends Query
                     foreach ($val->getBind() as $bind) {
                         $this->bind($bind, 'values');
                     }
+                } else {
+                    throw new \Exception('Invalid non-stringifiable object');
                 }
-                throw new \Exception('Invalid non-stringifiable object');
             } else {
                 $arrValues[] = '?';
                 $this->bind($val === '' ? null : $val, 'values');

@@ -46,11 +46,35 @@ class Update extends Query
         foreach ($this->set AS $key => $val) {
             $keyPart = "`" . $key . "` = ";
 
+            /**
+             * Booleans are transformed to 1 OR NULL.
+             */
             if (is_bool($val)) {
-                $val = $val ? 1 : null;
-            } else if (empty($val)) {
-                $val = null;
-            } else if (is_object($val)) {
+                $arrValues[] = $keyPart . ($val ? 1 : 'NULL');
+                continue;
+            }
+
+            /**
+             * Empty values are transformed to NULL.
+             */
+            if (empty($val)) {
+                $arrValues[] = $keyPart . 'NULL';
+                continue;
+            }
+
+            /**
+             * Scalar values are binded.
+             */
+            if (is_scalar($val)) {
+                $arrValues[] = $keyPart . '?';
+                $this->bind($val, 'set');
+                continue;
+            }
+
+            /**
+             * Objects are validated for stringification.
+             */
+            if (is_object($val)) {
                 /**
                  * @T00D00 - invalidate raws?
                  */
@@ -65,7 +89,9 @@ class Update extends Query
                      */
                     $this->bind($val->getBind(), 'set');
                     continue;
-                } else if ($val instanceof Raw) {
+                }
+
+                if ($val instanceof Raw) {
                     $arrValues[] = $keyPart . $val->buildSQL();
                     foreach ($val->getBind() as $bind) {
                         $this->bind($bind, 'set');
@@ -74,10 +100,9 @@ class Update extends Query
                 }
 
                 throw new \Exception('Cannot use object as a SQL value in key ' . $key);
-            } else {
-                $arrValues[] = $keyPart . '?';
-                $this->bind($val, 'set');
             }
+
+            throw new \Exception('Not scalar value in key ' . $key);
         }
 
         return implode(", ", $arrValues);

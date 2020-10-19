@@ -22,7 +22,7 @@ abstract class AbstractField implements Stringifiable, \JsonSerializable
     /**
      * @var mixed
      */
-    protected $data;
+    protected $collection;
 
     /**
      * AbstractField constructor.
@@ -71,7 +71,7 @@ abstract class AbstractField implements Stringifiable, \JsonSerializable
      */
     public function encapsulated()
     {
-        return $this->data;
+        return $this->collection;
     }
 
     /**

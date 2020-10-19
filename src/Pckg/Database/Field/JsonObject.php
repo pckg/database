@@ -33,7 +33,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
          * $foo->bar = null;
          */
         if (is_null($value)) {
-            $this->data = [];
+            $this->collection = [];
             return;
         }
 
@@ -41,7 +41,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
          * When set as $foo->bar = [];
          */
         if (is_array($value)) {
-            $this->data = $value;
+            $this->collection = $value;
             return;
         }
 
@@ -49,7 +49,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
          * When set as $foo->bar = '["something"]';
          */
         if (is_string($value) && substr($value, 0, 1) === '[') {
-            $this->data = json_decode($value, true) ?? [];
+            $this->collection = json_decode($value, true) ?? [];
             return;
         }
 
@@ -57,7 +57,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
          * When set as $foo->bar = '{"something":"something"}';
          */
         if (is_string($value) && substr($value, 0, 1) === '{') {
-            $this->data = json_decode($value, true) ?? [];
+            $this->collection = json_decode($value, true) ?? [];
             return;
         }
 
@@ -69,7 +69,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
      */
     public function jsonSerialize()
     {
-        return $this->data ?? new \stdClass();
+        return $this->collection ?? new \stdClass();
     }
 
     /**
@@ -93,7 +93,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
      */
     public function __toArray()
     {
-        return $this->data;
+        return $this->collection;
     }
 
     /**
@@ -111,7 +111,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
      */
     public function collect()
     {
-        return collect($this->data);
+        return collect($this->collection);
     }
 
     /**
@@ -121,10 +121,10 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
     public function __get($field)
     {
         if ($field === 'collection') {
-            return $this->data;
+            return $this->collection;
         }
 
-        return $this->data[$field] ?? null;
+        return $this->collection[$field] ?? null;
     }
 
     /**
@@ -135,7 +135,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
     public function __call($method, $args)
     {
         $this->markDirty();
-        $newCollection = collect($this->data)->{$method}(...$args);
+        $newCollection = collect($this->collection)->{$method}(...$args);
 
         /**
          * ->has(), ->first(), ->count(), ...
@@ -151,8 +151,8 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
          */
         $newCollection = $newCollection->{($this instanceof JsonArray) ? 'values' : 'all'}();
 
-        if ($newCollection !== $this->data) {
-            $this->data = $newCollection;
+        if ($newCollection !== $this->collection) {
+            $this->collection = $newCollection;
         }
 
         return $this;
@@ -161,7 +161,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
     public function __set($key, $value)
     {
         $this->markDirty();
-        $this->data[$key] = $value;
+        $this->collection[$key] = $value;
 
         return $this;
     }

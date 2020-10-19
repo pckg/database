@@ -24,7 +24,7 @@ class Point extends AbstractField
          * $foo->bar = null;
          */
         if (is_null($value)) {
-            $this->data = null;
+            $this->collection = null;
             return;
         }
 
@@ -32,9 +32,9 @@ class Point extends AbstractField
          * When set as $foo->bar = [];
          */
         if (is_array($value)) {
-            $this->data = array_slice(array_values($value), 0, 2);
-            $this->data[0] = (float)($this->data[0] ?? 0);
-            $this->data[1] = (float)($this->data[1] ?? 0);
+            $this->collection = array_slice(array_values($value), 0, 2);
+            $this->collection[0] = (float)($this->collection[0] ?? 0);
+            $this->collection[1] = (float)($this->collection[1] ?? 0);
             return;
         }
 
@@ -42,9 +42,9 @@ class Point extends AbstractField
          * When set as $foo->bar = '["something"]';
          */
         if (is_string($value)) {
-            $this->data = array_slice(explode(';', $value), 0, 2);
-            $this->data[0] = (float)($this->data[0] ?? 0);
-            $this->data[1] = (float)($this->data[1] ?? 0);
+            $this->collection = array_slice(explode(';', $value), 0, 2);
+            $this->collection[0] = (float)($this->collection[0] ?? 0);
+            $this->collection[1] = (float)($this->collection[1] ?? 0);
             return;
         }
 
@@ -56,7 +56,7 @@ class Point extends AbstractField
      */
     public function getPlaceholder()
     {
-        return $this->data ? "GeomFromText(?)" : '?';
+        return $this->collection ? "GeomFromText(?)" : '?';
     }
 
     /**
@@ -64,7 +64,7 @@ class Point extends AbstractField
      */
     public function getBind()
     {
-        return $this->data ? 'POINT(' . ((float)$this->data[0]) . ' ' . ((float)$this->data[1]) . ')' : [];
+        return $this->collection ? 'POINT(' . ((float)$this->collection[0]) . ' ' . ((float)$this->collection[1]) . ')' : [];
     }
 
     /**
@@ -72,13 +72,13 @@ class Point extends AbstractField
      */
     public function jsonSerialize()
     {
-        if (!$this->data) {
+        if (!$this->collection) {
             return null;
         }
 
         return [
-            'x' => $this->data[0],
-            'y' => $this->data[1],
+            'x' => $this->collection[0],
+            'y' => $this->collection[1],
         ];
     }
 
@@ -87,11 +87,11 @@ class Point extends AbstractField
      */
     public function __toString()
     {
-        if (!$this->data) {
+        if (!$this->collection) {
             return 'NULL';
         }
 
-        return implode(';', $this->data);
+        return implode(';', $this->collection);
     }
 
     /**
@@ -108,14 +108,14 @@ class Point extends AbstractField
             throw new \Exception('Unknown Point property');
         }
 
-        if (!$this->data) {
-            $this->data = [0, 0];
+        if (!$this->collection) {
+            $this->collection = [0, 0];
         }
 
         if ($key === 'x') {
-            $this->data[0] = (float)$val;
+            $this->collection[0] = (float)$val;
         } else if ($key === 'y') {
-            $this->data[1] = (float)$val;
+            $this->collection[1] = (float)$val;
         }
 
         return $this;
@@ -131,9 +131,9 @@ class Point extends AbstractField
     public function __get($key)
     {
         if ($key === 'x') {
-            return $this->data[0];
+            return $this->collection[0];
         } else if ($key === 'y') {
-            return $this->data[1];
+            return $this->collection[1];
         }
 
         throw new \Exception('Unknown Point property');

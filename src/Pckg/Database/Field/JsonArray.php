@@ -38,7 +38,7 @@ class JsonArray extends JsonObject implements \Countable
          * When set as $foo->bar = [];
          */
         if (is_array($value)) {
-            $this->data = array_values($value);
+            $this->collection = array_values($value);
             return;
         }
 
@@ -46,7 +46,7 @@ class JsonArray extends JsonObject implements \Countable
          * When set as $foo->bar = '["something"]';
          */
         if (is_string($value) && substr($value, 0, 1) === '[') {
-            $this->data = array_values(json_decode($value, true) ?? []);
+            $this->collection = array_values(json_decode($value, true) ?? []);
             return;
         }
 
@@ -54,7 +54,7 @@ class JsonArray extends JsonObject implements \Countable
          * When set as $foo->bar = '{"something":"something"}';
          */
         if (is_string($value) && substr($value, 0, 1) === '{') {
-            $this->data = array_values(json_decode($value, true) ?? []);
+            $this->collection = array_values(json_decode($value, true) ?? []);
             return;
         }
 
@@ -62,7 +62,7 @@ class JsonArray extends JsonObject implements \Countable
          * $foo->bar = null;
          */
         if (is_null($value)) {
-            $this->data = [];
+            $this->collection = [];
             return;
         }
 
@@ -74,7 +74,7 @@ class JsonArray extends JsonObject implements \Countable
      */
     public function __toArray()
     {
-        return $this->data ?? [];
+        return $this->collection ?? [];
     }
 
     /**

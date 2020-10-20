@@ -80,7 +80,7 @@ class PDO extends AbstractRepository implements Repository
         return [
             'name',
             'recordClass',
-            //'reconnect',
+            'reconnect',
         ];
     }
 

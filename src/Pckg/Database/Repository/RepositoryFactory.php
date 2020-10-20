@@ -121,7 +121,7 @@ class RepositoryFactory
             static::checkDebugBar($pdo, $name);
 
             return $pdo;
-        })(), $name);
+        }), $name);
     }
 
     /**

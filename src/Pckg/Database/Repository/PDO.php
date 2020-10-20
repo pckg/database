@@ -541,7 +541,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function checkThenExecute(callable $task)
     {
-        if (isConsole()) {
+        if (isConsole() && config('pckg.database.reconnect')) {
             try {
                 $serverInfo = $this->getConnection()->getAttribute(\PDO::ATTR_SERVER_INFO);
                 $this->getReconnectChecker($serverInfo ? $serverInfo : 'Empty server info')();

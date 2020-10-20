@@ -64,7 +64,6 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnect()
     {
-        return;
         $this->connection = null;
         if (!$this->reconnect) {
             throw new Exception('No reconnect method');

@@ -64,12 +64,11 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnect()
     {
+        /**
+         * @T00D00 - check for other means of serialization the callback.
+         */
         $this->connection = null;
-        if (!$this->reconnect) {
-            throw new Exception('No reconnect method');
-        }
-
-        $this->connection = ($this->reconnect)();
+        $this->connection = RepositoryFactory::initPdoDatabase(config('database.' . $this->name, []), $this->name);;
     }
 
     /**
@@ -80,7 +79,7 @@ class PDO extends AbstractRepository implements Repository
         return [
             'name',
             'recordClass',
-            'reconnect',
+            //'reconnect',
         ];
     }
 

@@ -46,6 +46,14 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
         }
 
         /**
+         * When set as $foo->bar = new stdClass();
+         */
+        if (is_object($value)) {
+            $this->collection = (array)$value;
+            return;
+        }
+
+        /**
          * When set as $foo->bar = '["something"]';
          */
         if (is_string($value) && substr($value, 0, 1) === '[') {

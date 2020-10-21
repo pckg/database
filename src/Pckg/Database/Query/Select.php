@@ -32,6 +32,19 @@ class Select extends Query
     protected $countRow = null;
 
     /**
+     * @var null
+     */
+    protected $lock = null;
+
+    /**
+     *
+     */
+    public function lock()
+    {
+        $this->lock = 'LOCK IN SHARE MODE';
+    }
+
+    /**
      * @param bool $set
      *
      * @return $this
@@ -143,6 +156,10 @@ class Select extends Query
 
         if ($this->limit) {
             $parts[] = 'LIMIT ' . $this->limit;
+        }
+        
+        if ($this->lock) {
+            $parts[] = $this->lock;
         }
 
         $sql = implode(' ', $parts);

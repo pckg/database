@@ -304,7 +304,7 @@ class Record extends Obj
     }
 
     /**
-     * @return mixed
+     * @return Entity
      */
     public function prepareEntity()
     {
@@ -347,6 +347,16 @@ class Record extends Obj
         }
 
         return $chains;
+    }
+
+    /**
+     * Makes LOCK IN SHARE MODE
+     */
+    public function lock()
+    {
+        $entity = $this->prepareEntity()->where('id', $this->id);
+        $entity->getQuery()->lock();
+        return $entity->oneOrFail();
     }
 
 }

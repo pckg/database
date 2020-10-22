@@ -64,9 +64,6 @@ class PDO extends AbstractRepository implements Repository
      */
     public function reconnect()
     {
-        /**
-         * @T00D00 - check for other means of serialization the callback.
-         */
         $this->connection = null;
         $this->connection = RepositoryFactory::createPdoConnectionByConfig(config('database.' . $this->name, []));
     }

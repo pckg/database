@@ -49,13 +49,12 @@ class PDO extends AbstractRepository implements Repository
         if (is_only_callable($connection)) {
             $this->reconnect = $connection;
             $connection = $connection();
-        }
-
-        if (!($connection instanceof \PDO)) {
+        } elseif (!($connection instanceof \PDO)) {
             throw new Exception('Connection is not a PDO connection');
         }
 
-        $this->setConnection($connection);
+        $this->connection = $connection;
+
         $this->name = $name;
     }
 
@@ -478,7 +477,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function beginTransaction()
     {
-        return $this->connection->beginTransaction();
+        return $this->getConnection()->beginTransaction();
     }
 
     /**
@@ -487,7 +486,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function rollbackTransaction()
     {
-        return $this->connection->rollBack();
+        return $this->getConnection()->rollBack();
     }
 
     /**
@@ -496,7 +495,7 @@ class PDO extends AbstractRepository implements Repository
      */
     public function commitTransaction()
     {
-        return $this->connection->commit();
+        return $this->getConnection()->commit();
     }
 
     /**

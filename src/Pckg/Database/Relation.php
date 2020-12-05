@@ -97,6 +97,11 @@ abstract class Relation implements RelationInterface
     protected $after;
 
     /**
+     * @var callable|null
+     */
+    protected $filterLeft;
+
+    /**
      * @param $left
      * @param $right
      */
@@ -367,6 +372,19 @@ abstract class Relation implements RelationInterface
                 $entity,
             ]
         );
+    }
+
+    /**
+     * @param callable $filter
+     * @return $this
+     *
+     * Filter left entity (morphs).
+     */
+    public function filterLeft(callable $filter)
+    {
+        $this->filterLeft = $filter;
+
+        return $this;
     }
 
 }

@@ -59,6 +59,9 @@ class RepositoryFactory
                         return new $name;
                     }
                     $config = config('database.default');
+                } else if (is_string($config) && config('database.' . $config)) {
+                    // dynamic -> default
+                    $config = config('database.' . $config);
                 }
                 $repository = RepositoryFactory::getRepositoryByConfig($config, $name);
                 context()->bind($fullName, $repository);

@@ -16,6 +16,7 @@ use Pckg\Database\Record\Transformations;
  * Class Record
  *
  * @package Pckg\Database
+ * @property int|string|null $id
  */
 class Record extends Obj
 {

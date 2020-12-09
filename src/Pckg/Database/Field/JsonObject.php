@@ -7,6 +7,7 @@ use Pckg\Database\Record;
 /**
  * Class JsonArray
  * @package Pckg\Database\Field
+ *
  * @see Collection
  * @method $this push($item)
  * @see Collection::push()

@@ -539,7 +539,7 @@ class Entity
      * @param        $time
      * @param string $type
      *
-     * @return Cached|Entity
+     * @return Cached|Entity|$this
      */
     public function cache($time, $type = 'app', $key = null)
     {

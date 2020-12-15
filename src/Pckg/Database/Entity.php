@@ -266,6 +266,14 @@ class Entity
     }
 
     /**
+     * @return mixed|string
+     */
+    public function getAliased()
+    {
+        return $this->getAlias() ?? $this->getTable();
+    }
+
+    /**
      * @param $alias
      *
      * @return $this

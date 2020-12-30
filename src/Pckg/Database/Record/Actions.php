@@ -142,7 +142,7 @@ trait Actions
      */
     public function isNew()
     {
-        return !$this->saved && !$this->id;
+        return !$this->saved && (!$this->id || $this->isDirty('id'));
     }
 
     /**

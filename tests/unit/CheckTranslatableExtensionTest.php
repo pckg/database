@@ -1,6 +1,5 @@
 <?php
 
-use Pckg\Database\Query;
 use Test\Record\UserGroup;
 
 class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
@@ -74,8 +73,8 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                     'binds' => ['untranslated'],
                 ],
                 [
-                    'sql'   => 'UPDATE `user_groups` SET `id` = ?, `slug` = ? WHERE (`id` = ?)',
-                    'binds' => [4, 4, 'untranslated'],
+                    'sql'   => 'UPDATE `user_groups` SET `id` = ? WHERE (`id` = ?)',
+                    'binds' => [4, 4],
                 ],
                 [
                     'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` AS `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',

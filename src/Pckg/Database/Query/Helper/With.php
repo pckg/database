@@ -66,22 +66,19 @@ trait With
                      *
                      * @T00D00
                      */
-                    if ($prefix == 'join' || $prefix == 'leftJoin') {
+                    if (in_array($prefix, ['join', 'leftJoin', 'innerJoin'])) {
                         $rightEntity = $relation->getRightEntity();
                         $oldEntityQuery = $rightEntity->getQuery();
                         $rightEntity->setQuery($relation->getQuery());
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
-                        if ($prefix == 'leftJoin') {
-                            $relation->leftJoin();
-                        }
                         $rightEntity->setQuery($oldEntityQuery);
                     } else {
                         Reflect::call($args[0], [$relation, $relation->getQuery()]);
                     }
-                } else {
-                    if ($prefix == 'leftJoin') {
-                        $relation->leftJoin();
-                    }
+                }
+
+                if ($prefix == 'leftJoin') {
+                    $relation->leftJoin();
                 }
                 /**
                  * We'll call $entity->with($relation), $entity->join($relation) or $entity->required($relation), and return Relation;
@@ -96,18 +93,6 @@ trait With
                     : $return;
             }
         }
-
-        /*if (method_exists($object, 'get' . ucfirst($method) . 'Subquery')) {
-            $subqueryEntity = $object->{'get' . ucfirst($method) . 'Subquery'}();
-            $groupBy = $subqueryEntity->getQuery()->getGroupBy();
-            if ($field = end(explode('.', $groupBy))) {
-                $subqueryEntity->where($field, $this->id);
-            }
-            $result = $subqueryEntity->one()->data();
-            $field = end($result);
-
-            return $field;
-        }*/
 
         if (!method_exists($object, $method)) {
             throw new Exception('Method ' . $method . ' does not exist in ' . get_class($object));
@@ -153,8 +138,48 @@ trait With
 
         if ($relation instanceof Relation) {
             $this->with[] = $relation;
+        } elseif (is_array($relation)) {
+            $this->processArrayOfRelations($relation);
         } else {
             $this->with[] = $this->{$relation}();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $relations
+     *
+     * @return $this
+     */
+    public function processArrayOfRelations(array $relations)
+    {
+        foreach ($relations as $key => $value) {
+            /**
+             * Call ->withString();
+             */
+            if (is_string($value)) {
+                $this->{'with' . ucfirst($value)}();
+                continue;
+            }
+
+            /**
+             * Call ->withString(callable);
+             */
+            if (is_only_callable($value)) {
+                $this->{'with' . ucfirst($key)}($value);
+                continue;
+            }
+
+            /**
+             * Call ->withString(callable)
+             */
+            if (is_array($value)) {
+                $this->{'with' . ucfirst($key)}(function(Relation $relation) use ($value) {
+                    $relation->processArrayOfRelations($value);
+                });
+                continue;
+            }
         }
 
         return $this;

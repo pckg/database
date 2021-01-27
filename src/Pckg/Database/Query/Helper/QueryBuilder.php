@@ -59,7 +59,7 @@ trait QueryBuilder
     }
 
     /**
-     * @return $this
+     * @return $this|Entity
      */
     public function resetQuery()
     {
@@ -138,7 +138,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function join($table, $on = null, $where = null, $binds = [])
+    public function join($table, $on = null, $where = null, $binds = [], $type = 'LEFT')
     {
         if ($table instanceof Relation) {
             if (is_only_callable($on)) {
@@ -152,8 +152,10 @@ trait QueryBuilder
         } elseif ($table instanceof Entity) {
             $query = $table->getQuery();
 
+            $sql = $query->buildSQL();
+
             $this->getQuery()->join(
-                'LEFT JOIN (' . $query->buildSQL() . ') AS `' . $where . '` ON (' .
+                $type . ' JOIN (' . $sql . ') AS `' . $where . '` ON (' .
                 (strpos($on, '(') ? '' : ($where . '.')) . $on . ')',
                 null,
                 null,
@@ -175,6 +177,18 @@ trait QueryBuilder
     public function whereRaw($raw, $bind = [])
     {
         $this->getQuery()->where(Query\Raw::raw($raw, $bind));
+
+        return $this;
+    }
+
+    /**
+     * @param $raw
+     * @param $bind
+     * @return $this
+     */
+    public function whereHas($raw, $bind = [])
+    {
+        $this->getQuery()->where(Query\Raw::raw('LENGTH(' . $raw . ') > 0'));
 
         return $this;
     }
@@ -207,10 +221,17 @@ trait QueryBuilder
             && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false &&
             strpos($key, ',') === false && strpos($key, '(') === false
         ) {
-            if ($this->alias) {
-                $key = '`' . $this->alias . '`.`' . $key . '`';
-            } else {
-                $key = '`' . $this->table . '`.`' . $key . '`';
+            /**
+             * Check if repository or extension holds key. :)
+             */
+            $aliasedTable = $this->alias ? $this->alias : $this->table;
+            $hasField = $this->getRepository()->getCache()->tableHasField($this->table, $key);
+            if (!$hasField) {
+                $aliasedTable = $this->getRepository()->getCache()->getExtendeeTableForField($this->table, $key);
+            }
+
+            if ($aliasedTable) {
+                $key = '`' . $aliasedTable . '`.`' . $key . '`';
             }
         }
 
@@ -276,7 +297,7 @@ trait QueryBuilder
     /**
      * @param $key
      *
-     * @return $this
+     * @return $this|Entity
      */
     public function orderBy($key)
     {
@@ -396,6 +417,26 @@ trait QueryBuilder
     public function getSelect()
     {
         return $this->getQuery()->getSelect();
+    }
+
+    public function transaction(callable $callable)
+    {
+        return $this->getRepository()->transaction($callable);
+    }
+
+    public function beginTransaction()
+    {
+        return $this->getRepository()->beginTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        return $this->getRepository()->rollbackTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        return $this->getRepository()->commitTransaction();
     }
 
 }

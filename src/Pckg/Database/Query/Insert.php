@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Query;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
 
 /**
@@ -49,14 +50,31 @@ class Insert extends Query
     {
         $arrValues = [];
         foreach ($this->insert AS $key => $val) {
-            if (is_object($val) && $val instanceof Raw) {
-                $arrValues[] = $val->buildSQL();
-                foreach ($val->getBind() as $bind) {
-                    $this->bind($bind, 'values');
+            if (is_object($val)) {
+                /**
+                 * @T00D00 - invalidate raws?
+                 */
+                if ($val instanceof Stringifiable) {
+                    /**
+                     * Collect "?", "?,?" or "POINT(?, ?)
+                     */
+                    $arrValues[] = $val->getPlaceholder();
+
+                    /**
+                     * Bind zero or more values.
+                     */
+                    $this->bind($val->getBind(), 'values');
+                } elseif ($val instanceof Raw) {
+                    $arrValues[] = $val->buildSQL();
+                    foreach ($val->getBind() as $bind) {
+                        $this->bind($bind, 'values');
+                    }
+                } else {
+                    throw new \Exception('Invalid non-stringifiable object');
                 }
             } else {
                 $arrValues[] = '?';
-                $this->bind($val == '' ? null : $val, 'values');
+                $this->bind($val === '' ? null : $val, 'values');
             }
         }
 
@@ -68,7 +86,9 @@ class Insert extends Query
      */
     public function buildBinds()
     {
-        return $this->getBinds(['keys', 'values']);
+        $binds = $this->getBinds(['keys', 'values']);
+        
+        return $binds;
     }
 
     /**

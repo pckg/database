@@ -53,6 +53,17 @@ class Parenthesis
      */
     public function push($child, $binds = [])
     {
+        if (is_string($child) && strpos($child, '(:?)')) {
+            if (is_countable($binds)) {
+                $child = str_replace('(:?)', '(' . str_repeat('?,', count($binds) - 1) . '?)', $child);
+            } elseif (is_object($binds) && $binds instanceof Select) {
+                $explodedSql = explode('(:?)', $child, 2);
+                $subSql = $binds->buildSQL();
+                $child = $explodedSql[0] . '(' . $subSql . ')' . $explodedSql[1];
+                $binds = $binds->buildBinds();
+            }
+        }
+
         $this->children[] = $child;
 
         if (!is_array($binds)) {
@@ -101,13 +112,27 @@ class Parenthesis
         return (string)$this->build();
     }
 
+    public function __clone()
+    {
+        $newChildren = [];
+        foreach ($this->children as $child) {
+            if (!is_object($child)) {
+                $newChildren[] = $child;
+                continue;
+            }
+
+            $newChildren[] = clone $child;
+        }
+        $this->children = $newChildren;
+    }
+
     /**
      * @return string
      */
     public function build()
     {
         return $this->children
-            ? '((' . implode(') ' . $this->glue . ' (', $this->children) . '))'
+            ? '(' . implode(') ' . $this->glue . ' (', $this->children) . ')'
             : '';
     }
 

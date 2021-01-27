@@ -13,6 +13,7 @@ use Pckg\Database\Record as DatabaseRecord;
 use Pckg\Database\Relation\Helper\RelationMethods;
 use Pckg\Database\Repository\PDO;
 use Pckg\Database\Repository\RepositoryFactory;
+use Pckg\Framework\Exception\NotFound;
 
 /**
  * Class Entity
@@ -80,20 +81,27 @@ class Entity
      */
     public function __construct(Repository $repository = null, $alias = null, $boot = true)
     {
-        if (!$repository) {
-            $repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
-        }
-
         $this->alias = $alias;
         $this->repository = $repository;
 
         $this->guessDefaults();
-        
+
         if ($boot) {
             $this->initExtensions();
             $this->preboot();
             $this->boot();
         }
+    }
+
+    /**
+     * @param Repository|null $repository
+     * @param null $alias
+     * @param bool $boot
+     * @return static
+     */
+    public static function create(Repository $repository = null, $alias = null, $boot = true)
+    {
+        return new static($repository, $alias, $boot);
     }
 
     /**
@@ -136,7 +144,7 @@ class Entity
         foreach (get_class_methods($this) as $method) {
             if (substr($method, 0, 4) == 'init' && substr($method, -9) == 'Extension') {
                 Reflect::method($this, $method);
-            } else if (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
+            } elseif (substr($method, 0, 6) == 'inject' && substr($method, -12) == 'Dependencies') {
                 $extension = substr($method, 6, -12);
                 if (method_exists($this, 'check' . $extension . 'Dependencies')) {
                     Reflect::method($this, 'check' . $extension . 'Dependencies');
@@ -183,7 +191,14 @@ class Entity
      */
     public function __clone()
     {
-        $this->query = clone $this->query;
+        if (is_object($this->query)) {
+            $this->query = clone $this->query;
+        }
+        $newWith = [];
+        foreach ($this->with as $with) {
+            $newWith[] = clone $with;
+        }
+        $this->with = $newWith;
     }
 
     /**
@@ -193,7 +208,7 @@ class Entity
      */
     public function extendedKey($key)
     {
-        $cache = $this->repository->getCache();
+        $cache = $this->getRepository()->getCache();
         if (!$cache->tableHasField($this->table, $key)) {
             if ($cache->tableHasField($this->table . '_i18n', $key)) {
                 return '`' . $this->table . '_i18n`.`' . $key . '`';
@@ -248,6 +263,14 @@ class Entity
     public function getAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getAliased()
+    {
+        return $this->getAlias() ?? $this->getTable();
     }
 
     /**
@@ -308,6 +331,10 @@ class Entity
      */
     public function getRepository()
     {
+        if (!$this->repository && RepositoryFactory::canCreateRepository($this->repositoryName)) {
+            $this->repository = RepositoryFactory::getOrCreateRepository($this->repositoryName);
+        }
+
         return $this->repository;
     }
 
@@ -360,9 +387,9 @@ class Entity
      *
      * @return array
      */
-    public function tabelizeRecord(DatabaseRecord $record, $onlyDirty = false)
+    public function tabelizeRecord(DatabaseRecord $record, $onlyDirty = false, $removeProtected = true)
     {
-        $dataArray = $record->__toArray(null, 2, false);
+        $dataArray = $record->__toArray(null, 2, false, $removeProtected);
         $extensionArray = [];
 
         if ($onlyDirty) {
@@ -384,7 +411,7 @@ class Entity
          * Holds all available fields in database table cache.
          */
         $keys = [
-            $this->table => $this->repository->getCache()->getTableFields($this->table),
+            $this->table => $this->getRepository()->getCache()->getTableFields($this->table),
         ];
 
         foreach (get_class_methods($this) as $method) {
@@ -393,9 +420,9 @@ class Entity
              */
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
-                    && $this->repository->getCache()->hasTable($this->table . $suffix)
-                ) {
+                if (substr($this->table,
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)) {
                     $keys[$this->table . $suffix] = $this->{$method}();
                 }
             }
@@ -403,20 +430,17 @@ class Entity
             /**
              * Get extension's foreign key values.
              */
-            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
-                                                                                     $method,
-                                                                                     -11
-                                                                                 ) == 'ForeignKeys'
-            ) {
+            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr($method,
+                                                                                        -11) == 'ForeignKeys') {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
-                if (substr($this->table, strlen($this->table) - strlen($suffix)) != $suffix
-                    && $this->repository->getCache()->hasTable($this->table . $suffix)
-                ) {
+                if (substr($this->table,
+                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)) {
                     // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
-                } elseif (strrpos($this->table, $suffix) == strlen($this->table) - strlen($suffix)
-                          && $this->repository->getCache()->hasTable($this->table)
-                ) {
+                } elseif (strrpos($this->table,
+                                  $suffix) == strlen($this->table) - strlen($suffix) && $this->getRepository()->getCache()
+                                                                                                         ->hasTable($this->table . $suffix)) {
                     // extendee table
                     $extensionArray[$this->table] = $this->{$method}($record);
                 }
@@ -431,8 +455,7 @@ class Entity
                 /**
                  * Add value if field exists in data array and repository has that field.
                  */
-                if ($this->repository->getCache()->tableHasField($table, $field)
-                ) {
+                if ($this->getRepository()->getCache()->tableHasField($table, $field)) {
                     if (isset($extensionArray[$table]) && array_key_exists($field, $extensionArray[$table])) {
                         $values[$table][$field] = $extensionArray[$table][$field];
                     } elseif (array_key_exists($field, $dataArray)) {
@@ -445,10 +468,6 @@ class Entity
         return $values;
     }
 
-    /*
-     * Find out which methods are extensions and init them.
-     * */
-
     /**
      * @return Record
      */
@@ -458,7 +477,7 @@ class Entity
 
         $binds = $this->query->getBinds();
 
-        $record = $this->repository->one($this);
+        $record = $this->getRepository()->one($this);
 
         if (!$record) {
             $data = [];
@@ -523,6 +542,19 @@ class Entity
     }
 
     /**
+     * Wraps entity into proxy instance which takes care of handling cached requests.
+     *
+     * @param        $time
+     * @param string $type
+     *
+     * @return Cached|Entity|$this
+     */
+    public function cache($time, $type = 'app', $key = null)
+    {
+        return new Cached($this, $time, $type, $key);
+    }
+
+    /**
      * @return Record|mixed
      */
     public function oneAnd($callback)
@@ -533,13 +565,15 @@ class Entity
     }
 
     /**
-     * @return Record|mixed
+     * @return Record|mixed|null
      */
     public function one()
     {
         $this->applyExtensions();
 
-        $one = $this->repository->one($this);
+        $repository = $this->getRepository()->aliased('read');
+
+        $one = $repository->one($this);
 
         $this->resetQuery();
 
@@ -555,9 +589,7 @@ class Entity
     {
         $one = $this->one();
 
-        return $one
-            ? $callback($one)
-            : $one;
+        return $one ? $callback($one) : $one;
     }
 
     /**
@@ -577,7 +609,9 @@ class Entity
     {
         $this->applyExtensions();
 
-        $all = $this->repository->all($this);
+        $repository = $this->getRepository()->aliased('read');
+
+        $all = $repository->all($this);
 
         $this->resetQuery();
 
@@ -597,6 +631,31 @@ class Entity
     }
 
     /**
+     * @param callable $callback
+     * @param int $by
+     * @return mixed|\Pckg\Collection
+     */
+    public function iterate(callable $callback, int $by = 100, $max = 1000)
+    {
+        $i = -1;
+        $collection = collect();
+        do {
+            $i++;
+
+            $clone = clone $this;
+
+            $limit = ($i > 0 ? ($i * $by) . ', ' : '') . $by;
+            $records = $clone->limit($limit)->all();
+            if (!$records->count()) {
+                break;
+            }
+            $collection->push($callback($records));
+        } while ($records->count() === $by && (!$max || (($i + 1) * $by < $max)));
+
+        return $collection;
+    }
+
+    /**
      * @return Record|mixed
      * @throws Exception
      */
@@ -604,7 +663,7 @@ class Entity
     {
         if (!$callback) {
             $callback = function() {
-                throw new Exception('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+                throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
             };
         }
 
@@ -638,7 +697,7 @@ class Entity
             return $callback();
         }
 
-        throw new Exception('No records found');
+        throw new Exception('No records ' . substr(static::class, strrpos(static::class, '\\') + 1) . ' found');
     }
 
     /**
@@ -646,10 +705,7 @@ class Entity
      */
     public function total()
     {
-        return $this->count()
-                    ->limit(1)
-                    ->all()
-                    ->total();
+        return $this->count()->limit(1)->all()->total();
     }
 
     /**
@@ -662,6 +718,8 @@ class Entity
         if (!$repository) {
             $repository = $this->getRepository();
         }
+
+        $repository = $repository->aliased('write');
 
         $delete = $this->getQuery()->transformToDelete();
 
@@ -680,6 +738,8 @@ class Entity
         if (!$repository) {
             $repository = $this->getRepository();
         }
+
+        $repository = $repository->aliased('write');
 
         $insert = $this->getQuery()->transformToInsert();
 
@@ -711,7 +771,16 @@ class Entity
             $repository = $this->getRepository();
         }
 
+        $repository = $repository->aliased('write');
+
         $update = $this->getQuery()->transformToUpdate();
+
+        /**
+         * Throw an exception? Or return null?
+         */
+        if (!$this->setData) {
+            throw new Exception('Empty update set');
+        }
 
         $update->setSet($this->setData);
 

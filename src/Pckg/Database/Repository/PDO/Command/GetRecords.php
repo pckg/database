@@ -32,8 +32,8 @@ class GetRecords
     public function __construct(Entity $entity, Repository $repository = null)
     {
         $this->entity = $entity;
-        $this->repository = $repository
-            ?: $this->entity->getRepository();
+        $this->repository = ($repository
+                             ?? $this->entity->getRepository())->aliased('read');
     }
 
     /**
@@ -44,28 +44,47 @@ class GetRecords
     public function executeAll()
     {
         $repository = $this->repository;
+
         $entity = $this->entity;
 
         $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
 
         $measure = str_replace("\n", " ", $prepare->queryString);
-        startMeasure('Executing ' . $measure);
-        if ($execute = $repository->executePrepared($prepare) && $results = $repository->fetchAllPrepared($prepare)) {
-            $collection = new Collection($results);
-            if ($entity->getQuery()->isCounted()) {
-                $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
-                $repository->executePrepared($prepareCount);
-                $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
-                $entity->count(false);
-            }
-            $collection->setEntity($entity)->setSaved()->setOriginalFromData();
+        $hash = sha1($measure . microtime());
 
-            stopMeasure('Executing ' . $measure);
-            return $entity->fillCollectionWithRelations($collection);
-        }
+        startMeasure('Executing ' . $measure);
+        $execute = $repository->executePrepared($prepare);
         stopMeasure('Executing ' . $measure);
 
-        return new Collection();
+        if (!$execute) {
+            return new Collection();
+        }
+
+        $results = $repository->fetchAllPrepared($prepare);
+
+        if (!$results) {
+            return new Collection();
+        }
+
+        $collection = new Collection($results);
+        if ($entity->getQuery()->isCounted()) {
+            startMeasure('Counting ' . $hash);
+            $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
+            $repository->executePrepared($prepareCount);
+            $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
+            $entity->count(false);
+            stopMeasure('Counting ' . $hash);
+        }
+
+        startMeasure('Setting original ' . $hash);
+        $collection->setEntity($entity)->setSaved()->setOriginalFromData();
+        stopMeasure('Setting original ' . $hash);
+
+        startMeasure('Filling relations ' . $hash);
+        $filled = $entity->fillCollectionWithRelations($collection);
+        stopMeasure('Filling relations ' . $hash);
+
+        return $filled;
     }
 
     /**
@@ -75,22 +94,7 @@ class GetRecords
      */
     public function executeOne()
     {
-        $repository = $this->repository;
-        $entity = $this->entity;
-
-        $prepare = $repository->prepareQuery($entity->getQuery()->limit(1), $entity->getRecordClass());
-
-        $measure = str_replace("\n", " ", $prepare->queryString);
-        startMeasure('Executing ' . $measure);
-        if ($execute = $repository->executePrepared($prepare) && $record = $repository->fetchPrepared($prepare)) {
-            $record->setEntity($entity)->setSaved()->setOriginalFromData();
-
-            stopMeasure('Executing ' . $measure);
-            return $entity->fillRecordWithRelations($record);
-        }
-        stopMeasure('Executing ' . $measure);
-
-        return null;
+        return $this->repository->executeOne($this->entity);
     }
 
 }

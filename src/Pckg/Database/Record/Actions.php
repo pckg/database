@@ -28,12 +28,13 @@ trait Actions
      *
      * @return $this|mixed|Record
      */
-    public static function getOrCreate(array $data, Entity $entity = null)
+    public static function getOrCreate(array $check, Entity $entity = null, array $data = [])
     {
-        $record = static::gets($data, $entity);
+        $record = static::gets($check, $entity);
 
         if (!$record) {
-            $record = static::create($data, $entity);
+            $a = array_merge($data, $check);
+            $record = static::create($a, $entity);
         }
 
         return $record;
@@ -43,15 +44,32 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return mixed|Record
+     * @return mixed|Record|$this
      */
-    public static function gets(array $data, Entity $entity = null)
+    public static function gets($data = [], Entity $entity = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();
         }
 
-        return $entity->whereArr($data)->one();
+        if (is_scalar($data)) {
+            return $entity->where('id', $data)->one();
+        } else {
+            return $entity->whereArr($data)->one();
+        }
+    }
+
+    /**
+     * @param array       $data
+     * @param Entity|null $entity
+     *
+     * @return $this|Record
+     */
+    public static function createNew($data = [], Entity $entity = null)
+    {
+        $record = new static($data, $entity);
+
+        return $record;
     }
 
     /**
@@ -62,7 +80,7 @@ trait Actions
      */
     public static function create($data = [], Entity $entity = null)
     {
-        $record = new static($data, $entity);
+        $record = static::createNew($data, $entity);
 
         $record->save();
 
@@ -71,9 +89,22 @@ trait Actions
 
     /**
      * @param array       $data
+     * @param array       $update
+     * @param Entity|null $entity
+     */
+    public static function getAndUpdateOrCreate(array $data, array $update, Entity $entity = null)
+    {
+        $record = static::getOrNew($data);
+        $record->setAndSave($update);
+
+        return $record;
+    }
+
+    /**
+     * @param array       $data
      * @param Entity|null $entity
      *
-     * @return mixed|Record
+     * @return self
      */
     public static function getOrNew(array $data, Entity $entity = null)
     {
@@ -91,17 +122,19 @@ trait Actions
      * @param Entity|null   $entity
      * @param callable|null $callable
      *
-     * @return mixed|Record
+     * @return mixed|Record|$this
      */
-    public static function getOrFail(array $data, Entity $entity = null, callable $callable = null)
+    public static function getOrFail($data = [], Entity $entity = null, callable $callable = null)
     {
         if (!$entity) {
             $entity = (new static)->getEntity();
         }
 
-        $record = $entity->whereArr($data)->oneOrFail($callable);
-
-        return $record;
+        if (is_scalar($data)) {
+            return $entity->where('id', $data)->oneOrFail($callable);
+        } else {
+            return $entity->whereArr($data)->oneOrFail($callable);
+        }
     }
 
     /**
@@ -109,7 +142,7 @@ trait Actions
      */
     public function isNew()
     {
-        return !$this->saved && !$this->id;
+        return !$this->saved && (!$this->id || $this->isDirty('id'));
     }
 
     /**
@@ -197,6 +230,8 @@ trait Actions
 
         $this->trigger(['updated', 'saved']);
 
+        $this->setOriginalFromData();
+
         return $update;
     }
 
@@ -217,13 +252,15 @@ trait Actions
 
         $this->trigger(['inserted', 'saved']);
 
+        $this->setOriginalFromData();
+
         return $insert;
     }
 
     /**
      * @param array $overwrite
      *
-     * @return mixed
+     * @return mixed|Record|$this
      */
     public function saveAs($overwrite = [])
     {
@@ -231,7 +268,7 @@ trait Actions
         $data['id'] = null;
         $data = array_merge($data, $overwrite);
 
-        return (new static($data))->save();
+        return $this->create($data, $this->getEntity());
     }
 
     /**
@@ -291,23 +328,41 @@ trait Actions
     }
 
     /**
+     * What about relations? Should we refetch them also?
+     *
      * @return $this
      */
-    public function refetch()
+    public function refetch($fields = [])
     {
+        /**
+         * @var $entity Entity
+         */
         $entity = $this->getEntity();
-        if (!$this->id) {
+        if ($this->id) {
             $entity->where('id', $this->id);
         } else {
             foreach ($this->data as $key => $val) {
                 $entity->where($key, $val);
             }
         }
-        $record = $entity->one();
 
-        if ($record) {
-            $this->data = $record->data();
+        /**
+         * Refetch only selected fields.
+         */
+        if ($fields) {
+            $entity->select($fields);
         }
+
+        /**
+         * Fail if record cannot be refetched.
+         */
+        $record = $entity->oneOrFail();
+
+        /**
+         * Fetch and merge data.
+         */
+        $data = $record->data();
+        $this->data = $fields ? array_merge($this->data, $data) : $data;
 
         return $this;
     }

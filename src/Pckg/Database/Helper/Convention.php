@@ -103,15 +103,14 @@ class Convention
     {
         $text = str_split($text, 1);
 
+        $splits = ['-', '_', ' ', '\\'];
         foreach ($text AS $index => $char) {
-            if (($char == "_" && isset($text[$index + 1]))
-                || ($char == "\\" && isset($text[$index + 1]))
-            ) {
+            if (in_array($char, $splits) && isset($text[$index + 1])) {
                 $text[$index + 1] = mb_strtoupper($text[$index + 1]);
             }
         }
 
-        return str_replace("_", "", implode($text));
+        return str_replace($splits, "", implode($text));
     }
 
     /**
@@ -119,7 +118,7 @@ class Convention
      *
      * @return string
      */
-    public static function fromCamel($text)
+    public static function fromCamel($text, $separator = '_')
     {
         $return = null;
         $text = str_split($text, 1);
@@ -129,7 +128,7 @@ class Convention
                     $char
                 ) && $index != 0 && (isset($text[$index - 1]) && $text[$index - 1] != "/" && $text[$index - 1] != "\\")
             ) {
-                $return .= "_";
+                $return .= $separator;
             }
 
             $return .= $char;

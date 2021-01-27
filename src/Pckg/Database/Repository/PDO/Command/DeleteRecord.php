@@ -48,7 +48,7 @@ class DeleteRecord
     {
         $this->record = $record;
         $this->entity = $entity;
-        $this->repository = $repository;
+        $this->repository = $repository->aliased('write');
     }
 
     /**
@@ -80,13 +80,13 @@ class DeleteRecord
      */
     public function execute()
     {
-        $data = $this->entity->tabelizeRecord($this->record);
+        $data = $this->entity->tabelizeRecord($this->record, false, false);
 
         /**
          * We need to get entity table extensions.
          * Lets hardcode them for now.
          */
-        $extensions = ['i18n', 'p17n', ''];
+        $extensions = ['i18n', 'p17n', 'l11e', ''];
         $table = $this->table ?? $this->entity->getTable();
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 

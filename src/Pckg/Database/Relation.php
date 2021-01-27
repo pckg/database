@@ -24,6 +24,11 @@ abstract class Relation implements RelationInterface
     /**
      *
      */
+    const LEFT_OUTER_JOIN = 'LEFT OUTER JOIN';
+
+    /**
+     *
+     */
     const RIGHT_JOIN = 'RIGHT JOIN';
 
     /**
@@ -92,6 +97,11 @@ abstract class Relation implements RelationInterface
     protected $after;
 
     /**
+     * @var callable|null
+     */
+    protected $filterLeft;
+
+    /**
      * @param $left
      * @param $right
      */
@@ -100,6 +110,16 @@ abstract class Relation implements RelationInterface
         $this->left = $left;
         $this->right = $right;
         $this->fill = $this->getCalee();
+    }
+
+    public function __clone()
+    {
+        /**
+         * Clone only right entity.
+         */
+        if (is_object($this->right)) {
+            $this->right = clone $this->right;
+        }
     }
 
     /**
@@ -181,6 +201,16 @@ abstract class Relation implements RelationInterface
     public function leftJoin()
     {
         $this->join = static::LEFT_JOIN;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function leftOuterJoin()
+    {
+        $this->join = static::LEFT_OUTER_JOIN;
 
         return $this;
     }
@@ -342,6 +372,19 @@ abstract class Relation implements RelationInterface
                 $entity,
             ]
         );
+    }
+
+    /**
+     * @param callable $filter
+     * @return $this
+     *
+     * Filter left entity (morphs).
+     */
+    public function filterLeft(callable $filter)
+    {
+        $this->filterLeft = $filter;
+
+        return $this;
     }
 
 }

@@ -107,7 +107,7 @@ class Fetcher
                             : null;
                         $record->{$field} = date('Y-m-d H:i:s', strtotime(-round(rand(0, 100000)) . ' seconds'));
                     } else {
-                        dd($meta);
+                        ddd($meta);
                     }
                 } elseif ($meta['name'] == 'language_id') {
                     $record->{$field} = 'en';
@@ -124,7 +124,7 @@ class Fetcher
                         $record->{$field} = $generator->{$field};
                         continue;
                     } catch (Throwable $e) {
-                        dd($meta);
+                        ddd($meta);
                     }
                 }
             }

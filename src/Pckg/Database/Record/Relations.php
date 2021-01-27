@@ -1,5 +1,8 @@
 <?php namespace Pckg\Database\Record;
 
+use Pckg\Collection;
+use Pckg\Database\Record;
+
 /**
  * Class Relations
  *
@@ -45,15 +48,13 @@ trait Relations
     /**
      * @param $name
      *
-     * @return null
+     * @return null|Collection|Record
      */
     public function getRelationIfSet($name)
     {
-        if (!isset($this->relations[$name])) {
-            return null;
-        }
-
-        return $this->relations[$name];
+        return array_key_exists($name, $this->relations)
+            ? $this->relations[$name]
+            : null;
     }
 
     /**
@@ -65,6 +66,19 @@ trait Relations
     public function setRelation($key, $value)
     {
         $this->relations[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     */
+    public function unsetRelation($key)
+    {
+        unset($this->relations[$key]);
 
         return $this;
     }

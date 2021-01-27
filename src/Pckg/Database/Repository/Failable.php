@@ -35,7 +35,7 @@ trait Failable
             return $results;
         }
 
-        throw new Exception('No records found');
+        throw new Exception('No records ' . substr(static::class, strrpos(static::class, '\\') + 1) . ' found');
     }
 
 }

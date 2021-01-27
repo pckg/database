@@ -32,6 +32,19 @@ class Select extends Query
     protected $countRow = null;
 
     /**
+     * @var null
+     */
+    protected $lock = null;
+
+    /**
+     *
+     */
+    public function lock()
+    {
+        $this->lock = 'LOCK IN SHARE MODE';
+    }
+
+    /**
      * @param bool $set
      *
      * @return $this
@@ -144,13 +157,27 @@ class Select extends Query
         if ($this->limit) {
             $parts[] = 'LIMIT ' . $this->limit;
         }
+        
+        if ($this->lock) {
+            $parts[] = $this->lock;
+        }
 
         $sql = implode(' ', $parts);
 
         if ($this->diebug) {
-            dd($sql, $this->bind);
+            $d = $this->diebug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                ddd($sql, $this->bind);
+            }
         } elseif ($this->debug) {
-            d($sql, $this->bind);
+            $d = $this->debug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                d($sql, $this->bind);
+            }
         }
 
         return $sql;
@@ -173,10 +200,10 @@ class Select extends Query
                     $this->bind($bind, 'select');
                 }
             }
-            if (is_numeric($key)) {
-                $keys[] = $select;
-            } else {
+            if ($key && is_string($key)) {
                 $keys[] = $select . ' AS `' . $key . '`';
+            } else {
+                $keys[] = $select;
             }
         }
 
@@ -278,6 +305,10 @@ class Select extends Query
         foreach ($this->join as $join) {
             $delete->join($join);
         }
+        $order = $this->getOrderBy();
+        if ($order) {
+            $delete->orderBy($order);
+        }
 
         return $delete;
     }
@@ -358,9 +389,12 @@ class Select extends Query
             $fields = [$fields];
         }
 
-        foreach ($fields as $field) {
-            array_unshift($this->select, $field);
+        $collection = collect($this->select);
+        foreach ($fields as $key => $field) {
+            $collection->prepend($field, is_string($key) ? $key : null);
         }
+
+        $this->select = $collection->all();
 
         return $this;
     }

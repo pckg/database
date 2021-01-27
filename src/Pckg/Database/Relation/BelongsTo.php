@@ -61,7 +61,9 @@ class BelongsTo extends Relation
         $rightCollection = $this->getRightCollection(
             $this->getRightEntity(),
             $this->primaryKey,
-            $collection->map($this->foreignKey)->unique()
+            $this->filterLeft
+                ? $collection->filter($this->filterLeft)->map($this->foreignKey)->removeEmpty()->unique()
+                : $collection->map($this->foreignKey)->removeEmpty()->unique()
         );
 
         /**

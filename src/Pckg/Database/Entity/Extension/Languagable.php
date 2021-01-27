@@ -1,9 +1,11 @@
 <?php namespace Pckg\Database\Entity\Extension;
 
-use Locale;
+use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
-use Pckg\Locale\Record\Language;
+use Pckg\Database\Relation\HasMany;
+use Pckg\Locale\Lang as LangAdapter;
+use Pckg\Locale\LangInterface;
 
 /**
  * Class Languagable
@@ -29,16 +31,30 @@ trait Languagable
     protected $languagableLanguageField = 'language_id';
 
     /**
-     * @var Language
+     * @var LangInterface
      */
     protected $languagableLanguage;
 
     /**
-     * @param Locale $locale
+     *
      */
-    public function injectLanguagableDependencies(Language $language)
+    public function checkLanguagableDependencies()
     {
-        $this->languagableLanguage = $language;
+        /**
+         * @T00D00 - check if we're able to resolve AuthInterface implementation.
+         *         If not, use default.
+         */
+        if (!Reflect::canResolve(LangInterface::class)) {
+            context()->bind(LangInterface::class, new LangAdapter());
+        }
+    }
+
+    /**
+     * @param LangInterface $lang
+     */
+    public function injectLanguagableDependencies(LangInterface $lang)
+    {
+        $this->languagableLanguage = $lang;
     }
 
     /**
@@ -61,7 +77,7 @@ trait Languagable
      */
     public function getLanguagableFields()
     {
-        return $this->languagableFields;
+        return $this->getRepository()->getCache()->getTableFields($this->table . $this->languagableTableSuffix);
     }
 
     /**
@@ -72,8 +88,8 @@ trait Languagable
     public function getLanguagableForeignKeys(Record $record)
     {
         return [
-            $this->languagableLanguageField => $this->language->slug,
-            $this->primary                  => $record->{$this->primary},
+            $this->primaryKey               => $record->{$this->primaryKey},
+            $this->languagableLanguageField => $this->languagableLanguage->langId(),
         ];
     }
 
@@ -95,6 +111,35 @@ trait Languagable
                          ->fill('_languagables');
 
         return $relation;
+    }
+
+    public function forCurrentLanguage()
+    {
+        $languagableTable = $this->getTable() . $this->languagableTableSuffix;
+        $languagableAlias = $this->getAlias()
+            ? $this->getAlias() . $this->languagableTableSuffix
+            : $languagableTable;
+
+        $languagebleLanguageField = $this->languagableLanguageField;
+        $this->joinLanguagables(function(HasMany $languagables) use ($languagableAlias, $languagebleLanguageField) {
+            $languagables->where($languagableAlias . '.' . $languagebleLanguageField,
+                                 substr(localeManager()->getCurrent(), 0, 2));
+        });
+    }
+
+    /**
+     * @return $this
+     */
+    public function forCurrentLanguageWhenMultilingual()
+    {
+        /**
+         * Check for multilanguage platforms.
+         */
+        if (config('pckg.database.extension.languagable.active', false) && localeManager()->isMultilingual()) {
+            $this->forCurrentLanguage();
+        }
+
+        return $this;
     }
 
 }

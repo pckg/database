@@ -1,6 +1,7 @@
 <?php namespace Pckg\Database\Record;
 
-use Pckg\Database\Object;
+use Pckg\Database\Field\Stringifiable;
+use Pckg\Database\Obj;
 use Throwable;
 
 /**
@@ -20,6 +21,11 @@ trait Transformations
      * @var array
      */
     protected $toJson = [];
+
+    /**
+     * @var array
+     */
+    protected $protect = [];
 
     /**
      * @param array $items
@@ -50,10 +56,10 @@ trait Transformations
     {
         $array = $this->toArray($values, $depth, $withToArray);
         foreach ($array as $key => $val) {
-            $array[$key] = new Object($val);
+            $array[$key] = new Obj($val);
         }
 
-        return new Object($array);
+        return new Obj($array);
     }
 
     /**
@@ -67,7 +73,7 @@ trait Transformations
     /**
      * @return array
      */
-    public function __toArray($values = null, $depth = 6, $withToArray = true)
+    public function __toArray($values = null, $depth = 6, $withToArray = true, $removeProtected = true)
     {
         $return = [];
 
@@ -76,7 +82,7 @@ trait Transformations
         }
 
         if (is_null($values)) {
-            $values = $this->data;
+            $values = $this->data; // should we call getters here?
             if ($withToArray && $this->toArray) {
                 foreach ($this->getToArrayValues() as $key => $value) {
                     $values[$key] = $value;
@@ -86,10 +92,23 @@ trait Transformations
                 }
             }
         }
-
+        
         foreach ($values as $key => $value) {
+            /**
+             * Skip protected keys.
+             */
+            if ($removeProtected && in_array($key, $this->protect)) {
+                continue;
+            }
+
             if (is_object($value)) {
-                if (method_exists($value, '__toArray')) {
+                /**
+                 * @T00D00 - Should we force  Strigifiable interface to be used?
+                 * What are the use cases for other options?
+                 */
+                if ($value instanceof Stringifiable) { // will be processed later because it's a literal
+                    $return[$key] = $value;
+                } else if (method_exists($value, '__toArray')) {
                     $return[$key] = $value->__toArray(null, $depth - 1, $withToArray);
                 } else {
                     $return[$key] = (string)$value;
@@ -124,6 +143,14 @@ trait Transformations
     function jsonSerialize()
     {
         return $this->__toArray();
+    }
+
+    /**
+     *
+     */
+    public function __toString()
+    {
+        return json_encode($this->jsonSerialize());
     }
 
     /**

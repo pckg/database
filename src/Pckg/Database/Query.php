@@ -85,12 +85,12 @@ abstract class Query
     protected $bind = [];
 
     /**
-     * @var bool
+     * @var bool|callable
      */
     protected $debug = false;
 
     /**
-     * @var bool
+     * @var bool|callable
      */
     protected $diebug = false;
 
@@ -333,6 +333,9 @@ abstract class Query
                 return $this;
             } elseif ($key instanceof Parenthesis) {
                 $sql = $key->build();
+                if ($sql) {
+                    $sql = '(' . $sql . ')';
+                }
                 $this->{$part}->push($sql);
 
                 if ($binds = $key->getBinds()) {
@@ -354,6 +357,10 @@ abstract class Query
             } else if (count($value) == 1) {
                 $value = end($value);
             }
+        }
+
+        if (in_array($operator, ['IS NULL', 'IS NOT NULL'])) {
+            $value = null;
         }
 
         $hasValue = $value || (is_scalar($value) && strlen($value)) || (is_array($value) && count($value));
@@ -605,6 +612,9 @@ abstract class Query
         if (!$on) {
             $this->join[] = $table;
         } else {
+            /**
+             * This is probably incorrect implementation.
+             */
             $this->join[] = $table . (strpos($table, ' ON ') ? ' AND ' : ' ON ') . $on;
         }
 
@@ -650,10 +660,6 @@ abstract class Query
     {
         $primaryKeys = $entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 
-        if (!$primaryKeys) {
-            throw new Exception('Primary key must be set on deletion!');
-        }
-
         if (strpos($table, '_i18n')) {
             $primaryKeys = ['id', 'language_id'];
         } elseif (strpos($table, '_p17n')) {
@@ -675,11 +681,16 @@ abstract class Query
             return (string)$this->buildSQL();
         } catch (Throwable $e) {
             if (dev()) {
-                dd('query', $e->getMessage(), $e->getFile(), $e->getLine());
+                ddd('query', $e->getMessage(), $e->getFile(), $e->getLine());
             }
 
             throw $e;
         }
+    }
+
+    public function getCacheKey()
+    {
+        return sha1($this->buildSQL() . json_encode($this->getBinds()));
     }
 
 }

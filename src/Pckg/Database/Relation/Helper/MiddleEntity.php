@@ -133,9 +133,13 @@ trait MiddleEntity
      *
      * @return $this
      */
-    public function over($middle)
+    public function over($middle, callable $callable = null)
     {
         $this->middle = $middle;
+
+        if ($callable) {
+            $callable($this, $this->getMiddleEntity());
+        }
 
         return $this;
     }

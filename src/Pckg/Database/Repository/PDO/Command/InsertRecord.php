@@ -2,6 +2,7 @@
 
 use Exception;
 use Pckg\Database\Entity;
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query\Insert;
 use Pckg\Database\Query\Raw;
 use Pckg\Database\Record;
@@ -44,7 +45,7 @@ class InsertRecord
     {
         $this->record = $record;
         $this->entity = $entity;
-        $this->repository = $repository;
+        $this->repository = $repository->aliased('write');
     }
 
     /**
@@ -65,8 +66,7 @@ class InsertRecord
      */
     public function execute()
     {
-        $data = $this->entity->tabelizeRecord($this->record);
-
+        $data = $this->entity->tabelizeRecord($this->record, false, false);
         foreach ($data as $table => $insert) {
             if ($this->tables && !in_array($table, $this->tables)) {
                 continue;
@@ -99,18 +99,6 @@ class InsertRecord
      */
     public function insert($table, array $data = [])
     {
-        /**
-         * Flatten data for possible multivalued values like geometric POINT or so.
-         */
-        $cache = $this->repository->getCache();
-        foreach ($data as $key => &$val) {
-            if (is_array($val)) {
-                if ($cache->tableHasField($table, $key) && $cache->getField($key, $table)['type'] == 'point') {
-                    $val = new Raw('GeomFromText(\'POINT(' . (float)$val[0] . ' ' . (float)$val[1] . ')\')');
-                }
-            }
-        }
-
         /**
          * We will insert $data into $table ...
          */

@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Query;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
 
 /**
@@ -27,7 +28,7 @@ class Update extends Query
                ($this->limit ? ' LIMIT ' . $this->limit : '');
 
         if ($this->diebug) {
-            dd($sql, $this->bind);
+            ddd($sql, $this->bind);
         } elseif ($this->debug) {
             d($sql, $this->bind);
         }
@@ -45,21 +46,63 @@ class Update extends Query
         foreach ($this->set AS $key => $val) {
             $keyPart = "`" . $key . "` = ";
 
+            /**
+             * Booleans are transformed to 1 OR NULL.
+             */
             if (is_bool($val)) {
-                $val = $val ? 1 : null;
-            } else if (empty($val)) {
-                $val = null;
+                $arrValues[] = $keyPart . ($val ? 1 : 'NULL');
+                continue;
             }
 
-            if (is_object($val) && $val instanceof Raw) {
-                $arrValues[] = $keyPart . $val->buildSQL();
-                foreach ($val->getBind() as $bind) {
-                    $this->bind($bind, 'set');
-                }
-            } else {
+            /**
+             * Empty values are transformed to NULL.
+             */
+            if (empty($val)) {
+                $arrValues[] = $keyPart . 'NULL';
+                continue;
+            }
+
+            /**
+             * Scalar values are binded.
+             */
+            if (is_scalar($val)) {
                 $arrValues[] = $keyPart . '?';
                 $this->bind($val, 'set');
+                continue;
             }
+
+            /**
+             * Objects are validated for stringification.
+             */
+            if (is_object($val)) {
+                /**
+                 * @T00D00 - invalidate raws?
+                 */
+                if ($val instanceof Stringifiable) {
+                    /**
+                     * Collect "?", "?,?" or "POINT(?, ?)
+                     */
+                    $arrValues[] = $keyPart . $val->getPlaceholder();
+
+                    /**
+                     * Bind zero or more values.
+                     */
+                    $this->bind($val->getBind(), 'set');
+                    continue;
+                }
+
+                if ($val instanceof Raw) {
+                    $arrValues[] = $keyPart . $val->buildSQL();
+                    foreach ($val->getBind() as $bind) {
+                        $this->bind($bind, 'set');
+                    }
+                    continue;
+                }
+
+                throw new \Exception('Cannot use object as a SQL value in key ' . $key);
+            }
+
+            throw new \Exception('Not scalar value in key ' . $key);
         }
 
         return implode(", ", $arrValues);

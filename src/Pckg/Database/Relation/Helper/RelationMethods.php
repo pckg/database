@@ -5,6 +5,7 @@ use Pckg\Database\Relation\BelongsTo;
 use Pckg\Database\Relation\HasAndBelongsTo;
 use Pckg\Database\Relation\HasChildren;
 use Pckg\Database\Relation\HasMany;
+use Pckg\Database\Relation\HasManyIn;
 use Pckg\Database\Relation\HasOne;
 use Pckg\Database\Relation\HasParent;
 use Pckg\Database\Relation\MorphedBy;
@@ -26,6 +27,16 @@ trait RelationMethods
     public function hasMany($hasMany, callable $callback = null, $alias = null)
     {
         return $this->returnRelation(HasMany::class, $hasMany, $callback, $alias);
+    }
+
+    /**
+     * @param $hasMany
+     *
+     * @return HasMany
+     */
+    public function hasManyIn($hasMany, callable $callback = null, $alias = null)
+    {
+        return $this->returnRelation(HasManyIn::class, $hasMany, $callback, $alias);
     }
 
     /**

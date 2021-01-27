@@ -8,7 +8,7 @@ use JsonSerializable;
  *
  * @package Pckg\Database
  */
-class Object implements ArrayAccess, JsonSerializable
+class Obj implements ArrayAccess, JsonSerializable
 {
 
     /**
@@ -22,6 +22,39 @@ class Object implements ArrayAccess, JsonSerializable
      * @T00D00 - rename this to $_original
      */
     protected $original = [];
+
+    /**
+     * @var array
+     */
+    protected $dirty = [];
+
+    public function markDirty($key) {
+        $this->dirty[] = $key;
+    }
+
+    public function getToArrayValues()
+    {
+        return [];
+    }
+
+    public function getToJsonValues()
+    {
+        return [];
+    }
+
+    /**
+     * @param $key
+     *
+     * @return bool
+     */
+    public function hasKey($key)
+    {
+        if (array_key_exists($key, $this->data)) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * @param array $values
@@ -188,7 +221,24 @@ class Object implements ArrayAccess, JsonSerializable
      */
     public function isDirty($key = null)
     {
-        return $this->data($key) != $this->original($key);
+        return in_array($key, $this->dirty) || $this->data($key) !== $this->original($key);
+    }
+
+    public function getDirtyData()
+    {
+        $data = $this->data();
+        $original = $this->original();
+        $diff = [];
+
+        foreach ($data as $key => $val) {
+            if (in_array($key, $this->dirty) || !isset($original[$key]) || $original[$key] !== $val) {
+                continue;
+            }
+
+            $diff[$key] = $val;
+        }
+
+        return $diff;
     }
 
     /**
@@ -237,9 +287,9 @@ class Object implements ArrayAccess, JsonSerializable
             }
 
             return $this;
-        } else {
-            return $this->__set($key, $val);
         }
+
+        return $this->__set($key, $val);
     }
 
     /**
@@ -257,7 +307,9 @@ class Object implements ArrayAccess, JsonSerializable
      */
     function jsonSerialize()
     {
-        return $this->__toArray();
+        $array = $this->__toArray();
+
+        return $array ? $array : new \stdClass();
     }
 
     /**
@@ -266,16 +318,6 @@ class Object implements ArrayAccess, JsonSerializable
     public function __toArray()
     {
         return $this->data;
-    }
-
-    /**
-     * @return $this
-     */
-    public function dd()
-    {
-        dd($this->data());
-
-        return $this;
     }
 
 }

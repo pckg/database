@@ -1,5 +1,6 @@
 <?php namespace Pckg\Database\Record;
 
+use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Helper\Convention;
 use Pckg\Database\Relation\Helper\CallWithRelation;
 
@@ -12,6 +13,50 @@ trait Magic
 {
 
     use CallWithRelation;
+
+    /**
+     * @var array
+     */
+    protected $encapsulate = [];
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function getEncapsulated($key, $value)
+    {
+        $encapsulator = $this->encapsulate[$key] ?? null;
+        if (!$encapsulator) {
+            return $value;
+        }
+
+        if ($value instanceof Stringifiable) {
+            return $value;
+        }
+
+        return (new $encapsulator($value, $key, $this));
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public function setEncapsulated($key, $value)
+    {
+        $encapsulator = $this->encapsulate[$key] ?? null;
+        if (!$encapsulator) {
+            return $value;
+        }
+
+        $this->markDirty($key);
+        if ($value instanceof Stringifiable) {
+            return $value;
+        }
+
+        return (new $encapsulator($value, $key, $this));
+    }
 
     /**
      * @param $key
@@ -70,7 +115,7 @@ trait Magic
          * Return value, even if it's null or not set.
          */
         if ($this->keyExists($key)) {
-            return $this->getValue($key);
+            return $this->getEncapsulated($key, $this->getValue($key));
         }
 
         /**
@@ -86,7 +131,7 @@ trait Magic
          */
         $entity = $this->getEntity();
         if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            return $this->getValue($key);
+            return $this->getEncapsulated($key, $this->getValue($key));
         }
 
         /**
@@ -94,15 +139,6 @@ trait Magic
          *
          * @T00D00 - optimize this
          */
-        $caller = db(0, 2, false)[0];
-        message(
-            static::class . '.' . $key . ' in ' .
-            ($caller['class'] ?? null) .
-            ($caller['type'] ?? null) .
-            ($caller['function'] ?? null) . ':' .
-            ($caller['line'] ?? null),
-            'optimize'
-        );
         if (method_exists($entity, $key)) {
             //$relation = $this->callWithRelation($key, [], $entity);
             $relation = $entity->{$key}();
@@ -139,7 +175,7 @@ trait Magic
             return $field;
         }
 
-        return null;
+        return $this->getEncapsulated($key, null);
     }
 
     /**
@@ -150,6 +186,18 @@ trait Magic
      */
     public function __set($key, $val)
     {
+        /**
+         * Set value via setter
+         */
+        if (method_exists($this, 'set' . Convention::toPascal($key) . 'Attribute')) {
+            return $this->{'set' . Convention::toPascal($key) . 'Attribute'}($val);
+        }
+
+        /**
+         * Encapsulate into object.
+         */
+        $val = $this->setEncapsulated($key, $val);
+
         if (!$this->ready) {
             $this->data[$key] = $val;
         } else if (array_key_exists($key, $this->data)) {

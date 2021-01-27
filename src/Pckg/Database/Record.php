@@ -16,8 +16,9 @@ use Pckg\Database\Record\Transformations;
  * Class Record
  *
  * @package Pckg\Database
+ * @property int|string|null $id
  */
-class Record extends Object
+class Record extends Obj
 {
 
     use Magic, Actions, Relations, Transformations, Events;
@@ -40,20 +41,24 @@ class Record extends Object
     protected $ready = false;
 
     /**
-     * @var array
-     * @T00D00
-     */
-    protected $bind = [
-        'dt_added' => Carbon::class,
-    ];
-
-    /**
      * @param array $values
      */
     public function __construct($data = [], Entity $entity = null)
     {
-        if (!$this->data) {
-            $this->data = is_array($data) && $data ? $data : [];
+        $defaults = $this->data ?? [];
+        $this->data = $data && is_array($data) ? $data : [];
+        if ($defaults) {
+            $this->data = array_merge($defaults, $this->data);
+        }
+
+        /**
+         * Encapsulate into object.
+         */
+        foreach ($this->encapsulate as $key => $encapsulator) {
+            if (!array_key_exists($key, $this->data)) {
+                continue;
+            }
+            $this->data[$key] = new $encapsulator($this->data[$key], $key, $this);
         }
 
         if ($entity) {
@@ -76,6 +81,19 @@ class Record extends Object
         }
 
         return $this->cache[$key];
+    }
+
+    /**
+     * @param $dataKey
+     * @return mixed
+     */
+    public function cacheDecodedField($dataKey)
+    {
+        $decodedKey = 'decoded' . ucfirst($dataKey);
+
+        return $this->cache($decodedKey, function() use ($dataKey) {
+            return json_decode($this->data($dataKey), true);
+        });
     }
 
     /**
@@ -204,7 +222,7 @@ class Record extends Object
                     continue;
                 }
                 $values[$key] = $this->getRelationIfSet($getter);
-            } elseif (method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
+            } elseif (!$type && method_exists($this, 'get' . Convention::toPascal($getter) . 'Attribute')) {
                 /**
                  * Getter exists in record definition.
                  */
@@ -287,7 +305,7 @@ class Record extends Object
     }
 
     /**
-     * @return mixed
+     * @return Entity
      */
     public function prepareEntity()
     {
@@ -330,6 +348,16 @@ class Record extends Object
         }
 
         return $chains;
+    }
+
+    /**
+     * Makes LOCK IN SHARE MODE
+     */
+    public function lock()
+    {
+        $entity = $this->prepareEntity()->where('id', $this->id);
+        $entity->getQuery()->lock();
+        return $entity->oneOrFail();
     }
 
 }

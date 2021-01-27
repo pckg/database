@@ -15,6 +15,9 @@
     "pckg/cache": "dev-master",
     "pckg/locale": "dev-master"
   },
+  "require-dev": {
+    "pckg-app/frontend-dev": "dev-master"
+  },
   "suggest": {
     "maximebf/debugbar": "Push queries and events to debugbar",
     "fzaninotto/faker": "Use faker to mock data*"
@@ -25,5 +28,18 @@
       "Test": "tests\\src\\"
     }
   },
-  "minimum-stability": "dev"
+  "scripts": {
+    "test": [
+      "vendor/bin/phpunit --help --stop-on-defect",
+      "vendor/bin/phpcloc cloc src/",
+      "vendor/bin/phpstan analyse src/ --level=1 || true",
+      "vendor/bin/phpcs -p src/ || true",
+      "vendor/bin/codecept run"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run all tests and quality checks"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

@@ -112,7 +112,7 @@ abstract class Query
      */
     public static function raw($sql, $binds = [], $part = 'main')
     {
-        $query = new static($sql);
+        $query = new Raw($sql);
 
         if (!is_array($binds)) {
             $binds = [$binds];

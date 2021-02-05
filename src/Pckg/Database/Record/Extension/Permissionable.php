@@ -1,11 +1,13 @@
 <?php namespace Pckg\Database\Record\Extension;
 
+use Pckg\Collection;
 use Pckg\Database\Record;
 
 /**
  * Class Permissionable
  *
  * @package Pckg\Database\Record\Extension
+ * @property Collection $allPermissions
  */
 trait Permissionable
 {

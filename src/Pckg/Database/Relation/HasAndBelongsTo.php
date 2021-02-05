@@ -216,7 +216,7 @@ class HasAndBelongsTo extends HasMany
         );*/
         $groupedMiddleCollection = $middleCollection->groupBy($this->rightForeignKey);
         $keyedRightCollection->each(function($rightRecord) use (
-            $keyedLeftCollection, $groupedMiddleCollection, $rightCollection
+            $keyedLeftCollection, $groupedMiddleCollection
         ) {
             (new Collection($groupedMiddleCollection[$rightRecord->{$this->rightPrimaryKey}] ?? []))
                 ->each(function($middleRecord) use ($rightRecord, $keyedLeftCollection) {

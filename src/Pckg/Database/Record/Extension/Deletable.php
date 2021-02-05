@@ -7,6 +7,7 @@ use Pckg\Database\Repository;
  * Class Deletable
  *
  * @package Pckg\Database\Record\Extension
+ * @property string $deleted_at
  */
 trait Deletable
 {

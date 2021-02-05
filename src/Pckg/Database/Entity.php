@@ -79,7 +79,7 @@ class Entity
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null, $alias = null, $boot = true)
+    final public function __construct(Repository $repository = null, $alias = null, $boot = true)
     {
         $this->alias = $alias;
         $this->repository = $repository;

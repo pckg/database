@@ -97,12 +97,10 @@ class Obj implements ArrayAccess, JsonSerializable
 
     /**
      * @param mixed $offset
-     *
-     * @return Object
      */
     public function offsetUnset($offset)
     {
-        return $this->__unset($offset);
+        $this->__unset($offset);
     }
 
     /**

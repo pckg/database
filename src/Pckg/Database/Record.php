@@ -43,7 +43,7 @@ class Record extends Obj
     /**
      * @param array $values
      */
-    public function __construct($data = [], Entity $entity = null)
+    final public function __construct($data = [], Entity $entity = null)
     {
         $defaults = $this->data ?? [];
         $this->data = $data && is_array($data) ? $data : [];

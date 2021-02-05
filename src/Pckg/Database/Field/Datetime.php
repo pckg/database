@@ -18,6 +18,8 @@ class Datetime extends AbstractField
      */
     protected $format = 'Y-m-d H:i:s';
 
+    protected $data;
+
     /**
      * @param mixed|mixed $value
      * @return mixed|void

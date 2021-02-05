@@ -135,9 +135,9 @@ trait Translatable
      */
     public function allTranslations(callable $callable = null)
     {
-        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix;
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
         $translaTableAlias = $this->getAlias()
-            ? $this->getAlias() . $this->getTranslatableTableSuffix
+            ? $this->getAlias() . $this->getTranslatableTableSuffix()
             : $translaTable;
         $repository = $this->getRepository();
 
@@ -278,7 +278,7 @@ trait Translatable
      */
     public function translationsFallback(callable $callable = null)
     {
-        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix;
+        $translaTable = $this->getTable() . $this->getTranslatableTableSuffix();
         $repository = $this->getRepository();
 
         $relation = $this->hasMany(

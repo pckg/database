@@ -257,6 +257,16 @@ abstract class Relation implements RelationInterface
         return $this->fill;
     }
 
+    public function getTable()
+    {
+        return $this->getLeftEntity()->getTable();
+    }
+
+    public function getRepository()
+    {
+        return $this->getLeftRepository();
+    }
+
     /**
      * @return Repository
      * @throws \Exception

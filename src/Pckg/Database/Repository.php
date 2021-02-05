@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use Exception;
 use Pckg\Cache\Cache;
@@ -97,5 +99,4 @@ interface Repository
      * @return Cache|\Pckg\Database\Helper\Cache
      */
     public function getCache();
-
 }

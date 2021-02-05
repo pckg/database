@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository;
+<?php
+
+namespace Pckg\Database\Repository;
 
 use Exception;
 use Pckg\Database\Entity;
@@ -18,7 +20,6 @@ use Throwable;
  */
 class PDO extends AbstractRepository implements Repository
 {
-
     use Failable;
 
     /**
@@ -565,5 +566,4 @@ class PDO extends AbstractRepository implements Repository
             }
         }
     }
-
 }

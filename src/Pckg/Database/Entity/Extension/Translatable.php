@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -203,7 +205,7 @@ trait Translatable
     public function withTranslation()
     {
         return $this->withTranslations(
-            function(Query $query) {
+            function (Query $query) {
                 $query->where($this->translatableLanguageField, $this->translatableLang->langId());
             }
         );
@@ -380,10 +382,11 @@ trait Translatable
         /**
          * Check that translatable field exists in database.
          */
-        if (!$this->getRepository()->getCache()->tableHasField(
-            $this->getTable() . $this->getTranslatableTableSuffix(),
-            $key
-        )
+        if (
+            !$this->getRepository()->getCache()->tableHasField(
+                $this->getTable() . $this->getTranslatableTableSuffix(),
+                $key
+            )
         ) {
             return null;
         }
@@ -473,5 +476,4 @@ trait Translatable
     {
         return $this->belongsTo(Languages::class)->foreignKey('language_id')->primaryKey('slug');
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use Carbon\Carbon;
 use Pckg\Concept\Reflect;
@@ -20,10 +22,15 @@ use Pckg\Database\Record\Transformations;
  */
 class Record extends Obj
 {
+    use Magic;
+    use Actions;
+    use Relations;
+    use Transformations;
+    use Events;
 
-    use Magic, Actions, Relations, Transformations, Events;
-
-    use Deletable, Translatable, Permissionable;
+    use Deletable;
+    use Translatable;
+    use Permissionable;
 
     /**
      * @var
@@ -91,7 +98,7 @@ class Record extends Obj
     {
         $decodedKey = 'decoded' . ucfirst($dataKey);
 
-        return $this->cache($decodedKey, function() use ($dataKey) {
+        return $this->cache($decodedKey, function () use ($dataKey) {
             return json_decode($this->data($dataKey), true);
         });
     }
@@ -128,7 +135,8 @@ class Record extends Obj
                 if (!$suffix) {
                     continue;
                 }
-                if (substr($entity->getTable(), strlen($entity->getTable()) - strlen($suffix)) != $suffix
+                if (
+                    substr($entity->getTable(), strlen($entity->getTable()) - strlen($suffix)) != $suffix
                     && $this->repository->getCache()->hasTable($entity->getTable() . $suffix)
                 ) {
                     $keys[$entity->getTable() . $suffix] = $this->{$method}();
@@ -341,7 +349,7 @@ class Record extends Obj
         $chains = [];
         foreach (get_class_methods($entity) as $method) {
             if (substr($method, 0, strlen($overloadMethod)) == $overloadMethod && substr($method, -9) == 'Extension') {
-                $chains[] = function() use ($method, $entity, $key) {
+                $chains[] = function () use ($method, $entity, $key) {
                     return $entity->$method($this, $key);
                 };
             }
@@ -359,5 +367,4 @@ class Record extends Obj
         $entity->getQuery()->lock();
         return $entity->oneOrFail();
     }
-
 }

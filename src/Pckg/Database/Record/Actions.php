@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record;
+<?php
+
+namespace Pckg\Database\Record;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
@@ -49,7 +51,7 @@ trait Actions
     public static function gets($data = [], Entity $entity = null)
     {
         if (!$entity) {
-            $entity = (new static)->getEntity();
+            $entity = (new static())->getEntity();
         }
 
         if (is_scalar($data)) {
@@ -127,7 +129,7 @@ trait Actions
     public static function getOrFail($data = [], Entity $entity = null, callable $callable = null)
     {
         if (!$entity) {
-            $entity = (new static)->getEntity();
+            $entity = (new static())->getEntity();
         }
 
         if (is_scalar($data)) {
@@ -417,5 +419,4 @@ trait Actions
 
         return $this;
     }
-
 }

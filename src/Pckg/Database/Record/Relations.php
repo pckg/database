@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record;
+<?php
+
+namespace Pckg\Database\Record;
 
 use Pckg\Collection;
 use Pckg\Database\Record;
@@ -100,5 +102,4 @@ trait Relations
     {
         return $this->relations;
     }
-
 }

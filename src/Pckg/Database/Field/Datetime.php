@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
@@ -109,5 +111,4 @@ class Datetime extends AbstractField
 
         return $this;
     }
-
 }

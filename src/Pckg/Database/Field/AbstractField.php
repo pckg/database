@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Database\Record;
 
@@ -119,5 +121,4 @@ abstract class AbstractField implements Stringifiable, \JsonSerializable
     {
         return $this->jsonSerialize();
     }
-
 }

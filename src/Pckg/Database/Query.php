@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use ArrayAccess;
 use Exception;
@@ -692,5 +694,4 @@ abstract class Query
     {
         return sha1($this->buildSQL() . json_encode($this->getBinds()));
     }
-
 }

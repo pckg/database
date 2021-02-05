@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
@@ -43,7 +45,7 @@ class Update extends Query
     {
         $arrValues = [];
 
-        foreach ($this->set AS $key => $val) {
+        foreach ($this->set as $key => $val) {
             $keyPart = "`" . $key . "` = ";
 
             /**

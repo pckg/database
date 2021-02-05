@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 /**
  * Class Cached
@@ -88,18 +90,23 @@ class Cached
         /**
          * Get cache or make real request and cache result.
          */
-        return measure('Getting cached key ' . $key,
-            function() use ($key, $method, $args) {
-                return cache()->cache($key,
-                    function() use ($key, $method, $args) {
-                        return measure('Caching key ' . $key,
-                            function() use ($method, $args) {
+        return measure(
+            'Getting cached key ' . $key,
+            function () use ($key, $method, $args) {
+                return cache()->cache(
+                    $key,
+                    function () use ($key, $method, $args) {
+                        return measure(
+                            'Caching key ' . $key,
+                            function () use ($method, $args) {
                                 return $this->entity->{$method}(...$args);
-                            });
+                            }
+                        );
                     },
-                                      $this->type,
-                                      $this->time);
-            });
+                    $this->type,
+                    $this->time
+                );
+            }
+        );
     }
-
 }

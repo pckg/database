@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation\Helper;
+<?php
+
+namespace Pckg\Database\Relation\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Collection;
@@ -79,7 +81,7 @@ trait RightEntity
 
         foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
             $entity->where(
-                function(Parenthesis $parenthesis) use ($condition) {
+                function (Parenthesis $parenthesis) use ($condition) {
                     $parenthesis->push($condition);
                 }
             );
@@ -115,7 +117,7 @@ trait RightEntity
          */
         foreach ($this->getQuery()->getWhere()->getChildren() as $condition) {
             $entity->where(
-                function(Parenthesis $parenthesis) use ($condition) {
+                function (Parenthesis $parenthesis) use ($condition) {
                     $parenthesis->push($condition);
                 }
             );
@@ -124,7 +126,7 @@ trait RightEntity
         foreach ($this->getQuery()->getBinds('where') as $bind) {
             $entity->getQuery()->bind($bind, 'where');
         }
-        
+
         return (new GetRecords($rightEntity))->executeOne();
     }
 
@@ -139,5 +141,4 @@ trait RightEntity
 
         return $this;
     }
-
 }

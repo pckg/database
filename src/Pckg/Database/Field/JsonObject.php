@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
@@ -20,7 +22,6 @@ use Pckg\Database\Record;
  */
 class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
 {
-
     use CollectionHelper;
 
     /**
@@ -174,5 +175,4 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
 
         return $this;
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -22,7 +24,7 @@ class HasManyIn extends HasMany
          * Prepare relations on left records.
          */
         $collection->each(
-            function(Record $record) {
+            function (Record $record) {
                 $record->setRelation($this->fill, new Collection());
             }
         );
@@ -31,7 +33,7 @@ class HasManyIn extends HasMany
          *
          */
         [$primaryKeyCallable, $primaryKey] = ($this->primaryKey)();
-        $cacheMapper = $collection->keyBy($primaryKey)->map(function(Record $record) use ($primaryKey, $primaryKeyCallable){
+        $cacheMapper = $collection->keyBy($primaryKey)->map(function (Record $record) use ($primaryKey, $primaryKeyCallable) {
             $cacheMapper[$record->{$primaryKey}] = $primaryKeyCallable($record);
 
             return $cacheMapper[$record->{$primaryKey}];
@@ -55,7 +57,7 @@ class HasManyIn extends HasMany
          * Set relations on left records.
          */
         $keyedRightCollection = $rightCollection->keyBy($this->foreignKey);
-        $cacheMapper->each(function($keys, $id) use ($keyedCollection, $keyedRightCollection){
+        $cacheMapper->each(function ($keys, $id) use ($keyedCollection, $keyedRightCollection) {
             foreach ($keys as $i) {
                 if (!($keyedRightCollection[$i] ?? null)) {
                     continue; // not index?
@@ -76,5 +78,4 @@ class HasManyIn extends HasMany
          */
         $this->fillCollectionWithRelations($collection);
     }
-
 }

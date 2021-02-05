@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record\Extension;
+<?php
+
+namespace Pckg\Database\Record\Extension;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
@@ -39,5 +41,4 @@ trait Deletable
 
         return $this->update($entity, $repository);
     }
-
 }

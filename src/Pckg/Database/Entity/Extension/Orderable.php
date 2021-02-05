@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Orderable
@@ -29,5 +31,4 @@ trait Orderable
 
         $this->orderBy($this->orderableField . ' ' . $this->orderableDirection);
     }
-
 }

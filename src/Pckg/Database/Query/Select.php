@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
@@ -157,7 +159,7 @@ class Select extends Query
         if ($this->limit) {
             $parts[] = 'LIMIT ' . $this->limit;
         }
-        
+
         if ($this->lock) {
             $parts[] = $this->lock;
         }
@@ -398,5 +400,4 @@ class Select extends Query
 
         return $this;
     }
-
 }

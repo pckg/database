@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 use Locale;
 use Pckg\Database\Record;
@@ -82,5 +84,4 @@ trait Localizable
     {
         return $this->hasMany($this->table . $this->localizableTableSuffix);
     }
-
 }

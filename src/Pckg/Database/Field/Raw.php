@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 /**
  * Class Raw
@@ -86,6 +88,4 @@ class Raw implements Stringifiable
     {
         return $this->sql;
     }
-
-
 }

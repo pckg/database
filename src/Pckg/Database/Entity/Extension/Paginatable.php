@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Paginatable
@@ -29,5 +31,4 @@ trait Paginatable
 
         return $this;
     }
-
 }

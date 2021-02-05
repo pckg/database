@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\Collection;
 use Pckg\Database\Entity;
@@ -84,5 +86,4 @@ class MorphsMany extends HasAndBelongsTo
     {
         return [get_class($this->getLeftEntity())];
     }
-
 }

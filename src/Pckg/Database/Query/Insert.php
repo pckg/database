@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
@@ -36,7 +38,7 @@ class Insert extends Query
     {
         $arrKeys = [];
 
-        foreach ($this->insert AS $key => $val) {
+        foreach ($this->insert as $key => $val) {
             $arrKeys[] = "`" . $key . "`";
         }
 
@@ -49,7 +51,7 @@ class Insert extends Query
     function buildValues()
     {
         $arrValues = [];
-        foreach ($this->insert AS $key => $val) {
+        foreach ($this->insert as $key => $val) {
             if (is_object($val)) {
                 /**
                  * @T00D00 - invalidate raws?
@@ -87,7 +89,7 @@ class Insert extends Query
     public function buildBinds()
     {
         $binds = $this->getBinds(['keys', 'values']);
-        
+
         return $binds;
     }
 

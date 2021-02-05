@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use ArrayAccess;
 use JsonSerializable;
@@ -28,7 +30,8 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     protected $dirty = [];
 
-    public function markDirty($key) {
+    public function markDirty($key)
+    {
         $this->dirty[] = $key;
     }
 
@@ -317,5 +320,4 @@ class Obj implements ArrayAccess, JsonSerializable
     {
         return $this->data;
     }
-
 }

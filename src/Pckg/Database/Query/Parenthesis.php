@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 /**
  * Class Parenthesis
@@ -154,5 +156,4 @@ class Parenthesis
 
         return $binds;
     }
-
 }

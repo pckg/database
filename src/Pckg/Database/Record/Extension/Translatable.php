@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record\Extension;
+<?php
+
+namespace Pckg\Database\Record\Extension;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
@@ -34,5 +36,4 @@ trait Translatable
 
         return $deleted;
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Helper;
+<?php
+
+namespace Pckg\Database\Helper;
 
 use Exception;
 use Pckg\Cache\Cache as PckgCache;
@@ -108,12 +110,15 @@ class Cache extends PckgCache
                 'type'      => strpos($field['Type'], '(')
                     ? substr($field['Type'], 0, strpos($field['Type'], '('))
                     : $field['Type'],
-                'limit'     => str_replace([') unsigne'], '',
-                                           substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
-                                               $field['Type'],
-                                               strpos($field['Type'], '(') + 1,
-                                               strpos($field['Type'], ')') ? -1 : null
-                                           )),
+                'limit'     => str_replace(
+                    [') unsigne'],
+                    '',
+                    substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
+                        $field['Type'],
+                        strpos($field['Type'], '(') + 1,
+                        strpos($field['Type'], ')') ? -1 : null
+                    )
+                ),
                 'null'      => $field['Null'] == 'YES',
                 'key'       => $field['Key'] == 'PRI'
                     ? 'primary'
@@ -180,7 +185,7 @@ class Cache extends PckgCache
         $this->cache['tables'][$table]['primaryKeys'] = array_column(
             array_filter(
                 $this->cache['fields'][$table],
-                function($field) {
+                function ($field) {
                     return $field['key'] == 'primary';
                 }
             ),
@@ -347,12 +352,11 @@ class Cache extends PckgCache
     public static function getCachePathByRepository(Repository $repository)
     {
         $path = path('cache') . 'framework/pckg_database_repository_' . str_replace(
-                ['\\', '/'],
-                '_',
-                (get_class(app()) . '_' . get_class(env()))
-            ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
+            ['\\', '/'],
+            '_',
+            (get_class(app()) . '_' . get_class(env()))
+        ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
 
         return $path;
     }
-
 }

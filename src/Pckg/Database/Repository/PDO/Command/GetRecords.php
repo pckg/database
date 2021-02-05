@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository\PDO\Command;
+<?php
+
+namespace Pckg\Database\Repository\PDO\Command;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -96,5 +98,4 @@ class GetRecords
     {
         return $this->repository->executeOne($this->entity);
     }
-
 }

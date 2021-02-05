@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -212,7 +214,7 @@ trait Permissionable
     public function withPermission()
     {
         return $this->withPermissions(
-            function(Query $query) {
+            function (Query $query) {
                 $query->where($this->permissionablePermissionField, $this->permissionableAuth->groupId());
             }
         );
@@ -250,7 +252,7 @@ trait Permissionable
 
         return $this->join(
             $this->permissions(
-                function(HasMany $permissions) use ($permission, $self) {
+                function (HasMany $permissions) use ($permission, $self) {
                     $permissions->where($self->getPermissionableTable() . '.action', $permission);
                 }
             )
@@ -277,8 +279,7 @@ trait Permissionable
         if (!$this->permissionableTableSuffix) {
             return false;
         }
-        
+
         return $this->getRepository()->getCache()->hasTable($this->table . $this->permissionableTableSuffix);
     }
-
 }

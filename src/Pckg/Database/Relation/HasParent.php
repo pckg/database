@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 /**
  * Class HasParent

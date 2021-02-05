@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
@@ -96,7 +98,7 @@ class Point extends AbstractField
 
     /**
      * Setter for ->x and ->y
-     * 
+     *
      * @param $key
      * @param $val
      * @return $this
@@ -123,7 +125,7 @@ class Point extends AbstractField
 
     /**
      * Getter for ->x and ->y
-     * 
+     *
      * @param $key
      * @return mixed
      * @throws \Exception
@@ -138,6 +140,4 @@ class Point extends AbstractField
 
         throw new \Exception('Unknown Point property');
     }
-
-
 }

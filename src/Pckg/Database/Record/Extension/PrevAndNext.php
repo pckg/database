@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record\Extension;
+<?php
+
+namespace Pckg\Database\Record\Extension;
 
 /**
  * Class PrevAndNext
@@ -15,7 +17,7 @@ trait PrevAndNext
     {
         $entity = $this->getEntity();
 
-        return $this->cache('prev', function() use ($entity) {
+        return $this->cache('prev', function () use ($entity) {
             $entity = (new $entity())->published()
                                      ->where('dt_published', $this->dt_published, '<')
                                      ->orderBy('dt_published DESC, ' . $entity->getTable() . '.id DESC');
@@ -35,7 +37,7 @@ trait PrevAndNext
     {
         $entity = $this->getEntity();
 
-        return $this->cache('next', function() use ($entity) {
+        return $this->cache('next', function () use ($entity) {
             $entity = (new $entity())->published()
                                      ->where('dt_published', $this->dt_published, '>')
                                      ->orderBy('dt_published ASC, ' . $entity->getTable() . '.id ASC');
@@ -47,5 +49,4 @@ trait PrevAndNext
             return $entity->one();
         });
     }
-
 }

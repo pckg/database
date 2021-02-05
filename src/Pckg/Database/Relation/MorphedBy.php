@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Entity;
@@ -28,5 +30,4 @@ class MorphedBy extends MorphsMany
         )
         )->executeAll();
     }
-
 }

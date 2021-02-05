@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension\Adapter;
+<?php
+
+namespace Pckg\Database\Entity\Extension\Adapter;
 
 /**
  * Interface AuthInterface
@@ -23,5 +25,4 @@ interface AuthInterface
      * Return user id of currently logged in user.
      */
     public function userId();
-
 }

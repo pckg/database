@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -13,7 +15,6 @@ use Pckg\Database\Relation\Helper\MiddleEntity;
  */
 class HasAndBelongsTo extends HasMany
 {
-
     use MiddleEntity;
 
     /**
@@ -127,7 +128,7 @@ class HasAndBelongsTo extends HasMany
          * Set middle collection's relations.
          */
         $middleCollection->each(
-            function($middleRecord) use ($record, $keyedRightCollection) {
+            function ($middleRecord) use ($record, $keyedRightCollection) {
                 if ($keyedRightCollection->hasKey($middleRecord->{$this->rightForeignKey})) {
                     /**
                      * We need to clone record, otherwise we override pivot relation each time.
@@ -161,7 +162,7 @@ class HasAndBelongsTo extends HasMany
          * Prepare relations on left records.
          */
         $collection->each(
-            function(Record $record) {
+            function (Record $record) {
                 $record->setRelation($this->fill, new Collection());
             }
         );
@@ -215,11 +216,12 @@ class HasAndBelongsTo extends HasMany
             }
         );*/
         $groupedMiddleCollection = $middleCollection->groupBy($this->rightForeignKey);
-        $keyedRightCollection->each(function($rightRecord) use (
-            $keyedLeftCollection, $groupedMiddleCollection
+        $keyedRightCollection->each(function ($rightRecord) use (
+            $keyedLeftCollection,
+            $groupedMiddleCollection
         ) {
             (new Collection($groupedMiddleCollection[$rightRecord->{$this->rightPrimaryKey}] ?? []))
-                ->each(function($middleRecord) use ($rightRecord, $keyedLeftCollection) {
+                ->each(function ($middleRecord) use ($rightRecord, $keyedLeftCollection) {
                     $rightRecord = clone $rightRecord;
                     $rightRecord->setRelation('pivot', $middleRecord);
                     $keyedLeftCollection[$middleRecord->{$this->leftForeignKey}]->getRelation($this->fill)->push(
@@ -240,5 +242,4 @@ class HasAndBelongsTo extends HasMany
          */
         $this->fillCollectionWithRelations($collection);
     }
-
 }

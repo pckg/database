@@ -141,7 +141,7 @@ trait Transformations
     /**
      * @return array
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->__toArray();
     }

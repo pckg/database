@@ -21,7 +21,7 @@ class Delete extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $sql = "DELETE FROM `" . $this->table . "` " .
             ($this->where ? $this->buildWhere() : '');
@@ -42,7 +42,7 @@ class Delete extends Query
     /**
      * @return array
      */
-    function buildBinds()
+    public function buildBinds()
     {
         return $this->getBinds(['where', 'limit']);
     }
@@ -52,7 +52,7 @@ class Delete extends Query
      *
      * @return $this
      */
-    function setTable($table)
+    public function setTable($table)
     {
         $this->table = $table;
 

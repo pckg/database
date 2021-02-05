@@ -14,11 +14,14 @@
     "pckg/collection": "dev-master",
     "pckg/cache": "dev-master",
     "pckg/locale": "dev-master",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "pckg-app/frontend-dev": "dev-master",
     "pckg/framework": "dev-master",
+    "pckg/htmlbuilder": "dev-master",
+    "pckg/manager": "dev-master",
     "fzaninotto/faker": "dev-master"
   },
   "suggest": {

@@ -22,7 +22,7 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $sql = "INSERT INTO `" . $this->table . "` " .
                $this->buildKeys() .
@@ -34,7 +34,7 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildKeys()
+    public function buildKeys()
     {
         $arrKeys = [];
 
@@ -48,7 +48,7 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildValues()
+    public function buildValues()
     {
         $arrValues = [];
         foreach ($this->insert as $key => $val) {
@@ -98,7 +98,7 @@ class Insert extends Query
      *
      * @return $this
      */
-    function setInsert($insert)
+    public function setInsert($insert)
     {
         $this->insert = $insert;
 

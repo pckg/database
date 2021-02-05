@@ -131,7 +131,7 @@ class Select extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $parts = ["SELECT " . $this->buildSelect(), "FROM " . $this->buildTable()];
 

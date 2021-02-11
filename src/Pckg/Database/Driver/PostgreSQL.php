@@ -19,7 +19,7 @@ class PostgreSQL extends PDODriver implements DriverInterface
         $prepare->execute([$repository->getDbName(), $table]);
 
         $columns = [];
-        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
+        foreach ($prepare->fetchAll(\PDO::FETCH_ASSOC) as $field) {
             $parsedField = $this->parseColumn($field);
             $columns[$parsedField['name']] = $parsedField;
         }

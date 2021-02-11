@@ -4,8 +4,21 @@ namespace Pckg\Database\Driver;
 
 use Pckg\Database\Repository;
 
+/**
+ * Class PDODriver
+ * @package Pckg\Database\Driver
+ * @extends
+ * @see MySQL
+ * @see PostgreSQL
+ */
 abstract class PDODriver
 {
+
+    abstract public function getTableIndexesQuery(Repository $repository, string $table): string;
+
+    abstract public function getIndexName(): string;
+
+    abstract public function getIndexType(array $index): string;
 
     public function getTableConstraints(Repository $repository, string $table)
     {
@@ -32,5 +45,4 @@ abstract class PDODriver
 
         return $constraints;
     }
-
 }

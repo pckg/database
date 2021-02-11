@@ -191,4 +191,9 @@ class Custom implements Repository
     {
         return $this->all($entity);
     }
+
+    public function getDriver()
+    {
+        // TODO: Implement getDriver() method.
+    }
 }

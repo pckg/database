@@ -89,7 +89,7 @@ class Insert extends Query
     public function buildBinds()
     {
         $binds = $this->getBinds(['keys', 'values']);
-        
+
         return $binds;
     }
 

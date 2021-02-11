@@ -46,6 +46,11 @@ class PDO extends AbstractRepository implements Repository
     protected $reconnect;
 
     /**
+     * @var DriverInterface
+     */
+    protected $driver;
+
+    /**
      * @param \PDO|callable $connection
      */
     public function __construct($connection, $name = 'default')
@@ -70,7 +75,7 @@ class PDO extends AbstractRepository implements Repository
         $this->connection = null;
         $this->connection = RepositoryFactory::createPdoConnectionByConfig(config('database.' . $this->name, []));
     }
-    
+
     public function setDriver(DriverInterface $driver)
     {
         $this->driver = $driver;

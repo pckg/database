@@ -157,7 +157,7 @@ class Cache extends PckgCache
         $this->cache['tables'][$table]['primaryKeys'] = array_column(
             array_filter(
                 $this->cache['fields'][$table],
-                function($field) {
+                function ($field) {
                     return $field['key'] == 'primary';
                 }
             ),
@@ -314,10 +314,10 @@ class Cache extends PckgCache
     public static function getCachePathByRepository(Repository $repository)
     {
         $path = path('cache') . 'framework/pckg_database_repository_' . str_replace(
-                ['\\', '/'],
-                '_',
-                (get_class(app()) . '_' . get_class(env()))
-            ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
+            ['\\', '/'],
+            '_',
+            (get_class(app()) . '_' . get_class(env()))
+        ) . '_' . $repository->getName() . '_' . ($repository->getConnection()->uniqueName ?? '') . '.cache';
 
         return $path;
     }

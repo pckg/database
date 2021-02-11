@@ -14,12 +14,12 @@ class MySQL implements DriverInterface
 
     public function getTableColumnsQuery(): string
     {
-        return 'SHOW FULL COLUMNS IN `' . $table . '`';
+        return 'SHOW FULL COLUMNS IN ?';
     }
 
     public function getTableIndexesQuery(): string
     {
-        return 'SHOW INDEX IN `' . $table . '`';
+        return 'SHOW INDEX IN ?';
     }
 
     public function getIndexName(): string
@@ -36,7 +36,7 @@ class MySQL implements DriverInterface
         } else {
             if (strpos($name, 'FOREIGN__') === 0) {
                 return 'FOREIGN';
-            } else if ($first['Non_unique']) {
+            } else if ($index['Non_unique']) {
                 return 'KEY';
             } else {
                 return 'UNIQUE';
@@ -58,12 +58,15 @@ class MySQL implements DriverInterface
             'type' => strpos($field['Type'], '(')
                 ? substr($field['Type'], 0, strpos($field['Type'], '('))
                 : $field['Type'],
-            'limit' => str_replace([') unsigne'], '',
+            'limit' => str_replace(
+                [') unsigne'],
+                '',
                 substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
                     $field['Type'],
                     strpos($field['Type'], '(') + 1,
                     strpos($field['Type'], ')') ? -1 : null
-                )),
+                )
+            ),
             'null' => $field['Null'] == 'YES',
             'key' => $field['Key'] == 'PRI'
                 ? 'primary'
@@ -152,5 +155,4 @@ class MySQL implements DriverInterface
     {
         return $connection->lastInsertId();
     }
-
 }

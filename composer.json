@@ -22,6 +22,7 @@
     "pckg/framework": "dev-master",
     "pckg/htmlbuilder": "dev-master",
     "pckg/manager": "dev-master",
+    "pckg/migrator": "dev-master",
     "fzaninotto/faker": "dev-master"
   },
   "suggest": {

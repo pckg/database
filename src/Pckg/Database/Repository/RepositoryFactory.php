@@ -265,7 +265,7 @@ class RepositoryFactory
         } elseif ($config['driver'] == 'faker') {
             return new Faker(Factory::create());
         } elseif ($config['driver'] == 'middleware') {
-            return resolve($config['middleware'])->execute(function() {
+            return resolve($config['middleware'])->execute(function () {
             });
         }
 

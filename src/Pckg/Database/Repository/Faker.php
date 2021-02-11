@@ -88,4 +88,9 @@ class Faker extends AbstractRepository implements Repository
     {
         // TODO: Implement deleteTranslation() method.
     }
+
+    public function getDriver()
+    {
+        // TODO: Implement getDriver() method.
+    }
 }

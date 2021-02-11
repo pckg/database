@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Driver;
+<?php
+
+namespace Pckg\Database\Driver;
 
 interface DriverInterface
 {
@@ -12,5 +14,4 @@ interface DriverInterface
     public function getIndexName(): string;
 
     public function getIndexType(array $index): string;
-
 }

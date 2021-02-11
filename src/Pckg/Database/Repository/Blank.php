@@ -83,5 +83,4 @@ class Blank implements Repository
     {
         return null;
     }
-
 }

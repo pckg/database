@@ -24,12 +24,15 @@ class PostgreSQL implements DriverInterface
             'type' => strpos($field['data_type'], '(')
                 ? substr($field['data_type'], 0, strpos($field['data_type'], '('))
                 : $field['data_type'],
-            'limit' => str_replace([') unsigne'], '',
+            'limit' => str_replace(
+                [') unsigne'],
+                '',
                 substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
                     $field['data_type'],
                     strpos($field['data_type'], '(') + 1,
                     strpos($field['data_type'], ')') ? -1 : null
-                )),
+                )
+            ),
             'null' => $field['is_nullable'] == 'YES',
             'key' => $field['is_identity'] == 'YES'
                 ? 'primary'
@@ -179,5 +182,4 @@ WHERE c.relkind IN ('r','v','m','S','f','')
     {
         return $connection->lastInsertId($table . '_id_seq');
     }
-
 }

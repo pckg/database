@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -121,9 +123,11 @@ trait Languagable
             : $languagableTable;
 
         $languagebleLanguageField = $this->languagableLanguageField;
-        $this->joinLanguagables(function(HasMany $languagables) use ($languagableAlias, $languagebleLanguageField) {
-            $languagables->where($languagableAlias . '.' . $languagebleLanguageField,
-                                 substr(localeManager()->getCurrent(), 0, 2));
+        $this->joinLanguagables(function (HasMany $languagables) use ($languagableAlias, $languagebleLanguageField) {
+            $languagables->where(
+                $languagableAlias . '.' . $languagebleLanguageField,
+                substr(localeManager()->getCurrent(), 0, 2)
+            );
         });
     }
 
@@ -141,5 +145,4 @@ trait Languagable
 
         return $this;
     }
-
 }

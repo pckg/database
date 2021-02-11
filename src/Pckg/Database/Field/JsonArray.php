@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
@@ -92,5 +94,4 @@ class JsonArray extends JsonObject implements \Countable
     {
         return json_encode($this->jsonSerialize()) ?? '[]';
     }
-
 }

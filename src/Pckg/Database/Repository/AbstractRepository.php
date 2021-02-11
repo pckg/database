@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository;
+<?php
+
+namespace Pckg\Database\Repository;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Repository;
@@ -114,7 +116,7 @@ abstract class AbstractRepository implements Repository
     {
         return measure(
             'Fetching prepared',
-            function() use ($prepare) {
+            function () use ($prepare) {
                 return $prepare->fetchAll();
             }
         );
@@ -129,5 +131,4 @@ abstract class AbstractRepository implements Repository
     {
         return $prepare->fetch();
     }
-
 }

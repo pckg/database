@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 /**
  * Interface Stringifiable
@@ -54,5 +56,4 @@ interface Stringifiable
      * @return string
      */
     public function __toString();
-
 }

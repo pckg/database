@@ -13,7 +13,16 @@
     "pckg/concept": "dev-master",
     "pckg/collection": "dev-master",
     "pckg/cache": "dev-master",
-    "pckg/locale": "dev-master"
+    "pckg/locale": "dev-master",
+    "ext-pdo": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "pckg-app/frontend-dev": "dev-master",
+    "pckg/framework": "dev-master",
+    "pckg/htmlbuilder": "dev-master",
+    "pckg/manager": "dev-master",
+    "fzaninotto/faker": "dev-master"
   },
   "suggest": {
     "maximebf/debugbar": "Push queries and events to debugbar",
@@ -25,5 +34,24 @@
       "Test": "tests\\src\\"
     }
   },
-  "minimum-stability": "dev"
+  "scripts": {
+    "test": [
+      "true || vendor/bin/phpunit --help --stop-on-defect",
+      "vendor/bin/phpcloc cloc src/",
+      "vendor/bin/phpstan analyse src/ --level=1",
+      "vendor/bin/phpcs --extensions=php --warning-severity=8 --error-severity=1 --standard=PSR12 --parallel=2 -p src/",
+      "vendor/bin/codecept run"
+    ],
+    "autofix": [
+      "vendor/bin/phpcs --extensions=php --report-diff=phpcs.diff --warning-severity=8 --error-severity=1 --standard=PSR12 --parallel=2 -p src/"
+    ],
+    "autopatch": [
+      "patch -p0 -ui phpcs.diff && rm phpcs.diff"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run all tests and quality checks"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

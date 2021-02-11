@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query\Helper;
+<?php
+
+namespace Pckg\Database\Query\Helper;
 
 use Closure;
 use Exception;
@@ -48,7 +50,8 @@ trait With
          * Check if $method prefix is listed in autocallPrefixes.
          */
         foreach ($this->autocallPrefixes as $prefix) {
-            if (substr($method, 0, strlen($prefix)) === $prefix
+            if (
+                substr($method, 0, strlen($prefix)) === $prefix
                 && strtoupper(substr($method, strlen($prefix), 1)) == substr($method, strlen($prefix), 1)
             ) {
                 /**
@@ -175,7 +178,7 @@ trait With
              * Call ->withString(callable)
              */
             if (is_array($value)) {
-                $this->{'with' . ucfirst($key)}(function(Relation $relation) use ($value) {
+                $this->{'with' . ucfirst($key)}(function (Relation $relation) use ($value) {
                     $relation->processArrayOfRelations($value);
                 });
                 continue;
@@ -228,5 +231,4 @@ trait With
 
         return $collection;
     }
-
 }

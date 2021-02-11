@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Query;
@@ -129,7 +131,7 @@ class Select extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $parts = ["SELECT " . $this->buildSelect(), "FROM " . $this->buildTable()];
 
@@ -398,5 +400,4 @@ class Select extends Query
 
         return $this;
     }
-
 }

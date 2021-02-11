@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 /**
  * Class Raw
@@ -24,7 +26,7 @@ class Raw implements Stringifiable
      * @param string|null $sql
      * @param array       $binds
      */
-    public function __construct(string $sql = null, $binds = [])
+    final public function __construct(string $sql = null, $binds = [])
     {
         $this->sql = $sql;
         $this->binds = $binds;
@@ -86,6 +88,4 @@ class Raw implements Stringifiable
     {
         return $this->sql;
     }
-
-
 }

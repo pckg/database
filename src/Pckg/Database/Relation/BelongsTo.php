@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Record;
@@ -50,7 +52,7 @@ class BelongsTo extends Relation
          * Prepare relations on left records.
          */
         $collection->each(
-            function($record) {
+            function ($record) {
                 $record->setRelation($this->fill, null);
             }
         );
@@ -75,7 +77,7 @@ class BelongsTo extends Relation
          * Set relations on left records.
          */
         $collection->each(
-            function($record) use ($keyedRightCollection) {
+            function ($record) use ($keyedRightCollection) {
                 if ($keyedRightCollection->hasKey($record->{$this->foreignKey})) {
                     $record->setRelation($this->fill, $keyedRightCollection[$record->{$this->foreignKey}]);
                 }
@@ -113,5 +115,4 @@ class BelongsTo extends Relation
 
         return $condition;
     }
-
 }

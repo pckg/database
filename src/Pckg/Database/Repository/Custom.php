@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository;
+<?php
+
+namespace Pckg\Database\Repository;
 
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
@@ -13,7 +15,6 @@ use Pckg\Database\Repository;
  */
 class Custom implements Repository
 {
-
     use Failable;
 
     public function aliased()
@@ -51,7 +52,7 @@ class Custom implements Repository
         $data = $entity->getCustomRepositoryCollection();
         $query = $entity->getQuery();
 
-        return $data->first(function(Record $record) use ($query) {
+        return $data->first(function (Record $record) use ($query) {
             $where = $query->getWhere();
             if (!$where) {
                 return true;
@@ -68,7 +69,7 @@ class Custom implements Repository
                 if (preg_match('/^`[a-z]*` = \?$/', $child, $matches)) {
                     $field = substr($child, 1, strpos($child, '`', 1) - 1);
                     $value = $binds[$i];
-                    
+
                     return $record->{$field} == $value;
                 } else {
                     return false;
@@ -190,5 +191,4 @@ class Custom implements Repository
     {
         return $this->all($entity);
     }
-
 }

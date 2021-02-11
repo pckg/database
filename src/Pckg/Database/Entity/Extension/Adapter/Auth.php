@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension\Adapter;
+<?php
+
+namespace Pckg\Database\Entity\Extension\Adapter;
 
 /**
  * Class Auth
@@ -29,5 +31,4 @@ class Auth implements AuthInterface
     {
         return null;
     }
-
 }

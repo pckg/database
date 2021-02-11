@@ -1,9 +1,12 @@
-<?php namespace Pckg\Database\Repository;
+<?php
+
+namespace Pckg\Database\Repository;
 
 use DebugBar\DataCollector\PDO\PDOCollector;
 use DebugBar\DataCollector\PDO\TraceablePDO;
 use DebugBar\DebugBar;
 use Exception;
+use Faker\Factory;
 use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;
@@ -56,7 +59,7 @@ class RepositoryFactory
                  */
                 if (!$config && $name != 'default') {
                     if (class_exists($name) && object_implements($name, Repository::class)) {
-                        return new $name;
+                        return new $name();
                     }
                     $config = config('database.default');
                 } else if (is_string($config) && config('database.' . $config)) {
@@ -77,7 +80,8 @@ class RepositoryFactory
         return $repository;
     }
 
-    public static function canCreateRepository($name) {
+    public static function canCreateRepository($name)
+    {
         $name = $name == Repository::class
             ? 'default'
             : str_replace(Repository::class . '.', '', $name);
@@ -254,7 +258,7 @@ class RepositoryFactory
     {
         if (!is_array($config)) {
             if (class_exists($config)) {
-                return new $config;
+                return new $config();
             }
 
             throw new Exception('Cannot create repository from string');
@@ -262,8 +266,7 @@ class RepositoryFactory
             return new Faker(Factory::create());
         } elseif ($config['driver'] == 'middleware') {
             return resolve($config['middleware'])->execute(function() {
-            }
-            );
+            });
         }
 
         return static::initPdoDatabase($config, $name);
@@ -284,5 +287,4 @@ class RepositoryFactory
     {
         return static::$repositories;
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository;
+<?php
+
+namespace Pckg\Database\Repository;
 
 use Faker\Generator;
 use Pckg\Database\Entity;

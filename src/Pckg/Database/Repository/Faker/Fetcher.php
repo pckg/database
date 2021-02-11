@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Repository\Faker;
+<?php
+
+namespace Pckg\Database\Repository\Faker;
 
 use Faker\Generator;
 use Pckg\Database\Query;
@@ -79,7 +81,7 @@ class Fetcher
         $cache = $this->faker->getCache();
         $table = $this->query->getTable();
         $fields = $cache->getTable($table);
-        $record = new $this->recordClass;
+        $record = new $this->recordClass();
         foreach ([$table, $table . '_i18n'] as $t) {
             $fields = $cache->getTable($t);
             foreach ($fields['fields'] as $field => $meta) {
@@ -140,5 +142,4 @@ class Fetcher
     {
         return $this->faker->getConnection();
     }
-
 }

@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation\Helper;
+<?php
+
+namespace Pckg\Database\Relation\Helper;
 
 use Pckg\Collection;
 use Pckg\Database\Record;
@@ -34,5 +36,4 @@ trait CallWithRelation
 
         return $relation;
     }
-
 }

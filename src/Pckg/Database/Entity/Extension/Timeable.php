@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Timeable
@@ -22,5 +24,4 @@ trait Timeable
             $this->fields[] = $field;
         }
     }
-
 }

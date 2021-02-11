@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Entity\Extension;
+<?php
+
+namespace Pckg\Database\Entity\Extension;
 
 /**
  * Class Deletable
@@ -53,5 +55,4 @@ trait Deletable
     {
         return $this->getRepository()->getCache()->tableHasField($this->table, $this->deletableField);
     }
-
 }

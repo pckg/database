@@ -1,11 +1,15 @@
-<?php namespace Pckg\Database\Record\Extension;
+<?php
 
+namespace Pckg\Database\Record\Extension;
+
+use Pckg\Collection;
 use Pckg\Database\Record;
 
 /**
  * Class Permissionable
  *
  * @package Pckg\Database\Record\Extension
+ * @property Collection $allPermissions
  */
 trait Permissionable
 {
@@ -18,7 +22,7 @@ trait Permissionable
     public function hasPermissionTo($action)
     {
         return $this->allPermissions->has(
-            function($permission) use ($action) {
+            function ($permission) use ($action) {
                 return $permission->action == $action;
             }
         );
@@ -57,5 +61,4 @@ trait Permissionable
             }
         }
     }
-
 }

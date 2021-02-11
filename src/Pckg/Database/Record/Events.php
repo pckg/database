@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record;
+<?php
+
+namespace Pckg\Database\Record;
 
 use Pckg\Database\Record;
 
@@ -38,5 +40,4 @@ trait Events
 
         return $this;
     }
-
 }

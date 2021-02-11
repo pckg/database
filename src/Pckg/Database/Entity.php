@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use Exception;
 use Pckg\Concept\Reflect;
@@ -22,9 +24,13 @@ use Pckg\Framework\Exception\NotFound;
  */
 class Entity
 {
-
-    use RelationMethods, QueryBuilder, With;
-    use Permissionable, Deletable, Translatable, Paginatable;
+    use RelationMethods;
+    use QueryBuilder;
+    use With;
+    use Permissionable;
+    use Deletable;
+    use Translatable;
+    use Paginatable;
 
     /**
      * @var string
@@ -79,7 +85,7 @@ class Entity
     /**
      * @param Repository $repository
      */
-    public function __construct(Repository $repository = null, $alias = null, $boot = true)
+    final public function __construct(Repository $repository = null, $alias = null, $boot = true)
     {
         $this->alias = $alias;
         $this->repository = $repository;
@@ -420,9 +426,13 @@ class Entity
              */
             if ($method != 'getFields' && substr($method, 0, 3) == 'get' && substr($method, -6) == 'Fields') {
                 $suffix = $this->{'get' . substr($method, 3, -6) . 'TableSuffix'}();
-                if (substr($this->table,
-                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
-                                                                                                  ->hasTable($this->table . $suffix)) {
+                if (
+                    substr(
+                        $this->table,
+                        strlen($this->table) - strlen($suffix)
+                    ) != $suffix && $this->getRepository()->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)
+                ) {
                     $keys[$this->table . $suffix] = $this->{$method}();
                 }
             }
@@ -430,17 +440,29 @@ class Entity
             /**
              * Get extension's foreign key values.
              */
-            if ($method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr($method,
-                                                                                        -11) == 'ForeignKeys') {
+            if (
+                $method != 'getForeignKeys' && substr($method, 0, 3) == 'get' && substr(
+                    $method,
+                    -11
+                ) == 'ForeignKeys'
+            ) {
                 $suffix = $this->{'get' . substr($method, 3, -11) . 'TableSuffix'}();
-                if (substr($this->table,
-                           strlen($this->table) - strlen($suffix)) != $suffix && $this->getRepository()->getCache()
-                                                                                                  ->hasTable($this->table . $suffix)) {
+                if (
+                    substr(
+                        $this->table,
+                        strlen($this->table) - strlen($suffix)
+                    ) != $suffix && $this->getRepository()->getCache()
+                                                                                                  ->hasTable($this->table . $suffix)
+                ) {
                     // base table
                     $extensionArray[$this->table . $suffix] = $this->{$method}($record);
-                } elseif (strrpos($this->table,
-                                  $suffix) == strlen($this->table) - strlen($suffix) && $this->getRepository()->getCache()
-                                                                                                         ->hasTable($this->table . $suffix)) {
+                } elseif (
+                    strrpos(
+                        $this->table,
+                        $suffix
+                    ) == strlen($this->table) - strlen($suffix) && $this->getRepository()->getCache()
+                                                                                                         ->hasTable($this->table . $suffix)
+                ) {
                     // extendee table
                     $extensionArray[$this->table] = $this->{$method}($record);
                 }
@@ -662,7 +684,7 @@ class Entity
     public function oneOrFail(callable $callback = null)
     {
         if (!$callback) {
-            $callback = function() {
+            $callback = function () {
                 throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
             };
         }
@@ -820,5 +842,4 @@ class Entity
     {
         return $this->getRepository()->getCache()->tableHasField($this->table, $field);
     }
-
 }

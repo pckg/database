@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Query\Helper\QueryBuilder;
@@ -13,8 +15,9 @@ use Pckg\Database\Relation\Helper\RightEntity;
  */
 abstract class Relation implements RelationInterface
 {
-
-    use With, RightEntity, QueryBuilder;
+    use With;
+    use RightEntity;
+    use QueryBuilder;
 
     /**
      *
@@ -257,6 +260,16 @@ abstract class Relation implements RelationInterface
         return $this->fill;
     }
 
+    public function getTable()
+    {
+        return $this->getLeftEntity()->getTable();
+    }
+
+    public function getRepository()
+    {
+        return $this->getLeftRepository();
+    }
+
     /**
      * @return Repository
      * @throws \Exception
@@ -386,5 +399,4 @@ abstract class Relation implements RelationInterface
 
         return $this;
     }
-
 }

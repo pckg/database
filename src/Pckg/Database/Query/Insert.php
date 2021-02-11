@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
@@ -20,7 +22,7 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $sql = "INSERT INTO `" . $this->table . "` " .
                $this->buildKeys() .
@@ -32,11 +34,11 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildKeys()
+    public function buildKeys()
     {
         $arrKeys = [];
 
-        foreach ($this->insert AS $key => $val) {
+        foreach ($this->insert as $key => $val) {
             $arrKeys[] = "`" . $key . "`";
         }
 
@@ -46,10 +48,10 @@ class Insert extends Query
     /**
      * @return string
      */
-    function buildValues()
+    public function buildValues()
     {
         $arrValues = [];
-        foreach ($this->insert AS $key => $val) {
+        foreach ($this->insert as $key => $val) {
             if (is_object($val)) {
                 /**
                  * @T00D00 - invalidate raws?
@@ -96,7 +98,7 @@ class Insert extends Query
      *
      * @return $this
      */
-    function setInsert($insert)
+    public function setInsert($insert)
     {
         $this->insert = $insert;
 

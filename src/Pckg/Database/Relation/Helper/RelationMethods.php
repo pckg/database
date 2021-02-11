@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation\Helper;
+<?php
+
+namespace Pckg\Database\Relation\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Relation\BelongsTo;
@@ -137,5 +139,4 @@ trait RelationMethods
     {
         return $this->returnRelation(MorphedBy::class, $entity, $callable, $alias);
     }
-
 }

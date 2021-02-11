@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Query;
@@ -20,7 +22,7 @@ class Update extends Query
     /**
      * @return string
      */
-    function buildSQL()
+    public function buildSQL()
     {
         $sql = "UPDATE `" . $this->table . "` " .
                "SET " . $this->buildSet() . " " .
@@ -41,11 +43,11 @@ class Update extends Query
     /**
      * @return string
      */
-    function buildSet()
+    public function buildSet()
     {
         $arrValues = [];
 
-        foreach ($this->set AS $key => $val) {
+        foreach ($this->set as $key => $val) {
             $keyPart = "`" . $key . "` = ";
 
             /**
@@ -115,7 +117,7 @@ class Update extends Query
     /**
      * @return array
      */
-    function buildBinds()
+    public function buildBinds()
     {
         return $this->getBinds(['set', 'where', 'limit']);
     }
@@ -127,7 +129,7 @@ class Update extends Query
      *
      * @return $this
      */
-    function setSet($set)
+    public function setSet($set)
     {
         $this->set = $set;
 
@@ -139,7 +141,7 @@ class Update extends Query
      *
      * @return $this
      */
-    function setTable($table)
+    public function setTable($table)
     {
         $this->table = $table;
 
@@ -151,7 +153,7 @@ class Update extends Query
      *
      * @return $this
      */
-    function setWhere($where)
+    public function setWhere($where)
     {
         $this->where = $where;
 
@@ -163,7 +165,7 @@ class Update extends Query
      *
      * @return $this
      */
-    function setLimit($limit)
+    public function setLimit($limit)
     {
         $this->limit = $limit;
 
@@ -176,7 +178,7 @@ class Update extends Query
      *
      * @return $this
      */
-    function addWhere($where)
+    public function addWhere($where)
     {
         $this->where[] = $where;
 

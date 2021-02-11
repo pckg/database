@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query;
+<?php
+
+namespace Pckg\Database\Query;
 
 use Pckg\Database\Query;
 
@@ -19,7 +21,6 @@ class Raw extends Query
     public function __construct($sql = null, $bind = [])
     {
         parent::__construct();
-
         $this->sql = $sql;
         $this->bind = $bind;
     }
@@ -39,5 +40,4 @@ class Raw extends Query
     {
         return $this->bind;
     }
-
 }

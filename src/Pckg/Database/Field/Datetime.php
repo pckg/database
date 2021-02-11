@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Field;
+<?php
+
+namespace Pckg\Database\Field;
 
 use Pckg\Collection;
 use Pckg\Collection\CollectionHelper;
@@ -17,6 +19,8 @@ class Datetime extends AbstractField
      * @var string
      */
     protected $format = 'Y-m-d H:i:s';
+
+    protected $data;
 
     /**
      * @param mixed|mixed $value
@@ -107,5 +111,4 @@ class Datetime extends AbstractField
 
         return $this;
     }
-
 }

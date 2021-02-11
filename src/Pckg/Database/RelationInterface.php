@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use Pckg\CollectionInterface;
 
@@ -53,5 +55,4 @@ interface RelationInterface
      * @return mixed
      */
     public function with($relation);
-
 }

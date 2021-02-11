@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation\Helper;
+<?php
+
+namespace Pckg\Database\Relation\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -155,5 +157,4 @@ trait MiddleEntity
     {
         return (new GetRecords($middleEntity->where($foreignKey, $primaryValue)))->executeAll();
     }
-
 }

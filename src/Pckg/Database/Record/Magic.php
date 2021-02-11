@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record;
+<?php
+
+namespace Pckg\Database\Record;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Helper\Convention;
@@ -11,7 +13,6 @@ use Pckg\Database\Relation\Helper\CallWithRelation;
  */
 trait Magic
 {
-
     use CallWithRelation;
 
     /**
@@ -294,5 +295,4 @@ trait Magic
             return $data;
         }
     }
-
 }

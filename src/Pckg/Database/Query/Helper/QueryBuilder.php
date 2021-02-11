@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Query\Helper;
+<?php
+
+namespace Pckg\Database\Query\Helper;
 
 use Pckg\Concept\Reflect;
 use Pckg\Database\Entity;
@@ -224,9 +226,15 @@ trait QueryBuilder
      */
     public function where($key, $value = true, $operator = '=')
     {
-        if ((isset($this->table) || isset($this->alias)) && is_string($key)
-            && strpos($key, '.') === false && strpos($key, '`') === false && strpos($key, ' ') === false &&
-            strpos($key, ',') === false && strpos($key, '(') === false
+        if (
+            (isset($this->table)
+            || isset($this->alias))
+            && is_string($key)
+            && strpos($key, '.') === false
+            && strpos($key, '`') === false
+            && strpos($key, ' ') === false
+            && strpos($key, ',') === false
+            && strpos($key, '(') === false
         ) {
             /**
              * Check if repository or extension holds key. :)
@@ -445,5 +453,4 @@ trait QueryBuilder
     {
         return $this->getRepository()->commitTransaction();
     }
-
 }

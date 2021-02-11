@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Helper;
+<?php
+
+namespace Pckg\Database\Helper;
 
 use Exception;
 use Pckg\Cache\Cache as PckgCache;
@@ -319,5 +321,4 @@ class Cache extends PckgCache
 
         return $path;
     }
-
 }

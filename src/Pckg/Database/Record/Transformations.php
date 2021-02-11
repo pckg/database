@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Record;
+<?php
+
+namespace Pckg\Database\Record;
 
 use Pckg\Database\Field\Stringifiable;
 use Pckg\Database\Obj;
@@ -92,7 +94,7 @@ trait Transformations
                 }
             }
         }
-        
+
         foreach ($values as $key => $value) {
             /**
              * Skip protected keys.
@@ -134,13 +136,12 @@ trait Transformations
         }
 
         return $json ?? 'null';
-
     }
 
     /**
      * @return array
      */
-    function jsonSerialize()
+    public function jsonSerialize()
     {
         return $this->__toArray();
     }
@@ -171,5 +172,4 @@ trait Transformations
 
         return $data;
     }
-
 }

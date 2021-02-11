@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Relation;
+<?php
+
+namespace Pckg\Database\Relation;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
@@ -60,7 +62,7 @@ class HasMany extends Relation
          * Prepare relations on left records.
          */
         $collection->each(
-            function(Record $record) {
+            function (Record $record) {
                 $record->setRelation($this->fill, new Collection());
             }
         );
@@ -83,7 +85,7 @@ class HasMany extends Relation
          * Set relations on left records.
          */
         $rightCollection->each(
-            function($rightRecord) use ($keyedCollection) {
+            function ($rightRecord) use ($keyedCollection) {
                 if ($keyedCollection->hasKey($rightRecord->{$this->foreignKey})) {
                     $keyedCollection[$rightRecord->{$this->foreignKey}]->getRelation($this->fill)->push($rightRecord);
                 }
@@ -95,5 +97,4 @@ class HasMany extends Relation
          */
         $this->fillCollectionWithRelations($collection);
     }
-
 }

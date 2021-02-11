@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 /**
  * Class Field
@@ -58,5 +60,4 @@ class Field
     {
         return 1;
     }
-
 }

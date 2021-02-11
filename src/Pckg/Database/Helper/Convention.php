@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database\Helper;
+<?php
+
+namespace Pckg\Database\Helper;
 
 /**
  * Class Convention
@@ -30,19 +32,15 @@ class Convention
         }
 
         $one = null;
-        if (substr($input, -3) == "ies") //categories
-        {
+        if (substr($input, -3) == "ies") { //categories
             $one = substr($input, 0, -3) . "y";
-        } else if (substr($input, -3) == "ses") // statuses
-        {
+        } else if (substr($input, -3) == "ses") { // statuses
             $one = substr($input, 0, -2);
-        } else if (substr($input, -3) == "es") // pages
-        {
+        } else if (substr($input, -3) == "es") { // pages
             $one = substr($input, 0, -1);
-        } else if (substr($input, -1) != "s") // users_fb
-        {
+        } else if (substr($input, -1) != "s") { // users_fb
             $one = $input;
-        } else  // users
+        } else // users
         {
             $one = substr($input, 0, -1);
         }
@@ -68,14 +66,11 @@ class Convention
         }
 
         $multiple = null;
-        if (substr($input, -2) == "es") //categories
-        {
+        if (substr($input, -2) == "es") { //categories
             $multiple = $input;
-        } else if (substr($input, -1) == "y") // category
-        {
+        } else if (substr($input, -1) == "y") { // category
             $multiple = substr($input, 0, -1) . "ies";
-        } else if (substr($input, -1) == "s") // news
-        {
+        } else if (substr($input, -1) == "s") { // news
             $multiple = $input;
         } else {
             $multiple = $input . "s";
@@ -104,7 +99,7 @@ class Convention
         $text = str_split($text, 1);
 
         $splits = ['-', '_', ' ', '\\'];
-        foreach ($text AS $index => $char) {
+        foreach ($text as $index => $char) {
             if (in_array($char, $splits) && isset($text[$index + 1])) {
                 $text[$index + 1] = mb_strtoupper($text[$index + 1]);
             }
@@ -123,8 +118,9 @@ class Convention
         $return = null;
         $text = str_split($text, 1);
 
-        foreach ($text AS $index => $char) {
-            if ($char != strtolower(
+        foreach ($text as $index => $char) {
+            if (
+                $char != strtolower(
                     $char
                 ) && $index != 0 && (isset($text[$index - 1]) && $text[$index - 1] != "/" && $text[$index - 1] != "\\")
             ) {
@@ -152,5 +148,4 @@ class Convention
 
         return $url;
     }
-
 }

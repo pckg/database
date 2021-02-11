@@ -1,4 +1,6 @@
-<?php namespace Pckg\Database;
+<?php
+
+namespace Pckg\Database;
 
 use ArrayAccess;
 use Exception;
@@ -137,7 +139,7 @@ abstract class Query
      */
     public static function raw($sql, $binds = [], $part = 'main')
     {
-        $query = new static($sql);
+        $query = new Raw($sql);
 
         if (!is_array($binds)) {
             $binds = [$binds];
@@ -340,7 +342,7 @@ abstract class Query
      *
      * @return $this
      */
-    private function addCondition($key, $value = true, $operator = '=', $part)
+    private function addCondition($key, $value = true, $operator = '=', $part = 'where')
     {
         if (is_object($key)) {
             if ($key instanceof Raw) {
@@ -717,5 +719,4 @@ abstract class Query
     {
         return sha1($this->buildSQL() . json_encode($this->getBinds()));
     }
-
 }

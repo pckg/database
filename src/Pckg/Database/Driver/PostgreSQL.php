@@ -2,9 +2,10 @@
 
 namespace Pckg\Database\Driver;
 
+use Pckg\Database\Repository;
 use Pckg\Migration\Field;
 
-class PostgreSQL implements DriverInterface
+class PostgreSQL extends PDODriver implements DriverInterface
 {
 
     public function getShowTablesQuery(): string
@@ -12,9 +13,18 @@ class PostgreSQL implements DriverInterface
         return 'SELECT table_name FROM information_schema.tables WHERE table_catalog = ? AND table_name NOT LIKE \'pg%\'';
     }
 
-    public function getTableColumnsQuery(): string
+    public function getTableColumns(Repository $repository, string $table): array
     {
-        return 'SELECT * FROM information_schema.columns WHERE table_catalog = ? AND table_name = ?';
+        $prepare = $repository->getConnection()->prepare('SELECT * FROM information_schema.columns WHERE table_catalog = ? AND table_name = ?');
+        $prepare->execute([$repository->getDbName(), $table]);
+
+        $columns = [];
+        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
+            $parsedField = $this->parseColumn($field);
+            $columns[$parsedField['name']] = $parsedField;
+        }
+
+        return $columns;
     }
 
     public function parseColumn($field)
@@ -43,9 +53,9 @@ class PostgreSQL implements DriverInterface
         ];
     }
 
-    public function getTableIndexesQuery(): string
+    public function getTableIndexesQuery(Repository $repository, string $table): string
     {
-        return 'SELECT * FROM pg_indexes WHERE tablename = ?';
+        return 'SELECT * FROM pg_indexes WHERE tablename = \'' . $table . '\'';
     }
 
     public function getIndexName(): string
@@ -133,10 +143,11 @@ WHERE c.relkind IN ('r','v','m','S','f','')
         $fieldType = $field->getType();
         if ($fieldType === 'DATETIME') {
             $field->setType('TIMESTAMP');
+        } else if ($fieldType === 'LONGTEXT') {
+            $field->setType('TEXT');
         } else if ($field instanceof Field\Boolean) {
             $field->setType('BOOLEAN');
         }
-
 
         $sql = [];
         $sql[] = '`' . $field->getName() . '`';

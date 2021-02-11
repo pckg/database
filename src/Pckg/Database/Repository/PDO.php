@@ -76,6 +76,13 @@ class PDO extends AbstractRepository implements Repository
         $this->connection = RepositoryFactory::createPdoConnectionByConfig(config('database.' . $this->name, []));
     }
 
+    public function getDbName()
+    {
+        $connection = $this->getConnection();
+
+        return substr($connection->uniqueName, strrpos($connection->uniqueName, '-') + 1);
+    }
+
     public function setDriver(DriverInterface $driver)
     {
         $this->driver = $driver;

@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 use Exception;
 use Pckg\Cache\Cache;
+use Pckg\Database\Driver\DriverInterface;
 use PDO;
 
 /**
@@ -19,6 +20,9 @@ interface Repository
      */
     public function getConnection();
 
+    /**
+     * @return DriverInterface
+     */
     public function getDriver();
 
     /**

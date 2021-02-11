@@ -2,24 +2,34 @@
 
 namespace Pckg\Database\Driver;
 
+use Pckg\Database\Repository;
 use Pckg\Migration\Field;
 
-class MySQL implements DriverInterface
+class MySQL extends PDODriver implements DriverInterface
 {
 
     public function getShowTablesQuery(): string
     {
-        return 'SHOW TABLES';
+        return 'SHOW TABLES WHERE 1 != ?';
     }
 
-    public function getTableColumnsQuery(): string
+    public function getTableColumns(Repository $repository, string $table): array
     {
-        return 'SHOW FULL COLUMNS IN ?';
+        $prepare = $repository->getConnection()->prepare('SHOW FULL COLUMNS IN `' . $table . '`');
+        $prepare->execute();
+
+        $columns = [];
+        foreach ($prepare->fetchAll(\PDO::FETCH_ASSOC) as $field) {
+            $parsedField = $this->parseColumn($field);
+            $columns[$parsedField['name']] = $parsedField;
+        }
+
+        return $columns;
     }
 
-    public function getTableIndexesQuery(): string
+    public function getTableIndexesQuery(Repository $repository, string $table): string
     {
-        return 'SHOW INDEX IN ?';
+        return 'SHOW INDEX IN `' . $table . '`';
     }
 
     public function getIndexName(): string

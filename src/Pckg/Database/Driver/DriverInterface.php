@@ -2,14 +2,16 @@
 
 namespace Pckg\Database\Driver;
 
+use Pckg\Database\Repository;
+
 interface DriverInterface
 {
 
     public function getShowTablesQuery(): string;
 
-    public function getTableColumnsQuery(): string;
+    public function getTableColumns(Repository $repository, string $table): array;
 
-    public function getTableIndexesQuery(): string;
+    public function getTableIndexesQuery(Repository $repository, string $table): string;
 
     public function getIndexName(): string;
 

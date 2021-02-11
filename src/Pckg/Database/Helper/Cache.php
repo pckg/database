@@ -71,13 +71,6 @@ class Cache extends PckgCache
         parent::buildCache();
     }
 
-    public function getDbName()
-    {
-        $connection = $this->repository->getConnection();
-
-        return substr($connection->uniqueName, strrpos($connection->uniqueName, '-') + 1);
-    }
-
     /**
      *
      */
@@ -89,7 +82,7 @@ class Cache extends PckgCache
         }
         $sql = $this->repository->getDriver()->getShowTablesQuery();
         $prepare = $connection->prepare($sql);
-        $prepare->execute([$this->getDbName()]);
+        $prepare->execute([$this->repository->getDbName()]);
 
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $table) {
             $table = end($table);
@@ -110,13 +103,7 @@ class Cache extends PckgCache
 
         $driver = $this->repository->getDriver();
 
-        $prepare = $this->repository->getConnection()->prepare($driver->getTableColumnsQuery());
-        $prepare->execute([$this->getDbName(), $table]);
-
-        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
-            $parsedField = $driver->parseColumn($field);
-            $this->cache['fields'][$table][$parsedField['name']] = $parsedField;
-        }
+        $this->cache['fields'][$table] = $driver->getTableColumns($this->repository, $table);
     }
 
     /**
@@ -124,29 +111,9 @@ class Cache extends PckgCache
      */
     protected function buildConstraints($table)
     {
-        $this->cache['constraints'][$table] = [];
-
         $driver = $this->repository->getDriver();
-        $connection = $this->repository->getConnection();
 
-        $prepare = $connection->prepare($driver->getTableIndexesQuery());
-        $prepare->execute([$table]);
-
-        $indexes = [];
-        $indexName = $driver->getIndexName();
-        foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $constraint) {
-            $indexes[$constraint[$indexName]][] = $constraint;
-        }
-
-        foreach ($indexes as $indexs) {
-            $first = $indexs[0];
-            $name = $first[$indexName];
-
-            $type = $driver->getIndexType($indexs);
-            $this->cache['constraints'][$table][$name] = [
-                'type' => $type,
-            ];
-        }
+        $this->cache['constraints'][$table] = $driver->getTableConstraints($this->repository, $table);
     }
 
     /**

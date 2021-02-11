@@ -26,7 +26,7 @@ class Insert extends Query
                $this->buildKeys() .
                "VALUES " . $this->buildValues();
 
-        return $sql;
+        return $this->getDriver()->recapsulate($sql, '`');
     }
 
     /**

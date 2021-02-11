@@ -114,7 +114,7 @@ class UpdateRecord
         /**
          * We will update record in $table with $data ...
          */
-        $query = (new Update())->setTable($table)->setSet($data);
+        $query = (new Update())->setDriver($this->repository->getDriver())->setTable($table)->setSet($data);
 
         /**
          * ... add primary key condition ...

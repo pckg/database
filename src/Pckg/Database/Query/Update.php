@@ -27,6 +27,8 @@ class Update extends Query
                $this->buildWhere() .
                ($this->limit ? ' LIMIT ' . $this->limit : '');
 
+        $sql = $this->getDriver()->recapsulate($sql, '`');
+
         if ($this->diebug) {
             ddd($sql, $this->bind);
         } elseif ($this->debug) {

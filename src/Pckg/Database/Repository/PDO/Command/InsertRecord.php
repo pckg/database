@@ -37,8 +37,8 @@ class InsertRecord
     protected $tables = [];
 
     /**
-     * @param Record     $record
-     * @param Entity     $entity
+     * @param Record $record
+     * @param Entity $entity
      * @param Repository $repository
      */
     public function __construct(Record $record, Entity $entity, Repository $repository)
@@ -102,7 +102,7 @@ class InsertRecord
         /**
          * We will insert $data into $table ...
          */
-        $query = (new Insert())->table($table)->setInsert($data);
+        $query = (new Insert())->setDriver($this->repository->getDriver())->table($table)->setInsert($data);
 
         /**
          * ... prepare query ...
@@ -114,10 +114,7 @@ class InsertRecord
          */
         $this->repository->executePrepared($prepare);
 
-        /**
-         * ... and return inserted ID.
-         */
-        return $this->repository->getConnection()->lastInsertId();
+        return $this->repository->getDriver()->getLastInsertId($this->repository->getConnection(), $table);
     }
 
 }

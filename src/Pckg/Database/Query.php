@@ -2,6 +2,7 @@
 
 use ArrayAccess;
 use Exception;
+use Pckg\Database\Driver\DriverInterface;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
 use Throwable;
@@ -95,12 +96,36 @@ abstract class Query
     protected $diebug = false;
 
     /**
+     * @var DriverInterface
+     */
+    protected $driver;
+
+    /**
      * Query constructor.
      */
     public function __construct()
     {
         $this->where = (new Parenthesis())->setGlue('AND');
         $this->having = (new Parenthesis())->setGlue('AND');
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @return $this
+     */
+    public function setDriver(DriverInterface $driver)
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @return DriverInterface|null
+     */
+    public function getDriver()
+    {
+        return $this->driver;
     }
 
     /**

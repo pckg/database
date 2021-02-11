@@ -69,18 +69,25 @@ class Cache extends PckgCache
         parent::buildCache();
     }
 
+    public function getDbName()
+    {
+        $connection = $this->repository->getConnection();
+
+        return substr($connection->uniqueName, strrpos($connection->uniqueName, '-') + 1);
+    }
+
     /**
      *
      */
     protected function buildTables()
     {
-        $sql = 'SHOW TABLES';
         $connection = $this->repository->getConnection();
         if (!$connection) {
             return;
         }
+        $sql = $this->repository->getDriver()->getShowTablesQuery();
         $prepare = $connection->prepare($sql);
-        $prepare->execute();
+        $prepare->execute([$this->getDbName()]);
 
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $table) {
             $table = end($table);
@@ -98,30 +105,15 @@ class Cache extends PckgCache
     {
         $this->cache['tables'][$table] = [];
         $this->cache['fields'][$table] = [];
-        $sql = 'SHOW FULL COLUMNS IN ';
-        $prepare = $this->repository->getConnection()->prepare($sql . '`' . $table . '`');
-        $prepare->execute();
+
+        $driver = $this->repository->getDriver();
+
+        $prepare = $this->repository->getConnection()->prepare($driver->getTableColumnsQuery());
+        $prepare->execute([$this->getDbName(), $table]);
+
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $field) {
-            $field['Field'] = strtolower($field['Field']);
-            $this->cache['fields'][$table][$field['Field']] = [
-                'name'      => $field['Field'],
-                'type'      => strpos($field['Type'], '(')
-                    ? substr($field['Type'], 0, strpos($field['Type'], '('))
-                    : $field['Type'],
-                'limit'     => str_replace([') unsigne'], '',
-                                           substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
-                                               $field['Type'],
-                                               strpos($field['Type'], '(') + 1,
-                                               strpos($field['Type'], ')') ? -1 : null
-                                           )),
-                'null'      => $field['Null'] == 'YES',
-                'key'       => $field['Key'] == 'PRI'
-                    ? 'primary'
-                    : $field['Key'],
-                'default'   => $field['Default'],
-                'extra'     => $field['Extra'],
-                'relations' => [],
-            ];
+            $parsedField = $driver->parseColumn($field);
+            $this->cache['fields'][$table][$parsedField['name']] = $parsedField;
         }
     }
 
@@ -132,43 +124,26 @@ class Cache extends PckgCache
     {
         $this->cache['constraints'][$table] = [];
 
-        $sql = 'SHOW INDEX IN `' . $table . '`';
+        $driver = $this->repository->getDriver();
         $connection = $this->repository->getConnection();
-        $prepare = $connection->prepare($sql);
-        $prepare->execute();
+
+        $prepare = $connection->prepare($driver->getTableIndexesQuery());
+        $prepare->execute([$table]);
 
         $indexes = [];
-
+        $indexName = $driver->getIndexName();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $constraint) {
-            $indexes[$constraint['Key_name']][] = $constraint;
+            $indexes[$constraint[$indexName]][] = $constraint;
         }
 
         foreach ($indexes as $indexs) {
             $first = $indexs[0];
-            $name = $first['Key_name'];
+            $name = $first[$indexName];
 
-            if ($name == 'PRIMARY') {
-                $this->cache['constraints'][$table][$name] = [
-                    'type' => 'PRIMARY',
-                ];
-            } else {
-                if (strpos($name, 'FOREIGN__') === 0) {
-                    /**
-                     * This is handled in buildRelations();
-                     */
-                    $this->cache['constraints'][$table][$first['Key_name']] = [
-                        'type' => 'FOREIGN',
-                    ];
-                } else if ($first['Non_unique']) {
-                    $this->cache['constraints'][$table][$first['Key_name']] = [
-                        'type' => 'KEY',
-                    ];
-                } else {
-                    $this->cache['constraints'][$table][$first['Key_name']] = [
-                        'type' => 'UNIQUE',
-                    ];
-                }
-            }
+            $type = $driver->getIndexType($indexs);
+            $this->cache['constraints'][$table][$name] = [
+                'type' => $type,
+            ];
         }
     }
 
@@ -197,23 +172,13 @@ class Cache extends PckgCache
         if (!$connection) {
             return;
         }
-        $sql = 'SELECT `TABLE_SCHEMA`, `TABLE_NAME`, `COLUMN_NAME`, `REFERENCED_TABLE_SCHEMA`, `REFERENCED_TABLE_NAME`, `REFERENCED_COLUMN_NAME`
-  FROM `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE` WHERE `TABLE_SCHEMA` = SCHEMA() AND `REFERENCED_TABLE_NAME` IS NOT NULL;';
-        $prepare = $connection->prepare($sql);
+        $driver = $this->repository->getDriver();
+        $prepare = $connection->prepare($driver->getRelationsQuery());
         $prepare->execute();
         foreach ($prepare->fetchAll(PDO::FETCH_ASSOC) as $result) {
-            $table = $result['TABLE_NAME'];
-            $primary = $result['COLUMN_NAME'];
-            $references = $result['REFERENCED_TABLE_NAME'];
-            $on = $result['REFERENCED_COLUMN_NAME'];
-            $key = 'FOREIGN__' . substr($table . '__' . $primary, -55);
-
-            $this->cache['constraints'][$table][$key] = [
-                'type'       => 'FOREIGN',
-                'primary'    => $primary,
-                'references' => $references,
-                'on'         => $on,
-            ];
+            $parsedRelation = $driver->parseRelation($result);
+            continue;
+            $this->cache['constraints'][$parsedRelation['table']][$parsedRelation['key']] = $parsedRelation;
         }
     }
 
@@ -328,7 +293,7 @@ class Cache extends PckgCache
      */
     public function getTablePrimaryKeys($table)
     {
-        return $this->cache['tables'][$table]['primaryKeys'];
+        return $this->cache['tables'][$table]['primaryKeys'] ?? [];
     }
 
     /**

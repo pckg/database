@@ -164,13 +164,21 @@ class RepositoryFactory
          */
         $to = 'host';
         $key = 'host';
+        $scheme = $config['driver'] ?? 'mysql';
         if (isset($config['socket'])) {
             $to = 'unix_socket';
             $key = 'socket';
         }
-        
+
+        $finalCharset = ";charset=" . $charset;
+        $finalOptions = '';
+        if ($scheme === 'pgsql') {
+            $finalCharset = '';
+            $finalOptions = ';options=\'--client_encoding=' . $charset . '\'';
+        }
+
         return new PDO(
-            "mysql:" . $to . "=" . $config[$key] . ";charset=" . $charset . $partDb,
+            $scheme . ":" . $to . "=" . $config[$key] . $finalCharset . $partDb . $finalOptions,
             $config['user'],
             $config['pass'],
             $options

@@ -41,9 +41,16 @@ trait QueryBuilder
      */
     public function getQuery()
     {
-        return $this->query
+        $query = $this->query
             ? $this->query
             : $this->resetQuery()->getQuery();
+
+        /**
+         * Set driver/formatter.
+         */
+        $query->setDriver($this->getRepository()->getDriver());
+
+        return $query;
     }
 
     /**

@@ -157,7 +157,7 @@ class Select extends Query
         if ($this->limit) {
             $parts[] = 'LIMIT ' . $this->limit;
         }
-        
+
         if ($this->lock) {
             $parts[] = $this->lock;
         }
@@ -180,7 +180,7 @@ class Select extends Query
             }
         }
 
-        return $sql;
+        return $this->getDriver()->recapsulate($sql, '`');
     }
 
     /**
@@ -207,7 +207,7 @@ class Select extends Query
             }
         }
 
-        return ($this->count ? 'SQL_CALC_FOUND_ROWS ' : '') .
+        return ($this->count ? $this->driver->addFullCount() : '') .
                ($this->distinct ? 'DISTINCT ' : '') .
                ($this->countRow ? 'COUNT(' . $this->countRow . ') AS `count`' : '') .
                ($this->countRow && $keys && $this->groupBy ? ', ' : '') .

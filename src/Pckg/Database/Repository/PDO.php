@@ -1,6 +1,9 @@
 <?php namespace Pckg\Database\Repository;
 
 use Exception;
+use Pckg\Database\Driver\DriverInterface;
+use Pckg\Database\Driver\MySQL;
+use Pckg\Database\Driver\PostgreSQL;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
@@ -65,6 +68,26 @@ class PDO extends AbstractRepository implements Repository
     {
         $this->connection = null;
         $this->connection = RepositoryFactory::createPdoConnectionByConfig(config('database.' . $this->name, []));
+    }
+    
+    public function setDriver(DriverInterface $driver)
+    {
+        $this->driver = $driver;
+
+        return $this;
+    }
+
+    /**
+     * @return DriverInterface
+     */
+    public function getDriver()
+    {
+        $driver = config('database.' . $this->name . '.driver', null);
+        if (!$driver) {
+            return null;
+        }
+
+        return resolve(['mysql' => MySQL::class, 'pgsql' => PostgreSQL::class][$driver]);
     }
 
     /**

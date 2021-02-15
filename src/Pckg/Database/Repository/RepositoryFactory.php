@@ -121,9 +121,7 @@ class RepositoryFactory
                 $pdo = static::createPdoConnectionByConfig($config);
             } catch (PDOException $e) {
                 throw new Exception('Cannon instantiate database connection: ' . $e->getMessage());
-            }
-
-            $pdo->uniqueName = $config['host'] . "-" . $config['db'];
+            };
 
             static::checkDebugBar($pdo, $name);
 
@@ -181,12 +179,16 @@ class RepositoryFactory
             $finalOptions = ';options=\'--client_encoding=' . $charset . '\'';
         }
 
-        return new PDO(
+        $pdo = new PDO(
             $scheme . ":" . $to . "=" . $config[$key] . $finalCharset . $partDb . $finalOptions,
             $config['user'],
             $config['pass'],
             $options
         );
+
+        $pdo->uniqueName = $config['host'] . "-" . $config['db'];
+
+        return $pdo;
     }
 
     /**

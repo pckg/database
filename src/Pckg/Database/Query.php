@@ -5,6 +5,7 @@ namespace Pckg\Database;
 use ArrayAccess;
 use Exception;
 use Pckg\Database\Driver\DriverInterface;
+use Pckg\Database\Driver\MySQL;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
 use Throwable;
@@ -100,7 +101,7 @@ abstract class Query
     /**
      * @var DriverInterface
      */
-    protected $driver;
+    protected $driver = MySQL::class;
 
     /**
      * Query constructor.

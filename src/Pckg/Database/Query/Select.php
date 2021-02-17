@@ -300,6 +300,7 @@ class Select extends Query
     public function transformToDelete()
     {
         $delete = new Delete();
+        $delete->setDriver($this->getDriver());
 
         $delete->setTable($this->table);
         $delete->getWhere()->setChildren($this->where->getChildren());
@@ -333,6 +334,7 @@ class Select extends Query
     public function transformToUpdate()
     {
         $update = new Update();
+        $update->setDriver($this->getDriver());
         $update->setTable($this->table);
         $update->getWhere()->setChildren($this->where->getChildren());
         $update->setBind(['where' => $this->getBinds('where')]);

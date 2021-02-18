@@ -126,7 +126,7 @@ class MySQL extends PDODriver implements DriverInterface
         $sql[] = $field->getTypeWithLength();
 
         if (method_exists($field, 'isUnsigned') && $field->isUnsigned()) {
-            $sql[] = 'UNSIGNED';
+            //$sql[] = 'UNSIGNED';
         }
 
         if ($field->isNullable()) {

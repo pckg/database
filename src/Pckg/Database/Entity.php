@@ -31,6 +31,7 @@ class Entity
     use Deletable;
     use Translatable;
     use Paginatable;
+    use DatabaseRecord\Events; // from record?
 
     /**
      * @var string

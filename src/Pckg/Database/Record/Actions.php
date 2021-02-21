@@ -226,10 +226,12 @@ trait Actions
         $entity = $this->prepareEntityIfEmpty($entity);
         $repository = $entity->getRepositoryIfEmpty($repository);
 
+        $entity->trigger(['saving', 'updating'], $this);
         $this->trigger(['saving', 'updating']);
 
         $update = $repository->update($this, $entity);
 
+        $entity->trigger(['updated', 'saved'], $this);
         $this->trigger(['updated', 'saved']);
 
         $this->setOriginalFromData();
@@ -248,10 +250,12 @@ trait Actions
         $entity = $this->getEntityIfEmpty($entity);
         $repository = $entity->getRepositoryIfEmpty($repository);
 
+        $entity->trigger(['saving', 'inserting'], $this);
         $this->trigger(['saving', 'inserting']);
 
         $insert = $repository->insert($this, $entity);
 
+        $entity->trigger(['inserted', 'saved'], $this);
         $this->trigger(['inserted', 'saved']);
 
         $this->setOriginalFromData();

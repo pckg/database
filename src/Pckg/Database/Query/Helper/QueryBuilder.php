@@ -50,8 +50,19 @@ trait QueryBuilder
         /**
          * Set driver/formatter.
          */
-        $driver = $this->getRepository()->getDriver();
-        $driver && $query->setDriver($driver);
+        if (!$query->getDriver()) {
+            $repository = $this->getRepository();
+            if (!$repository) {
+                return $driver;
+            }
+
+            $driver = $repository->getDriver();
+            if (!$driver) {
+                return $query;
+            }
+
+            $query->setDriver($driver);
+        }
 
         return $query;
     }

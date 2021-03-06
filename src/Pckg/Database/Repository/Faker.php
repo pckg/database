@@ -27,6 +27,11 @@ class Faker extends AbstractRepository implements Repository
         $this->cache = new Cache($this);
     }
 
+    public function getName()
+    {
+        return 'faker';
+    }
+
     /**
      * @param Record $record
      * @param Entity $entity

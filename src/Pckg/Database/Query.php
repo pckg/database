@@ -128,6 +128,10 @@ abstract class Query
      */
     public function getDriver()
     {
+        if (is_string($this->driver)) {
+            $this->driver = resolve($this->driver);
+        }
+
         return $this->driver;
     }
 

@@ -686,7 +686,15 @@ class Entity
     {
         if (!$callback) {
             $callback = function () {
-                throw new NotFound('No record ' . $this->getRecordClass() . ' / ' . static::class . ' found');
+                $class = $this->getRecordClass();
+
+                $error = 'No record ' . $class . ' / ' . static::class . ' found';
+                error_log($error);
+
+                $niceName = substr($class, strrpos($class, '\\') + 1);
+                $error = 'No record found (' . $niceName . ')';
+
+                throw new NotFound($error);
             };
         }
 

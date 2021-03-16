@@ -672,10 +672,18 @@ class Entity
             if (!$records->count()) {
                 break;
             }
-            $collection->push($callback($records));
+            $collection->push($callback($records, $i));
         } while ($records->count() === $by && (!$max || (($i + 1) * $by < $max)));
 
         return $collection;
+    }
+
+    /**
+     *
+     */
+    public function chunk(callable $callback, int $by = 100, $max = 1000)
+    {
+        return $this->iterate($callback, $by, $max);
     }
 
     /**

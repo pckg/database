@@ -155,6 +155,7 @@ trait MiddleEntity
      */
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
+        return $middleEntity->where($foreignKey, $primaryValue)->all(); // to call correct repository
         return (new GetRecords($middleEntity->where($foreignKey, $primaryValue)))->executeAll();
     }
 }

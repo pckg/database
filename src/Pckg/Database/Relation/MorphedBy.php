@@ -23,6 +23,9 @@ class MorphedBy extends MorphsMany
      */
     public function getMiddleCollection(Entity $middleEntity, $foreignKey, $primaryValue)
     {
+        return $middleEntity->where($foreignKey, $primaryValue)
+            ->where($this->morph, get_class($this->getLeftEntity()))
+            ->all(); // call correct repository
         return (
         new GetRecords(
             $middleEntity->where($foreignKey, $primaryValue)

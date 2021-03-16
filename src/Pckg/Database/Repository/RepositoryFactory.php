@@ -270,6 +270,8 @@ class RepositoryFactory
         } elseif ($config['driver'] == 'middleware') {
             return resolve($config['middleware'])->execute(function () {
             });
+        } elseif ($config['driver'] === 'json') {
+            return new JSON($config);
         }
 
         return static::initPdoDatabase($config, $name);

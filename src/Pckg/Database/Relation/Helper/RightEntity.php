@@ -91,6 +91,7 @@ trait RightEntity
             $entity->getQuery()->bind($bind, 'where');
         }
 
+        return $rightEntity->all(); // to apply correct repository
         return (new GetRecords($rightEntity))->executeAll();
     }
 
@@ -127,6 +128,7 @@ trait RightEntity
             $entity->getQuery()->bind($bind, 'where');
         }
 
+        return $entity->one(); // to apply correct repository
         return (new GetRecords($rightEntity))->executeOne();
     }
 

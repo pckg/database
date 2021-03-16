@@ -61,6 +61,9 @@ class MorphsMany extends HasAndBelongsTo
             return new Collection();
         }
 
+        return $middleEntity->where($foreignKey, $primaryValue)
+            ->where($this->morph, get_class($this->getLeftEntity()))
+            ->all(); // call correct repository
         return (
         new GetRecords(
             $middleEntity->where($foreignKey, $primaryValue)

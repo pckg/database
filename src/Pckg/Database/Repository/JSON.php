@@ -52,9 +52,8 @@ class JSON extends Custom
         $file = $entity->getTable() . '.json';
         $path = path('root') . 'static/db/json/' . $db . '/';
         if (!is_file($path . $file)) {
+            error_log('Database file ' . $file . ' does not exist');
             return collect();
-            db();die("no file");
-            throw new \Exception($file . ' does not exist');
         }
 
         $content = json_decode(file_get_contents($path . $file), true);
@@ -144,7 +143,26 @@ class JSON extends Custom
                 if (!($record->{$field} != $value)) {
                     return false;
                 }
+            } else if (preg_match('/^`[a-z_]*` IN\([\\?, ]*\)$/', $child, $matches)) {
+                $field = substr($child, 1, strpos($child, '`', 1) - 1);
+
+                if (!(in_array($record->{$field}, $binds))) {
+                    return false;
+                }
+            } else if (preg_match('/^`[a-z_]*` IS NULL$/', $child, $matches)) {
+                $field = substr($child, 1, strpos($child, '`', 1) - 1);
+
+                if (!(is_null($record->{$field}))) {
+                    return false;
+                }
+            } else if (preg_match('/^`[a-z_]*` IS NOT NULL$/', $child, $matches)) {
+                $field = substr($child, 1, strpos($child, '`', 1) - 1);
+
+                if (is_null($record->{$field})) {
+                    return false;
+                }
             } else {
+                throw new \Exception('Unsupported custom repository operation');
                 return false;
             }
         }

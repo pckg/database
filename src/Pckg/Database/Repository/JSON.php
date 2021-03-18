@@ -104,80 +104,88 @@ class JSON extends Custom
             $last = end($exploded);
             return trim($last, '`');
         };
+        $pattern = function ($after = '') {
+            return '/^`[\w`\.]*`' . $after . '$/';
+        };
 
         foreach ($children as $i => $child) {
             if (!is_string($child)) {
                 return false;
             }
 
-            if (preg_match('/^`[\w`\.]*` = \?$/', $child, $matches)) {
+            if (preg_match($pattern(' = \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} == $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` > \?$/', $child, $matches)) {
+            } else if (preg_match($pattern(' > \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} > $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` < \?$/', $child, $matches)) {
+            } else if (preg_match($pattern(' < \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} < $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` >= \?$/', $child, $matches)) {
+            } else if (preg_match($pattern(' >= \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} >= $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` <= \?$/', $child, $matches)) {
+            } else if (preg_match($pattern(' <= \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} <= $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` != \?$/', $child, $matches)) {
+            } else if (preg_match($pattern(' != \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$i];
 
                 if (!($record->{$field} != $value)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` IN\([\\?, ]*\)$/', $child, $matches)) {
+            } else if (preg_match($pattern(' IN\([\\?, ]*\)'), $child, $matches)) {
                 $field = $getField($child);
 
                 if (!(in_array($record->{$field}, $binds))) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` NOT IN\([\\?, ]*\)$/', $child, $matches)) {
+            } else if (preg_match($pattern(' NOT IN\([\\?, ]*\)'), $child, $matches)) {
                 $field = $getField($child);
 
                 if (in_array($record->{$field}, $binds)) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` IS NULL$/', $child, $matches)) {
+            } else if (preg_match($pattern(' IS NULL'), $child, $matches)) {
                 $field = $getField($child);
 
                 if (!(is_null($record->{$field}))) {
                     return false;
                 }
-            } else if (preg_match('/^`[\w`\.]*` IS NOT NULL$/', $child, $matches)) {
+            } else if (preg_match($pattern(' IS NOT NULL'), $child, $matches)) {
                 $field = $getField($child);
 
                 if (is_null($record->{$field})) {
                     return false;
                 }
+            } else if (preg_match($pattern(), $child, $matches)) {
+                $field = $getField($child);
+
+                if (!$record->{$field}) {
+                    return false;
+                }
             } else {
-                ddd($child, $binds, $query);
                 throw new \Exception('Unsupported custom repository operation');
                 return false;
             }
@@ -227,10 +235,10 @@ class JSON extends Custom
          * Create sub-collections.
          */
         $recordClass = $entity->getRecordClass();
-        $rows = $rows->map(function ($row) use ($recordClass) {
+        $rows = $rows->map(function ($row) {
             if (isset($row['allPermissions'])) {
-                $row['allPermissions'] = collect($row['allPermissions'])->map(function ($permission) use ($recordClass) {
-                    return new $recordClass($permission);
+                $row['allPermissions'] = collect($row['allPermissions'])->map(function ($permission) {
+                    return new Record($permission);
                 });
             }
             return $row;

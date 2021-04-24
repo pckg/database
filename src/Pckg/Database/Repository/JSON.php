@@ -80,6 +80,10 @@ class JSON extends Custom
         /**
          * Sort? Limit?
          */
+        $sort = $query->getOrderBy();
+        if ($sort) {
+            $collection = $collection->sortBy($sort);
+        }
 
         /**
          * Fill relations.

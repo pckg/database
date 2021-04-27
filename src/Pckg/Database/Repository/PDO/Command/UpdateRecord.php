@@ -80,7 +80,7 @@ class UpdateRecord
                 continue;
             }
 
-            if ($table == $this->entity->getTable()) {
+            if ($table === $this->entity->getTable()) {
                 $this->update($table, $update);
             } else {
                 // we don't know if children exists
@@ -114,9 +114,21 @@ class UpdateRecord
         }
 
         /**
+         * ID cannot be updated.
+         */
+        $clone = $data;
+        if (isset($clone['id'])) {
+            unset($clone['id']);
+        }
+
+        if (!$clone) {
+            return 0; // no rows updated
+        }
+
+        /**
          * We will update record in $table with $data ...
          */
-        $query = (new Update())->setDriver($this->repository->getDriver())->setTable($table)->setSet($data);
+        $query = (new Update())->setDriver($this->repository->getDriver())->setTable($table)->setSet($clone);
 
         /**
          * ... add primary key condition ...

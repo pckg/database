@@ -136,6 +136,10 @@ WHERE c.relkind IN ('r','v','m','S','f','')
             return $sql;
         }
 
+        if (strpos($sql, 'INSERT INTO ') === 0 && strpos($sql, ' RETURNING id') === false) {
+            $sql .= ' RETURNING id';
+        }
+
         return str_replace($encapsulator, '"', $sql);
     }
 
@@ -194,9 +198,9 @@ WHERE c.relkind IN ('r','v','m','S','f','')
             $this->recapsulate(implode(",\n", $sql), '`') . "\n" . ')';
     }
 
-    public function getLastInsertId(\PDO $connection, $table)
+    public function getLastInsertId(\PDO $connection, $table, \PDOStatement $prepare)
     {
-        return $connection->lastInsertId($table . '_id_seq');
+        return $prepare->fetchColumn();
     }
 
     public function condition($condition, $true = '1', $false = '0')

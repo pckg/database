@@ -173,7 +173,7 @@ class MySQL extends PDODriver implements DriverInterface
             implode(",\n", $sql) . "\n" . ') ENGINE=InnoDB DEFAULT CHARSET=utf8';
     }
 
-    public function getLastInsertId(\PDO $connection, $table)
+    public function getLastInsertId(\PDO $connection, $table, $prepare)
     {
         return $connection->lastInsertId();
     }

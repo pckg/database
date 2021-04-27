@@ -93,7 +93,8 @@ class DeleteRecord
         $primaryKeys = $this->entity->getRepository()->getCache()->getTablePrimaryKeys($table);
 
         if (!$primaryKeys) {
-            throw new Exception('Will NOT delete from table without primary keys ...');
+            $primaryKeys = ['id'];
+            //throw new Exception('Will NOT delete from table without primary keys ...');
         }
 
         foreach ($extensions as $ext) {
@@ -104,7 +105,7 @@ class DeleteRecord
                 /**
                  * We will delete record from $table ...
                  */
-                $query = (new Delete())->setTable($table . $ext);
+                $query = (new Delete())->setDriver($this->repository->getDriver())->setTable($table . $ext);
 
                 /**
                  * ... add primary key condition ...
@@ -122,7 +123,11 @@ class DeleteRecord
                 /**
                  *  ... and execute it.
                  */
-                $this->repository->executePrepared($prepare);
+                try {
+                    $this->repository->executePrepared($prepare);
+                } catch (\Throwable $e) {
+                    ddd(exception($e));
+                }
             }
         }
 

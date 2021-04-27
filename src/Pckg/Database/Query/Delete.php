@@ -36,7 +36,9 @@ class Delete extends Query
             $parts[] = 'LIMIT ' . $this->limit;
         }
 
-        return implode(' ', $parts);
+        $sql = implode(' ', $parts);
+        
+        return $this->getDriver()->recapsulate($sql, '`');
     }
 
     /**

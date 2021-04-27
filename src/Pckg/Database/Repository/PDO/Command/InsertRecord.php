@@ -116,6 +116,6 @@ class InsertRecord
          */
         $this->repository->executePrepared($prepare);
 
-        return $this->repository->getDriver()->getLastInsertId($this->repository->getConnection(), $table);
+        return $this->repository->getDriver()->getLastInsertId($this->repository->getConnection(), $table, $prepare);
     }
 }

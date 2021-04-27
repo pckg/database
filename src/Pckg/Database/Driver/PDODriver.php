@@ -73,7 +73,7 @@ abstract class PDODriver
         $cachedField = $cache->getField($field->getName(), $table->getName());
 
         if (strpos($cachedField['default'], 'nextval(') === 0) {
-            return $encapsulator . $cachedField['name'] . $encapsulator . ' SERIAL';
+            return $encapsulator . $cachedField['name'] . $encapsulator . ' SERIAL PRIMARY KEY';
         }
 
         return '`' . $cachedField['name'] . '` '

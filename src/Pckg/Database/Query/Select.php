@@ -209,7 +209,7 @@ class Select extends Query
             }
         }
 
-        return ($this->count ? $this->driver->addFullCount() : '') .
+        return ($this->count ? $this->getDriver()->addFullCount() : '') .
                ($this->distinct ? 'DISTINCT ' : '') .
                ($this->countRow ? 'COUNT(' . $this->countRow . ') AS `count`' : '') .
                ($this->countRow && $keys && $this->groupBy ? ', ' : '') .

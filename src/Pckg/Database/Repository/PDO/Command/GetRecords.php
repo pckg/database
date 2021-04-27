@@ -4,6 +4,8 @@ namespace Pckg\Database\Repository\PDO\Command;
 
 use Pckg\CollectionInterface;
 use Pckg\Database\Collection;
+use Pckg\Database\Driver\MySQL;
+use Pckg\Database\Driver\PostgreSQL;
 use Pckg\Database\Entity;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
@@ -46,10 +48,16 @@ class GetRecords
     public function executeAll()
     {
         $repository = $this->repository;
-
         $entity = $this->entity;
+        $query = $entity->getQuery();
 
-        $prepare = $repository->prepareQuery($entity->getQuery(), $entity->getRecordClass());
+        $isCounted = $query->isCounted();
+        $queryDriver = $query->getDriver();
+        if ($isCounted && get_class() !== MySQL::class) {
+            $query->addSelect(['total_count' => 'COUNT(*) OVER()']);
+        }
+
+        $prepare = $repository->prepareQuery($query, $entity->getRecordClass());
 
         $measure = str_replace("\n", " ", $prepare->queryString);
         $hash = sha1($measure . microtime());
@@ -69,13 +77,17 @@ class GetRecords
         }
 
         $collection = new Collection($results);
-        if ($entity->getQuery()->isCounted()) {
-            startMeasure('Counting ' . $hash);
-            $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
-            $repository->executePrepared($prepareCount);
-            $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
-            $entity->count(false);
-            stopMeasure('Counting ' . $hash);
+        if ($isCounted) {
+            if (get_class($queryDriver) === MySQL::class) {
+                startMeasure('Counting ' . $hash);
+                $prepareCount = $repository->prepareSQL('SELECT FOUND_ROWS()');
+                $repository->executePrepared($prepareCount);
+                $collection->setTotal($prepareCount->fetch(PDO::FETCH_COLUMN));
+                $entity->count(false);
+                stopMeasure('Counting ' . $hash);
+            } else {
+                $collection->setTotal($results[0]->total_count);
+            }
         }
 
         startMeasure('Setting original ' . $hash);

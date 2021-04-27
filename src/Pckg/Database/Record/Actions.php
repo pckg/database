@@ -271,8 +271,8 @@ trait Actions
     public function saveAs($overwrite = [])
     {
         $data = $this->data();
-        $data['id'] = null;
         $data = array_merge($data, $overwrite);
+        unset($data['id']);
 
         return $this->create($data, $this->getEntity());
     }

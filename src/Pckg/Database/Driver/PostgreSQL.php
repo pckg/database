@@ -142,7 +142,7 @@ WHERE c.relkind IN ('r','v','m','S','f','')
     public function installField(Field $field)
     {
         if ($field instanceof Field\Id) {
-            return '"' . $field->getName() . '" SERIAL';
+            return '"' . $field->getName() . '" SERIAL PRIMARY KEY';
         }
 
         $fieldType = $field->getType();
@@ -197,5 +197,10 @@ WHERE c.relkind IN ('r','v','m','S','f','')
     public function getLastInsertId(\PDO $connection, $table)
     {
         return $connection->lastInsertId($table . '_id_seq');
+    }
+
+    public function condition($condition, $true = '1', $false = '0')
+    {
+        return '(CASE WHEN ' . $condition . ' THEN ' . $true . ' ELSE ' . $false . ' END)';
     }
 }

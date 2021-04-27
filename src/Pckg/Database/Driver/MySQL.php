@@ -177,4 +177,9 @@ class MySQL extends PDODriver implements DriverInterface
     {
         return $connection->lastInsertId();
     }
+
+    public function condition($condition, $true = '1', $false = '0')
+    {
+        return 'IF(' . $condition . ', ' . $true . ', ' . $false . ')';
+    }
 }

@@ -54,7 +54,7 @@ class Update extends Query
              * Booleans are transformed to 1 OR NULL.
              */
             if (is_bool($val)) {
-                $arrValues[] = $keyPart . ($val ? 1 : 'NULL');
+                $arrValues[] = $keyPart . $this->getDriver()->makeBool($val);
                 continue;
             }
 

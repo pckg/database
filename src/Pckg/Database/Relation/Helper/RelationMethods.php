@@ -75,9 +75,7 @@ trait RelationMethods
      */
     public function hasOne($entity, callable $callback = null, $alias = null)
     {
-        $relation = $this->returnRelation(HasOne::class, $entity, $callback, $alias);
-
-        return $relation;
+        return $this->returnRelation(HasOne::class, $entity, $callback, $alias);
     }
 
     /**

@@ -364,7 +364,7 @@ class Record extends Obj
     public function lock()
     {
         $entity = $this->prepareEntity()->where('id', $this->id);
-        $entity->getQuery()->lock();
+        //$entity->getQuery()->lock();
         return $entity->oneOrFail();
     }
 }

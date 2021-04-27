@@ -702,6 +702,8 @@ abstract class Query
             $primaryKeys = ['id', 'language_id'];
         } elseif (strpos($table, '_p17n')) {
             $primaryKeys = ['id', 'user_group_id'];
+        } elseif (!$primaryKeys) {
+            $primaryKeys = ['id'];
         }
 
         foreach ($primaryKeys as $primaryKey) {

@@ -78,9 +78,7 @@ class PDO extends AbstractRepository implements Repository
 
     public function getDbName()
     {
-        $connection = $this->getConnection();
-
-        return substr($connection->uniqueName, strrpos($connection->uniqueName, '-') + 1);
+        return config('database.' . $this->name . '.db', null);
     }
 
     public function setDriver(DriverInterface $driver)

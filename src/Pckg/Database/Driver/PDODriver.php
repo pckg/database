@@ -2,7 +2,10 @@
 
 namespace Pckg\Database\Driver;
 
+use Pckg\Database\Helper\Cache;
 use Pckg\Database\Repository;
+use Pckg\Migration\Field;
+use Pckg\Migration\Table;
 
 /**
  * Class PDODriver
@@ -44,5 +47,49 @@ abstract class PDODriver
         }
 
         return $constraints;
+    }
+
+    public function updateField(Cache $cache, Table $table, Field $field)
+    {
+        $newSql = $this->installField($field);
+        $oldSql = str_replace(['CHARACTER VARYING', ' WITHOUT TIME ZONE', 'INTEGER'], ['VARCHAR', '', 'INT'], $this->buildOldFieldSql($cache, $table, $field));
+
+        if ($newSql != $oldSql) {
+            d($newSql, $oldSql);
+            return $newSql;
+        }
+    }
+
+    /**
+     * @param Cache $cache
+     * @param Table $table
+     * @param Field $field
+     *
+     * @return string
+     */
+    protected function buildOldFieldSql(Cache $cache, Table $table, Field $field)
+    {
+        $encapsulator = $this->getEncapsulator();
+        $cachedField = $cache->getField($field->getName(), $table->getName());
+
+        if (strpos($cachedField['default'], 'nextval(') === 0) {
+            return $encapsulator . $cachedField['name'] . $encapsulator . ' SERIAL';
+        }
+
+        return '`' . $cachedField['name'] . '` '
+            . strtoupper($cachedField['type'])
+            . ($cachedField['limit'] ? '(' . $cachedField['limit'] . ')' : '')
+            . ($cachedField['null'] ? ' NULL' : ' NOT NULL')
+            . ($cachedField['default']
+                ? ' DEFAULT '
+                . ($cachedField['default'] == 'CURRENT_TIMESTAMP'
+                    ? $cachedField['default']
+                    : (strpos($cachedField['default'], 'NULL') === 0
+                        ? 'NULL'
+                        : ("'" . $cachedField['default'] . "'")))
+                : ($cachedField['null']
+                    ? ' DEFAULT NULL'
+                    : ''))
+            . ($cachedField['extra'] ? ' ' . strtoupper($cachedField['extra']) : '');
     }
 }

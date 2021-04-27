@@ -101,7 +101,9 @@ abstract class Query
     /**
      * @var DriverInterface
      */
-    protected $driver = MySQL::class;
+    protected $driver/* = MySQL::class*/;
+
+    protected $myDriver;
 
     /**
      * Query constructor.
@@ -118,7 +120,7 @@ abstract class Query
      */
     public function setDriver(DriverInterface $driver)
     {
-        $this->driver = $driver;
+        $this->myDriver = $driver;
 
         return $this;
     }
@@ -128,11 +130,15 @@ abstract class Query
      */
     public function getDriver()
     {
-        if (is_string($this->driver)) {
-            $this->driver = resolve($this->driver);
+        if (!$this->myDriver && !$this->driver) {
+            return null;
         }
 
-        return $this->driver;
+        if (!$this->myDriver) {
+            $this->myDriver = resolve($this->driver);
+        }
+
+        return $this->myDriver;
     }
 
     /**

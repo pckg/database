@@ -2,11 +2,23 @@
 
 namespace Pckg\Database\Driver;
 
+use Pckg\Database\Helper\Cache;
 use Pckg\Database\Repository;
 use Pckg\Migration\Field;
+use Pckg\Migration\Table;
 
 class MySQL extends PDODriver implements DriverInterface
 {
+
+    public function __construct() {
+        db(8);
+        ddd('should not be constructed');
+    }
+
+    public function getEncapsulator(): string
+    {
+        return '`';
+    }
 
     public function getShowTablesQuery(): string
     {

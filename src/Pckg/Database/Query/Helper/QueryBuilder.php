@@ -43,26 +43,41 @@ trait QueryBuilder
      */
     public function getQuery()
     {
-        $query = $this->query
-            ? $this->query
-            : $this->resetQuery()->getQuery();
+        /**
+         * Prepare query.
+         */
+        $query = $this->query;
+        if (!$query) {
+            $query = $this->resetQuery()->getQuery();
+        }
 
         /**
-         * Set driver/formatter.
+         * Short-circuit when driver is already set.
          */
-        if (!$query->getDriver()) {
-            $repository = $this->getRepository();
-            if (!$repository) {
-                return $driver;
-            }
-
-            $driver = $repository->getDriver();
-            if (!$driver) {
-                return $query;
-            }
-
-            $query->setDriver($driver);
+        if ($query->getDriver()) {
+            return $query;
         }
+
+        /**
+         * Short-cirtcuit when repository is not set.
+         */
+        $repository = $this->getRepository();
+        if (!$repository) {
+            return $query;
+        }
+
+        /**
+         * Short circuit when repository is driver-less.
+         */
+        $driver = $repository->getDriver();
+        if (!$driver) {
+            return $query;
+        }
+
+        /**
+         * Set driver and return query.
+         */
+        $query->setDriver($driver);
 
         return $query;
     }

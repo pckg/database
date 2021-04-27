@@ -8,6 +8,11 @@ use Pckg\Migration\Field;
 class PostgreSQL extends PDODriver implements DriverInterface
 {
 
+    public function getEncapsulator(): string
+    {
+        return '"';
+    }
+
     public function getShowTablesQuery(): string
     {
         return 'SELECT table_name FROM information_schema.tables WHERE table_catalog = ? AND table_name NOT LIKE \'pg%\'';

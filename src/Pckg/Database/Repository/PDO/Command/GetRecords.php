@@ -53,7 +53,7 @@ class GetRecords
 
         $isCounted = $query->isCounted();
         $queryDriver = $query->getDriver();
-        if ($isCounted && get_class() !== MySQL::class) {
+        if ($isCounted && (get_class($queryDriver) !== MySQL::class)) {
             $query->addSelect(['total_count' => 'COUNT(*) OVER()']);
         }
 

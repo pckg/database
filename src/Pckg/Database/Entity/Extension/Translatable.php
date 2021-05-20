@@ -401,7 +401,7 @@ trait Translatable
         /**
          * Translations were fetched by join.
          */
-        foreach ($record->getRelation('_translations') as $translation) {
+        foreach ($record->getRelation('_translations') ?? [] as $translation) {
             if ($translation->keyExists($key)) {
                 return $translation->{$key};
             }

@@ -92,7 +92,7 @@ trait Relations
      */
     public function getRelation($key)
     {
-        return $this->relations[$key];
+        return $this->relations[$key] ?? null;
     }
 
     /**

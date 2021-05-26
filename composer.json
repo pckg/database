@@ -19,7 +19,8 @@
   },
   "require-dev": {
     "pckg-app/frontend-dev": "dev-master",
-    "pckg/framework": "dev-master",
+    "pckg/framework": "dev-master-yoda",
+    "pckg/auth": "dev-master",
     "pckg/htmlbuilder": "dev-master",
     "pckg/manager": "dev-master",
     "pckg/migrator": "dev-master",

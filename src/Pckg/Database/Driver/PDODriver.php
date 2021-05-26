@@ -49,6 +49,8 @@ abstract class PDODriver
         return $constraints;
     }
 
+    abstract public function installField(Field $field);
+
     public function updateField(Cache $cache, Table $table, Field $field)
     {
         $newSql = $this->installField($field);
@@ -59,6 +61,8 @@ abstract class PDODriver
             return $newSql;
         }
     }
+
+    abstract public function getEncapsulator();
 
     /**
      * @param Cache $cache

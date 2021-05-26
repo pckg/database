@@ -178,7 +178,8 @@ class MySQL extends PDODriver implements DriverInterface
         return 'IF(' . $condition . ', ' . $true . ', ' . $false . ')';
     }
 
-    public function makeBool($val) {
+    public function makeBool($val)
+    {
         return $val ? '1' : 'NULL';
     }
 }

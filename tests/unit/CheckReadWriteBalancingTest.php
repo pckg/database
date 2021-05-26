@@ -22,7 +22,7 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
         $username = sha1(microtime());
         User::getOrNew(['username' => $username])->setAndSave(['user_group_id' => 2, 'language_id' => 'si']);
         (new Users())->where('username', $username)->delete();
-        
+
         /*User::gets(['id' => 1])->setAndSave(['password' => sha1(microtime())]);
         (new Users())->where('id', 1)->one()->setAndSave(['password' => sha1(microtime())]);
         (new Users())->where('id', 1)->all()->first()->setAndSave(['password' => sha1(microtime())]);
@@ -67,17 +67,6 @@ class CheckReadWriteBalancingTest extends \Codeception\Test\Unit
             ],
             $this->tester->getListenedQueries('Repo')
         );
-    }
-
-    // executed before each test
-    protected function _before()
-    {
-        $this->tester->initPckg(__DIR__);
-    }
-
-    // executed after each test
-    protected function _after()
-    {
     }
 
 }

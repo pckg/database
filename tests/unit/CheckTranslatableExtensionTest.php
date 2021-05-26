@@ -42,16 +42,16 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                     'binds' => [5, 'en'],
                 ],
                 [
-                    'sql'   => 'UPDATE `user_groups` SET `id` = ?, `slug` = ? WHERE (`id` = ?)',
-                    'binds' => [5, 5, 'test2'],
+                    'sql'   => 'UPDATE `user_groups` SET `slug` = ? WHERE (`id` = ?)',
+                    'binds' => ['test2', 5],
                 ],
                 [
                     'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` AS `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
                     'binds' => [5, 'en'],
                 ],
                 [
-                    'sql'   => 'UPDATE `user_groups_i18n` SET `id` = ?, `language_id` = ?, `title` = ? WHERE (`id` = ?) AND (`language_id` = ?)',
-                    'binds' => [5, 5, 'en', 'en', 'test2title'],
+                    'sql'   => 'UPDATE `user_groups_i18n` SET `language_id` = ?, `title` = ? WHERE (`id` = ?) AND (`language_id` = ?)',
+                    'binds' => ['en', 'test2title', 5, 'en'],
                 ],
             ],
             $this->tester->getListenedQueries()
@@ -73,10 +73,6 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
                     'binds' => ['untranslated'],
                 ],
                 [
-                    'sql'   => 'UPDATE `user_groups` SET `id` = ? WHERE (`id` = ?)',
-                    'binds' => [4, 4],
-                ],
-                [
                     'sql'   => 'SELECT `user_groups_i18n`.* FROM `user_groups_i18n` AS `user_groups_i18n` WHERE (`user_groups_i18n`.`id` = ?) AND (`user_groups_i18n`.`language_id` = ?) LIMIT 1',
                     'binds' => [4, 'en'],
                 ],
@@ -87,17 +83,6 @@ class CheckTranslatableExtensionTest extends \Codeception\Test\Unit
             ],
             $this->tester->getListenedQueries()
         );
-    }
-
-    // executed before each test
-    protected function _before()
-    {
-        $this->tester->initPckg(__DIR__);
-    }
-
-    // executed after each test
-    protected function _after()
-    {
     }
 
 }

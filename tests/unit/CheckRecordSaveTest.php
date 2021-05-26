@@ -39,20 +39,4 @@ class CheckRecordSaveTest extends \Codeception\Test\Unit
         $this->assertFalse($user->isSaved(), 'User isn\'t saved after delete().');
         $this->assertTrue($user->isDeleted(), 'User is deleted after delete().');
     }
-
-    // executed before each test
-    protected function _before()
-    {
-        try {
-            $this->tester->initPckg(__DIR__);
-        } catch (Throwable $e) {
-            die($e->getMessage());
-        }
-    }
-
-    // executed after each test
-    protected function _after()
-    {
-    }
-
 }

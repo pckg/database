@@ -19,6 +19,11 @@ class JSON extends Custom
 
     protected $localCache = [];
 
+    /**
+     * @var array|mixed
+     */
+    protected $config = [];
+
     public function __construct($config)
     {
         if (!($config['db'] ?? null)) {
@@ -35,7 +40,7 @@ class JSON extends Custom
      */
     public function one(Entity $entity)
     {
-        $data = $entity->all($entity);
+        $data = $entity->all();
         $query = $entity->getQuery();
 
         return $data->first(function (Record $record) use ($query) {

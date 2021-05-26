@@ -208,7 +208,8 @@ WHERE c.relkind IN ('r','v','m','S','f','')
         return '(CASE WHEN ' . $condition . ' THEN ' . $true . ' ELSE ' . $false . ' END)';
     }
 
-    public function makeBool($val) {
+    public function makeBool($val)
+    {
         return $val ? 'TRUE' : 'FALSE';
     }
 }

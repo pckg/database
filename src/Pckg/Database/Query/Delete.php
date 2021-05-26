@@ -37,7 +37,7 @@ class Delete extends Query
         }
 
         $sql = implode(' ', $parts);
-        
+
         return $this->getDriver()->recapsulate($sql, '`');
     }
 

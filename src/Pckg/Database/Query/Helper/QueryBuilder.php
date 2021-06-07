@@ -7,6 +7,7 @@ use Pckg\Database\Entity;
 use Pckg\Database\Query;
 use Pckg\Database\Query\Select;
 use Pckg\Database\Relation;
+use Pckg\Database\Repository\PDOInterface;
 
 /**
  * Class QueryBuilder
@@ -69,7 +70,9 @@ trait QueryBuilder
         /**
          * Short circuit when repository is driver-less.
          */
-        $driver = $repository->getDriver();
+        $driver = \Pckg\Concept\Helper\object_implements($repository, PDOInterface::class)
+            ? $repository->getDriver()
+            : null;
         if (!$driver) {
             return $query;
         }

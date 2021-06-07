@@ -21,7 +21,7 @@ use Throwable;
  *
  * @package Pckg\Database\Repository
  */
-class PDO extends AbstractRepository implements Repository
+class PDO extends AbstractRepository implements Repository, PDOInterface
 {
     use Failable;
 

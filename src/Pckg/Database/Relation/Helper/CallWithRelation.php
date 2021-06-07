@@ -24,13 +24,14 @@ trait CallWithRelation
     {
         $relation = $entity->callWith($method, $args, $entity, true);
 
-        if (!$relation && prod()) {
+        if (!$relation/* && prod()*/) {
             return null;
         }
 
         if ($this instanceof Collection) {
             $relation->fillCollection($this);
         } else if ($this instanceof Record) {
+            $relation->fill($method);
             $relation->fillRecord($this);
         }
 

@@ -21,11 +21,6 @@ interface Repository
     public function getConnection();
 
     /**
-     * @return DriverInterface
-     */
-    public function getDriver();
-
-    /**
      * @param Entity $entity
      *
      * @return Record

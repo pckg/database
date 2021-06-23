@@ -105,5 +105,4 @@ class Matcher
 
         return true;
     }
-
 }

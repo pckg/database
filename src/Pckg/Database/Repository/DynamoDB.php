@@ -13,7 +13,6 @@ use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
-use function GuzzleHttp\Promise\promise_for;
 
 /**
  * Class DynamoDB

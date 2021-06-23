@@ -24,7 +24,8 @@
     "pckg/htmlbuilder": "dev-master",
     "pckg/manager": "dev-master",
     "pckg/migrator": "dev-master",
-    "fzaninotto/faker": "dev-master"
+    "fzaninotto/faker": "dev-master",
+    "aws/aws-sdk-php-resources": "^0.3.0"
   },
   "suggest": {
     "maximebf/debugbar": "Push queries and events to debugbar",

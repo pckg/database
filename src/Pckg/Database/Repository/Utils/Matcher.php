@@ -2,12 +2,13 @@
 
 namespace Pckg\Database\Repository\Utils;
 
+use Pckg\Database\Record;
 use Pckg\Database\Repository;
 
 class Matcher
 {
 
-    public function matches(array $conditions, array $binds)
+    public function matches(Record $record, array $conditions, array $binds)
     {
         $getField = function ($string) {
             $exploded = explode(' ', $string);

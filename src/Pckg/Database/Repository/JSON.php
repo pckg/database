@@ -108,7 +108,7 @@ class JSON extends Custom
         $children = $where->getChildren();
         $binds = $query->getBinds('where');
 
-        return (new Repository\Utils\Matcher())->matches($children, $binds);
+        return (new Repository\Utils\Matcher())->matches($record, $children, $binds);
     }
 
     public function getCachedFile(Entity $entity)

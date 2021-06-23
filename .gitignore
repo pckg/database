@@ -8,4 +8,4 @@ codeception.yml
 
 # DEPENDENCIES
 vendor/
-composer.lock
+#composer.lock

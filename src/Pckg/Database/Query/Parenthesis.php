@@ -7,7 +7,7 @@ namespace Pckg\Database\Query;
  *
  * @package Pckg\Database\Query
  */
-class Parenthesis
+class Parenthesis implements Buildable, Bindable
 {
 
     /**
@@ -138,6 +138,11 @@ class Parenthesis
             : '';
     }
 
+    public function buildSQL()
+    {
+        return '(' . $this->build() . ')';
+    }
+
     /**
      * @param array $binds
      *
@@ -155,5 +160,10 @@ class Parenthesis
         }
 
         return $binds;
+    }
+
+    public function buildBinds()
+    {
+        return $this->getBinds();
     }
 }

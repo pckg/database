@@ -9,7 +9,7 @@ use Pckg\Database\Query;
  *
  * @package Pckg\Database\Query
  */
-class Raw extends Query
+class Raw extends Query implements Buildable, Bindable
 {
 
     /**

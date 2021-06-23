@@ -6,6 +6,9 @@ use ArrayAccess;
 use Exception;
 use Pckg\Database\Driver\DriverInterface;
 use Pckg\Database\Driver\MySQL;
+use Pckg\Database\Query\Bindable;
+use Pckg\Database\Query\Buildable;
+use Pckg\Database\Query\Condition;
 use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Query\Raw;
 use Throwable;
@@ -346,6 +349,20 @@ abstract class Query
     }
 
     /**
+     * @param $binds
+     */
+    private function processBinds($binds)
+    {
+        if (!is_array($binds)) {
+            $binds = [$binds];
+        }
+
+        foreach ($binds as $bind) {
+            $this->bind($bind, $part);
+        }
+    }
+
+    /**
      * @param        $key
      * @param bool   $value
      * @param string $operator
@@ -355,36 +372,19 @@ abstract class Query
      */
     private function addCondition($key, $value = true, $operator = '=', $part = 'where')
     {
-        if (is_object($key)) {
-            if ($key instanceof Raw) {
-                $sql = $key->buildSQL();
-                $this->{$part}->push($sql);
-                if ($binds = $key->buildBinds()) {
-                    if (!is_array($binds)) {
-                        $binds = [$binds];
-                    }
-                    foreach ($binds as $bind) {
-                        $this->bind($bind, $part);
-                    }
-                }
+        if (is_object($key) && $key instanceof Bindable) {
+            $this->processBinds($key->buildBinds());
 
-                return $this;
-            } elseif ($key instanceof Parenthesis) {
-                $sql = $key->build();
-                if ($sql) {
-                    $sql = '(' . $sql . ')';
-                }
-                $this->{$part}->push($sql);
-
-                if ($binds = $key->getBinds()) {
-                    foreach ($binds as $bind) {
-                        $this->bind($bind, $part);
-                    }
-                }
-
-                return $this;
+            /**
+             * @var $key Parenthesis|Raw|Condition
+             */
+            if ($key instanceof Buildable) {
+                $this->{$part}->push($key->buildSQL());
             }
+
+            return $this;
         }
+
         if (is_object($value) && object_implements($value, ArrayAccess::class)) {
             $value = $value->__toArray();
         }

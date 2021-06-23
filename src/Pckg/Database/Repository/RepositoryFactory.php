@@ -30,6 +30,13 @@ class RepositoryFactory
      */
     protected static $repositories = [];
 
+    const DRIVER_FAKER = 'faker';
+    const DRIVER_MIDDLEWARE = 'middleware';
+    const DRIVER_JSON = 'json';
+    const DRIVER_DYNAMODB = 'dynamodb';
+    const DRIVER_MYSQL = 'mysql';
+    const DRIVER_PGSQL = 'pgsql';
+
     /**
      * @param $name
      *
@@ -167,7 +174,7 @@ class RepositoryFactory
          */
         $to = 'host';
         $key = 'host';
-        $scheme = $config['driver'] ?? 'mysql';
+        $scheme = $config['driver'] ?? static::DRIVER_MYSQL;
         if (isset($config['socket'])) {
             $to = 'unix_socket';
             $key = 'socket';
@@ -175,7 +182,7 @@ class RepositoryFactory
 
         $finalCharset = ";charset=" . $charset;
         $finalOptions = '';
-        if ($scheme === 'pgsql') {
+        if ($scheme === static::DRIVER_PGSQL) {
             $finalCharset = '';
             $finalOptions = ';options=\'--client_encoding=' . $charset . '\'';
         }
@@ -260,18 +267,26 @@ class RepositoryFactory
     protected static function getRepositoryByConfig($config, $name)
     {
         if (!is_array($config)) {
+            /**
+             * Custom (or not :)) static class repository.
+             */
             if (class_exists($config)) {
                 return new $config();
             }
 
+            /**
+             * Could be aliased?
+             */
             throw new Exception('Cannot create repository from string');
-        } elseif ($config['driver'] == 'faker') {
+        } elseif ($config['driver'] === static::DRIVER_FAKER) {
             return new Faker(Factory::create());
-        } elseif ($config['driver'] == 'middleware') {
+        } elseif ($config['driver'] === static::DRIVER_MIDDLEWARE) {
             return resolve($config['middleware'])->execute(function () {
             });
-        } elseif ($config['driver'] === 'json') {
+        } elseif ($config['driver'] === static::DRIVER_JSON) {
             return new JSON($config);
+        } elseif ($config['driver'] === static::DRIVER_DYNAMODB) {
+            return new DynamoDB($config);
         }
 
         return static::initPdoDatabase($config, $name);

@@ -351,7 +351,7 @@ abstract class Query
     /**
      * @param $binds
      */
-    private function processBinds($binds)
+    private function processBinds($binds, $part)
     {
         if (!is_array($binds)) {
             $binds = [$binds];
@@ -373,14 +373,11 @@ abstract class Query
     private function addCondition($key, $value = true, $operator = '=', $part = 'where')
     {
         if (is_object($key) && $key instanceof Bindable) {
-            $this->processBinds($key->buildBinds());
-
             /**
              * @var $key Parenthesis|Raw|Condition
              */
-            if ($key instanceof Buildable) {
-                $this->{$part}->push($key->buildSQL());
-            }
+            $this->processBinds($key->buildBinds(), $part);
+            $this->{$part}->push($key->buildSQL());
 
             return $this;
         }

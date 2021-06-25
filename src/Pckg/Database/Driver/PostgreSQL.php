@@ -212,4 +212,14 @@ WHERE c.relkind IN ('r','v','m','S','f','')
     {
         return $val ? 'TRUE' : 'FALSE';
     }
+
+    public function makeJsonField($table, $field, $jsonPath)
+    {
+        return $table . '.' . $field . '->>\'' . $jsonPath . '\'';
+    }
+
+    public function dateFormat($table, $field, $format)
+    {
+        return 'to_date(' . $table . '.' . $field . '::TEXT, \'' . $format . '\')';
+    }
 }

@@ -464,6 +464,16 @@ trait QueryBuilder
         return $this->getQuery()->getSelect();
     }
 
+    public function makeJsonField($field, $jsonPath)
+    {
+        return $this->getRepository()->getDriver()->makeJsonField($this->getAliased(), $field, $jsonPath);
+    }
+
+    public function dateFormat($field, $format)
+    {
+        return $this->getRepository()->getDriver()->dateFormat($this->getAliased(), $field, $format);
+    }
+
     public function transaction(callable $callable)
     {
         return $this->getRepository()->transaction($callable);

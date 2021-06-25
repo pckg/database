@@ -182,4 +182,14 @@ class MySQL extends PDODriver implements DriverInterface
     {
         return $val ? '1' : 'NULL';
     }
+
+    public function makeJsonField($table, $field, $jsonPath)
+    {
+        return 'JSON_EXTRACT(' . $table . '.' . $field . ', "$.' . $jsonPath . '")';
+    }
+
+    public function dateFormat($table, $field, $format)
+    {
+        return 'DATE_FORMAT(' . $table . '.' . $field . ', \'' . $format . '\')';
+    }
 }

@@ -59,7 +59,7 @@ class Entity
     protected $repository;
 
     /**
-     * @var
+     * @var string
      */
     protected $repositoryName = Repository::class;
 

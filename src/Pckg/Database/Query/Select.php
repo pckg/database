@@ -157,7 +157,10 @@ class Select extends Query
         }
 
         if ($this->limit) {
-            $parts[] = 'LIMIT ' . $this->limit;
+            $limit = $this->getDriver()->buildLimit($this->limit);
+            if ($limit) {
+                $parts[] = $limit;
+            }
         }
 
         if ($this->lock) {

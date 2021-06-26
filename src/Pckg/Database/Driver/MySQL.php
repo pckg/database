@@ -192,4 +192,9 @@ class MySQL extends PDODriver implements DriverInterface
     {
         return 'DATE_FORMAT(' . $table . '.' . $field . ', \'' . $format . '\')';
     }
+
+    public function buildLimit($limit)
+    {
+        return 'LIMIT ' . $limit;
+    }
 }

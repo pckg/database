@@ -222,4 +222,15 @@ WHERE c.relkind IN ('r','v','m','S','f','')
     {
         return 'to_date(' . $table . '.' . $field . '::TEXT, \'' . $format . '\')';
     }
+
+    public function buildLimit($limit)
+    {
+        $exploded = explode(', ', $limit);
+
+        if (count($exploded) > 1) {
+            return 'LIMIT ' . $exploded[0] . ' OFFSET ' . $exploded[1];
+        }
+
+        return 'LIMIT ' . $limit;
+    }
 }

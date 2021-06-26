@@ -90,7 +90,7 @@ class RepositoryFactory
 
     public static function canCreateRepository($name)
     {
-        $name = $name == Repository::class
+        $name = $name === Repository::class
             ? 'default'
             : str_replace(Repository::class . '.', '', $name);
 

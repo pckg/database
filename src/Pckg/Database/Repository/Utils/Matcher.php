@@ -20,6 +20,7 @@ class Matcher
             return '/^`[\w`\.]*`' . $after . '$/';
         };
 
+        $numBinds = 0;
         foreach ($conditions as $i => $child) {
             if (!is_string($child)) {
                 return false;
@@ -27,56 +28,60 @@ class Matcher
 
             if (preg_match($pattern(' = \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds++];
 
                 if (!($record->{$field} == $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' > \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds];
 
                 if (!($record->{$field} > $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' < \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds];
 
                 if (!($record->{$field} < $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' >= \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds];
 
                 if (!($record->{$field} >= $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' <= \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds];
 
                 if (!($record->{$field} <= $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' != \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$i];
+                $value = $binds[$numBinds];
 
                 if (!($record->{$field} != $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' IN\([\\?, ]*\)'), $child, $matches)) {
                 $field = $getField($child);
+                $tempBinds = array_slice($binds, $numBinds, count(explode('?', $child)) - 1);
+                $numBinds += count($tempBinds);
 
-                if (!(in_array($record->{$field}, $binds))) {
+                if (!(in_array($record->{$field}, $tempBinds))) {
                     return false;
                 }
             } else if (preg_match($pattern(' NOT IN\([\\?, ]*\)'), $child, $matches)) {
                 $field = $getField($child);
+                $tempBinds = array_slice($binds, $numBinds, count(explode('?', $child)) - 1);
+                $numBinds += count($tempBinds);
 
-                if (in_array($record->{$field}, $binds)) {
+                if (in_array($record->{$field}, $tempBinds)) {
                     return false;
                 }
             } else if (preg_match($pattern(' IS NULL'), $child, $matches)) {

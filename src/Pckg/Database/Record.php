@@ -200,17 +200,25 @@ class Record extends Obj
             $getter = $j;
 
             $type = null;
-            if (strpos($getter, '+') === 0) {
-                $type = 'plus'; // add if existent
+            if (substr($getter, 0, 1) === '+') {
+                $type = 'plus'; // add if existent - should be "always add"!
+                $getter = substr($getter, 1);
+            } elseif (substr($getter, 0, 1) === '?') {
+                $type = 'question'; // add if existent?
                 $getter = substr($getter, 1);
             } else if (strpos($getter, '-') === 0) {
+                // always remove
                 continue;
             }
 
-            if (strpos($key, '+') === 0) {
-                $type = 'plus'; // add if existent
+            if (substr($key, 0, 1) === '+') {
+                $type = 'plus'; // add if existent - should be "always add"!
+                $key = substr($key, 1);
+            } else if (substr($key, 0, 1) === '?') {
+                $type = 'question'; // add if existent?
                 $key = substr($key, 1);
             } else if (strpos($key, '-') === 0) {
+                // always remove
                 continue;
             }
 

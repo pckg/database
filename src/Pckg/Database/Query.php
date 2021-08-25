@@ -21,25 +21,16 @@ use Throwable;
 abstract class Query
 {
 
-    /**
-     *
-     */
     const LIKE = 'LIKE';
-
-    /**
-     *
-     */
     const IN = 'IN';
-
-    /**
-     *
-     */
     const NOT_LIKE = 'NOT LIKE';
-
-    /**
-     *
-     */
     const NOT_IN = 'NOT IN';
+    const EQUAL = '=';
+    const NOT_EQUAL = '!=';
+    const MORE = '>';
+    const LESS = '<';
+    const MORE_EQUAL = '>=';
+    const LESS_EQUAL = '<=';
 
     /**
      * @var

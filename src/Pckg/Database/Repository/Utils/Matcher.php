@@ -17,7 +17,7 @@ class Matcher
             return trim($last, '`');
         };
         $pattern = function ($after = '') {
-            return '/^`[\w`\.]*`' . $after . '$/';
+            return '/^[`]?[\w`\._]*[`]?' . $after . '$/';
         };
 
         $numBinds = 0;

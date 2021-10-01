@@ -56,6 +56,14 @@ trait Permissionable
     }
 
     /**
+     * @return AuthInterface
+     */
+    public function getPermissionableAuth()
+    {
+        return $this->permissionableAuth;
+    }
+
+    /**
      *
      */
     public function initPermissionableExtension()

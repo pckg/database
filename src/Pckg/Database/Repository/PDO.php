@@ -93,7 +93,12 @@ class PDO extends AbstractRepository implements Repository, PDOInterface
      */
     public function getDriver()
     {
-        $driver = config('database.' . $this->name . '.driver', null);
+        $config = config('database.' . $this->name, null);
+        if (is_string($config)) {
+            $config = config('database.' . $config);
+        }
+        
+        $driver = $config['driver'] ?? null;
         if (!$driver) {
             return null;
         }

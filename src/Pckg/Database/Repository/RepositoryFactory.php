@@ -66,7 +66,8 @@ class RepositoryFactory
                  */
                 if (!$config && $name != 'default') {
                     if (class_exists($name) && object_implements($name, Repository::class)) {
-                        return resolve($name);
+                        // we cannot auto-resolve because we need a specific instane
+                        // $resolved = resolve($name);
                         return new $name();
                     }
                     $config = config('database.default');

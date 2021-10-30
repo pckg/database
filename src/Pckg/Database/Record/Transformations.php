@@ -84,7 +84,18 @@ trait Transformations
         }
 
         if (is_null($values)) {
-            $values = $this->data; // should we call getters here?
+            $values = $this->data;
+
+            // experimental - should we call getters on json transformation?
+            if (config('pckg.database.flag.callGettersOnTransformation', false)) {
+                foreach ($values as $key => $value) {
+                    $getAttributeName = 'get' . toCamel($key) . 'Attribute';
+                    if (method_exists($this, $getAttributeName)) {
+                        $values[$key] = $this->{$getAttributeName}();
+                    }
+                }
+            }
+
             if ($withToArray && $this->toArray) {
                 foreach ($this->getToArrayValues() as $key => $value) {
                     $values[$key] = $value;

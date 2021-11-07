@@ -363,6 +363,18 @@ abstract class Query
      */
     private function addCondition($key, $value = true, $operator = '=', $part = 'where')
     {
+        /**
+         * Pass Parenthesis and Query
+         */
+        if (is_only_callable($key)) {
+            $parenthesis = new Parenthesis();
+            $key($parenthesis, $this);
+            $this->{$part}->push($parenthesis);
+            $this->processBinds($parenthesis->buildBinds(), $part);
+
+            return $this;
+        }
+
         if (is_object($key) && $key instanceof Bindable) {
             /**
              * @var $key Parenthesis|Raw|Condition
@@ -403,9 +415,7 @@ abstract class Query
             $operator = 'IN';
         }
 
-        if (is_only_callable($key)) {
-            $key($this->{$part});
-        } else if ($operator == 'IN' || $operator == 'NOT IN') {
+        if ($operator == 'IN' || $operator == 'NOT IN') {
             if (is_array($value)) {
                 if (!$hasValue) {
                     /**

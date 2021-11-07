@@ -133,9 +133,14 @@ class Parenthesis implements Buildable, Bindable
      */
     public function build()
     {
-        return $this->children
-            ? '(' . implode(') ' . $this->glue . ' (', $this->children) . ')'
-            : '';
+        if (!$this->children) {
+            return '';
+        }
+
+        return collect($this->children)
+            ->map(fn($child) => is_object($child) ? $child->buildSQL() : $child)
+            ->map(fn($child) => '(' . $child . ')')
+            ->implode(' ' . $this->glue . ' ');
     }
 
     public function buildSQL()

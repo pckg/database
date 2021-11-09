@@ -4,6 +4,7 @@ namespace Pckg\Database;
 
 use Exception;
 use Pckg\Concept\Reflect;
+use Pckg\Concept\When;
 use Pckg\Database\Entity\Extension\Deletable;
 use Pckg\Database\Entity\Extension\Paginatable;
 use Pckg\Database\Entity\Extension\Permissionable;
@@ -32,6 +33,7 @@ class Entity
     use Translatable;
     use Paginatable;
     use DatabaseRecord\Events; // from record?
+    use When;
 
     /**
      * @var string

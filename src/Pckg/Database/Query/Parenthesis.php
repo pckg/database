@@ -2,6 +2,8 @@
 
 namespace Pckg\Database\Query;
 
+use Pckg\Concept\When;
+
 /**
  * Class Parenthesis
  *
@@ -9,6 +11,7 @@ namespace Pckg\Database\Query;
  */
 class Parenthesis implements Buildable, Bindable
 {
+    use When;
 
     /**
      * @var string

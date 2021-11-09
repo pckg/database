@@ -369,8 +369,10 @@ abstract class Query
         if (is_only_callable($key)) {
             $parenthesis = new Parenthesis();
             $key($parenthesis, $this);
-            $this->{$part}->push($parenthesis);
-            $this->processBinds($parenthesis->buildBinds(), $part);
+            if ($parenthesis->hasChildren()) {
+                $this->{$part}->push($parenthesis);
+                $this->processBinds($parenthesis->buildBinds(), $part);
+            }
 
             return $this;
         }

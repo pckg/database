@@ -2,13 +2,14 @@
 
 namespace Pckg\Database\Repository\Utils;
 
+use Pckg\Database\Query\Parenthesis;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
 
 class Matcher
 {
 
-    public function matches(Record $record, array $conditions, array $binds)
+    public function matches(Record $record, array $conditions, array $binds, int &$numBinds = 0)
     {
         $getField = function ($string) {
             $exploded = explode(' ', $string);
@@ -20,8 +21,15 @@ class Matcher
             return '/^[`]?[\w`\._]*[`]?' . $after . '$/';
         };
 
-        $numBinds = 0;
         foreach ($conditions as $i => $child) {
+            if (is_object($child) && $child instanceof Parenthesis) {
+                $subMatch = $this->matches($record, $child->getChildren(), $binds, $numBinds);
+                if (!$subMatch) {
+                    return false;
+                }
+                continue;
+            }
+
             if (!is_string($child)) {
                 return false;
             }

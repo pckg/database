@@ -106,8 +106,13 @@ trait With
          */
         $relation = Reflect::method($object, $method, $args);
 
-        if (isset($args[0]) && ($args[0] instanceof Closure || is_only_callable($args[0]))) {
-            Reflect::call($args[0], [$relation, $relation->getQuery()]);
+        /**
+         * Apply callback.
+         * Add Relation and Query as available params.
+         */
+        $callback = $args[0] ?? null;
+        if ($callback instanceof Closure || is_only_callable($callback)) {
+            Reflect::call($callback, [$relation, $relation->getQuery()]);
         }
 
         return $relation;

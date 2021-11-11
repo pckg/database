@@ -31,49 +31,51 @@ class Matcher
             }
 
             if (!is_string($child)) {
+                throw new \Exception('Should be string');
                 return false;
             }
 
+            $matches = [];
             if (preg_match($pattern(' = \?'), $child, $matches)) {
                 $field = $getField($child);
                 $value = $binds[$numBinds++];
 
-                if (!($record->{$field} == $value)) {
+                if ($record->{$field} != $value) {
+                    return false;
+                }
+            } else if (preg_match($pattern(' != \?'), $child, $matches)) {
+                $field = $getField($child);
+                $value = $binds[$numBinds++];
+
+                if ($record->{$field} == $value) {
                     return false;
                 }
             } else if (preg_match($pattern(' > \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$numBinds];
+                $value = $binds[$numBinds++];
 
                 if (!($record->{$field} > $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' < \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$numBinds];
+                $value = $binds[$numBinds++];
 
                 if (!($record->{$field} < $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' >= \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$numBinds];
+                $value = $binds[$numBinds++];
 
                 if (!($record->{$field} >= $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' <= \?'), $child, $matches)) {
                 $field = $getField($child);
-                $value = $binds[$numBinds];
+                $value = $binds[$numBinds++];
 
                 if (!($record->{$field} <= $value)) {
-                    return false;
-                }
-            } else if (preg_match($pattern(' != \?'), $child, $matches)) {
-                $field = $getField($child);
-                $value = $binds[$numBinds];
-
-                if (!($record->{$field} != $value)) {
                     return false;
                 }
             } else if (preg_match($pattern(' IN\([\\?, ]*\)'), $child, $matches)) {

@@ -7,6 +7,7 @@ use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
 use Pckg\Database\Record;
 use Pckg\Database\Repository;
+use Pckg\Database\Repository\Utils\Matcher;
 
 /**
  * Class JSON
@@ -44,7 +45,7 @@ class JSON extends Custom
         $query = $entity->getQuery();
 
         return $data->first(function (Record $record) use ($query) {
-            return $query ? $this->filterRecord($record, $query) : $record;
+            return $this->filterRecord($record, $query);
         });
     }
 
@@ -98,8 +99,12 @@ class JSON extends Custom
         return $collection;
     }
 
-    public function filterRecord(Record $record, Query $query)
+    public function filterRecord(Record $record, Query $query = null)
     {
+        if (!$query) {
+            return true;
+        }
+
         $where = $query->getWhere();
         if (!$where) {
             return true;
@@ -108,7 +113,7 @@ class JSON extends Custom
         $children = $where->getChildren();
         $binds = $query->getBinds('where');
 
-        return (new Repository\Utils\Matcher())->matches($record, $children, $binds);
+        return (new Matcher())->matches($record, $children, $binds);
     }
 
     public function getCachedFile(Entity $entity)

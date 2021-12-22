@@ -82,7 +82,7 @@ class JsonArray extends JsonObject implements \Countable
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->__toArray() ?? [];
     }

@@ -185,7 +185,9 @@ class MySQL extends PDODriver implements DriverInterface
 
     public function makeJsonField($table, $field, $jsonPath)
     {
-        return 'JSON_EXTRACT(' . $table . '.' . $field . ', "$.' . $jsonPath . '")';
+        $dot = substr($jsonPath, 0, 1) === '[' ? '' : ':';
+
+        return 'JSON_EXTRACT(' . $table . '.' . $field . ', "$' . $dot . $jsonPath . '")';
     }
 
     public function dateFormat($table, $field, $format)

@@ -70,12 +70,10 @@ class MySQL extends PDODriver implements DriverInterface
     public function parseColumn($field)
     {
         $field['Field'] = strtolower($field['Field']);
-        return [
-            'name' => $field['Field'],
-            'type' => strpos($field['Type'], '(')
-                ? substr($field['Type'], 0, strpos($field['Type'], '('))
-                : $field['Type'],
-            'limit' => str_replace(
+
+        $limit = null;
+        if (strpos($field['Type'], '(')) {
+            $limit = str_replace(
                 [') unsigne'],
                 '',
                 substr( // @T00D00 - fix this ... example values: longblob, 7, 7 (unsigned), 8,2
@@ -83,7 +81,15 @@ class MySQL extends PDODriver implements DriverInterface
                     strpos($field['Type'], '(') + 1,
                     strpos($field['Type'], ')') ? -1 : null
                 )
-            ),
+            );
+        }
+
+        return [
+            'name' => $field['Field'],
+            'type' => strpos($field['Type'], '(')
+                ? substr($field['Type'], 0, strpos($field['Type'], '('))
+                : $field['Type'],
+            'limit' => $limit,
             'null' => $field['Null'] == 'YES',
             'key' => $field['Key'] == 'PRI'
                 ? 'primary'

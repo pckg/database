@@ -78,7 +78,7 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return $this|Record
+     * @return $this|Record|mixed
      */
     public static function create($data = [], Entity $entity = null)
     {

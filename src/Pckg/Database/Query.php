@@ -227,6 +227,32 @@ abstract class Query
         return $this;
     }
 
+    protected function processDebug(string $sql): string
+    {
+        $driver = $this->getDriver();
+        if ($driver) {
+            $sql = $driver->recapsulate($sql, '`');
+        }
+
+        if ($this->diebug) {
+            $d = $this->diebug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                ddd($sql, $this->bind);
+            }
+        } elseif ($this->debug) {
+            $d = $this->debug;
+            if (is_only_callable($d)) {
+                $d($sql, $this->bind);
+            } else {
+                d($sql, $this->bind);
+            }
+        }
+
+        return $sql;
+    }
+
     /**
      * @return array
      */

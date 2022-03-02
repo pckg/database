@@ -46,7 +46,7 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return mixed|Record|$this
+     * @return mixed|boolean|Record|$this
      */
     public static function gets($data = [], Entity $entity = null)
     {

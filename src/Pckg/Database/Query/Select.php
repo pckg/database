@@ -169,23 +169,7 @@ class Select extends Query
 
         $sql = implode(' ', $parts);
 
-        if ($this->diebug) {
-            $d = $this->diebug;
-            if (is_only_callable($d)) {
-                $d($sql, $this->bind);
-            } else {
-                ddd($sql, $this->bind);
-            }
-        } elseif ($this->debug) {
-            $d = $this->debug;
-            if (is_only_callable($d)) {
-                $d($sql, $this->bind);
-            } else {
-                d($sql, $this->bind);
-            }
-        }
-
-        return $this->getDriver()->recapsulate($sql, '`');
+        return $this->processDebug($sql);
     }
 
     /**
@@ -315,6 +299,9 @@ class Select extends Query
         if ($order) {
             $delete->orderBy($order);
         }
+
+        $delete->debug($this->debug);
+        $delete->diebug($this->diebug);
 
         return $delete;
     }

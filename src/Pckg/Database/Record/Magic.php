@@ -132,7 +132,7 @@ trait Magic
          */
         $entity = $this->getEntity();
         if ($entity->getRepository()->getCache()->tableHasField($entity->getTable(), $key)) {
-            return $this->getEncapsulated($key, $this->getValue($key));
+            return $this->data[$key] = $this->getEncapsulated($key, $this->getValue($key));
         }
 
         /**

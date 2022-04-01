@@ -177,8 +177,12 @@ trait Transformations
         }
 
         $data = [];
-        foreach ($map as $key) {
-            $data[$key] = $this->{$key};
+        foreach ($map as $i => $key) {
+            if (is_array($key)) {
+                $data[$i] = $this->{$i}->transform($key);
+            } else {
+                $data[$key] = $this->{$key};
+            }
         }
 
         return $data;

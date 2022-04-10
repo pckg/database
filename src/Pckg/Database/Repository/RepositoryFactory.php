@@ -188,8 +188,9 @@ class RepositoryFactory
             $finalOptions = ';options=\'--client_encoding=' . $charset . '\'';
         }
 
+        $dsn = $scheme . ":" . $to . "=" . $config[$key] . $finalCharset . $partDb . $finalOptions;
         $pdo = new PDO(
-            $scheme . ":" . $to . "=" . $config[$key] . $finalCharset . $partDb . $finalOptions,
+            $dsn,
             $config['user'],
             $config['pass'],
             $options

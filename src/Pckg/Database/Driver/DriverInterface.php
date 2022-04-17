@@ -6,7 +6,6 @@ use Pckg\Database\Repository;
 
 interface DriverInterface
 {
-
     public function getEncapsulator(): string;
 
     public function getShowTablesQuery(): string;

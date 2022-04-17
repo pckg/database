@@ -12,7 +12,6 @@ use Pckg\Database\Query;
  */
 class Insert extends Query
 {
-
     /**
      * @var
      */

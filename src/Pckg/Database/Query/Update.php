@@ -12,7 +12,6 @@ use Pckg\Database\Query;
  */
 class Update extends Query
 {
-
     /**
      * @var
      */

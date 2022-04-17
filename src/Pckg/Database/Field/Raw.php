@@ -9,7 +9,6 @@ namespace Pckg\Database\Field;
  */
 class Raw implements Stringifiable
 {
-
     /**
      * @var null|string
      */

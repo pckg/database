@@ -11,7 +11,6 @@ use Pckg\Database\Query;
  */
 class Delete extends Query
 {
-
     /**
      * @var
      */

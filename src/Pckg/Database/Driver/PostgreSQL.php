@@ -7,7 +7,6 @@ use Pckg\Migration\Field;
 
 class PostgreSQL extends PDODriver implements DriverInterface
 {
-
     public function getEncapsulator(): string
     {
         return '"';

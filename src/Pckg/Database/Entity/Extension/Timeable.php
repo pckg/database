@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 trait Timeable
 {
-
     /**
      * @var array
      */

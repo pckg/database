@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 class HasOne extends HasMany
 {
-
     /**
      * @param Record $record
      */

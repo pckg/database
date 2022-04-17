@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 class Point extends AbstractField
 {
-
     /**
      * Transform string or array?
      *

@@ -13,7 +13,6 @@ use Pckg\Database\Repository;
  */
 trait Deletable
 {
-
     /**
      * @param Entity|null     $entity
      * @param Repository|null $repository

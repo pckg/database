@@ -11,7 +11,6 @@ namespace Pckg\Database\Entity\Extension\Adapter;
  */
 interface AuthInterface
 {
-
     /**
      * @return null|string|integer
      *

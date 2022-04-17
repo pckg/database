@@ -9,7 +9,6 @@ namespace Pckg\Database\Field;
  */
 interface Stringifiable
 {
-
     /**
      * Normalize value to the selected type.
      *

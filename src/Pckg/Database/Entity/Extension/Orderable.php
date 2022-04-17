@@ -9,7 +9,6 @@ namespace Pckg\Database\Entity\Extension;
  */
 trait Orderable
 {
-
     /**
      * @var string
      */

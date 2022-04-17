@@ -2,9 +2,8 @@
 
 namespace Pckg\Database\Query;
 
-class Condition implements Conditional, Buildable, Bindable
+abstract class Condition implements Conditional, Buildable, Bindable
 {
-
     protected string $key;
 
     protected $value;
@@ -25,4 +24,6 @@ class Condition implements Conditional, Buildable, Bindable
     {
         return $this->binds;
     }
+
+    abstract public function buildSQL();
 }

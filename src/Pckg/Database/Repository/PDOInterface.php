@@ -6,7 +6,6 @@ use Pckg\Database\Driver\DriverInterface;
 
 interface PDOInterface
 {
-
     /**
      * @return DriverInterface
      */

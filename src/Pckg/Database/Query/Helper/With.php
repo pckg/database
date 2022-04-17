@@ -16,7 +16,6 @@ use Pckg\Database\Relation;
  */
 trait With
 {
-
     /**
      * @var array
      */

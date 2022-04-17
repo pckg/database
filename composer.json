@@ -18,12 +18,12 @@
     "ext-json": "*"
   },
   "require-dev": {
-    "pckg-app/frontend-dev": "dev-master",
+    "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
     "pckg/framework": "dev-next-8.0 as dev-master",
     "pckg/auth": "dev-next-8.0 as dev-master",
     "pckg/htmlbuilder": "dev-next-8.0 as dev-master",
     "pckg/manager": "dev-next-8.0 as dev-master",
-    "pckg/migrator": "dev-master",
+    "pckg/migrator": "dev-next-8.0 as dev-master",
     "fakerphp/faker": "1.*",
     "aws/aws-sdk-php-resources": "^0.3.0"
   },

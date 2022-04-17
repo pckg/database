@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 trait CallWithRelation
 {
-
     /**
      * @param $method
      * @param $args

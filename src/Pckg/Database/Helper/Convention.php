@@ -9,7 +9,6 @@ namespace Pckg\Database\Helper;
  */
 class Convention
 {
-
     /**
      * @param $input
      *

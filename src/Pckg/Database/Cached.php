@@ -9,7 +9,6 @@ namespace Pckg\Database;
  */
 class Cached
 {
-
     /**
      * @var Entity
      */

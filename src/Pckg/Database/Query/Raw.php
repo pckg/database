@@ -11,7 +11,6 @@ use Pckg\Database\Query;
  */
 class Raw extends Query implements Buildable, Bindable
 {
-
     /**
      * Raw constructor.
      *

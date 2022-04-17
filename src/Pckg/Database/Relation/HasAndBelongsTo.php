@@ -63,6 +63,8 @@ class HasAndBelongsTo extends HasMany
                 $query->addSelect([$key => $val]);
             }
         }
+
+        return $this;
     }
 
     /**

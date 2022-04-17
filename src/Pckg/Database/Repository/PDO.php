@@ -3,6 +3,7 @@
 namespace Pckg\Database\Repository;
 
 use Exception;
+use Pckg\Database\ConnectableRepository;
 use Pckg\Database\Driver\DriverInterface;
 use Pckg\Database\Driver\MySQL;
 use Pckg\Database\Driver\PostgreSQL;
@@ -21,7 +22,7 @@ use Throwable;
  *
  * @package Pckg\Database\Repository
  */
-class PDO extends AbstractRepository implements Repository, PDOInterface
+class PDO extends AbstractRepository implements Repository, PDOInterface, ConnectableRepository
 {
     use Failable;
 

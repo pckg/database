@@ -21,7 +21,6 @@ use Pckg\Database\Record;
  */
 class JsonArray extends JsonObject implements \Countable
 {
-
     public function empty()
     {
         $this->set([]);

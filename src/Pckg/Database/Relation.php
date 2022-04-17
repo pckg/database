@@ -399,4 +399,12 @@ abstract class Relation implements RelationInterface
 
         return $this;
     }
+
+    /**
+     * @return mixed|string
+     */
+    public function getAliased()
+    {
+        return $this->getRightEntity()->getAlias() ?? $this->getRightEntity()->getTable();
+    }
 }

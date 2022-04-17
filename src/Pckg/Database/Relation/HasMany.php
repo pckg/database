@@ -14,7 +14,6 @@ use Pckg\Database\Relation;
  */
 class HasMany extends Relation
 {
-
     /**
      * Attaches $sth to HasMany relation.
      * For example, we attach user to status like: $status->attach($user);

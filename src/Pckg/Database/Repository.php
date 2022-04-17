@@ -14,12 +14,6 @@ use PDO;
  */
 interface Repository
 {
-
-    /**
-     * @return PDO
-     */
-    public function getConnection();
-
     /**
      * @param Entity $entity
      *

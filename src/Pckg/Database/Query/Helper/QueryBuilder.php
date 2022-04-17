@@ -16,7 +16,6 @@ use Pckg\Database\Repository\PDOInterface;
  */
 trait QueryBuilder
 {
-
     /**
      * @var
      */

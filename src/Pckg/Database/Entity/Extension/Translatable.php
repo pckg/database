@@ -19,7 +19,6 @@ use Pckg\Locale\LangInterface;
  */
 trait Translatable
 {
-
     /**
      * @var string
      */

@@ -9,7 +9,6 @@ namespace Pckg\Database\Record\Extension;
  */
 trait PrevAndNext
 {
-
     /**
      * @return mixed
      */

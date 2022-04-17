@@ -17,7 +17,6 @@ use Pckg\Database\Repository;
  */
 class InsertRecord
 {
-
     /**
      * @var Record
      */

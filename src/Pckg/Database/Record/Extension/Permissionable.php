@@ -13,7 +13,6 @@ use Pckg\Database\Record;
  */
 trait Permissionable
 {
-
     /**
      * @param $action
      *

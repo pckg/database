@@ -10,7 +10,6 @@ use Pckg\Database\Record;
  */
 abstract class AbstractField implements Stringifiable, \JsonSerializable
 {
-
     /**
      * @var string
      */

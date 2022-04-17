@@ -16,7 +16,6 @@ use Pckg\Locale\LangInterface;
  */
 trait Languagable
 {
-
     /**
      * @var array
      */

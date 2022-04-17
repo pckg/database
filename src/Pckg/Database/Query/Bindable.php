@@ -2,7 +2,7 @@
 
 namespace Pckg\Database\Query;
 
-interface Bindable {
-    
+interface Bindable
+{
     public function buildBinds();
 }

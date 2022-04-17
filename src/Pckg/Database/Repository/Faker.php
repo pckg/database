@@ -17,7 +17,6 @@ use Pckg\Database\Repository\Faker\Fetcher;
  */
 class Faker extends AbstractRepository implements Repository
 {
-
     /**
      * @param \PDO $connection
      */
@@ -91,7 +90,8 @@ class Faker extends AbstractRepository implements Repository
      */
     public function deleteTranslation(Record $record, Entity $entity, $language)
     {
-        // TODO: Implement deleteTranslation() method.
+        throw new \Exception('Faker::deleteTranslation not implemented');
+        return $record;
     }
 
     public function getDriver()

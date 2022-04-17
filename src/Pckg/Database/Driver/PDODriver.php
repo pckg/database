@@ -16,7 +16,6 @@ use Pckg\Migration\Table;
  */
 abstract class PDODriver
 {
-
     abstract public function getTableIndexesQuery(Repository $repository, string $table): string;
 
     abstract public function getIndexName(): string;

@@ -20,7 +20,6 @@ use Throwable;
  */
 abstract class Query
 {
-
     const LIKE = 'LIKE';
     const IN = 'IN';
     const NOT_LIKE = 'NOT LIKE';

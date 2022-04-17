@@ -98,7 +98,8 @@ class Custom implements Repository
      */
     public function update(Record $record, Entity $entity)
     {
-        // TODO: Implement update() method.
+        throw new \Exception('Custom::update not implemented');
+        return $record;
     }
 
     /**
@@ -109,7 +110,8 @@ class Custom implements Repository
      */
     public function delete(Record $record, Entity $entity)
     {
-        // TODO: Implement delete() method.
+        throw new \Exception('Custom::delete not implemented');
+        return $record;
     }
 
     /**
@@ -120,23 +122,8 @@ class Custom implements Repository
      */
     public function insert(Record $record, Entity $entity)
     {
-        // TODO: Implement insert() method.
-    }
-
-    /**
-     * @param $connection
-     */
-    public function setConnection($connection)
-    {
-        // TODO: Implement setConnection() method.
-    }
-
-    /**
-     *
-     */
-    public function getConnection()
-    {
-        // TODO: Implement getConnection() method.
+        throw new \Exception('Custom::insert not implemented');
+        return $record;
     }
 
     /**
@@ -179,7 +166,8 @@ class Custom implements Repository
      */
     public function deleteTranslation(Record $record, Entity $entity, $language)
     {
-        // TODO: Implement deleteTranslation() method.
+        throw new \Exception('Custom::deleteTranslation not implemented');
+        return $record;
     }
 
     public function executeOne(Entity $entity)

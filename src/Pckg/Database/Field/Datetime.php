@@ -14,7 +14,6 @@ use Pckg\Database\Record;
  */
 class Datetime extends AbstractField
 {
-
     /**
      * @var string
      */

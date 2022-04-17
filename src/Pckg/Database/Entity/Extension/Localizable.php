@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 trait Localizable
 {
-
     /**
      * @var array
      */

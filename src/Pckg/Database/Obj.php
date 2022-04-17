@@ -12,7 +12,6 @@ use JsonSerializable;
  */
 class Obj implements ArrayAccess, JsonSerializable
 {
-
     /**
      * @var array
      * @T00D00 - rename this to $_data

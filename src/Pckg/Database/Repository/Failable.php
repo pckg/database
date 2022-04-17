@@ -13,7 +13,6 @@ use Pckg\Database\Record;
  */
 trait Failable
 {
-
     /**
      * @return Record
      * @throws Exception

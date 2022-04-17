@@ -13,7 +13,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 class MorphsMany extends HasAndBelongsTo
 {
-
     /**
      * @var string
      */

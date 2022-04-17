@@ -15,7 +15,6 @@ use Pckg\Database\Repository;
  */
 class DeleteRecord
 {
-
     /**
      * @var Record
      */

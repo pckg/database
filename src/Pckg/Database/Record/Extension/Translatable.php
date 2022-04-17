@@ -12,7 +12,6 @@ use Pckg\Database\Repository;
  */
 trait Translatable
 {
-
     /**
      * @param                 $language
      * @param Entity|null     $entity

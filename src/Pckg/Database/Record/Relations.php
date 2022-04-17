@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 trait Relations
 {
-
     /**
      * @var array
      */

@@ -14,7 +14,6 @@ use Throwable;
  */
 class Fetcher
 {
-
     /**
      * @var Faker
      */

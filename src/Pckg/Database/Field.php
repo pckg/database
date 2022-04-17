@@ -11,7 +11,6 @@ namespace Pckg\Database;
  */
 class Field
 {
-
     /**
      * @var
      */

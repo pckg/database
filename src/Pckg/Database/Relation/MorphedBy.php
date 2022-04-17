@@ -13,7 +13,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 class MorphedBy extends MorphsMany
 {
-
     /**
      * @param Entity $middleEntity
      * @param        $foreignKey

@@ -9,7 +9,6 @@ namespace Pckg\Database\Entity\Extension;
  */
 trait Deletable
 {
-
     /**
      * @var bool
      */

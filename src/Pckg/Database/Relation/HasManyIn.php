@@ -14,7 +14,6 @@ use Pckg\Database\Relation;
  */
 class HasManyIn extends HasMany
 {
-
     /**
      * @param CollectionInterface $collection
      */

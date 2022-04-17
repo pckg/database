@@ -17,7 +17,6 @@ use Pckg\Database\Relation\HasMany;
  */
 trait Permissionable
 {
-
     /**
      * @var string
      */

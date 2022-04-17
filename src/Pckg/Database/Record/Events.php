@@ -12,7 +12,6 @@ use Pckg\Database\Record;
  */
 trait Events
 {
-
     /**
      * @return array
      */

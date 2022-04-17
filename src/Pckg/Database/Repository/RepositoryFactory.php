@@ -19,7 +19,6 @@ use PDOException;
  */
 class RepositoryFactory
 {
-
     /**
      *
      */

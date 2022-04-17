@@ -9,5 +9,4 @@ namespace Pckg\Database\Relation;
  */
 class HasChildren extends HasMany
 {
-
 }

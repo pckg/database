@@ -13,7 +13,6 @@ use Pckg\Database\Relation;
  */
 class BelongsTo extends Relation
 {
-
     /**
      * @param Record $record
      *

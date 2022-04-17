@@ -18,7 +18,6 @@ use PDO;
  */
 class GetRecords
 {
-
     /**
      * @var Entity
      */

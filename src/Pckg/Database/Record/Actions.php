@@ -13,7 +13,6 @@ use Pckg\Database\Repository;
  */
 trait Actions
 {
-
     /**
      * @var bool
      */

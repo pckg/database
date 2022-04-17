@@ -20,7 +20,6 @@ use Pckg\Database\Relation\MorphsMany;
  */
 trait RelationMethods
 {
-
     /**
      * @param $hasMany
      *

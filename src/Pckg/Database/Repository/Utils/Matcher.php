@@ -8,7 +8,6 @@ use Pckg\Database\Repository;
 
 class Matcher
 {
-
     public function matches(Record $record, array $conditions, array $binds, int &$numBinds = 0)
     {
         $getField = function ($string) {

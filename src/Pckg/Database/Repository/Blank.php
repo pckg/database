@@ -13,7 +13,6 @@ use PDO;
 
 class Blank implements Repository
 {
-
     public function getConnection()
     {
         return null;

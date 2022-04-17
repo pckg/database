@@ -11,7 +11,6 @@ use Pckg\CollectionInterface;
  */
 interface RelationInterface
 {
-
     /**
      * @param Record $record
      *

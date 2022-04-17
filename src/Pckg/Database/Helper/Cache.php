@@ -15,7 +15,6 @@ use PDO;
  */
 class Cache extends PckgCache
 {
-
     /**
      * @var Repository
      */

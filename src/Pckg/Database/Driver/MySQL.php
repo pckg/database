@@ -9,7 +9,6 @@ use Pckg\Migration\Table;
 
 class MySQL extends PDODriver implements DriverInterface
 {
-
     public function getEncapsulator(): string
     {
         return '`';

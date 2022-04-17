@@ -13,7 +13,6 @@ use Throwable;
  */
 trait Transformations
 {
-
     /**
      * @var array
      */

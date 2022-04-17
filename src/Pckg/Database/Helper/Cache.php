@@ -137,10 +137,10 @@ class Cache extends PckgCache
      */
     protected function buildRelations()
     {
-        $connection = $this->repository->getConnection();
-        if (!$connection) {
+        if (!($this->repository instanceof ConnectableRepository)) {
             return;
         }
+        $connection = $this->repository->getConnection();
         $driver = $this->repository->getDriver();
         $prepare = $connection->prepare($driver->getRelationsQuery());
         $prepare->execute();

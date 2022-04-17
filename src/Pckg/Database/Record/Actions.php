@@ -42,12 +42,12 @@ trait Actions
     }
 
     /**
-     * @param array       $data
+     * @param int|string|array $data
      * @param Entity|null $entity
      *
      * @return mixed|boolean|Record|$this
      */
-    public static function gets($data = [], Entity $entity = null)
+    public static function gets(int|string|array $data, Entity $entity = null)
     {
         if (!$entity) {
             $entity = (new static())->getEntity();

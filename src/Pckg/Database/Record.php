@@ -235,6 +235,9 @@ class Record extends Obj
                  * Relation exists in entity definition.
                  */
                 if ($type && !$this->relationExists($getter)) {
+                    if ($type === 'plus') {
+                        $values[$key] = $this->{$getter};
+                    }
                     continue;
                 }
                 $values[$key] = $this->getRelationIfSet($getter);

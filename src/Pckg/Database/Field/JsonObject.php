@@ -77,7 +77,7 @@ class JsonObject extends AbstractField implements \Iterator, \ArrayAccess
     /**
      * @return mixed|\stdClass|string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->collection ?? new \stdClass();
     }

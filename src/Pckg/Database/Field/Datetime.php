@@ -50,7 +50,7 @@ class Datetime extends AbstractField
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         if (!$this->data) {
             return null;

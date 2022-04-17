@@ -64,7 +64,7 @@ class Raw implements Stringifiable
         throw new \Exception('Raw cannot be used as a encapsulator!');
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         throw new \Exception('No json serializer');
     }

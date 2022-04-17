@@ -24,7 +24,7 @@ interface Stringifiable
      *
      * @return string|object|array|null|integer|float
      */
-    public function jsonSerialize();
+    public function jsonSerialize(): mixed;
 
     /**
      * Return field object (datetime, array, object, ...).

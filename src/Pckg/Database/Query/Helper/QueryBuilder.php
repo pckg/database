@@ -213,7 +213,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function whereRaw($raw, $bind = [])
+    public function whereRaw($raw, string|array $bind = [])
     {
         $this->getQuery()->where(Query\Raw::raw($raw, $bind));
 
@@ -420,7 +420,7 @@ trait QueryBuilder
      *
      * @return $this
      */
-    public function select($fields = [])
+    public function select(array|string $fields = [])
     {
         $this->getQuery()->select($fields);
 

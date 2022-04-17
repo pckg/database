@@ -72,7 +72,7 @@ class Point extends AbstractField
     /**
      * @return null|array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         if (!$this->collection) {
             return null;

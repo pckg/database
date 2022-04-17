@@ -97,7 +97,7 @@ class PDO extends AbstractRepository implements Repository, PDOInterface
         if (is_string($config)) {
             $config = config('database.' . $config);
         }
-        
+
         $driver = $config['driver'] ?? null;
         if (!$driver) {
             return null;

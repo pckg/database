@@ -2,6 +2,7 @@
 
 namespace Pckg\Database\Repository;
 
+use Pckg\Collection;
 use Pckg\Database\Entity;
 use Pckg\Database\Helper\Cache;
 use Pckg\Database\Query;
@@ -14,10 +15,8 @@ use Pckg\Database\Repository\Utils\Matcher;
  *
  * @package Pckg\Database\Repository
  */
-class JSON extends Custom
+class JSON extends Memory
 {
-    use Failable;
-
     protected $localCache = [];
 
     /**
@@ -34,89 +33,7 @@ class JSON extends Custom
         $this->config = $config;
     }
 
-    /**
-     * @param Entity $entity
-     *
-     * @return null
-     */
-    public function one(Entity $entity)
-    {
-        $data = $entity->all();
-        $query = $entity->getQuery();
-
-        return $data->first(function (Record $record) use ($query) {
-            return $this->filterRecord($record, $query);
-        });
-    }
-
-    /**
-     * @param Entity $entity
-     *
-     * @return array
-     */
-    public function all(Entity $entity)
-    {
-        $collection = $this->getCachedFile($entity);
-
-        /**
-         * Immediately return empty collection.
-         */
-        if (!$collection->count()) {
-            return $collection;
-        }
-
-        /**
-         * Return collection when there's no query to apply.
-         */
-        $query = $entity->getQuery();
-        if (!$query) {
-            return $collection;
-        }
-
-        /**
-         * Filter.
-         */
-        $where = $query->getWhere();
-        if ($where && $where->hasChildren()) {
-            $collection = $collection->filter(function (Record $record) use ($query) {
-                return $this->filterRecord($record, $query);
-            });
-        }
-
-        /**
-         * Sort? Limit?
-         */
-        $sort = $query->getOrderBy();
-        if ($sort) {
-            $collection = $collection->sortBy($sort);
-        }
-
-        /**
-         * Fill relations.
-         */
-        $entity->fillCollectionWithRelations($collection);
-
-        return $collection;
-    }
-
-    public function filterRecord(Record $record, Query $query = null)
-    {
-        if (!$query) {
-            return true;
-        }
-
-        $where = $query->getWhere();
-        if (!$where) {
-            return true;
-        }
-
-        $children = $where->getChildren();
-        $binds = $query->getBinds('where');
-
-        return (new Matcher())->matches($record, $children, $binds);
-    }
-
-    public function getCachedFile(Entity $entity)
+    public function getCollection(Entity $entity): Collection
     {
         $db = $this->config['db'];
         $file = $entity->getTable() . '.json';

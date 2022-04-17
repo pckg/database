@@ -4,6 +4,7 @@ namespace Pckg\Database\Helper;
 
 use Exception;
 use Pckg\Cache\Cache as PckgCache;
+use Pckg\Database\ConnectableRepository;
 use Pckg\Database\Repository;
 use PDO;
 
@@ -279,11 +280,15 @@ class Cache extends PckgCache
      */
     public static function getCachePathByRepository(Repository $repository)
     {
-        $path = path('cache') . 'framework/pckg_database_repository_' . str_replace(
-            ['\\', '/'],
-            '_',
-            (get_class(app()) . '_' . get_class(env()))
-        ) . '_' . $repository->getName() . '_' . ($repository?->getConnection()?->uniqueName ?? '') . '.cache';
+        $part = $repository instanceof ConnectableRepository::class
+            ? ($repository->getConnection()->uniqueName ?? '')
+            : '';
+
+        $path = path('cache') . 'framework/pckg_database_repository_'
+            . sluggify(get_class(app()))
+            . '_'
+            . sluggify(get_class(env()))
+            . '_' . $repository->getName() . '_' . $part . '.cache';
 
         return $path;
     }

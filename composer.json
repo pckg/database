@@ -19,17 +19,17 @@
   },
   "require-dev": {
     "pckg-app/frontend-dev": "dev-master",
-    "pckg/framework": "dev-master-yoda",
-    "pckg/auth": "dev-master",
-    "pckg/htmlbuilder": "dev-master",
-    "pckg/manager": "dev-master",
+    "pckg/framework": "dev-next-8.0 as dev-master",
+    "pckg/auth": "dev-next-8.0 as dev-master",
+    "pckg/htmlbuilder": "dev-next-8.0 as dev-master",
+    "pckg/manager": "dev-next-8.0 as dev-master",
     "pckg/migrator": "dev-master",
-    "fzaninotto/faker": "dev-master",
+    "fakerphp/faker": "1.*",
     "aws/aws-sdk-php-resources": "^0.3.0"
   },
   "suggest": {
     "maximebf/debugbar": "Push queries and events to debugbar",
-    "fzaninotto/faker": "Use faker to mock data*"
+    "fakerphp/faker": "Use faker to mock data*"
   },
   "autoload": {
     "psr-0": {

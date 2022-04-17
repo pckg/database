@@ -280,7 +280,7 @@ class Cache extends PckgCache
      */
     public static function getCachePathByRepository(Repository $repository)
     {
-        $part = $repository instanceof ConnectableRepository::class
+        $part = $repository instanceof ConnectableRepository
             ? ($repository->getConnection()->uniqueName ?? '')
             : '';
 

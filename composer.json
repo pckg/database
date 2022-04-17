@@ -11,7 +11,7 @@
   ],
   "require": {
     "pckg/concept": "dev-master",
-    "pckg/collection": "dev-master",
+    "pckg/collection": "dev-next-8.0 as dev-master",
     "pckg/cache": "dev-master",
     "pckg/locale": "dev-master",
     "ext-pdo": "*",

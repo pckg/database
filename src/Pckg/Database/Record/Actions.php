@@ -105,7 +105,7 @@ trait Actions
      * @param array       $data
      * @param Entity|null $entity
      *
-     * @return self
+     * @return $this
      */
     public static function getOrNew(array $data, Entity $entity = null)
     {

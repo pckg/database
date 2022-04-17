@@ -106,7 +106,7 @@ class Entity
      * @param Repository|null $repository
      * @param null $alias
      * @param bool $boot
-     * @return self
+     * @return $this
      */
     public static function create(Repository $repository = null, $alias = null, $boot = true)
     {

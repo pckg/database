@@ -76,10 +76,10 @@ class Cache extends PckgCache
      */
     protected function buildTables()
     {
-        $connection = $this->repository->getConnection();
-        if (!$connection) {
+        if (!($this->repository instanceof ConnectableRepository)) {
             return;
         }
+        $connection = $this->repository->getConnection();
         $sql = $this->repository->getDriver()->getShowTablesQuery();
         $prepare = $connection->prepare($sql);
         $prepare->execute([$this->repository->getDbName()]);

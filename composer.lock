@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19be8fb9ccbfe6d7866b3ab9b2a52c3a",
+    "content-hash": "b96c9f26820c508e93e9d61558c3b2b4",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -150,57 +150,6 @@
                 "source": "https://github.com/pckg/cache/tree/master"
             },
             "time": "2021-03-05T18:25:17+00:00"
-        },
-        {
-            "name": "pckg/collection",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pckg/collection.git",
-                "reference": "66274555af9f26f0e079021fe333b6ffc6c0b589"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pckg/collection/zipball/66274555af9f26f0e079021fe333b6ffc6c0b589",
-                "reference": "66274555af9f26f0e079021fe333b6ffc6c0b589",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "pckg/concept": "dev-master"
-            },
-            "require-dev": {
-                "pckg-app/frontend-dev": "dev-master",
-                "pckg/database": "dev-master",
-                "pckg/framework": "dev-master"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Pckg/Collection/Helper/functions.php"
-                ],
-                "psr-0": {
-                    "Pckg": "src\\"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bojan Rajh",
-                    "email": "schtr4jh@schtr4jh.net"
-                }
-            ],
-            "description": "Implementation for more human-like dealing with collections",
-            "homepage": "https://github.com/pckg/collection",
-            "support": {
-                "issues": "https://github.com/pckg/collection/issues",
-                "source": "https://github.com/pckg/collection/tree/master"
-            },
-            "time": "2021-11-10T17:25:49+00:00"
         },
         {
             "name": "pckg/concept",
@@ -2586,12 +2535,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/auth.git",
-                "reference": "b33e45bce8cde3d7a307b9858c94e6e0348daa64"
+                "reference": "be09f496c81bd6160fc05d3d8654121b2208e33a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/auth/zipball/b33e45bce8cde3d7a307b9858c94e6e0348daa64",
-                "reference": "b33e45bce8cde3d7a307b9858c94e6e0348daa64",
+                "url": "https://api.github.com/repos/pckg/auth/zipball/be09f496c81bd6160fc05d3d8654121b2208e33a",
+                "reference": "be09f496c81bd6160fc05d3d8654121b2208e33a",
                 "shasum": ""
             },
             "require": {
@@ -2609,6 +2558,7 @@
                 "pckg/manager": "dev-next-8.0 as dev-master",
                 "pckg/migrator": "dev-next-8.0 as dev-master"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2631,7 +2581,58 @@
                 "issues": "https://github.com/pckg/auth/issues",
                 "source": "https://github.com/pckg/auth/tree/next-8.0"
             },
-            "time": "2022-04-17T10:21:58+00:00"
+            "time": "2022-04-18T09:48:24+00:00"
+        },
+        {
+            "name": "pckg/collection",
+            "version": "dev-next-8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pckg/collection.git",
+                "reference": "ae14b89573e33e09dbd1560365452b719eef09d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pckg/collection/zipball/ae14b89573e33e09dbd1560365452b719eef09d2",
+                "reference": "ae14b89573e33e09dbd1560365452b719eef09d2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "pckg/concept": "dev-master"
+            },
+            "require-dev": {
+                "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/database": "dev-next-8.0 as dev-master",
+                "pckg/framework": "dev-next-8.0 as dev-master"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Pckg/Collection/Helper/functions.php"
+                ],
+                "psr-0": {
+                    "Pckg": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bojan Rajh",
+                    "email": "schtr4jh@schtr4jh.net"
+                }
+            ],
+            "description": "Implementation for more human-like dealing with collections",
+            "homepage": "https://github.com/pckg/collection",
+            "support": {
+                "issues": "https://github.com/pckg/collection/issues",
+                "source": "https://github.com/pckg/collection/tree/next-8.0"
+            },
+            "time": "2022-04-17T11:33:50+00:00"
         },
         {
             "name": "pckg/framework",
@@ -2639,12 +2640,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/framework.git",
-                "reference": "cfbad13e6f2c253800b4a7c219d4af2440d9cc25"
+                "reference": "14126ca6a4a0a01221a35c0049cd3764f7709723"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/framework/zipball/cfbad13e6f2c253800b4a7c219d4af2440d9cc25",
-                "reference": "cfbad13e6f2c253800b4a7c219d4af2440d9cc25",
+                "url": "https://api.github.com/repos/pckg/framework/zipball/14126ca6a4a0a01221a35c0049cd3764f7709723",
+                "reference": "14126ca6a4a0a01221a35c0049cd3764f7709723",
                 "shasum": ""
             },
             "require": {
@@ -2668,6 +2669,7 @@
                 "nesbot/carbon": "2.*",
                 "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
                 "pckg/auth": "dev-next-8.0 as dev-master",
+                "pckg/collection": "dev-next-8.0 as dev-master",
                 "pckg/database": "dev-next-8.0 as dev-master",
                 "pckg/htmlbuilder": "dev-next-8.0 as dev-master",
                 "pckg/mail": "dev-master",
@@ -2677,6 +2679,7 @@
                 "pckg/translator": "dev-master",
                 "ramsey/uuid": ">=4.1"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -2703,7 +2706,7 @@
                 "issues": "https://github.com/pckg/framework/issues",
                 "source": "https://github.com/pckg/framework/tree/next-8.0"
             },
-            "time": "2022-04-17T10:41:00+00:00"
+            "time": "2022-04-18T11:59:59+00:00"
         },
         {
             "name": "pckg/htmlbuilder",
@@ -2711,12 +2714,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/htmlbuilder.git",
-                "reference": "932d4a0f3feccc72a4ff8553beb5761413ec9026"
+                "reference": "fe6ac15fd98aa2155804c3c223664cd042b69131"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/htmlbuilder/zipball/932d4a0f3feccc72a4ff8553beb5761413ec9026",
-                "reference": "932d4a0f3feccc72a4ff8553beb5761413ec9026",
+                "url": "https://api.github.com/repos/pckg/htmlbuilder/zipball/fe6ac15fd98aa2155804c3c223664cd042b69131",
+                "reference": "fe6ac15fd98aa2155804c3c223664cd042b69131",
                 "shasum": ""
             },
             "require": {
@@ -2727,6 +2730,7 @@
                 "pckg-app/frontend-dev": "dev-master",
                 "pckg/framework": "dev-master || dev-master-yoda"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2754,7 +2758,7 @@
                 "issues": "https://github.com/pckg/htmlbuilder/issues",
                 "source": "https://github.com/pckg/htmlbuilder/tree/next-8.0"
             },
-            "time": "2022-01-02T19:22:00+00:00"
+            "time": "2022-04-18T11:56:07+00:00"
         },
         {
             "name": "pckg/manager",
@@ -2762,23 +2766,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/manager.git",
-                "reference": "d61892831ce6947208089e36286874a068553334"
+                "reference": "9ab3220063e8a3969f7799d814e4ca1f420a2b1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/manager/zipball/d61892831ce6947208089e36286874a068553334",
-                "reference": "d61892831ce6947208089e36286874a068553334",
+                "url": "https://api.github.com/repos/pckg/manager/zipball/9ab3220063e8a3969f7799d814e4ca1f420a2b1d",
+                "reference": "9ab3220063e8a3969f7799d814e4ca1f420a2b1d",
                 "shasum": ""
             },
             "require": {
                 "assetic/framework": "1.*"
             },
             "require-dev": {
-                "pckg-app/frontend-dev": "dev-master",
-                "pckg/database": "dev-master",
-                "pckg/framework": "dev-master",
-                "pckg/queue": "dev-master"
+                "pckg-app/frontend-dev": "dev-next-8.0 as master",
+                "pckg/collection": "dev-next-8.0 as master",
+                "pckg/database": "dev-next-8.0 as master",
+                "pckg/framework": "dev-next-8.0 as master",
+                "pckg/queue": "dev-master",
+                "pckg/storage": "dev-master"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2801,7 +2808,7 @@
                 "issues": "https://github.com/pckg/manager/issues",
                 "source": "https://github.com/pckg/manager/tree/next-8.0"
             },
-            "time": "2022-04-15T06:50:31+00:00"
+            "time": "2022-04-18T12:01:23+00:00"
         },
         {
             "name": "pckg/migrator",
@@ -7101,6 +7108,12 @@
             "alias_normalized": "dev-master"
         },
         {
+            "package": "pckg/collection",
+            "version": "dev-next-8.0",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        },
+        {
             "package": "pckg/framework",
             "version": "dev-next-8.0",
             "alias": "dev-master",
@@ -7128,9 +7141,9 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "pckg/concept": 20,
-        "pckg/collection": 20,
         "pckg/cache": 20,
         "pckg/locale": 20,
+        "pckg/collection": 20,
         "pckg-app/frontend-dev": 20,
         "pckg/framework": 20,
         "pckg/auth": 20,
@@ -7145,5 +7158,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

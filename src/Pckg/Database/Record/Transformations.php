@@ -151,6 +151,7 @@ trait Transformations
     /**
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize(): mixed
     {
         return $this->__toArray();

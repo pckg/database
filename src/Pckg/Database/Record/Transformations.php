@@ -187,4 +187,27 @@ trait Transformations
 
         return $data;
     }
+
+    public function setProtectedKeys(array $protect)
+    {
+        $this->protect = array_values($protect);
+
+        return $this;
+    }
+
+    public function getProtectedKeys()
+    {
+        return $this->protect;
+    }
+
+    public function pushProtectedKeys(...$keys)
+    {
+        foreach ($keys as $key) {
+            if (!in_array($key, $this->protect)) {
+                $this->protect[] = $key;
+            }
+        }
+
+        return $this;
+    }
 }

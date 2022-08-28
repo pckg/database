@@ -196,6 +196,11 @@ class Record extends Obj
     {
         $values = [];
         foreach ($source as $i => $j) {
+            if (is_only_callable($j)) {
+                $values = $values + $j($this, $values);
+                continue;
+            }
+
             $key = is_int($i) ? $j : $i;
             $getter = $j;
 

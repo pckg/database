@@ -10,7 +10,6 @@ use Pckg\Migration\Table;
 /**
  * Class PDODriver
  * @package Pckg\Database\Driver
- * @extends
  * @see MySQL
  * @see PostgreSQL
  */

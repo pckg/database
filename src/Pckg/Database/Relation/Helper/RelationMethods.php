@@ -21,8 +21,6 @@ use Pckg\Database\Relation\MorphsMany;
 trait RelationMethods
 {
     /**
-     * @param $hasMany
-     *
      * @return HasMany
      */
     public function hasMany($hasMany, callable $callback = null, $alias = null)
@@ -31,8 +29,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasMany
-     *
      * @return HasMany
      */
     public function hasManyIn($hasMany, callable $callback = null, $alias = null)
@@ -68,8 +64,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasMany
-     *
      * @return HasMany
      */
     public function hasOne($entity, callable $callback = null, $alias = null)
@@ -78,8 +72,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $belongsTo
-     *
      * @return BelongsTo
      */
     public function belongsTo($entity, callable $callback = null, $alias = null)
@@ -88,8 +80,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasAndBelongsTo
-     *
      * @return HasAndBelongsTo
      */
     public function hasAndBelongsTo($entity, callable $callback = null, $alias = null)
@@ -98,8 +88,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasParent
-     *
      * @return HasParent
      */
     public function hasParent($hasParent)
@@ -108,8 +96,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $hasChildren
-     *
      * @return HasChildren
      */
     public function hasChildren($hasChildren)
@@ -118,8 +104,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $morphsMany
-     *
      * @return MorphsMany
      */
     public function morphsMany($entity, callable $callable = null, $alias = null)
@@ -128,8 +112,6 @@ trait RelationMethods
     }
 
     /**
-     * @param $morphedBy
-     *
      * @return MorphedBy
      */
     public function morphedBy($entity, callable $callable = null, $alias = null)

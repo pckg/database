@@ -53,8 +53,6 @@ class DeleteRecord
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function setTable($table)
@@ -65,8 +63,6 @@ class DeleteRecord
     }
 
     /**
-     * @param $data
-     *
      * @return $this
      */
     public function setData($data)

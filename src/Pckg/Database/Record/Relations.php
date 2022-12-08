@@ -18,8 +18,6 @@ trait Relations
     protected $relations = [];
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function hasRelation($key)
@@ -37,8 +35,6 @@ trait Relations
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function relationExists($key)
@@ -47,8 +43,6 @@ trait Relations
     }
 
     /**
-     * @param $name
-     *
      * @return null|Collection|Record
      */
     public function getRelationIfSet($name)
@@ -59,9 +53,6 @@ trait Relations
     }
 
     /**
-     * @param $key
-     * @param $value
-     *
      * @return $this
      */
     public function setRelation($key, $value)
@@ -72,9 +63,6 @@ trait Relations
     }
 
     /**
-     * @param $key
-     * @param $value
-     *
      * @return $this
      */
     public function unsetRelation($key)
@@ -85,8 +73,6 @@ trait Relations
     }
 
     /**
-     * @param $key
-     *
      * @return mixed
      */
     public function getRelation($key)

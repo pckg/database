@@ -10,8 +10,6 @@ namespace Pckg\Database\Helper;
 class Convention
 {
     /**
-     * @param $input
-     *
      * @return string
      */
     public static function nameOne($input)
@@ -48,8 +46,6 @@ class Convention
     }
 
     /**
-     * @param $input
-     *
      * @return string
      */
     public static function nameMultiple($input)
@@ -79,8 +75,6 @@ class Convention
     }
 
     /**
-     * @param $text
-     *
      * @return string
      */
     public static function toPascal($text)
@@ -89,8 +83,6 @@ class Convention
     }
 
     /**
-     * @param $text
-     *
      * @return string
      */
     public static function toCamel($text)
@@ -108,8 +100,6 @@ class Convention
     }
 
     /**
-     * @param $text
-     *
      * @return string
      */
     public static function fromCamel($text, $separator = '_')
@@ -133,8 +123,6 @@ class Convention
     }
 
     /**
-     * @param $url
-     *
      * @return mixed|string
      */
     public static function url($url)

@@ -39,8 +39,6 @@ class Parenthesis implements Buildable, Bindable
     }
 
     /**
-     * @param $glue
-     *
      * @return $this
      */
     public function setGlue($glue)
@@ -98,8 +96,6 @@ class Parenthesis implements Buildable, Bindable
     }
 
     /**
-     * @param $children
-     *
      * @return $this
      */
     public function setChildren($children)

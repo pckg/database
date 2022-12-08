@@ -45,9 +45,6 @@ class Entity
      */
     protected $alias;
 
-    /**
-     * @var
-     */
     protected $record = Record::class;
 
     /**
@@ -182,9 +179,6 @@ class Entity
     }
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return $this
      * @throws Exception
      */
@@ -211,8 +205,6 @@ class Entity
     }
 
     /**
-     * @param $key
-     *
      * @return string
      */
     public function extendedKey($key)
@@ -228,9 +220,6 @@ class Entity
     }
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return $this
      */
     public function __call($method, $args)
@@ -241,8 +230,6 @@ class Entity
     }
 
     /**
-     * @param $property
-     *
      * @return mixed
      */
     public function __get($property)
@@ -255,8 +242,6 @@ class Entity
     }
 
     /**
-     * @param $class
-     *
      * @return $this
      */
     public function setRecordClass($class)
@@ -283,8 +268,6 @@ class Entity
     }
 
     /**
-     * @param $alias
-     *
      * @return $this
      */
     public function setAlias($alias)
@@ -307,8 +290,6 @@ class Entity
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function setTable($table)
@@ -364,8 +345,6 @@ class Entity
     }
 
     /**
-     * @param $repository
-     *
      * @return Repository|PDO
      */
     public function getRepositoryIfEmpty($repository)
@@ -378,8 +357,6 @@ class Entity
     }
 
     /**
-     * @param $extension
-     *
      * @return $this
      */
     public function addExtension($extension)
@@ -853,8 +830,6 @@ class Entity
     }
 
     /**
-     * @param $field
-     *
      * @return bool
      */
     public function hasField($field)

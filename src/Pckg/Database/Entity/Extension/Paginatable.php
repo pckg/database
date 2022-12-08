@@ -10,8 +10,6 @@ namespace Pckg\Database\Entity\Extension;
 trait Paginatable
 {
     /**
-     * @param $num
-     *
      * @return $this
      */
     public function page($num)

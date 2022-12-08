@@ -16,14 +16,8 @@ use Pckg\Database\Repository\PDOInterface;
  */
 trait QueryBuilder
 {
-    /**
-     * @var
-     */
     protected $query;
 
-    /**
-     * @var
-     */
     protected $prevQuery;
 
     /**
@@ -85,8 +79,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $query
-     *
      * @return $this
      */
     public function setQuery($query)
@@ -220,8 +212,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $raw
-     * @param $bind
      * @return $this
      */
     public function whereHas($raw, $bind = [])
@@ -315,8 +305,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $key
-     *
      * @return $this
      */
     public function groupBy($key)
@@ -327,8 +315,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $key
-     *
      * @return $this
      */
     public function addGroupBy($key)
@@ -339,8 +325,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $key
-     *
      * @return $this|Entity
      */
     public function orderBy($key)
@@ -355,8 +339,6 @@ trait QueryBuilder
     }
 
     /**
-     * @param $limit
-     *
      * @return $this
      */
     public function limit($limit)

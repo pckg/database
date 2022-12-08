@@ -16,9 +16,6 @@ class Collection extends \Pckg\Collection
     use CallWithRelation;
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return $this
      */
     public function __call($method, $args)

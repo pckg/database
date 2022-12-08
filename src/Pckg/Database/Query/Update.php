@@ -12,9 +12,6 @@ use Pckg\Database\Query;
  */
 class Update extends Query
 {
-    /**
-     * @var
-     */
     protected $set;
 
     // builders
@@ -116,8 +113,6 @@ class Update extends Query
     // setters
 
     /**
-     * @param $set
-     *
      * @return $this
      */
     public function setSet($set)
@@ -128,8 +123,6 @@ class Update extends Query
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function setTable($table)
@@ -140,8 +133,6 @@ class Update extends Query
     }
 
     /**
-     * @param $where
-     *
      * @return $this
      */
     public function setWhere($where)
@@ -152,8 +143,6 @@ class Update extends Query
     }
 
     /**
-     * @param $limit
-     *
      * @return $this
      */
     public function setLimit($limit)
@@ -165,8 +154,6 @@ class Update extends Query
 
     // adders
     /**
-     * @param $where
-     *
      * @return $this
      */
     public function addWhere($where)

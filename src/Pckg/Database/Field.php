@@ -11,14 +11,9 @@ namespace Pckg\Database;
  */
 class Field
 {
-    /**
-     * @var
-     */
     protected $value;
 
     /**
-     * @param $value
-     *
      * @return $this
      */
     public function set($value)

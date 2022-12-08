@@ -166,8 +166,6 @@ trait Transformations
     }
 
     /**
-     * @param $map
-     *
      * @return array
      */
     public function transform($map)

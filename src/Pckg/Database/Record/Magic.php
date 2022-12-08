@@ -21,8 +21,6 @@ trait Magic
     protected $encapsulate = [];
 
     /**
-     * @param $key
-     * @param $value
      * @return mixed
      */
     public function getEncapsulated($key, $value)
@@ -40,8 +38,6 @@ trait Magic
     }
 
     /**
-     * @param $key
-     * @param $value
      * @return mixed
      */
     public function setEncapsulated($key, $value)
@@ -60,8 +56,6 @@ trait Magic
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function __isset($key)
@@ -99,8 +93,6 @@ trait Magic
     }
 
     /**
-     * @param $key
-     *
      * @return null
      */
     public function __get($key)
@@ -180,9 +172,6 @@ trait Magic
     }
 
     /**
-     * @param $key
-     * @param $val
-     *
      * @return $this
      */
     public function __set($key, $val)
@@ -229,11 +218,6 @@ trait Magic
     }
 
     /**
-     *
-     *
-     * @param $method
-     * @param $args
-     *
      * @return mixed
      */
     public function __call($method, $args)

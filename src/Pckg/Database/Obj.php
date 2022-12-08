@@ -45,8 +45,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function hasKey($key)
@@ -63,7 +61,7 @@ class Obj implements ArrayAccess, JsonSerializable
      */
     public function __construct(array $data = [])
     {
-        $this->data = $data ?? [];
+        $this->data = $data ?: [];
     }
 
     /**
@@ -88,8 +86,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function __isset($key)
@@ -106,8 +102,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return $this
      */
     public function __unset($key)
@@ -128,8 +122,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return null
      */
     public function __get($key)
@@ -140,9 +132,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     * @param $val
-     *
      * @return $this
      */
     public function __set($key, $val)
@@ -252,8 +241,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function keyExists($key)
@@ -262,8 +249,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return mixed|null
      */
     public function getValue($key)
@@ -274,9 +259,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     * @param $val
-     *
      * @return Object
      */
     public function set($key, $val = null)
@@ -293,8 +275,6 @@ class Obj implements ArrayAccess, JsonSerializable
     }
 
     /**
-     * @param $key
-     *
      * @return null
      */
     public function get($key)

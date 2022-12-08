@@ -24,8 +24,6 @@ class MorphsMany extends HasAndBelongsTo
     protected $morph = 'morph_id';
 
     /**
-     * @param $poly
-     *
      * @return $this
      */
     public function poly($poly)
@@ -36,8 +34,6 @@ class MorphsMany extends HasAndBelongsTo
     }
 
     /**
-     * @param $morph
-     *
      * @return $this
      */
     public function morph($morph)

@@ -44,29 +44,14 @@ abstract class Relation implements RelationInterface
      */
     public $join = self::INNER_JOIN;
 
-    /**
-     * @var
-     */
     protected $left;
 
-    /**
-     * @var
-     */
     protected $on;
 
-    /**
-     * @var
-     */
     protected $onAdditional;
 
-    /**
-     * @var
-     */
     protected $record;
 
-    /**
-     * @var
-     */
     protected $fill;
 
     /**
@@ -74,14 +59,8 @@ abstract class Relation implements RelationInterface
      */
     protected $primaryKey = 'id';
 
-    /**
-     * @var
-     */
     protected $primaryCollectionKey;
 
-    /**
-     * @var
-     */
     protected $foreignKey;
 
     /**
@@ -94,9 +73,6 @@ abstract class Relation implements RelationInterface
      */
     protected $query;
 
-    /**
-     * @var
-     */
     protected $after;
 
     /**
@@ -104,10 +80,6 @@ abstract class Relation implements RelationInterface
      */
     protected $filterLeft;
 
-    /**
-     * @param $left
-     * @param $right
-     */
     public function __construct($left, $right)
     {
         $this->left = $left;
@@ -140,9 +112,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return $this
      */
     public function __call($method, $args)
@@ -167,8 +136,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $primaryKey
-     *
      * @return $this
      */
     public function primaryKey($primaryKey)
@@ -179,8 +146,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $foreignKey
-     *
      * @return $this
      */
     public function foreignKey($foreignKey)
@@ -229,8 +194,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $fill
-     *
      * @return $this
      */
     public function fill($fill)
@@ -241,8 +204,6 @@ abstract class Relation implements RelationInterface
     }
 
     /**
-     * @param $after
-     *
      * @return $this
      */
     public function after($after)
@@ -380,7 +341,7 @@ abstract class Relation implements RelationInterface
         Reflect::call(
             $callable,
             [
-                $query ?? $this->getQuery(),
+                $query ? $this->getQuery() : null,
                 $this,
                 $entity,
             ]

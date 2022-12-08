@@ -92,7 +92,6 @@ abstract class AbstractField implements Stringifiable, \JsonSerializable
     }
 
     /**
-     * @param $value
      * @return $this
      */
     public function set($value)

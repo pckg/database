@@ -12,9 +12,6 @@ use Pckg\Database\Query;
  */
 class Select extends Query
 {
-    /**
-     * @var
-     */
     protected $select = [];
 
     /**
@@ -70,8 +67,6 @@ class Select extends Query
     }
 
     /**
-     * @param $row
-     *
      * @return $this
      */
     public function countRow($row)
@@ -90,8 +85,6 @@ class Select extends Query
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function table($table)
@@ -107,8 +100,6 @@ class Select extends Query
     }
 
     /**
-     * @param $alias
-     *
      * @return $this
      */
     public function alias($alias)
@@ -240,8 +231,6 @@ class Select extends Query
     }
 
     /**
-     * @param $select
-     *
      * @return $this
      */
     public function addSelect($fields, $bind = [])

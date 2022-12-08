@@ -12,9 +12,6 @@ use Pckg\Database\Query;
  */
 class Insert extends Query
 {
-    /**
-     * @var
-     */
     protected $insert;
 
     // builders
@@ -93,8 +90,6 @@ class Insert extends Query
     }
 
     /**
-     * @param $insert
-     *
      * @return $this
      */
     public function setInsert($insert)

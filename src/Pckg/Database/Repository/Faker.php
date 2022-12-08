@@ -17,9 +17,6 @@ use Pckg\Database\Repository\Faker\Fetcher;
  */
 class Faker extends AbstractRepository implements Repository
 {
-    /**
-     * @param \PDO $connection
-     */
     public function __construct(Generator $connection)
     {
         $this->setConnection($connection);

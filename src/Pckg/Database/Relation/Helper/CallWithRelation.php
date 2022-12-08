@@ -13,10 +13,6 @@ use Pckg\Database\Record;
 trait CallWithRelation
 {
     /**
-     * @param $method
-     * @param $args
-     * @param $entity
-     *
      * @return null
      */
     protected function callWithRelation($method, $args, $entity)

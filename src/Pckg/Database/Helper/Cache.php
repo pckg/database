@@ -93,9 +93,6 @@ class Cache extends PckgCache
         }
     }
 
-    /**
-     * @param $table
-     */
     protected function buildFields($table)
     {
         $this->cache['tables'][$table] = [];
@@ -106,9 +103,6 @@ class Cache extends PckgCache
         $this->cache['fields'][$table] = $driver->getTableColumns($this->repository, $table);
     }
 
-    /**
-     * @param $table
-     */
     protected function buildConstraints($table)
     {
         $driver = $this->repository->getDriver();
@@ -116,9 +110,6 @@ class Cache extends PckgCache
         $this->cache['constraints'][$table] = $driver->getTableConstraints($this->repository, $table);
     }
 
-    /**
-     * @param $table
-     */
     protected function buildPrimaryKeys($table)
     {
         $this->cache['tables'][$table]['primaryKeys'] = array_column(
@@ -152,8 +143,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     *
      * @return array
      */
     public function getTableFields($table)
@@ -166,9 +155,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $field
-     * @param $table
-     *
      * @return mixed
      */
     public function getField($field, $table)
@@ -177,8 +163,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     *
      * @return array
      */
     public function getTable($table)
@@ -193,9 +177,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $field
-     * @param $table
-     *
      * @return mixed
      */
     public function getConstraint($constraint, $table)
@@ -204,9 +185,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     * @param $field
-     *
      * @return bool
      */
     public function tableHasField($table, $field)
@@ -229,9 +207,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     * @param $field
-     *
      * @return bool
      */
     public function tableHasConstraint($table, $constraint)
@@ -246,8 +221,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     *
      * @return bool
      */
     public function hasTable($table)
@@ -256,8 +229,6 @@ class Cache extends PckgCache
     }
 
     /**
-     * @param $table
-     *
      * @return mixed
      */
     public function getTablePrimaryKeys($table)

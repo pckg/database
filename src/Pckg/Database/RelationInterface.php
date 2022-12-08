@@ -49,8 +49,6 @@ interface RelationInterface
     public function join($table, $on = null, $where = null);
 
     /**
-     * @param $relation
-     *
      * @return mixed
      */
     public function with($relation);

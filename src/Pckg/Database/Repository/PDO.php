@@ -248,7 +248,7 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
     }
 
     /**
-     * @param $prepare \PDOStatement
+     * @param \PDOStatement $prepare
      *
      * @return mixed
      * @throws Exception
@@ -301,7 +301,6 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
     /**
      * @param callable $task
      * @param string $message
-     * @return |null
      * @throws Throwable
      */
     private function measureAndCheckAndReconnect(callable $task, string $message)
@@ -357,10 +356,6 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
         return $prepare;
     }
 
-    /**
-     * @param $prepare
-     * @param $binds
-     */
     protected function bindBinds($prepare, $binds)
     {
         $i = 1;
@@ -378,7 +373,7 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
     }
 
     /**
-     * @param $prepare \PDOStatement
+     * @param \PDOStatement $prepare
      *
      * @return mixed
      */
@@ -396,8 +391,6 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
     }
 
     /**
-     * @param $prepare
-     *
      * @return mixed
      */
     public function fetchPrepared($prepare)
@@ -413,8 +406,6 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
     }
 
     /**
-     * @param $records
-     *
      * @return mixed
      */
     public function transformRecordsToObjects($records)
@@ -460,8 +451,6 @@ class PDO extends AbstractRepository implements Repository, PDOInterface, Connec
 
     /**
      * @param callable $callable
-     * @param callable|null $onError
-     * @param callable|null $onSuccess
      * @throws Throwable
      */
     public function transaction(callable $callable)

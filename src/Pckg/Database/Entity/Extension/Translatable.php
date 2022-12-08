@@ -408,8 +408,6 @@ trait Translatable
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function __issetTranslatableExtension($key)

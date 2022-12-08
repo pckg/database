@@ -27,9 +27,6 @@ trait Localizable
      */
     protected $localizableLocaleField = 'locale_id';
 
-    /**
-     * @var
-     */
     protected $localizableLocale;
 
     /**

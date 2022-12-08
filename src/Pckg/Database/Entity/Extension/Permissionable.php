@@ -27,9 +27,6 @@ trait Permissionable
      */
     protected $permissionablePermissionField = 'user_group_id';
 
-    /**
-     * @var
-     */
     protected $permissionableAuth;
 
     /**
@@ -249,8 +246,6 @@ trait Permissionable
     }
 
     /**
-     * @param $permission
-     *
      * @return mixed
      */
     public function joinPermissionTo($permission)

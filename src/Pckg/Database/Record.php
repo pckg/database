@@ -32,9 +32,6 @@ class Record extends Obj
     use Translatable;
     use Permissionable;
 
-    /**
-     * @var
-     */
     protected $entity = Entity::class;
 
     /**
@@ -91,7 +88,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $dataKey
      * @return mixed
      */
     public function cacheDecodedField($dataKey)
@@ -158,8 +154,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $entity
-     *
      * @return $this
      */
     public function setEntity($entity)
@@ -188,8 +182,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $source
-     *
      * @return array
      */
     protected function getKeyValue($source)
@@ -258,8 +250,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function hasKey($key)
@@ -289,8 +279,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $class
-     *
      * @return $this
      */
     public function setEntityClass($class)
@@ -301,8 +289,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $entity
-     *
      * @return Entity
      */
     public function getEntityIfEmpty($entity)
@@ -315,8 +301,6 @@ class Record extends Obj
     }
 
     /**
-     * @param $entity
-     *
      * @return Entity
      */
     public function prepareEntityIfEmpty($entity)

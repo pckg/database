@@ -135,25 +135,16 @@ class Custom implements Repository
         // TODO: Implement prepareQuery() method.
     }
 
-    /**
-     * @param $prepare
-     */
     public function executePrepared($prepare)
     {
         // TODO: Implement executePrepared() method.
     }
 
-    /**
-     * @param $prepare
-     */
     public function fetchAllPrepared($prepare)
     {
         // TODO: Implement fetchAllPrepared() method.
     }
 
-    /**
-     * @param $prepare
-     */
     public function fetchPrepared($prepare)
     {
         // TODO: Implement fetchPrepared() method.

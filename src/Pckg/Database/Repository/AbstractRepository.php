@@ -13,14 +13,8 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 abstract class AbstractRepository implements Repository
 {
-    /**
-     * @var
-     */
     protected $connection;
 
-    /**
-     * @var
-     */
     protected $cache;
 
     /**
@@ -50,8 +44,6 @@ abstract class AbstractRepository implements Repository
     }
 
     /**
-     * @param $alias
-     *
      * @return mixed|AbstractRepository
      */
     public function aliased($alias)
@@ -95,8 +87,6 @@ abstract class AbstractRepository implements Repository
     }
 
     /**
-     * @param $prepare
-     *
      * @return mixed
      */
     public function executePrepared($prepare)
@@ -107,8 +97,6 @@ abstract class AbstractRepository implements Repository
     }
 
     /**
-     * @param $prepare
-     *
      * @return mixed
      */
     public function fetchAllPrepared($prepare)
@@ -122,8 +110,6 @@ abstract class AbstractRepository implements Repository
     }
 
     /**
-     * @param $prepare
-     *
      * @return mixed
      */
     public function fetchPrepared($prepare)

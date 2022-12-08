@@ -340,7 +340,7 @@ trait Actions
     public function refetch($fields = [])
     {
         /**
-         * @var $entity Entity
+         * @var Entity $entity
          */
         $entity = $this->getEntity();
         if ($this->id) {
@@ -402,8 +402,6 @@ trait Actions
     }
 
     /**
-     * @param $data
-     *
      * @return $this
      */
     public function updateIf($data)

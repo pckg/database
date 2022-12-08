@@ -14,8 +14,6 @@ use Pckg\Database\Record;
 trait Permissionable
 {
     /**
-     * @param $action
-     *
      * @return mixed
      */
     public function hasPermissionTo($action)
@@ -32,10 +30,6 @@ trait Permissionable
         return $this->getEntity()->usePermissionableTable()->resetQuery()->where('id', $this->id)->delete();
     }
 
-    /**
-     * @param      $action
-     * @param null $userGroupId
-     */
     public function grantPermissionTo($actions, $userGroupIds = [])
     {
         if (!is_array($userGroupIds)) {

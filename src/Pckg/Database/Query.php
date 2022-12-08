@@ -31,14 +31,8 @@ abstract class Query
     const MORE_EQUAL = '>=';
     const LESS_EQUAL = '<=';
 
-    /**
-     * @var
-     */
     protected $table;
 
-    /**
-     * @var
-     */
     protected $alias;
 
     /**
@@ -51,9 +45,6 @@ abstract class Query
      */
     protected $where;
 
-    /**
-     * @var
-     */
     protected $groupBy;
 
     /**
@@ -61,19 +52,10 @@ abstract class Query
      */
     protected $having;
 
-    /**
-     * @var
-     */
     protected $orderBy;
 
-    /**
-     * @var
-     */
     protected $limit;
 
-    /**
-     * @var
-     */
     protected $sql;
 
     /**
@@ -157,9 +139,6 @@ abstract class Query
     }
 
     /**
-     * @param $val
-     * @param $part
-     *
      * @return $this
      */
     public function bind($val, $part)
@@ -261,8 +240,6 @@ abstract class Query
     }
 
     /**
-     * @param $bind
-     *
      * @return $this
      */
     public function setBind($bind)
@@ -273,8 +250,6 @@ abstract class Query
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function table($table)
@@ -293,8 +268,6 @@ abstract class Query
     }
 
     /**
-     * @param $alias
-     *
      * @return $this
      */
     public function alias($alias)
@@ -364,9 +337,6 @@ abstract class Query
         return $this->addCondition($key, $value, $operator, 'having');
     }
 
-    /**
-     * @param $binds
-     */
     private function processBinds($binds, $part)
     {
         if (!is_array($binds)) {
@@ -514,8 +484,6 @@ abstract class Query
     }
 
     /**
-     * @param $key
-     *
      * @return int|string
      */
     private function makeKey($key)
@@ -561,8 +529,6 @@ abstract class Query
     }
 
     /**
-     * @param $groupBy
-     *
      * @return $this
      */
     public function groupBy($groupBy)
@@ -573,8 +539,6 @@ abstract class Query
     }
 
     /**
-     * @param $groupBy
-     *
      * @return $this
      */
     public function addGroupBy($groupBy)
@@ -597,8 +561,6 @@ abstract class Query
     }
 
     /**
-     * @param $orderBy
-     *
      * @return $this
      */
     public function orderBy($orderBy)
@@ -617,8 +579,6 @@ abstract class Query
     }
 
     /**
-     * @param $limit
-     *
      * @return $this
      */
     public function limit($limit)

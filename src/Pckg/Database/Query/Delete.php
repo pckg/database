@@ -11,9 +11,6 @@ use Pckg\Database\Query;
  */
 class Delete extends Query
 {
-    /**
-     * @var
-     */
     protected $insert;
 
     // builders
@@ -49,8 +46,6 @@ class Delete extends Query
     }
 
     /**
-     * @param $table
-     *
      * @return $this
      */
     public function setTable($table)

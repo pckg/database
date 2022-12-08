@@ -24,9 +24,6 @@ class Fetcher
      */
     protected $query;
 
-    /**
-     * @var
-     */
     protected $recordClass;
 
     /**

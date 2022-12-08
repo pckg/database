@@ -11,6 +11,7 @@ use Pckg\Database\Repository;
 use Pckg\Database\Repository\PDO as RepositoryPDO;
 use PDO;
 use PDOException;
+use Pckg\Database\Connection\PDO as PDOConnection;
 
 /**
  * Class RepositoryFactory
@@ -37,8 +38,6 @@ class RepositoryFactory
     const DRIVER_PGSQL = 'pgsql';
 
     /**
-     * @param $name
-     *
      * @return mixed|null|\Pckg\Database\Repository\PDO
      * @throws Exception
      */
@@ -116,9 +115,6 @@ class RepositoryFactory
     }
 
     /**
-     * @param $config
-     * @param $name
-     *
      * @return \Pckg\Database\Repository\PDO
      * @throws Exception
      */
@@ -138,8 +134,6 @@ class RepositoryFactory
     }
 
     /**
-     * @param $config
-     *
      * @return PDO
      */
     public static function createPdoConnectionByConfig($config)
@@ -188,7 +182,7 @@ class RepositoryFactory
         }
 
         $dsn = $scheme . ":" . $to . "=" . $config[$key] . $finalCharset . $partDb . $finalOptions;
-        $pdo = new PDO(
+        $pdo = new PDOConnection(
             $dsn,
             $config['user'],
             $config['pass'],
@@ -200,10 +194,6 @@ class RepositoryFactory
         return $pdo;
     }
 
-    /**
-     * @param $pdo
-     * @param $name
-     */
     protected static function checkDebugBar($pdo, $name)
     {
         if (!context()->exists(DebugBar::class)) {
@@ -223,9 +213,6 @@ class RepositoryFactory
     }
 
     /**
-     * @param $config
-     * @param $name
-     *
      * @return Faker|\Pckg\Database\Repository\PDO
      */
     public static function createRepositoryConnection($config, $name)
@@ -258,9 +245,6 @@ class RepositoryFactory
 
     /**
      * Instantiate connection for defined driver.
-     *
-     * @param $config
-     * @param $name
      *
      * @return Faker|RepositoryPDO
      * @throws Exception

@@ -33,9 +33,6 @@ trait With
     protected $with = [];
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return $this|Relation|mixed
      * @throws Exception
      */

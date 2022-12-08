@@ -13,9 +13,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 trait MiddleEntity
 {
-    /**
-     * @var
-     */
     protected $middle;
 
     /**
@@ -23,9 +20,6 @@ trait MiddleEntity
      */
     protected $leftForeignKey = 'poly_id';
 
-    /**
-     * @var
-     */
     protected $rightForeignKey;
 
     /**
@@ -39,8 +33,6 @@ trait MiddleEntity
     protected $rightPrimaryKey = 'id';
 
     /**
-     * @param $leftPrimaryKey
-     *
      * @return $this
      */
     public function leftPrimaryKey($leftPrimaryKey)
@@ -51,8 +43,6 @@ trait MiddleEntity
     }
 
     /**
-     * @param $rightPrimaryKey
-     *
      * @return $this
      */
     public function rightPrimaryKey($rightPrimaryKey)
@@ -63,8 +53,6 @@ trait MiddleEntity
     }
 
     /**
-     * @param $leftForeignKey
-     *
      * @return $this
      */
     public function leftForeignKey($leftForeignKey)
@@ -75,8 +63,6 @@ trait MiddleEntity
     }
 
     /**
-     * @param $rightForeignKey
-     *
      * @return $this
      */
     public function rightForeignKey($rightForeignKey)
@@ -130,8 +116,6 @@ trait MiddleEntity
     }
 
     /**
-     * @param $middle
-     *
      * @return $this
      */
     public function over($middle, callable $callable = null)

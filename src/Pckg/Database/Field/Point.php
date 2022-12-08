@@ -98,8 +98,6 @@ class Point extends AbstractField
     /**
      * Setter for ->x and ->y
      *
-     * @param $key
-     * @param $val
      * @return $this
      * @throws \Exception
      */
@@ -125,7 +123,6 @@ class Point extends AbstractField
     /**
      * Getter for ->x and ->y
      *
-     * @param $key
      * @return mixed
      * @throws \Exception
      */

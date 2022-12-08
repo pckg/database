@@ -17,9 +17,6 @@ use Pckg\Database\Repository\PDO\Command\GetRecords;
  */
 trait RightEntity
 {
-    /**
-     * @var
-     */
     protected $right;
 
     /**

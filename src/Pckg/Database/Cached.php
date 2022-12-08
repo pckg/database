@@ -56,9 +56,6 @@ class Cached
     }
 
     /**
-     * @param $method
-     * @param $args
-     *
      * @return mixed
      */
     public function __call($method, $args)

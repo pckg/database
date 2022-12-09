@@ -4,248 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b96c9f26820c508e93e9d61558c3b2b4",
-    "packages": [
-        {
-            "name": "doctrine/cache",
-            "version": "1.13.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/cache.git",
-                "reference": "56cd022adb5514472cb144c087393c1821911d09"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/56cd022adb5514472cb144c087393c1821911d09",
-                "reference": "56cd022adb5514472cb144c087393c1821911d09",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~7.1 || ^8.0"
-            },
-            "conflict": {
-                "doctrine/common": ">2.2,<2.4"
-            },
-            "require-dev": {
-                "alcaeus/mongo-php-adapter": "^1.1",
-                "cache/integration-tests": "dev-master",
-                "doctrine/coding-standard": "^9",
-                "mongodb/mongodb": "^1.1",
-                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
-                "predis/predis": "~1.0",
-                "psr/cache": "^1.0 || ^2.0 || ^3.0",
-                "symfony/cache": "^4.4 || ^5.4 || ^6",
-                "symfony/var-exporter": "^4.4 || ^5.4 || ^6"
-            },
-            "suggest": {
-                "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
-                    "name": "Roman Borschel",
-                    "email": "roman@code-factory.org"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com"
-                }
-            ],
-            "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
-            "homepage": "https://www.doctrine-project.org/projects/cache.html",
-            "keywords": [
-                "abstraction",
-                "apcu",
-                "cache",
-                "caching",
-                "couchdb",
-                "memcached",
-                "php",
-                "redis",
-                "xcache"
-            ],
-            "support": {
-                "issues": "https://github.com/doctrine/cache/issues",
-                "source": "https://github.com/doctrine/cache/tree/1.13.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2022-05-20T20:06:54+00:00"
-        },
-        {
-            "name": "pckg/cache",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pckg/cache.git",
-                "reference": "7b56641cbacf9deb724e337335ccfe38c72c06bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pckg/cache/zipball/7b56641cbacf9deb724e337335ccfe38c72c06bf",
-                "reference": "7b56641cbacf9deb724e337335ccfe38c72c06bf",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/cache": "^1.6"
-            },
-            "require-dev": {
-                "pckg-app/frontend-dev": "dev-master",
-                "pckg/framework": "dev-master"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Pckg": "src\\"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bojan Rajh",
-                    "email": "schtr4jh@schtr4jh.net"
-                }
-            ],
-            "description": "PHP cache",
-            "homepage": "https://github.com/pckg/cache",
-            "support": {
-                "issues": "https://github.com/pckg/cache/issues",
-                "source": "https://github.com/pckg/cache/tree/master"
-            },
-            "time": "2021-03-05T18:25:17+00:00"
-        },
-        {
-            "name": "pckg/concept",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pckg/concept.git",
-                "reference": "0ebc4a200faab53a3990da8b9793336c8f91e3e5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pckg/concept/zipball/0ebc4a200faab53a3990da8b9793336c8f91e3e5",
-                "reference": "0ebc4a200faab53a3990da8b9793336c8f91e3e5",
-                "shasum": ""
-            },
-            "require-dev": {
-                "pckg-app/frontend-dev": "dev-master",
-                "pckg/framework": "dev-master-yoda",
-                "pckg/htmlbuilder": "dev-master",
-                "pckg/manager": "dev-master"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/Pckg/Concept/Helper/functions.php",
-                    "src/Pckg/Concept/Helper/functions_bc.php"
-                ],
-                "psr-0": {
-                    "Pckg": "src\\"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bojan Rajh",
-                    "email": "schtr4jh@schtr4jh.net"
-                }
-            ],
-            "description": "Simple php concepts",
-            "homepage": "https://github.com/pckg/concept",
-            "support": {
-                "issues": "https://github.com/pckg/concept/issues",
-                "source": "https://github.com/pckg/concept/tree/master"
-            },
-            "time": "2021-11-09T11:25:31+00:00"
-        },
-        {
-            "name": "pckg/locale",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pckg/locale.git",
-                "reference": "fa7776c472ea0b93c655c74350655c570572f0ea"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pckg/locale/zipball/fa7776c472ea0b93c655c74350655c570572f0ea",
-                "reference": "fa7776c472ea0b93c655c74350655c570572f0ea",
-                "shasum": ""
-            },
-            "require-dev": {
-                "pckg-app/frontend-dev": "dev-master",
-                "pckg/database": "dev-master",
-                "pckg/framework": "dev-master",
-                "pckg/manager": "dev-master"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Pckg": "src\\"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bojan Rajh",
-                    "email": "schtr4jh@schtr4jh.net"
-                }
-            ],
-            "description": "PHP locale",
-            "homepage": "https://github.com/pckg/locale",
-            "support": {
-                "issues": "https://github.com/pckg/locale/issues",
-                "source": "https://github.com/pckg/locale/tree/master"
-            },
-            "time": "2022-10-25T20:18:29+00:00"
-        }
-    ],
+    "content-hash": "4bde13bdd5d330cad87332d0b57ba627",
+    "packages": [],
     "packages-dev": [
         {
             "name": "assetic/framework",
@@ -1231,6 +991,105 @@
                 "source": "https://github.com/Codeception/Stub/tree/4.0.2"
             },
             "time": "2022-01-31T19:25:15+00:00"
+        },
+        {
+            "name": "doctrine/cache",
+            "version": "1.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/doctrine/cache.git",
+                "reference": "56cd022adb5514472cb144c087393c1821911d09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/56cd022adb5514472cb144c087393c1821911d09",
+                "reference": "56cd022adb5514472cb144c087393c1821911d09",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~7.1 || ^8.0"
+            },
+            "conflict": {
+                "doctrine/common": ">2.2,<2.4"
+            },
+            "require-dev": {
+                "alcaeus/mongo-php-adapter": "^1.1",
+                "cache/integration-tests": "dev-master",
+                "doctrine/coding-standard": "^9",
+                "mongodb/mongodb": "^1.1",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "predis/predis": "~1.0",
+                "psr/cache": "^1.0 || ^2.0 || ^3.0",
+                "symfony/cache": "^4.4 || ^5.4 || ^6",
+                "symfony/var-exporter": "^4.4 || ^5.4 || ^6"
+            },
+            "suggest": {
+                "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Roman Borschel",
+                    "email": "roman@code-factory.org"
+                },
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
+                    "name": "Johannes Schmitt",
+                    "email": "schmittjoh@gmail.com"
+                }
+            ],
+            "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
+            "homepage": "https://www.doctrine-project.org/projects/cache.html",
+            "keywords": [
+                "abstraction",
+                "apcu",
+                "cache",
+                "caching",
+                "couchdb",
+                "memcached",
+                "php",
+                "redis",
+                "xcache"
+            ],
+            "support": {
+                "issues": "https://github.com/doctrine/cache/issues",
+                "source": "https://github.com/doctrine/cache/tree/1.13.0"
+            },
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcache",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-05-20T20:06:54+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -2613,6 +2472,52 @@
             "time": "2022-12-08T19:47:24+00:00"
         },
         {
+            "name": "pckg/cache",
+            "version": "dev-next-8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pckg/cache.git",
+                "reference": "3e3584e8144a34480399325311f92fba56d62d48"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pckg/cache/zipball/3e3584e8144a34480399325311f92fba56d62d48",
+                "reference": "3e3584e8144a34480399325311f92fba56d62d48",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/cache": "^1.6",
+                "php": "8.0.*"
+            },
+            "require-dev": {
+                "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/framework": "dev-next-8.0 as dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Pckg": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bojan Rajh",
+                    "email": "schtr4jh@schtr4jh.net"
+                }
+            ],
+            "description": "PHP cache",
+            "homepage": "https://github.com/pckg/cache",
+            "support": {
+                "issues": "https://github.com/pckg/cache/issues",
+                "source": "https://github.com/pckg/cache/tree/next-8.0"
+            },
+            "time": "2022-12-08T19:56:06+00:00"
+        },
+        {
             "name": "pckg/collection",
             "version": "dev-next-8.0",
             "source": {
@@ -2664,17 +2569,69 @@
             "time": "2022-12-08T19:59:27+00:00"
         },
         {
+            "name": "pckg/concept",
+            "version": "dev-next-8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pckg/concept.git",
+                "reference": "eace5a99cf4c1dc50fb68b9aa2d9ee2152f374e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pckg/concept/zipball/eace5a99cf4c1dc50fb68b9aa2d9ee2152f374e8",
+                "reference": "eace5a99cf4c1dc50fb68b9aa2d9ee2152f374e8",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.0.*"
+            },
+            "require-dev": {
+                "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/framework": "dev-next-8.0 as dev-master",
+                "pckg/htmlbuilder": "dev-next-8.0 as dev-master",
+                "pckg/manager": "dev-next-8.0 as dev-master"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Pckg/Concept/Helper/functions.php",
+                    "src/Pckg/Concept/Helper/functions_bc.php"
+                ],
+                "psr-0": {
+                    "Pckg": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bojan Rajh",
+                    "email": "schtr4jh@schtr4jh.net"
+                }
+            ],
+            "description": "Simple php concepts",
+            "homepage": "https://github.com/pckg/concept",
+            "support": {
+                "issues": "https://github.com/pckg/concept/issues",
+                "source": "https://github.com/pckg/concept/tree/next-8.0"
+            },
+            "time": "2022-12-08T20:18:50+00:00"
+        },
+        {
             "name": "pckg/framework",
             "version": "dev-next-8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/framework.git",
-                "reference": "31740c4111560630b58799790226e3adc19354a7"
+                "reference": "5d63637cdf182a952b8b24e73abe76265012ce7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/framework/zipball/31740c4111560630b58799790226e3adc19354a7",
-                "reference": "31740c4111560630b58799790226e3adc19354a7",
+                "url": "https://api.github.com/repos/pckg/framework/zipball/5d63637cdf182a952b8b24e73abe76265012ce7d",
+                "reference": "5d63637cdf182a952b8b24e73abe76265012ce7d",
                 "shasum": ""
             },
             "require": {
@@ -2735,7 +2692,7 @@
                 "issues": "https://github.com/pckg/framework/issues",
                 "source": "https://github.com/pckg/framework/tree/next-8.0"
             },
-            "time": "2022-12-08T19:54:37+00:00"
+            "time": "2022-12-08T20:27:02+00:00"
         },
         {
             "name": "pckg/htmlbuilder",
@@ -2743,12 +2700,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/htmlbuilder.git",
-                "reference": "e508f8bb9f49de44e1ed8931f9cdcbc5c5b5922e"
+                "reference": "384fe46f831ed1a03de06117c9852961efa10b72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/htmlbuilder/zipball/e508f8bb9f49de44e1ed8931f9cdcbc5c5b5922e",
-                "reference": "e508f8bb9f49de44e1ed8931f9cdcbc5c5b5922e",
+                "url": "https://api.github.com/repos/pckg/htmlbuilder/zipball/384fe46f831ed1a03de06117c9852961efa10b72",
+                "reference": "384fe46f831ed1a03de06117c9852961efa10b72",
                 "shasum": ""
             },
             "require": {
@@ -2787,7 +2744,57 @@
                 "issues": "https://github.com/pckg/htmlbuilder/issues",
                 "source": "https://github.com/pckg/htmlbuilder/tree/next-8.0"
             },
-            "time": "2022-12-06T19:57:48+00:00"
+            "time": "2022-12-08T20:20:35+00:00"
+        },
+        {
+            "name": "pckg/locale",
+            "version": "dev-next-8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pckg/locale.git",
+                "reference": "f61ad344134a6ada085102d0a334f42f31cbd5cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pckg/locale/zipball/f61ad344134a6ada085102d0a334f42f31cbd5cf",
+                "reference": "f61ad344134a6ada085102d0a334f42f31cbd5cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.0.*"
+            },
+            "require-dev": {
+                "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/cache": "dev-next-8.0 as dev-master",
+                "pckg/collection": "dev-next-8.0 as dev-master",
+                "pckg/concept": "dev-next-8.0 as dev-master",
+                "pckg/database": "dev-next-8.0 as dev-master",
+                "pckg/framework": "dev-next-8.0 as dev-master",
+                "pckg/manager": "dev-next-8.0 as dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Pckg": "src\\"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bojan Rajh",
+                    "email": "schtr4jh@schtr4jh.net"
+                }
+            ],
+            "description": "PHP locale",
+            "homepage": "https://github.com/pckg/locale",
+            "support": {
+                "issues": "https://github.com/pckg/locale/issues",
+                "source": "https://github.com/pckg/locale/tree/next-8.0"
+            },
+            "time": "2022-12-08T20:35:21+00:00"
         },
         {
             "name": "pckg/manager",
@@ -2795,22 +2802,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/manager.git",
-                "reference": "27ee91c6c96cbda20166fd71b8874f1cd54002b0"
+                "reference": "d1b560417134bcf3326919d2bb3db8774fe29d15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/manager/zipball/27ee91c6c96cbda20166fd71b8874f1cd54002b0",
-                "reference": "27ee91c6c96cbda20166fd71b8874f1cd54002b0",
+                "url": "https://api.github.com/repos/pckg/manager/zipball/d1b560417134bcf3326919d2bb3db8774fe29d15",
+                "reference": "d1b560417134bcf3326919d2bb3db8774fe29d15",
                 "shasum": ""
             },
             "require": {
                 "assetic/framework": "1.*"
             },
             "require-dev": {
-                "pckg-app/frontend-dev": "dev-next-8.0 as master",
-                "pckg/collection": "dev-next-8.0 as master",
-                "pckg/database": "dev-next-8.0 as master",
-                "pckg/framework": "dev-next-8.0 as master",
+                "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/cache": "dev-next-8.0 as dev-master",
+                "pckg/collection": "dev-next-8.0 as dev-master",
+                "pckg/database": "dev-next-8.0 as dev-master",
+                "pckg/framework": "dev-next-8.0 as dev-master",
+                "pckg/locale": "dev-next-8.0 as dev-master",
                 "pckg/queue": "dev-master",
                 "pckg/storage": "dev-master"
             },
@@ -2837,7 +2846,7 @@
                 "issues": "https://github.com/pckg/manager/issues",
                 "source": "https://github.com/pckg/manager/tree/next-8.0"
             },
-            "time": "2022-09-10T12:57:36+00:00"
+            "time": "2022-12-08T20:40:54+00:00"
         },
         {
             "name": "pckg/migrator",
@@ -2845,12 +2854,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pckg/migrator.git",
-                "reference": "4a6fa0dfd0f2f0a988b3d954940712b2672ec189"
+                "reference": "c1e5c00540e329c83130a0d6c82d4af5b2329f6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pckg/migrator/zipball/4a6fa0dfd0f2f0a988b3d954940712b2672ec189",
-                "reference": "4a6fa0dfd0f2f0a988b3d954940712b2672ec189",
+                "url": "https://api.github.com/repos/pckg/migrator/zipball/c1e5c00540e329c83130a0d6c82d4af5b2329f6f",
+                "reference": "c1e5c00540e329c83130a0d6c82d4af5b2329f6f",
                 "shasum": ""
             },
             "require": {
@@ -2858,6 +2867,8 @@
             },
             "require-dev": {
                 "pckg-app/frontend-dev": "dev-next-8.0 as dev-master",
+                "pckg/cache": "dev-next-8.0 as dev-master",
+                "pckg/concept": "dev-next-8.0 as dev-master",
                 "pckg/database": "dev-next-8.0 as dev-master",
                 "pckg/framework": "dev-next-8.0 as dev-master",
                 "pckg/htmlbuilder": "dev-next-8.0 as dev-master",
@@ -2886,7 +2897,7 @@
                 "issues": "https://github.com/pckg/migrator/issues",
                 "source": "https://github.com/pckg/migrator/tree/next-8.0"
             },
-            "time": "2022-04-18T16:29:45+00:00"
+            "time": "2022-12-08T20:42:22+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -3491,16 +3502,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.26",
+            "version": "9.5.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "851867efcbb6a1b992ec515c71cdcf20d895e9d2"
+                "reference": "a2bc7ffdca99f92d959b3f2270529334030bba38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/851867efcbb6a1b992ec515c71cdcf20d895e9d2",
-                "reference": "851867efcbb6a1b992ec515c71cdcf20d895e9d2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a2bc7ffdca99f92d959b3f2270529334030bba38",
+                "reference": "a2bc7ffdca99f92d959b3f2270529334030bba38",
                 "shasum": ""
             },
             "require": {
@@ -3573,7 +3584,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.26"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.27"
             },
             "funding": [
                 {
@@ -3589,7 +3600,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-28T06:00:21+00:00"
+            "time": "2022-12-09T07:31:23+00:00"
         },
         {
             "name": "predis/predis",
@@ -6844,7 +6855,19 @@
             "alias_normalized": "dev-master"
         },
         {
+            "package": "pckg/cache",
+            "version": "dev-next-8.0",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        },
+        {
             "package": "pckg/collection",
+            "version": "dev-next-8.0",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        },
+        {
+            "package": "pckg/concept",
             "version": "dev-next-8.0",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
@@ -6857,6 +6880,12 @@
         },
         {
             "package": "pckg/htmlbuilder",
+            "version": "dev-next-8.0",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        },
+        {
+            "package": "pckg/locale",
             "version": "dev-next-8.0",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
@@ -6876,20 +6905,21 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "pckg/concept": 20,
-        "pckg/cache": 20,
-        "pckg/locale": 20,
         "pckg/collection": 20,
         "pckg-app/frontend-dev": 20,
         "pckg/framework": 20,
         "pckg/auth": 20,
         "pckg/htmlbuilder": 20,
         "pckg/manager": 20,
-        "pckg/migrator": 20
+        "pckg/migrator": 20,
+        "pckg/locale": 20,
+        "pckg/cache": 20,
+        "pckg/concept": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
+        "php": "8.0.*",
         "ext-pdo": "*",
         "ext-json": "*"
     },
